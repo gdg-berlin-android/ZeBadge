@@ -1,13 +1,16 @@
 package de.berlindroid.zeapp
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
+import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -164,11 +168,17 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
 
             Button(
                 onClick = {
-                    composableToDitheredImage(
-                        activity = activity,
-                        content = { NamePage() }
-                    ) { bitmap ->
-                        image = bitmap
+                    with(activity) {
+                        ask("What is your name?") { name ->
+                            ask("How can we contact you?") { contact ->
+                                composableToDitheredImage(
+                                    activity = activity,
+                                    content = { NamePage(name, contact) }
+                                ) { bitmap ->
+                                    image = bitmap
+                                }
+                            }
+                        }
                     }
                 },
             ) { Text(text = "name tag") }
@@ -184,6 +194,21 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
             ) { Text(text = "Reset") }
         }
     }
+}
+
+private fun Activity.ask(question: String, callback: (answer: String) -> Unit) {
+    val editText = EditText(this)
+    AlertDialog
+        .Builder(this)
+        .setTitle("Your input is needed")
+        .setMessage(question)
+        .setView(editText)
+        .setPositiveButton(
+            android.R.string.ok
+        ) { dialog, _ ->
+            dialog.dismiss()
+            callback(editText.text.toString())
+        }.show()
 }
 
 fun composableToDitheredImage(
