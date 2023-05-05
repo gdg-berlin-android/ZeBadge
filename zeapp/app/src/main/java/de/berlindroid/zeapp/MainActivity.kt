@@ -1,21 +1,27 @@
 package de.berlindroid.zeapp
 
+import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.hardware.usb.UsbDevice
-import android.hardware.usb.UsbManager
+import android.graphics.Canvas
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
+import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -34,18 +40,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.graphics.scale
 import de.berlindroid.zeapp.bits.dither
 import de.berlindroid.zeapp.bits.invert
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 
+private const val PAGE_WIDTH = 296
+private const val PAGE_HEIGHT = 128
+private const val DELETE_ME_VIEW_TAG = "PLEASE DELETE ME AFTER USE"
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
@@ -64,7 +82,7 @@ class MainActivity : ComponentActivity() {
                     ZeTopBar()
                 },
                 content = { paddingValues ->
-                    ZePages(paddingValues, resources)
+                    ZePages(this, paddingValues)
                 }
             )
         })
@@ -99,8 +117,9 @@ private fun ZeTopBar() {
     )
 }
 
+
 @Composable
-private fun ZePages(paddingValues: PaddingValues, resources: Resources) {
+private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -110,10 +129,10 @@ private fun ZePages(paddingValues: PaddingValues, resources: Resources) {
         var image by remember {
             mutableStateOf(
                 BitmapFactory.decodeResource(
-                    resources,
+                    activity.resources,
                     R.drawable.sample_badge,
                     BitmapFactory.Options()
-                ).scale(296, 128)
+                ).scale(PAGE_WIDTH, PAGE_HEIGHT)
             )
         }
 
@@ -145,13 +164,173 @@ private fun ZePages(paddingValues: PaddingValues, resources: Resources) {
 
             Button(
                 onClick = {
+                    composableToDitheredImage(
+                        activity = activity,
+                        content = { NamePage() }
+                    ) { bitmap ->
+                        image = bitmap
+                    }
+                },
+            ) { Text(text = "name tag") }
+
+            Button(
+                onClick = {
                     image = BitmapFactory.decodeResource(
-                        resources,
+                        activity.resources,
                         R.drawable.sample_badge,
                         BitmapFactory.Options()
-                    ).scale(296, 128)
+                    ).scale(PAGE_WIDTH, PAGE_HEIGHT)
                 },
             ) { Text(text = "Reset") }
         }
+    }
+}
+
+fun composableToDitheredImage(
+    activity: Activity,
+    content: @Composable () -> Unit,
+    callback: (Bitmap) -> Unit
+) {
+    class ParentView(context: Context) : LinearLayout(context) {
+        init {
+            val width = PAGE_WIDTH
+            val height = PAGE_HEIGHT
+
+            tag = DELETE_ME_VIEW_TAG
+
+            val view = ComposeView(context)
+            view.visibility = View.GONE
+            view.layoutParams = LayoutParams(width, height)
+            addView(view)
+
+            view.setContent {
+                content()
+            }
+
+            viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    val bitmap = createBitmapFromView(view = view, width = width, height = height)
+                    callback(bitmap)
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    removeView(view)
+                }
+            })
+        }
+
+        private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
+            view.layoutParams = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+
+            view.measure(
+                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+            )
+
+            view.layout(0, 0, width, height)
+
+            val canvas = Canvas()
+            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+            canvas.setBitmap(bitmap)
+            view.draw(canvas)
+
+            return bitmap
+        }
+    }
+
+    activity.addContentView(
+        ParentView(activity),
+        LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+    )
+}
+
+@Composable
+@Preview
+fun NamePage(
+    name: String = "Jane Doe",
+    contact: String = "jane.doe@berlindroid.de",
+) {
+
+    Column(
+        modifier = Modifier
+            .background(
+                color = Color.White,
+            )
+            .size(
+                width = with(LocalDensity.current) { PAGE_WIDTH.toDp() },
+                height = with(LocalDensity.current) { PAGE_HEIGHT.toDp() },
+            )
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.DarkGray),
+            fontFamily = FontFamily.SansSerif,
+            fontSize = 8.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            maxLines = 1,
+            text = "Hello, my name is",
+        )
+        Spacer(modifier = Modifier.weight(1.0f))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                modifier = Modifier
+                    .weight(1.0f)
+                    .height(
+                        height = with(LocalDensity.current) { (PAGE_HEIGHT / 2).toDp() },
+                    ),
+                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                contentDescription = null
+            )
+
+            Text(
+                modifier = Modifier
+                    .padding(1.dp)
+                    .weight(2.0f),
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center,
+                text = name,
+            )
+
+            Image(
+                modifier = Modifier
+                    .weight(1.0f)
+                    .height(
+                        height = with(LocalDensity.current) { (PAGE_HEIGHT / 2).toDp() },
+                    ),
+                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                contentDescription = null
+            )
+
+        }
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 4.sp,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            text = contact,
+        )
+        Spacer(modifier = Modifier.weight(1.0f))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.DarkGray),
+            fontFamily = FontFamily.SansSerif,
+            fontSize = 3.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            maxLines = 1,
+            text = "powered by berlindroid",
+        )
     }
 }
