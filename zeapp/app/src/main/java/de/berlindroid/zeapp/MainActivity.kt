@@ -2,16 +2,10 @@ package de.berlindroid.zeapp
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
+import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Bundle
-import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -26,12 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,10 +43,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,13 +56,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.scale
+import de.berlindroid.zeapp.bits.composableToBitmap
 import de.berlindroid.zeapp.bits.dither
 import de.berlindroid.zeapp.bits.invert
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 
-private const val PAGE_WIDTH = 296
-private const val PAGE_HEIGHT = 128
-private const val DELETE_ME_VIEW_TAG = "PLEASE DELETE ME AFTER USE"
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
@@ -140,6 +133,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
             )
         }
 
+        // TODO: LazyColumn with A+ design!
         Column {
             Image(
                 modifier = Modifier
@@ -155,23 +149,32 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
             )
 
             Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
                 onClick = { image = image.dither() },
-            ) { Text(text = "Dither") }
+            ) { Text(text = "dither") }
 
             Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
                 onClick = { image = image.dither(thresholdOnly = true) },
-            ) { Text(text = "Thres") }
+            ) { Text(text = "threshold") }
 
             Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
                 onClick = { image = image.invert() },
             ) { Text(text = "invert") }
 
             Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
                 onClick = {
                     with(activity) {
+                        // TODO: That should be in a VM
                         ask("What is your name?") { name ->
                             ask("How can we contact you?") { contact ->
-                                composableToDitheredImage(
+                                composableToBitmap(
                                     activity = activity,
                                     content = { NamePage(name, contact) }
                                 ) { bitmap ->
@@ -181,9 +184,11 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
                         }
                     }
                 },
-            ) { Text(text = "name tag") }
+            ) { Text(text = "customize") }
 
             Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
                 onClick = {
                     image = BitmapFactory.decodeResource(
                         activity.resources,
@@ -191,7 +196,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
                         BitmapFactory.Options()
                     ).scale(PAGE_WIDTH, PAGE_HEIGHT)
                 },
-            ) { Text(text = "Reset") }
+            ) { Text(text = "reset to start badge") }
         }
     }
 }
@@ -211,69 +216,6 @@ private fun Activity.ask(question: String, callback: (answer: String) -> Unit) {
         }.show()
 }
 
-fun composableToDitheredImage(
-    activity: Activity,
-    content: @Composable () -> Unit,
-    callback: (Bitmap) -> Unit
-) {
-    class ParentView(context: Context) : LinearLayout(context) {
-        init {
-            val width = PAGE_WIDTH
-            val height = PAGE_HEIGHT
-
-            tag = DELETE_ME_VIEW_TAG
-
-            val view = ComposeView(context)
-            view.visibility = View.GONE
-            view.layoutParams = LayoutParams(width, height)
-            addView(view)
-
-            view.setContent {
-                content()
-            }
-
-            viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    val bitmap = createBitmapFromView(view = view, width = width, height = height)
-                    callback(bitmap)
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    removeView(view)
-                }
-            })
-        }
-
-        private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
-            view.layoutParams = LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT
-            )
-
-            view.measure(
-                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
-            )
-
-            view.layout(0, 0, width, height)
-
-            val canvas = Canvas()
-            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-
-            canvas.setBitmap(bitmap)
-            view.draw(canvas)
-
-            return bitmap
-        }
-    }
-
-    activity.addContentView(
-        ParentView(activity),
-        LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-    )
-}
 
 @Composable
 @Preview
