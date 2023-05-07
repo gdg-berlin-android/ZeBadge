@@ -60,7 +60,7 @@ fun CustomizeBadgeDialog(
                     } else {
                         Toast.makeText(
                             activity,
-                            "Binary image needed. Press one of the buttons below the iamge",
+                            "Binary image needed. Press one of the buttons below the image.",
                             Toast.LENGTH_LONG
                         ).show()
                     }
