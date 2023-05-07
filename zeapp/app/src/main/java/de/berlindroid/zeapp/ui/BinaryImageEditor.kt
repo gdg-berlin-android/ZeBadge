@@ -24,11 +24,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.ditherFloydSteinberg
+import de.berlindroid.zeapp.bits.ditherStaticPattern
 import de.berlindroid.zeapp.bits.invert
 import de.berlindroid.zeapp.bits.threshold
 
 @Composable
- fun BinaryImageEditor(
+fun BinaryImageEditor(
     bitmap: Bitmap,
     refresh: () -> Unit,
     bitmapUpdated: (Bitmap) -> Unit
@@ -75,7 +76,20 @@ import de.berlindroid.zeapp.bits.threshold
                     width = 1.dp,
                     color = LocalContentColor.current
                 ),
-                painter = painterResource(id = R.drawable.binary_bitmap_modificator_floid),
+                painter = painterResource(id = R.drawable.binary_bitmap_modificator_floid_steinberg),
+                contentDescription = null
+            )
+        }
+        IconButton(
+            onClick = { bitmapUpdated(bitmap.ditherStaticPattern()) }
+        ) {
+            Icon(
+                tint = Color.Unspecified,
+                modifier = Modifier.border(
+                    width = 1.dp,
+                    color = LocalContentColor.current
+                ),
+                painter = painterResource(id = R.drawable.binary_bitmap_modificator_static),
                 contentDescription = null
             )
         }
