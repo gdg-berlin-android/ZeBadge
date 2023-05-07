@@ -1,5 +1,3 @@
-Adafruit CircuitPython 8.0.5 on 2023-03-31; Pimoroni Badger 2040 with rp2040
+Adafruit CircuitPython 8.1.0-beta.2 on 2023-04-26; Pimoroni Badger 2040 with rp2040
 Board ID:pimoroni_badger2040
 UID:E661410403806732
-boot.py output:
-<Serial>

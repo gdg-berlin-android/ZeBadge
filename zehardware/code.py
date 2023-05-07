@@ -9,10 +9,10 @@
 # Windows: Change OS
 
 import re
+import sys
 import time
 import board
 import supervisor
-import usb_cdc
 from digitalio import DigitalInOut, Direction, Pull
 
 
@@ -31,11 +31,6 @@ def log(string):
 
 led = DigitalInOut(board.USER_LED)
 led.direction = Direction.OUTPUT
-
-if usb_cdc.data != None:
-    usb_cdc.data.timeout = READ_TIMEOUT
-    usb_cdc.data.reset_input_buffer()
-    usb_cdc.data.reset_output_buffer()
 
 log("-----")
 log("Running in serial mode.")
@@ -61,12 +56,23 @@ def handle_blink():
 
 
 # Read a single command from the serial interface
+read_buffer = ""
 def read_command():
-    buffer = ""
-    while usb_cdc.data.in_waiting > 0:
-        buffer += str(usb_cdc.data.readline(), "utf-8")
-    cleaned = re.sub(r'\s', " ", buffer).strip()
-    return cleaned if len(cleaned) > 0 else None
+    global read_buffer
+    if not supervisor.runtime.usb_connected:
+        log("No USB connection, skipping read")
+        return None
+    if not supervisor.runtime.serial_connected:
+        log("No serial connection, skipping read")
+        return None
+    while supervisor.runtime.serial_bytes_available:
+        read_buffer += sys.stdin.read(1)
+    if read_buffer.endswith("\n") or read_buffer.endswith("\r"):
+        cleaned = re.sub(r'\s', "", read_buffer).strip()
+        if len(cleaned) > 0:
+            read_buffer = ""
+            return cleaned
+    return None
 
 
 # Handle commands in format Base64<command:metadata:content>
@@ -80,9 +86,8 @@ def handle_commands():
         log("Reloading…")
         time.sleep(1)
         supervisor.reload()
-    elif command == "stop":
-        log("Stopping…")
-        supervisor.stop()
+    elif command == "exit":
+        sys.exit()
     elif command != None:
         log("Unknown command '%s'" % command)
 
