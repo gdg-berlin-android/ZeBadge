@@ -17,18 +17,45 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import java.nio.IntBuffer
 
+/**
+ * Linear invert all pixel values
+ *
+ * This will work best with images in black/white or grayscale.
+ */
 fun Bitmap.invert(): Bitmap {
     val outputBitmap = grayscale()
 
     val buffer = IntBuffer.allocate(width * height)
     outputBitmap.copyPixelsToBuffer(buffer)
+    buffer.rewind()
 
-    for (y in 0 until height) {
-        for (x in 0 until width) {
-            val input = buffer[x + y * width]
-            val output =
-                Color.rgb(255 - Color.red(input), 255 - Color.green(input), 255 - Color.blue(input))
-            buffer.put(x + y * width, output)
+    buffer.map { input ->
+        Color.rgb(255 - Color.red(input), 255 - Color.green(input), 255 - Color.blue(input))
+    }
+
+    buffer.rewind()
+    outputBitmap.copyPixelsFromBuffer(buffer)
+    return outputBitmap
+}
+
+/**
+ * Linear threshold all values above limit to white, and below to black
+ *
+ * @param limit the value to be considered the threshold, defaults to 128, half of the range
+ */
+fun Bitmap.threshold(limit: Int = 128): Bitmap {
+    val outputBitmap = grayscale()
+
+    val buffer = IntBuffer.allocate(width * height)
+    outputBitmap.copyPixelsToBuffer(buffer)
+    buffer.rewind()
+
+    buffer.map { input ->
+        val gray = Color.green(input)
+        if (gray > limit) {
+            Color.WHITE
+        } else {
+            Color.BLACK
         }
     }
 
@@ -37,8 +64,13 @@ fun Bitmap.invert(): Bitmap {
     return outputBitmap
 }
 
+/**
+ * Create new bitmap containing only the luminance values of all pixels.
+ */
 fun Bitmap.grayscale(): Bitmap {
-    val outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val outputBitmap = Bitmap.createBitmap(width, height, config)
+    outputBitmap.density = density
+
     val canvas = Canvas(outputBitmap)
     val paint = Paint()
     val colorMatrix = ColorMatrix(
@@ -56,6 +88,11 @@ fun Bitmap.grayscale(): Bitmap {
     return outputBitmap
 }
 
+/**
+ * Render a composable into a bitmap.
+ *
+ * Warning: This will add a content view to the activity, gone, but there.
+ */
 fun composableToBitmap(
     activity: Activity,
     content: @Composable () -> Unit,
@@ -120,4 +157,49 @@ fun composableToBitmap(
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
     )
+}
+
+/**
+ * Check if a given bitmap can be converted into binary form.
+ *
+ * The binary form consists of pixel whos color values are either all zeros or all 255.
+ */
+fun Bitmap.isBinary(): Boolean {
+    val buffer = IntBuffer.allocate(width * height)
+    copyPixelsToBuffer(buffer)
+    buffer.rewind()
+
+    var allBinaryPixel = true
+
+    buffer.forEach { pixelColor ->
+        allBinaryPixel = allBinaryPixel && pixelColor.isBinary()
+    }
+
+    return allBinaryPixel
+}
+
+private fun Int.isBinary(): Boolean {
+    val r = Color.red(this)
+    val g = Color.green(this)
+    val b = Color.blue(this)
+
+    return r == g && g == b && (r == 0 || r == 255)
+}
+
+/**
+ * Map all values of an IntBuffer
+ */
+fun IntBuffer.map(mapper: (it: Int) -> Int) {
+    for (i in 0 until limit()) {
+        put(i, mapper(get(i)))
+    }
+}
+
+/**
+ * Iterate over all values of an IntBuffer
+ */
+fun IntBuffer.forEach(mapper: (it: Int) -> Unit) {
+    for (i in 0 until limit()) {
+        mapper(get(i))
+    }
 }

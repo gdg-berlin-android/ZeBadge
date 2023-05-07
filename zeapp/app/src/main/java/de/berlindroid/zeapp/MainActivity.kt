@@ -1,30 +1,27 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
 package de.berlindroid.zeapp
 
 import android.app.Activity
-import android.app.AlertDialog
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,25 +34,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.graphics.scale
-import de.berlindroid.zeapp.bits.composableToBitmap
-import de.berlindroid.zeapp.bits.dither
-import de.berlindroid.zeapp.bits.invert
+import de.berlindroid.zeapp.ui.CustomizeBadgeDialog
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 
 
@@ -88,26 +75,6 @@ class MainActivity : ComponentActivity() {
 private fun ZeTopBar() {
     TopAppBar(
         title = { Text(stringResource(id = R.string.app_name)) },
-        actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    Icons.Filled.Share,
-                    contentDescription = null
-                )
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    Icons.Filled.KeyboardArrowUp,
-                    contentDescription = null
-                )
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null
-                )
-            }
-        }
     )
 }
 
@@ -120,181 +87,112 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
             .padding(paddingValues)
             .padding(4.dp)
     ) {
-        var image by remember {
-            mutableStateOf(
-                BitmapFactory.decodeResource(
-                    activity.resources,
-                    R.drawable.sample_badge,
-                    BitmapFactory.Options()
-                ).scale(PAGE_WIDTH, PAGE_HEIGHT)
-            )
-        }
+        fun resetBadgeBitmap() = BitmapFactory.decodeResource(
+            activity.resources,
+            R.drawable.sample_badge,
+        ).scale(PAGE_WIDTH, PAGE_HEIGHT)
 
-        // TODO: LazyColumn with A+ design!
+        var name by remember { mutableStateOf("Your Name") }
+        var contact by remember { mutableStateOf("Your Contact") }
+        var badgeBitmap by remember { mutableStateOf(resetBadgeBitmap()) }
+
+        var showCustomizeBadgeDialog by remember { mutableStateOf(false) }
+
         Column {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(unbounded = true)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                painter = BitmapPainter(
-                    image = image.asImageBitmap(),
-                    filterQuality = FilterQuality.None,
-                ),
-                contentScale = ContentScale.FillWidth,
-                contentDescription = null,
-            )
+            if (showCustomizeBadgeDialog) {
+                CustomizeBadgeDialog(
+                    activity,
+                    badgeBitmap,
+                    name,
+                    contact
+                ) { newBadge, newName, newContact ->
+                    badgeBitmap = newBadge
+                    name = newName
+                    contact = newContact
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
-                onClick = { image = image.dither() },
-            ) { Text(text = "dither") }
+                    showCustomizeBadgeDialog = false
+                }
+            }
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
-                onClick = { image = image.dither(thresholdOnly = true) },
-            ) { Text(text = "threshold") }
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
-                onClick = { image = image.invert() },
-            ) { Text(text = "invert") }
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
-                onClick = {
-                    with(activity) {
-                        // TODO: That should be in a VM
-                        ask("What is your name?") { name ->
-                            ask("How can we contact you?") { contact ->
-                                composableToBitmap(
-                                    activity = activity,
-                                    content = { NamePage(name, contact) }
-                                ) { bitmap ->
-                                    image = bitmap
-                                }
-                            }
-                        }
-                    }
-                },
-            ) { Text(text = "customize") }
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
-                onClick = {
-                    image = BitmapFactory.decodeResource(
-                        activity.resources,
-                        R.drawable.sample_badge,
-                        BitmapFactory.Options()
-                    ).scale(PAGE_WIDTH, PAGE_HEIGHT)
-                },
-            ) { Text(text = "reset to start badge") }
+            LazyColumn {
+                item {
+                    PageEditor(
+                        page = badgeBitmap,
+                        customizeThisPage = { showCustomizeBadgeDialog = true },
+                        resetThisPage = { badgeBitmap = resetBadgeBitmap() }
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+            }
         }
     }
 }
 
-private fun Activity.ask(question: String, callback: (answer: String) -> Unit) {
-    val editText = EditText(this)
-    AlertDialog
-        .Builder(this)
-        .setTitle("Your input is needed")
-        .setMessage(question)
-        .setView(editText)
-        .setPositiveButton(
-            android.R.string.ok
-        ) { dialog, _ ->
-            dialog.dismiss()
-            callback(editText.text.toString())
-        }.show()
-}
-
-
 @Composable
-@Preview
-fun NamePage(
-    name: String = "Jane Doe",
-    contact: String = "jane.doe@berlindroid.de",
+private fun PageEditor(
+    page: Bitmap,
+    customizeThisPage: (() -> Unit)? = null,
+    resetThisPage: (() -> Unit)? = null,
 ) {
-
-    Column(
+    Image(
         modifier = Modifier
-            .background(
-                color = Color.White,
-            )
-            .size(
-                width = with(LocalDensity.current) { PAGE_WIDTH.toDp() },
-                height = with(LocalDensity.current) { PAGE_HEIGHT.toDp() },
-            )
-    ) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.DarkGray),
-            fontFamily = FontFamily.SansSerif,
-            fontSize = 8.sp,
-            textAlign = TextAlign.Center,
-            color = Color.White,
-            maxLines = 1,
-            text = "Hello, my name is",
-        )
-        Spacer(modifier = Modifier.weight(1.0f))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Image(
-                modifier = Modifier
-                    .weight(1.0f)
-                    .height(
-                        height = with(LocalDensity.current) { (PAGE_HEIGHT / 2).toDp() },
-                    ),
-                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                contentDescription = null
-            )
+            .fillMaxWidth()
+            .wrapContentHeight(unbounded = true)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        painter = BitmapPainter(
+            image = page.asImageBitmap(),
+            filterQuality = FilterQuality.None,
+        ),
+        contentScale = ContentScale.FillWidth,
+        contentDescription = null,
+    )
 
-            Text(
-                modifier = Modifier
-                    .padding(1.dp)
-                    .weight(2.0f),
-                fontSize = 10.sp,
-                textAlign = TextAlign.Center,
-                text = name,
-            )
-
-            Image(
-                modifier = Modifier
-                    .weight(1.0f)
-                    .height(
-                        height = with(LocalDensity.current) { (PAGE_HEIGHT / 2).toDp() },
-                    ),
-                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                contentDescription = null
-            )
-
+    if (resetThisPage != null || customizeThisPage != null) {
+        Row(horizontalArrangement = Arrangement.End) {
+            Spacer(modifier = Modifier.weight(1.0f))
+            if (resetThisPage != null) {
+                IconButton(
+                    modifier = Modifier.padding(horizontal = 2.dp),
+                    onClick = resetThisPage,
+                ) { Icon(imageVector = Icons.Filled.Refresh, contentDescription = "reset") }
+            }
+            if (customizeThisPage != null) {
+                IconButton(
+                    modifier = Modifier.padding(horizontal = 2.dp),
+                    onClick = customizeThisPage
+                ) { Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit") }
+            }
         }
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            fontFamily = FontFamily.Monospace,
-            fontSize = 4.sp,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            text = contact,
-        )
-        Spacer(modifier = Modifier.weight(1.0f))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.DarkGray),
-            fontFamily = FontFamily.SansSerif,
-            fontSize = 3.sp,
-            textAlign = TextAlign.Center,
-            color = Color.White,
-            maxLines = 1,
-            text = "powered by berlindroid",
-        )
     }
 }
