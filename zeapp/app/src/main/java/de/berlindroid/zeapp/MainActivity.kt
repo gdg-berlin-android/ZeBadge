@@ -1,27 +1,27 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
 package de.berlindroid.zeapp
 
-import android.content.Context
-import android.content.res.Resources
+import android.app.Activity
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.hardware.usb.UsbDevice
-import android.hardware.usb.UsbManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,8 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.scale
-import de.berlindroid.zeapp.bits.dither
-import de.berlindroid.zeapp.bits.invert
+import de.berlindroid.zeapp.ui.CustomizeBadgeDialog
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 
 
@@ -64,7 +63,7 @@ class MainActivity : ComponentActivity() {
                     ZeTopBar()
                 },
                 content = { paddingValues ->
-                    ZePages(paddingValues, resources)
+                    ZePages(this, paddingValues)
                 }
             )
         })
@@ -76,82 +75,124 @@ class MainActivity : ComponentActivity() {
 private fun ZeTopBar() {
     TopAppBar(
         title = { Text(stringResource(id = R.string.app_name)) },
-        actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    Icons.Filled.Share,
-                    contentDescription = null
-                )
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    Icons.Filled.KeyboardArrowUp,
-                    contentDescription = null
-                )
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null
-                )
-            }
-        }
     )
 }
 
+
 @Composable
-private fun ZePages(paddingValues: PaddingValues, resources: Resources) {
+private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
             .padding(4.dp)
     ) {
-        var image by remember {
-            mutableStateOf(
-                BitmapFactory.decodeResource(
-                    resources,
-                    R.drawable.sample_badge,
-                    BitmapFactory.Options()
-                ).scale(296, 128)
-            )
-        }
+        fun resetBadgeBitmap() = BitmapFactory.decodeResource(
+            activity.resources,
+            R.drawable.sample_badge,
+        ).scale(PAGE_WIDTH, PAGE_HEIGHT)
+
+        var name by remember { mutableStateOf("Your Name") }
+        var contact by remember { mutableStateOf("Your Contact") }
+        var badgeBitmap by remember { mutableStateOf(resetBadgeBitmap()) }
+
+        var showCustomizeBadgeDialog by remember { mutableStateOf(false) }
 
         Column {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(unbounded = true)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                painter = BitmapPainter(
-                    image = image.asImageBitmap(),
-                    filterQuality = FilterQuality.None,
-                ),
-                contentScale = ContentScale.FillWidth,
-                contentDescription = null,
-            )
+            if (showCustomizeBadgeDialog) {
+                CustomizeBadgeDialog(
+                    activity,
+                    badgeBitmap,
+                    name,
+                    contact
+                ) { newBadge, newName, newContact ->
+                    badgeBitmap = newBadge
+                    name = newName
+                    contact = newContact
 
-            Button(
-                onClick = { image = image.dither() },
-            ) { Text(text = "Dither") }
+                    showCustomizeBadgeDialog = false
+                }
+            }
 
-            Button(
-                onClick = { image = image.dither(thresholdOnly = true) },
-            ) { Text(text = "Thres") }
+            LazyColumn {
+                item {
+                    PageEditor(
+                        page = badgeBitmap,
+                        customizeThisPage = { showCustomizeBadgeDialog = true },
+                        resetThisPage = { badgeBitmap = resetBadgeBitmap() }
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+                item {
+                    PageEditor(
+                        page = BitmapFactory.decodeResource(
+                            activity.resources,
+                            R.drawable.soon,
+                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
+                    )
+                }
+            }
+        }
+    }
+}
 
-            Button(
-                onClick = { image = image.invert() },
-            ) { Text(text = "invert") }
+@Composable
+private fun PageEditor(
+    page: Bitmap,
+    customizeThisPage: (() -> Unit)? = null,
+    resetThisPage: (() -> Unit)? = null,
+) {
+    Image(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(unbounded = true)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        painter = BitmapPainter(
+            image = page.asImageBitmap(),
+            filterQuality = FilterQuality.None,
+        ),
+        contentScale = ContentScale.FillWidth,
+        contentDescription = null,
+    )
 
-            Button(
-                onClick = {
-                    image = BitmapFactory.decodeResource(
-                        resources,
-                        R.drawable.sample_badge,
-                        BitmapFactory.Options()
-                    ).scale(296, 128)
-                },
-            ) { Text(text = "Reset") }
+    if (resetThisPage != null || customizeThisPage != null) {
+        Row(horizontalArrangement = Arrangement.End) {
+            Spacer(modifier = Modifier.weight(1.0f))
+            if (resetThisPage != null) {
+                IconButton(
+                    modifier = Modifier.padding(horizontal = 2.dp),
+                    onClick = resetThisPage,
+                ) { Icon(imageVector = Icons.Filled.Refresh, contentDescription = "reset") }
+            }
+            if (customizeThisPage != null) {
+                IconButton(
+                    modifier = Modifier.padding(horizontal = 2.dp),
+                    onClick = customizeThisPage
+                ) { Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit") }
+            }
         }
     }
 }
