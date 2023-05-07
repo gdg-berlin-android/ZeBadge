@@ -126,7 +126,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
                     PageEditor(
                         page = BitmapFactory.decodeResource(
                             activity.resources,
-                            R.drawable.soon,
+                            R.drawable.page_google,
                         ).scale(PAGE_WIDTH, PAGE_HEIGHT),
                     )
                 }
@@ -134,7 +134,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues) {
                     PageEditor(
                         page = BitmapFactory.decodeResource(
                             activity.resources,
-                            R.drawable.soon,
+                            R.drawable.page_telekom,
                         ).scale(PAGE_WIDTH, PAGE_HEIGHT),
                     )
                 }
