@@ -21,18 +21,26 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import de.berlindroid.zeapp.PAGE_HEIGHT
+import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.ditherFloydSteinberg
 import de.berlindroid.zeapp.bits.ditherStaticPattern
 import de.berlindroid.zeapp.bits.invert
+import de.berlindroid.zeapp.bits.randomizeColors
 import de.berlindroid.zeapp.bits.threshold
 
 @Composable
+@Preview
 fun BinaryImageEditor(
+    @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
-    refresh: () -> Unit,
-    bitmapUpdated: (Bitmap) -> Unit
+    refresh: () -> Unit = {},
+    bitmapUpdated: (Bitmap) -> Unit = {}
 ) {
     Image(
         modifier = Modifier
@@ -107,4 +115,16 @@ fun BinaryImageEditor(
             )
         }
     }
+}
+
+class BinaryBitmapPageProvider : PreviewParameterProvider<Bitmap> {
+    override val values: Sequence<Bitmap>
+        get() {
+            return sequenceOf(
+                with(Bitmap.createBitmap(PAGE_WIDTH, PAGE_HEIGHT, Bitmap.Config.ARGB_8888)) {
+                    randomizeColors()
+                    this
+                }
+            )
+        }
 }
