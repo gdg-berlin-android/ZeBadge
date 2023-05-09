@@ -63,7 +63,7 @@ fun NameEditorDialog(
                 Text(text = stringResource(id = R.string.ok))
             }
         },
-        title = { Text(text = "Add your name") },
+        title = { Text(text = "Add your contact details") },
         properties = DialogProperties(),
         text = {
             LazyColumn {
