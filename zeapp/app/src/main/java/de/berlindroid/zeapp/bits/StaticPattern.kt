@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import java.nio.IntBuffer
 import kotlin.math.abs
+import kotlin.math.pow
 
 /**
  * Dither using a static pattern
@@ -70,10 +71,8 @@ private fun Array<Int>.differenceToBlock(
         for (x in 0 until PATTERN_SIZE) {
             val bufferX = (blockX * PATTERN_SIZE + x).coerceIn(0, width - 1)
             val bufferY = (blockY * PATTERN_SIZE + y).coerceIn(0, height - 1)
+            val bufferPixel = buffer[bufferX + bufferY * width]
 
-            val bufferIndex = bufferX + bufferY * width
-
-            val bufferPixel = if (buffer[bufferIndex] < 128) 0 else 255
             error += abs(get(x + y * PATTERN_SIZE) - bufferPixel)
         }
     }
@@ -81,10 +80,19 @@ private fun Array<Int>.differenceToBlock(
     return error
 }
 
+private const val PATTERN_SIZE = 3
+
+private const val PATTERN_PLACE_COUNT = PATTERN_SIZE * PATTERN_SIZE
+
+private val PATTERN_BITS_NEEDED = 2 pow PATTERN_PLACE_COUNT
+
 /**
  * The patterns to compare our blocks with.
  */
-private val PATTERNS = mutableListOf(
+//private val PATTERNS = bruteForce() // ignored due to size constraints
+private val PATTERNS = handPicked()
+
+fun handPicked() = mutableListOf(
     arrayOf(
         0x00, 0x00, 0x00,
         0x00, 0x00, 0x00,
@@ -130,9 +138,9 @@ private val PATTERNS = mutableListOf(
         0xFF, 0x00, 0xFF,
         0x00, 0xFF, 0x00,
     ),
-).addInverted()
+).deriveMorePatterns()
 
-fun MutableList<Array<Int>>.addInverted(): List<Array<Int>> {
+fun MutableList<Array<Int>>.deriveMorePatterns(): List<Array<Int>> {
     val outputList = mutableListOf<Array<Int>>()
 
     forEach { input ->
@@ -159,4 +167,17 @@ fun MutableList<Array<Int>>.addInverted(): List<Array<Int>> {
     return outputList.toList()
 }
 
-private const val PATTERN_SIZE = 3
+fun bruteForce() = (0 until PATTERN_BITS_NEEDED).map { patternAsInt ->
+    var pattern = IntArray(PATTERN_PLACE_COUNT)
+
+    for (bit in 0 until PATTERN_PLACE_COUNT) {
+        if (patternAsInt and (1 shl bit) == (1 shl bit)) {
+            pattern[bit] = 0xFF
+        }
+    }
+
+    pattern.toTypedArray()
+}
+
+private infix fun Int.pow(power: Int): Int = toDouble().pow(power.toDouble()).toInt()
+
