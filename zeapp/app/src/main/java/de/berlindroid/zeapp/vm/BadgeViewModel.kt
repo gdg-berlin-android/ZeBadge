@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.graphics.scale
 import androidx.lifecycle.AndroidViewModel
 import de.berlindroid.zeapp.PAGE_HEIGHT
@@ -45,6 +46,21 @@ class BadgeViewModel(
         namePage.value = initialNamePage()
     }
 
+    fun simulatorButtonPressed(button: Char) {
+        currentPage.value = button
+    }
+
+    fun currentPageCharToPageBitmap(): Bitmap {
+        return when (currentPage.value) {
+            'a' -> namePage.value
+            'b' -> firstSponsorPage.value
+            'c' -> secondSponsorPage.value
+            'u' -> firstCustomPage.value
+            'd' -> secondCustomPage.value
+            else -> namePage.value
+        }
+    }
+
     private fun initialNamePage(): Bitmap =
         BitmapFactory.decodeResource(
             getApplication<Application>().resources,
@@ -53,6 +69,40 @@ class BadgeViewModel(
 
     var name = mutableStateOf("Your Name")
     var contact = mutableStateOf("Your Contact")
-    var namePage = mutableStateOf<Bitmap>(initialNamePage())
     var nameEditorDialog = mutableStateOf(false)
+
+
+    var namePage = mutableStateOf(initialNamePage())
+
+    var firstSponsorPage = mutableStateOf(
+        BitmapFactory.decodeResource(
+            getApplication<Application>().resources,
+            R.drawable.page_google,
+        ).scale(PAGE_WIDTH, PAGE_HEIGHT)
+    )
+
+    var secondSponsorPage = mutableStateOf(
+        BitmapFactory.decodeResource(
+            getApplication<Application>().resources,
+            R.drawable.page_telekom,
+        ).scale(PAGE_WIDTH, PAGE_HEIGHT)
+    )
+
+    var firstCustomPage =
+        mutableStateOf(
+            BitmapFactory.decodeResource(
+                getApplication<Application>().resources,
+                R.drawable.soon,
+            ).scale(PAGE_WIDTH, PAGE_HEIGHT)
+        )
+
+    var secondCustomPage =
+        mutableStateOf(
+            BitmapFactory.decodeResource(
+                getApplication<Application>().resources,
+                R.drawable.soon,
+            ).scale(PAGE_WIDTH, PAGE_HEIGHT)
+        )
+
+    var currentPage = mutableStateOf('a')
 }

@@ -3,8 +3,8 @@
 package de.berlindroid.zeapp
 
 import android.app.Activity
+import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,12 +40,13 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.scale
 import de.berlindroid.zeapp.ui.CustomizeBadgeDialog
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.vm.BadgeViewModel
+import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
 
 
 @ExperimentalMaterial3Api
@@ -55,7 +56,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ZeScreen()
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                ZeSimulator(
+                    page = vm.currentPageCharToPageBitmap(),
+                    onButtonPressed = vm::simulatorButtonPressed,
+                )
+            } else {
+                ZeScreen()
+            }
         }
     }
 
@@ -94,7 +102,11 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
 
         var name by remember { vm.name }
         var contact by remember { vm.contact }
-        var badgeBitmap by remember { vm.namePage }
+        var badgePageBitmap by remember { vm.namePage }
+        var firstSponsorPageBitmap by remember { vm.firstSponsorPage }
+        var secondSponsorPageBitmap by remember { vm.secondSponsorPage }
+        var firstCustomPageBitmap by remember { vm.firstCustomPage }
+        var secondCustomPageBitmap by remember { vm.secondCustomPage }
 
         var showNameEditorDialog by remember { vm.nameEditorDialog }
 
@@ -102,11 +114,11 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
             if (showNameEditorDialog) {
                 CustomizeBadgeDialog(
                     activity,
-                    badgeBitmap,
+                    badgePageBitmap,
                     name,
                     contact
                 ) { newBadge, newName, newContact ->
-                    badgeBitmap = newBadge
+                    badgePageBitmap = newBadge
                     name = newName
                     contact = newContact
 
@@ -117,44 +129,20 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
             LazyColumn {
                 item {
                     PageEditor(
-                        page = badgeBitmap,
+                        page = badgePageBitmap,
                         customizeThisPage = { showNameEditorDialog = true },
                         resetThisPage = { vm.resetNamePage() },
-                        sendToDevice = { vm.sendPageToDevice("a", badgeBitmap) }
+                        sendToDevice = { vm.sendPageToDevice("a", badgePageBitmap) }
                     )
                 }
-                item {
-                    PageEditor(
-                        page = BitmapFactory.decodeResource(
-                            activity.resources,
-                            R.drawable.page_google,
-                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
-                    )
-                }
-                item {
-                    PageEditor(
-                        page = BitmapFactory.decodeResource(
-                            activity.resources,
-                            R.drawable.page_telekom,
-                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
-                    )
-                }
-                item {
-                    PageEditor(
-                        page = BitmapFactory.decodeResource(
-                            activity.resources,
-                            R.drawable.soon,
-                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
-                    )
-                }
-                item {
-                    PageEditor(
-                        page = BitmapFactory.decodeResource(
-                            activity.resources,
-                            R.drawable.soon,
-                        ).scale(PAGE_WIDTH, PAGE_HEIGHT),
-                    )
-                }
+
+                item { PageEditor(page = firstSponsorPageBitmap) }
+
+                item { PageEditor(page = secondSponsorPageBitmap) }
+
+                item { PageEditor(page = firstCustomPageBitmap) }
+
+                item { PageEditor(page = secondCustomPageBitmap) }
             }
         }
     }

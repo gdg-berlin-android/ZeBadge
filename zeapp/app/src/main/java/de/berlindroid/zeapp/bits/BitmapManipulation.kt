@@ -17,6 +17,7 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import java.nio.IntBuffer
 import kotlin.experimental.or
+import kotlin.random.Random
 
 /**
  * Linear invert all pixel values
@@ -86,6 +87,29 @@ fun Bitmap.grayscale(): Bitmap {
     val colorFilter = ColorMatrixColorFilter(colorMatrix)
     paint.colorFilter = colorFilter
     canvas.drawBitmap(this, 0f, 0f, paint)
+    return outputBitmap
+}
+
+/**
+ * Return a random image
+ */
+fun Bitmap.randomizeColors(): Bitmap {
+    val outputBitmap = copy(config, true)
+
+    val buffer = IntBuffer.allocate(width * height)
+    outputBitmap.copyPixelsToBuffer(buffer)
+    buffer.rewind()
+
+    buffer.map {
+        Color.rgb(
+            Random.nextInt(0, 255),
+            Random.nextInt(0, 255),
+            Random.nextInt(0, 255)
+        )
+    }
+
+    buffer.rewind()
+    outputBitmap.copyPixelsFromBuffer(buffer)
     return outputBitmap
 }
 
