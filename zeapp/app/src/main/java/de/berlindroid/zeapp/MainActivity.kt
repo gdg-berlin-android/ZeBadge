@@ -6,6 +6,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -45,6 +46,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.ui.NameEditorDialog
+import de.berlindroid.zeapp.ui.PictureEditorDialog
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.vm.BadgeViewModel
 import de.berlindroid.zeapp.vm.BadgeViewModel.*
@@ -106,7 +108,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
         val slots by remember { vm.slots }
 
         if (editor != null) {
-            SelectEditor(editor, activity, vm)
+            SelectedEditor(editor!!, activity, vm)
         }
 
         if (templateChooser != null) {
@@ -123,12 +125,11 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
                     Slot.SecondCustom,
                 )
             ) { slot ->
-                PageView(
+                PagePreview(
                     bitmap = vm.slotToBitmap(slot),
                     customizeThisPage = if (slot.isLocked) null else {
                         { vm.customizeSlot(slot) }
-                    }
-                    ,
+                    },
                     resetThisPage = if (slot.isLocked) null else {
                         { vm.resetSlot(slot) }
                     },
@@ -145,35 +146,54 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
 }
 
 @Composable
-private fun SelectEditor(
-    editor: Editor?,
+private fun SelectedEditor(
+    editor: Editor,
     activity: Activity,
     vm: BadgeViewModel
 ) {
-    when (val config = editor!!.config) {
-        is Configuration.Name -> NameEditorDialog(
-            activity,
-            config,
-            dismissed = { vm.slotConfigured(editor?.slot, null) }
-        ) { newConfig ->
-            val slot = editor?.slot
-            if (slot != null && slot in listOf(
-                    Slot.Name,
-                    Slot.FirstCustom,
-                    Slot.SecondCustom
-                )
-            ) {
-                vm.slotConfigured(slot, newConfig)
-            } else {
-                Log.e("Slot", "This slot '$slot' is not supposed to be editable.")
+    if (editor.slot !in listOf(
+            Slot.Name,
+            Slot.FirstCustom,
+            Slot.SecondCustom
+        )
+    ) {
+        Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
+    } else {
+        when (val config = editor.config) {
+            is Configuration.Name -> NameEditorDialog(
+                activity,
+                config,
+                dismissed = { vm.slotConfigured(editor.slot, null) }
+            ) { newConfig ->
+                vm.slotConfigured(editor.slot, newConfig)
+            }
+
+            is Configuration.Picture -> {
+                PictureEditorDialog(activity) {
+                    vm.slotConfigured(editor.slot, it)
+                }
+            }
+
+            is Configuration.Schedule -> {
+                Toast.makeText(
+                    activity,
+                    "Not added by you yet, please feel free to contribute this editor",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                vm.slotConfigured(null, null)
+            }
+
+            is Configuration.Weather -> {
+                Toast.makeText(
+                    activity,
+                    "Need the weather report? Think about editing the source code!",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                vm.slotConfigured(null, null)
             }
         }
-
-        is Configuration.Picture -> {}
-
-        is Configuration.Schedule -> {}
-
-        is Configuration.Weather -> {}
     }
 }
 
@@ -190,6 +210,9 @@ private fun TemplateChooserDialog(
             Button(onClick = { vm.templateSelected(null, null) }) {
                 Text(text = stringResource(id = android.R.string.ok))
             }
+        },
+        title = {
+            Text(text = "Select Content")
         },
         text = {
             LazyColumn {
@@ -209,7 +232,7 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
-private fun PageView(
+private fun PagePreview(
     bitmap: Bitmap,
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,

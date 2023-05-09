@@ -36,34 +36,16 @@ class BadgeViewModel(
         ) : Configuration("Name Tag", bitmap)
 
         data class Schedule(
-            val timetable: List<Entry>,
             override val bitmap: Bitmap,
-        ) : Configuration("Conference Schedule", bitmap) {
-            data class Entry(
-                val time: Int,
-                val title: String,
-                val presenter: String,
-            )
-        }
+        ) : Configuration("Conference Schedule", bitmap)
 
         data class Picture(
             override val bitmap: Bitmap,
         ) : Configuration("Custom Picture", bitmap)
 
         data class Weather(
-            val minTemp: Int,
-            val sky: Sky,
             override val bitmap: Bitmap,
-        ) : Configuration("Todays Weather", bitmap) {
-            enum class Sky {
-                Sunny,
-                Cloudy,
-                Clear,
-                Rainy,
-                Stormy,
-                Half,
-            }
-        }
+        ) : Configuration("Todays Weather", bitmap)
     }
 
     data class Editor(
@@ -116,7 +98,7 @@ class BadgeViewModel(
     }
 
     fun customizeSlot(slot: Slot) {
-        // do we need a template chooser first? Aka are we selecting a custom slot?
+        // Do we need a template chooser first? Aka are we selecting a custom slot?
         if (slot in listOf(Slot.FirstCustom, Slot.SecondCustom)) {
             // yes, so let the user choose
             currentTemplateChooser.value = TemplateChooser(
@@ -127,20 +109,13 @@ class BadgeViewModel(
                         "Your Contact",
                         initialNameBitmap()
                     ), // TODO: Fetch from shared
+
+                    Configuration.Picture(R.drawable.soon.toBitmap()),
+
                     Configuration.Schedule(
-                        listOf(
-                            Configuration.Schedule.Entry(
-                                0,
-                                "KMP: Herding Sheep",
-                                "Presenting P. Presenter"
-                            )
-                        ),
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch Schedule here.
-                    Configuration.Picture(R.drawable.soon.toBitmap()),
                     Configuration.Weather(
-                        19,
-                        Configuration.Weather.Sky.Sunny,
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch weather here
                 )
@@ -153,7 +128,7 @@ class BadgeViewModel(
                     slots.value[Slot.Name]!!
                 )
             } else {
-                Log.d("Customize Page", "Cannot configure that slot '${slot.name}'.")
+                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
         }
     }
