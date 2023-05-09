@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -24,19 +25,20 @@ import androidx.core.graphics.scale
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.vm.BadgeViewModel.Slot
 
 @Composable
 @Preview(device = "spec:parent=pixel_3a_xl,orientation=landscape", showSystemUi = true)
 fun BadgeSimulator(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1) page: Bitmap,
-    onButtonPressed: (button: Char) -> Unit = {},
+    onButtonPressed: (buttonForSlot: Slot) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .paint(
                 painterResource(id = R.drawable.badgerrpi2040),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Fit,
             )
     ) {
         Spacer(Modifier.fillMaxHeight(.2f))
@@ -50,19 +52,20 @@ fun BadgeSimulator(
                     .scale(PAGE_WIDTH, PAGE_HEIGHT)
                     .asImageBitmap(),
                 contentDescription = null,
+                filterQuality = FilterQuality.None,
             )
             Column() {
                 Spacer(modifier = Modifier.weight(1.0f))
                 Text(
                     text = "⏺️",
                     fontSize = 43.sp,
-                    modifier = Modifier.clickable { onButtonPressed('u') }
+                    modifier = Modifier.clickable { onButtonPressed(Slot.FirstCustom) }
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
                 Text(
                     text = "⏺️",
                     fontSize = 43.sp,
-                    modifier = Modifier.clickable { onButtonPressed('d') }
+                    modifier = Modifier.clickable { onButtonPressed(Slot.SecondCustom) }
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
             }
@@ -74,17 +77,17 @@ fun BadgeSimulator(
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed('a') })
+                modifier = Modifier.clickable { onButtonPressed(Slot.Name) })
             Spacer(modifier = Modifier.weight(1.0f))
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed('b') })
+                modifier = Modifier.clickable { onButtonPressed(Slot.FirstSponsor) })
             Spacer(modifier = Modifier.weight(1.0f))
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed('c') })
+                modifier = Modifier.clickable { onButtonPressed(Slot.SecondSponsor) })
             Spacer(modifier = Modifier.weight(1.0f))
         }
     }
