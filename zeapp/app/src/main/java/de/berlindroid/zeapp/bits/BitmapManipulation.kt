@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.ComposeView
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import java.nio.IntBuffer
+import kotlin.experimental.or
+import kotlin.random.Random
 
 /**
  * Linear invert all pixel values
@@ -85,6 +87,29 @@ fun Bitmap.grayscale(): Bitmap {
     val colorFilter = ColorMatrixColorFilter(colorMatrix)
     paint.colorFilter = colorFilter
     canvas.drawBitmap(this, 0f, 0f, paint)
+    return outputBitmap
+}
+
+/**
+ * Return a random image
+ */
+fun Bitmap.randomizeColors(): Bitmap {
+    val outputBitmap = copy(config, true)
+
+    val buffer = IntBuffer.allocate(width * height)
+    outputBitmap.copyPixelsToBuffer(buffer)
+    buffer.rewind()
+
+    buffer.map {
+        Color.rgb(
+            Random.nextInt(0, 255),
+            Random.nextInt(0, 255),
+            Random.nextInt(0, 255)
+        )
+    }
+
+    buffer.rewind()
+    outputBitmap.copyPixelsFromBuffer(buffer)
     return outputBitmap
 }
 
@@ -160,6 +185,32 @@ fun composableToBitmap(
 }
 
 /**
+ * Converts a given black/white image to a binary array.
+ */
+fun Bitmap.toBinary(): ByteArray {
+    val buffer = IntBuffer.allocate(width * height)
+    copyPixelsToBuffer(buffer)
+    buffer.rewind()
+
+    val output = mutableListOf<Byte>()
+    var bitIndex = 0
+    var currentByte: Byte = 0
+    buffer.forEachIndexed { i, pixel ->
+        val value = Color.green(pixel)
+        currentByte = currentByte or ((if (value == 255) 1 else 0) shl bitIndex).toByte()
+        bitIndex += 1
+
+        if (bitIndex == Byte.SIZE_BITS) {
+            output.add(currentByte)
+            bitIndex = 0
+            currentByte = 0
+        }
+    }
+
+    return output.toByteArray()
+}
+
+/**
  * Check if a given bitmap can be converted into binary form.
  *
  * The binary form consists of pixel whos color values are either all zeros or all 255.
@@ -201,5 +252,14 @@ fun IntBuffer.map(mapper: (it: Int) -> Int) {
 fun IntBuffer.forEach(mapper: (it: Int) -> Unit) {
     for (i in 0 until limit()) {
         mapper(get(i))
+    }
+}
+
+/**
+ * Iterate over all values of an IntBuffer
+ */
+fun IntBuffer.forEachIndexed(mapper: (index: Int, it: Int) -> Unit) {
+    for (i in 0 until limit()) {
+        mapper(i, get(i))
     }
 }
