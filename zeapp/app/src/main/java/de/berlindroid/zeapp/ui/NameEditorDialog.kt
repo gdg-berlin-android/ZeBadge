@@ -4,9 +4,7 @@ package de.berlindroid.zeapp.ui
 
 import android.R
 import android.app.Activity
-import android.graphics.Bitmap
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
@@ -16,30 +14,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.window.DialogProperties
-import de.berlindroid.zeapp.ui.pages.NamePage
 import de.berlindroid.zeapp.bits.composableToBitmap
 import de.berlindroid.zeapp.bits.isBinary
+import de.berlindroid.zeapp.ui.pages.NamePage
+import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
 
 @Composable
-fun CustomizeBadgeDialog(
+fun NameEditorDialog(
     activity: Activity,
-    initialBadge: Bitmap,
-    initialName: String,
-    initialContact: String,
+    config: Configuration.Name,
     dismissed: () -> Unit = {},
-    accepted: (badge: Bitmap, name: String, contact: String) -> Unit
+    accepted: (config: Configuration.Name) -> Unit
 ) {
-    var name by remember { mutableStateOf(initialName) }
-    var contact by remember { mutableStateOf(initialContact) }
-    var image by remember { mutableStateOf(initialBadge) }
+    var name by remember { mutableStateOf(config.name) }
+    var contact by remember { mutableStateOf(config.contact) }
+    var image by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
         composableToBitmap(
@@ -56,7 +51,7 @@ fun CustomizeBadgeDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(image, name, contact)
+                        accepted(Configuration.Name(name, contact, image))
                     } else {
                         Toast.makeText(
                             activity,
@@ -75,7 +70,7 @@ fun CustomizeBadgeDialog(
                 item {
                     BinaryImageEditor(
                         bitmap = image,
-                        refresh = { image = initialBadge },
+                        refresh = { image = config.bitmap },
                         bitmapUpdated = { image = it }
                     )
                 }
@@ -84,6 +79,7 @@ fun CustomizeBadgeDialog(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = name,
+                        maxLines = 1,
                         label = { Text(text = "Name") },
                         onValueChange = { newValue ->
                             name = newValue
@@ -96,6 +92,7 @@ fun CustomizeBadgeDialog(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = contact,
+                        maxLines = 1,
                         label = { Text(text = "Contact") },
                         onValueChange = { newValue ->
                             contact = newValue

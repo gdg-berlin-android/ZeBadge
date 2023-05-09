@@ -41,9 +41,8 @@ class Badge {
 
     fun sendPage(context: Context, name: String, page: Bitmap) {
         val payload = Payload(
-            type = name,
-            meta = "", // TODO: Mario – could be date of creation, name, image contents…
-                       // anything you'd like to get returned back from the badge
+            type = "blink",
+            meta = "",
             payload = page.toBinary().base64()
         )
 

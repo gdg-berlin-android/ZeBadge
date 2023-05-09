@@ -3,9 +3,9 @@ package de.berlindroid.zeapp.vm
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.graphics.scale
 import androidx.lifecycle.AndroidViewModel
 import de.berlindroid.zeapp.PAGE_HEIGHT
@@ -17,6 +17,65 @@ import de.berlindroid.zeapp.hardware.Badge
 class BadgeViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
+    sealed class Slot(val name: String) {
+        object Name : Slot("A")
+        object FirstSponsor : Slot("B")
+        object SecondSponsor : Slot("C")
+        object FirstCustom : Slot("Up")
+        object SecondCustom : Slot("Down")
+    }
+
+    sealed class Configuration(
+        open val humanTitle: String,
+        open val bitmap: Bitmap,
+    ) {
+        data class Name(
+            val name: String,
+            val contact: String,
+            override val bitmap: Bitmap,
+        ) : Configuration("Name Tag", bitmap)
+
+        data class Schedule(
+            val timetable: List<Entry>,
+            override val bitmap: Bitmap,
+        ) : Configuration("Conference Schedule", bitmap) {
+            data class Entry(
+                val time: Int,
+                val title: String,
+                val presenter: String,
+            )
+        }
+
+        data class Picture(
+            override val bitmap: Bitmap,
+        ) : Configuration("Custom Picture", bitmap)
+
+        data class Weather(
+            val minTemp: Int,
+            val sky: Sky,
+            override val bitmap: Bitmap,
+        ) : Configuration("Todays Weather", bitmap) {
+            enum class Sky {
+                Sunny,
+                Cloudy,
+                Clear,
+                Rainy,
+                Stormy,
+                Half,
+            }
+        }
+    }
+
+    data class Editor(
+        val slot: Slot,
+        val config: Configuration
+    )
+
+    data class TemplateChooser(
+        val slot: Slot,
+        val configurations: List<Configuration>,
+    )
+
     private val sharedPreferences =
         getApplication<Application>()
             .getSharedPreferences(
@@ -26,83 +85,125 @@ class BadgeViewModel(
 
     private val badge = Badge()
 
-    fun sendPageToDevice(name: String, page: Bitmap) {
-        if (page.isBinary()) {
+    val currentPageEditor = mutableStateOf<Editor?>(null)
+    val currentTemplateChooser = mutableStateOf<TemplateChooser?>(null)
+    val currentSimulatorSlot = mutableStateOf<Slot>(Slot.Name)
+
+    val slots = mutableStateOf(
+        mutableMapOf(
+            Slot.Name to initialConfiguration(Slot.Name),
+            Slot.FirstSponsor to initialConfiguration(Slot.FirstSponsor),
+            Slot.SecondSponsor to initialConfiguration(Slot.SecondSponsor),
+            Slot.FirstCustom to initialConfiguration(Slot.FirstCustom),
+            Slot.SecondCustom to initialConfiguration(Slot.SecondCustom),
+        )
+    )
+
+    fun sendPageToDevice(slot: Slot, bitmap: Bitmap) {
+        if (bitmap.isBinary()) {
             badge.sendPage(
                 getApplication<Application>().applicationContext,
-                name,
-                page
+                slot.name,
+                bitmap
             )
         } else {
             Toast.makeText(
                 getApplication(),
-                "Please send binary image.",
+                "Please give binary image for page '${slot.name}'.",
                 Toast.LENGTH_LONG
             ).show()
         }
     }
 
-    fun resetNamePage() {
-        namePage.value = initialNamePage()
-    }
-
-    fun simulatorButtonPressed(button: Char) {
-        currentPage.value = button
-    }
-
-    fun currentPageCharToPageBitmap(): Bitmap {
-        return when (currentPage.value) {
-            'a' -> namePage.value
-            'b' -> firstSponsorPage.value
-            'c' -> secondSponsorPage.value
-            'u' -> firstCustomPage.value
-            'd' -> secondCustomPage.value
-            else -> namePage.value
+    fun customizeSlot(slot: Slot) {
+        // do we need a template chooser first? Aka are we selecting a custom slot?
+        if (slot in listOf(Slot.FirstCustom, Slot.SecondCustom)) {
+            // yes, so let the user choose
+            currentTemplateChooser.value = TemplateChooser(
+                slot = slot,
+                configurations = listOf(
+                    Configuration.Name(
+                        "Your Name",
+                        "Your Contact",
+                        initialNameBitmap()
+                    ), // TODO: Fetch from shared
+                    Configuration.Schedule(
+                        listOf(
+                            Configuration.Schedule.Entry(
+                                0,
+                                "KMP: Herding Sheep",
+                                "Presenting P. Presenter"
+                            )
+                        ),
+                        R.drawable.soon.toBitmap()
+                    ), // TODO: Fetch Schedule here.
+                    Configuration.Picture(R.drawable.soon.toBitmap()),
+                    Configuration.Weather(
+                        19,
+                        Configuration.Weather.Sky.Sunny,
+                        R.drawable.soon.toBitmap()
+                    ), // TODO: Fetch weather here
+                )
+            )
+        } else {
+            // no selection needed, check for name slot and ignore non configurable slots
+            if (slot is Slot.Name) {
+                currentPageEditor.value = Editor(
+                    slot,
+                    slots.value[Slot.Name]!!
+                )
+            } else {
+                Log.d("Customize Page", "Cannot configure that slot '${slot.name}'.")
+            }
         }
     }
 
-    private fun initialNamePage(): Bitmap =
+    fun templateSelected(slot: Slot?, configuration: Configuration?) {
+        currentTemplateChooser.value = null
+
+        if (slot != null && configuration != null) {
+            currentPageEditor.value = Editor(slot, configuration)
+        }
+    }
+
+    fun slotConfigured(slot: Slot?, configuration: Configuration?) {
+        currentPageEditor.value = null
+
+        if (slot != null && configuration != null) {
+            slots.value[slot] = configuration
+        }
+    }
+
+    fun simulatorButtonPressed(slot: Slot) {
+        currentSimulatorSlot.value = slot
+    }
+
+    fun slotToBitmap(slot: Slot = currentSimulatorSlot.value): Bitmap =
+        slots.value[slot]?.bitmap ?: R.drawable.error.toBitmap().also {
+            Log.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap")
+        }
+
+    fun resetSlot(slot: Slot) {
+        slots.value[slot] = initialConfiguration(slot)
+    }
+
+    private fun initialConfiguration(slot: Slot): Configuration = when (slot) {
+        is Slot.Name -> Configuration.Name("Your Name", "Your Contact", initialNameBitmap())
+        is Slot.FirstSponsor -> Configuration.Picture(R.drawable.page_google.toBitmap())
+        is Slot.SecondSponsor -> Configuration.Picture(R.drawable.page_telekom.toBitmap())
+        is Slot.FirstCustom -> Configuration.Picture(R.drawable.soon.toBitmap())
+        is Slot.SecondCustom -> Configuration.Picture(R.drawable.soon.toBitmap())
+    }
+
+    private fun initialNameBitmap(): Bitmap =
         BitmapFactory.decodeResource(
             getApplication<Application>().resources,
             R.drawable.sample_badge,
         ).scale(PAGE_WIDTH, PAGE_HEIGHT)
 
-    var name = mutableStateOf("Your Name")
-    var contact = mutableStateOf("Your Contact")
-    var nameEditorDialog = mutableStateOf(false)
-
-
-    var namePage = mutableStateOf(initialNamePage())
-
-    var firstSponsorPage = mutableStateOf(
+    private fun Int.toBitmap(): Bitmap =
         BitmapFactory.decodeResource(
             getApplication<Application>().resources,
-            R.drawable.page_google,
+            this,
         ).scale(PAGE_WIDTH, PAGE_HEIGHT)
-    )
-
-    var secondSponsorPage = mutableStateOf(
-        BitmapFactory.decodeResource(
-            getApplication<Application>().resources,
-            R.drawable.page_telekom,
-        ).scale(PAGE_WIDTH, PAGE_HEIGHT)
-    )
-
-    var firstCustomPage =
-        mutableStateOf(
-            BitmapFactory.decodeResource(
-                getApplication<Application>().resources,
-                R.drawable.soon,
-            ).scale(PAGE_WIDTH, PAGE_HEIGHT)
-        )
-
-    var secondCustomPage =
-        mutableStateOf(
-            BitmapFactory.decodeResource(
-                getApplication<Application>().resources,
-                R.drawable.soon,
-            ).scale(PAGE_WIDTH, PAGE_HEIGHT)
-        )
-
-    var currentPage = mutableStateOf('a')
 }
