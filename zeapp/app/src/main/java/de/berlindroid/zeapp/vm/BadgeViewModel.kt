@@ -155,7 +155,7 @@ class BadgeViewModel(
 
     fun slotToBitmap(slot: Slot = currentSimulatorSlot.value): Bitmap =
         slots.value[slot]?.bitmap ?: R.drawable.error.toBitmap().also {
-            Log.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap")
+            Log.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
         }
 
     fun resetSlot(slot: Slot) {
