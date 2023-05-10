@@ -59,6 +59,6 @@ fun Bitmap.ditherFloydSteinberg(): Bitmap {
 }
 
 private val FLOYD_STEINBERG_NEIGHBOR_WEIGHTS = arrayOf(
-    0 / 16.0f, 0 / 16.0f, 7 / 16.0f,
+    0 / 16.0f, /**/ 0.0f, 7 / 16.0f,
     3 / 16.0f, 5 / 16.0f, 1 / 16.0f
 )

@@ -2,20 +2,15 @@ package de.berlindroid.zeapp.ui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -29,6 +24,7 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.ditherFloydSteinberg
+import de.berlindroid.zeapp.bits.ditherPositional
 import de.berlindroid.zeapp.bits.ditherStaticPattern
 import de.berlindroid.zeapp.bits.invert
 import de.berlindroid.zeapp.bits.randomizeColors
@@ -39,80 +35,57 @@ import de.berlindroid.zeapp.bits.threshold
 fun BinaryImageEditor(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
-    refresh: () -> Unit = {},
     bitmapUpdated: (Bitmap) -> Unit = {}
 ) {
-    Image(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(unbounded = true)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        painter = BitmapPainter(
-            image = bitmap.asImageBitmap(),
-            filterQuality = FilterQuality.None,
-        ),
-        contentScale = ContentScale.FillWidth,
-        contentDescription = null,
-    )
-    Row {
-        Spacer(modifier = Modifier.weight(1.0f))
-        IconButton(onClick = refresh) {
-            Icon(
-                imageVector = Icons.Filled.Refresh,
-                contentDescription = null
-            )
-        }
-        IconButton(
-            onClick = { bitmapUpdated(bitmap.threshold()) },
+    Column {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(unbounded = true)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            painter = BitmapPainter(
+                image = bitmap.asImageBitmap(),
+                filterQuality = FilterQuality.None,
+            ),
+            contentScale = ContentScale.FillWidth,
+            contentDescription = null,
+        )
+
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 2.dp),
+            horizontalArrangement = Arrangement.End
         ) {
-            Icon(
-                tint = Color.Unspecified,
-                modifier = Modifier.border(
-                    width = 1.dp,
-                    color = LocalContentColor.current
-                ),
-                painter = painterResource(id = R.drawable.binary_bitmap_modificator_threshold),
-                contentDescription = null
-            )
-        }
-        IconButton(
-            onClick = { bitmapUpdated(bitmap.ditherFloydSteinberg()) }
-        ) {
-            Icon(
-                tint = Color.Unspecified,
-                modifier = Modifier.border(
-                    width = 1.dp,
-                    color = LocalContentColor.current
-                ),
-                painter = painterResource(id = R.drawable.binary_bitmap_modificator_floid_steinberg),
-                contentDescription = null
-            )
-        }
-        IconButton(
-            onClick = { bitmapUpdated(bitmap.ditherStaticPattern()) }
-        ) {
-            Icon(
-                tint = Color.Unspecified,
-                modifier = Modifier.border(
-                    width = 1.dp,
-                    color = LocalContentColor.current
-                ),
-                painter = painterResource(id = R.drawable.binary_bitmap_modificator_static),
-                contentDescription = null
-            )
-        }
-        IconButton(
-            onClick = { bitmapUpdated(bitmap.invert()) }
-        ) {
-            Icon(
-                tint = Color.Unspecified,
-                modifier = Modifier.border(
-                    width = 1.dp,
-                    color = LocalContentColor.current
-                ),
-                painter = painterResource(id = R.drawable.binary_bitmap_modificator_invert),
-                contentDescription = null
-            )
+            item {
+                ToolButton(
+                    painter = painterResource(id = R.drawable.binary_bitmap_modificator_threshold),
+                    text = "B/W"
+                ) { bitmapUpdated(bitmap.threshold()) }
+            }
+            item {
+                ToolButton(
+                    painter = painterResource(id = R.drawable.binary_bitmap_modificator_floyd_steinberg),
+                    text = "FS Dither"
+                ) { bitmapUpdated(bitmap.ditherFloydSteinberg()) }
+            }
+            item {
+                ToolButton(
+                    painter = painterResource(id = R.drawable.binary_bitmap_modificator_static),
+                    text = "Static Dither"
+                ) { bitmapUpdated(bitmap.ditherStaticPattern()) }
+            }
+            item {
+                ToolButton(
+                    painter = painterResource(id = R.drawable.binary_bitmap_modificator_positional),
+                    text = "Positional Dither"
+                ) { bitmapUpdated(bitmap.ditherPositional()) }
+            }
+            item {
+                ToolButton(
+                    painter = painterResource(id = R.drawable.binary_bitmap_modificator_invert),
+                    text = "Invert"
+                ) { bitmapUpdated(bitmap.invert()) }
+            }
         }
     }
 }
