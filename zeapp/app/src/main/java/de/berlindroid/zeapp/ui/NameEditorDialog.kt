@@ -70,7 +70,6 @@ fun NameEditorDialog(
                 item {
                     BinaryImageEditor(
                         bitmap = image,
-                        refresh = { image = config.bitmap },
                         bitmapUpdated = { image = it }
                     )
                 }
