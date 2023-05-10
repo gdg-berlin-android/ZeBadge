@@ -3,6 +3,7 @@ package de.berlindroid.zeapp.ui
 import android.app.Activity
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,7 @@ import androidx.core.graphics.scale
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.vm.BadgeViewModel
 
 @Composable
@@ -61,7 +63,11 @@ fun PictureEditorDialog(
         onDismissRequest = dismissed,
         confirmButton = {
             Button(onClick = {
-                accepted(BadgeViewModel.Configuration.Picture(bitmap))
+                if (bitmap.isBinary()) {
+                    accepted(BadgeViewModel.Configuration.Picture(bitmap))
+                } else {
+                    Toast.makeText(activity, "Not a binary image.", Toast.LENGTH_LONG).show()
+                }
             }) {
                 Text(stringResource(id = android.R.string.ok))
             }
