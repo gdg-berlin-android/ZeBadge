@@ -132,7 +132,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
                         page = badgePageBitmap,
                         customizeThisPage = { showNameEditorDialog = true },
                         resetThisPage = { vm.resetNamePage() },
-                        sendToDevice = { vm.sendPageToDevice("a", badgePageBitmap) }
+                        sendToDevice = { vm.sendPageToDevice("blink", badgePageBitmap) } // TODO: Mario – blink works, others not yet
                     )
                 }
 

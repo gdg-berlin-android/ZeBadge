@@ -20,8 +20,7 @@ import java.util.zip.ZipOutputStream
 
 
 private const val ACTION_USB_PERMISSION = "ACTION_USB_PERMISSION"
-private const val USB_DEVICE_PRODUCT_NAME =
-    "Seeeduino XIAO" // TODO Milos: replace with real product name
+private const val DEVICE_PRODUCT_NAME = "Badger 2040"
 private const val ACTION_USB_PERMISSION_REQUEST_CODE = 4711
 
 class Badge {
@@ -43,7 +42,8 @@ class Badge {
     fun sendPage(context: Context, name: String, page: Bitmap) {
         val payload = Payload(
             type = name,
-            meta = "", // TODO: Milos what do I put here?
+            meta = "", // TODO: Mario – could be date of creation, name, image contents…
+                       // anything you'd like to get returned back from the badge
             payload = page.toBinary().base64()
         )
 
@@ -57,7 +57,7 @@ class Badge {
             Log.e(
                 "Badge Connection",
                 "Could not find usb device with product name '${
-                    USB_DEVICE_PRODUCT_NAME
+                    DEVICE_PRODUCT_NAME
                 }'.\nFound product(s):\n${
                     manager.connectedProductNames().joinToString("\n •")
                 }"
@@ -68,7 +68,7 @@ class Badge {
             } else {
                 val parameter = device.findParameter()
                 if (parameter != null) {
-                    var (iface, endpoint) = parameter
+                    val (iface, endpoint) = parameter
                     val data = "${payload.toBadgeCommand()}\n"
                     val bulkData = data.toByteArray()
 
@@ -143,7 +143,7 @@ class Badge {
 
 private fun UsbManager.findConnectedBadge() =
     deviceList.values.firstOrNull {
-        it.productName == USB_DEVICE_PRODUCT_NAME
+        it.productName == DEVICE_PRODUCT_NAME
     }
 
 private fun UsbManager.connectedProductNames() =
