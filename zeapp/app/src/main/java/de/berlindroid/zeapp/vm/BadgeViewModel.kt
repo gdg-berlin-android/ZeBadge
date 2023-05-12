@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.graphics.scale
 import androidx.lifecycle.AndroidViewModel
+import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.hardware.Badge
+
+private const val OPEN_API_PREFERENCES_KEY = "openapi"
 
 class BadgeViewModel(
     application: Application,
@@ -35,13 +38,18 @@ class BadgeViewModel(
             override val bitmap: Bitmap,
         ) : Configuration("Name Tag", bitmap)
 
-        data class Schedule(
-            override val bitmap: Bitmap,
-        ) : Configuration("Conference Schedule", bitmap)
-
         data class Picture(
             override val bitmap: Bitmap,
         ) : Configuration("Custom Picture", bitmap)
+
+        data class ImageGen(
+            val prompt: String,
+            override val bitmap: Bitmap,
+        ) : Configuration("Image Gen", bitmap)
+
+        data class Schedule(
+            override val bitmap: Bitmap,
+        ) : Configuration("Conference Schedule", bitmap)
 
         data class Weather(
             override val bitmap: Bitmap,
@@ -70,6 +78,11 @@ class BadgeViewModel(
     val currentPageEditor = mutableStateOf<Editor?>(null)
     val currentTemplateChooser = mutableStateOf<TemplateChooser?>(null)
     val currentSimulatorSlot = mutableStateOf<Slot>(Slot.Name)
+    val openApiKey = mutableStateOf(
+        OPENAI_API_KEY.ifBlank {
+            sharedPreferences.getString(OPEN_API_PREFERENCES_KEY, "")
+        }
+    )
 
     val slots = mutableStateOf(
         mutableMapOf(
@@ -103,7 +116,7 @@ class BadgeViewModel(
             // yes, so let the user choose
             currentTemplateChooser.value = TemplateChooser(
                 slot = slot,
-                configurations = listOf(
+                configurations = mutableListOf(
                     Configuration.Name(
                         "Your Name",
                         "Your Contact",
@@ -115,10 +128,23 @@ class BadgeViewModel(
                     Configuration.Schedule(
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch Schedule here.
+
                     Configuration.Weather(
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch weather here
-                )
+                ).apply {
+                    // Surprise mechanic: If token is set, show open ai item
+                    if (openApiKey.value.isNeitherNullNorBlank()) {
+                        add(
+                            2,
+                            Configuration
+                                .ImageGen(
+                                    prompt = "An Android developer at a conference in Berlin.",
+                                    bitmap = R.drawable.soon.toBitmap()
+                                )
+                        )
+                    }
+                }
             )
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
@@ -182,3 +208,5 @@ class BadgeViewModel(
             this,
         ).scale(PAGE_WIDTH, PAGE_HEIGHT)
 }
+
+private fun String?.isNeitherNullNorBlank(): Boolean = !this.isNullOrBlank()

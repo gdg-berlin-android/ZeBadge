@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
@@ -27,8 +31,8 @@ import de.berlindroid.zeapp.bits.ditherFloydSteinberg
 import de.berlindroid.zeapp.bits.ditherPositional
 import de.berlindroid.zeapp.bits.ditherStaticPattern
 import de.berlindroid.zeapp.bits.invert
-import de.berlindroid.zeapp.bits.randomizeColors
 import de.berlindroid.zeapp.bits.threshold
+import de.berlindroid.zeapp.bits.copy
 
 @Composable
 @Preview
@@ -37,6 +41,8 @@ fun BinaryImageEditor(
     bitmap: Bitmap,
     bitmapUpdated: (Bitmap) -> Unit = {}
 ) {
+    var last by remember { mutableStateOf<Bitmap?>(null) }
+
     Column {
         Image(
             modifier = Modifier
@@ -56,35 +62,74 @@ fun BinaryImageEditor(
             contentPadding = PaddingValues(horizontal = 2.dp),
             horizontalArrangement = Arrangement.End
         ) {
+            if (last != null) {
+                item {
+                    ToolButton(
+                        painter = painterResource(id = R.drawable.binary_bitmap_modificator_undo),
+                        text = "Reset",
+                        onClick = {
+                            bitmapUpdated(last!!)
+                            last = null
+                        }
+                    )
+                }
+            }
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_threshold),
                     text = "B/W"
-                ) { bitmapUpdated(bitmap.threshold()) }
+                ) {
+                    if (last == null) {
+                        last = bitmap.copy()
+                    }
+                    bitmapUpdated(bitmap.threshold())
+                }
             }
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_floyd_steinberg),
-                    text = "FS Dither"
-                ) { bitmapUpdated(bitmap.ditherFloydSteinberg()) }
+                    text = "FS"
+                ) {
+                    if (last == null) {
+                        last = bitmap.copy()
+                    }
+
+                    bitmapUpdated(bitmap.ditherFloydSteinberg())
+                }
             }
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_static),
-                    text = "Static Dither"
-                ) { bitmapUpdated(bitmap.ditherStaticPattern()) }
+                    text = "Static"
+                ) {
+                    if (last == null) {
+                        last = bitmap.copy()
+                    }
+
+                    bitmapUpdated(bitmap.ditherStaticPattern())
+                }
             }
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_positional),
-                    text = "Positional Dither"
-                ) { bitmapUpdated(bitmap.ditherPositional()) }
+                    text = "Positional"
+                ) {
+                    if (last == null) {
+                        last = bitmap.copy()
+                    }
+                    bitmapUpdated(bitmap.ditherPositional())
+                }
             }
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_invert),
                     text = "Invert"
-                ) { bitmapUpdated(bitmap.invert()) }
+                ) {
+                    if (last == null) {
+                        last = bitmap.copy()
+                    }
+                    bitmapUpdated(bitmap.invert())
+                }
             }
         }
     }
@@ -95,9 +140,9 @@ class BinaryBitmapPageProvider : PreviewParameterProvider<Bitmap> {
         get() {
             return sequenceOf(
                 with(Bitmap.createBitmap(PAGE_WIDTH, PAGE_HEIGHT, Bitmap.Config.ARGB_8888)) {
-                    randomizeColors()
                     this
                 }
             )
         }
 }
+

@@ -13,6 +13,7 @@ import android.view.ViewTreeObserver
 import android.widget.LinearLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.graphics.scale
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import java.nio.IntBuffer
@@ -94,7 +95,7 @@ fun Bitmap.grayscale(): Bitmap {
  * Return a random image
  */
 fun Bitmap.randomizeColors(): Bitmap {
-    val outputBitmap = copy(config, true)
+    val outputBitmap = copy()
 
     val buffer = IntBuffer.allocate(width * height)
     outputBitmap.copyPixelsToBuffer(buffer)
@@ -263,3 +264,20 @@ fun IntBuffer.forEachIndexed(mapper: (index: Int, it: Int) -> Unit) {
         mapper(i, get(i))
     }
 }
+
+fun Bitmap.cutToPage() = scale(PAGE_WIDTH, PAGE_WIDTH)
+    .cutOut(
+        fromX = 0,
+        fromY = (PAGE_WIDTH - PAGE_HEIGHT) / -2,
+        targetWidth = PAGE_WIDTH,
+        targetHeight = PAGE_HEIGHT,
+    )
+
+private fun Bitmap.cutOut(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: Int): Bitmap {
+    val result = Bitmap.createBitmap(targetWidth, targetHeight, config)
+    val canvas = Canvas(result)
+    canvas.drawBitmap(this, fromX.toFloat(), fromY.toFloat(), null)
+    return result
+}
+
+fun Bitmap.copy(): Bitmap = copy(config, true)
