@@ -33,6 +33,7 @@ Files are in the root directory on your device:
 - There's a `settings.toml` file as well, empty for now but could be edited to change device configuration during boot. See the official Circuit Python docs to learn more about it
 
 The main libraries our project needs in the on-device `/lib` directory are:
+  - adafruit_imageload/
   - circuitpython_base64.py
   - adafruit_binascii.mpy
 
