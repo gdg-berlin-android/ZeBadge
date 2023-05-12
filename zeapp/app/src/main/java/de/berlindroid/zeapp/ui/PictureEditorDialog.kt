@@ -19,10 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.core.graphics.scale
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.vm.BadgeViewModel
 
@@ -58,7 +56,7 @@ fun PictureEditorDialog(
             BitmapFactory.decodeStream(
                 activity.contentResolver.openInputStream(uri)
             )
-        }.scale(PAGE_WIDTH, PAGE_HEIGHT)
+        }.cropPageFromCenter()
     }
 
     AlertDialog(

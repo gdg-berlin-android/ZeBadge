@@ -29,7 +29,7 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.copy
-import de.berlindroid.zeapp.bits.cutToPage
+import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.vm.BadgeViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -180,7 +180,7 @@ private suspend fun requestImageGeneration(
                 }
             }
 
-            return bitmaps.first().cutToPage()
+            return bitmaps.first().cropPageFromCenter()
         } else {
             Log.e("ImageGenError", "No image returned.")
         }
