@@ -51,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.ui.BinaryBitmapPageProvider
+import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.ui.NameEditorDialog
 import de.berlindroid.zeapp.ui.PictureEditorDialog
 import de.berlindroid.zeapp.ui.ToolButton
@@ -176,7 +177,23 @@ private fun SelectedEditor(
             }
 
             is Configuration.Picture -> {
-                PictureEditorDialog(activity) {
+                PictureEditorDialog(
+                    activity = activity,
+                    dismissed = {
+                        vm.slotConfigured(null, null)
+                    }
+                ) {
+                    vm.slotConfigured(editor.slot, it)
+                }
+            }
+
+            is Configuration.ImageGen -> {
+                ImageGenerationEditorDialog(
+                    config.prompt,
+                    dismissed = {
+                        vm.slotConfigured(null, null)
+                    }
+                ) {
                     vm.slotConfigured(editor.slot, it)
                 }
             }
