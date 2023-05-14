@@ -1,33 +1,38 @@
 #!/bin/python
 #
-# To properly send commands, you must end them with CR+LF.
+# To properly format commands, you must end them with CR+LF.
 # The easiest way is apparently using Pico COM, like below.
 # (that will map CR to CR+LF on each echo)
 #
 # Linux: picocom /dev/ttyACM1 --omap crcrlf --echo
 # Mac: picocom /dev/cu.usbmodem2103 --omap crcrlf --echo
-# Windows: Change OS
+# Windows: Change OS (:
 #
-# Thonny's interactive mode (REPL) should also work.
+# Thonny's interactive mode (REPL) should be the best option.
 
-import re
+import adafruit_imageload
+import board
+import circuitpython_base64 as base64
+import displayio
 import io
+import os
+import re
+import storage
+import supervisor
 import sys
 import time
-import board
-import displayio
-import supervisor
-import circuitpython_base64 as base64
-import adafruit_imageload
+import traceback
 from digitalio import DigitalInOut, Direction
 
 
 # Configuration
 
-READ_TIMEOUT =    2 # seconds
-LOOP_CYCLE   =  0.3 # seconds
-KEEP_ALIVE   =    5 # seconds
-DEBUG        = True
+READ_TIMEOUT   =    2 # seconds
+LOOP_CYCLE     =  0.3 # seconds
+KEEP_ALIVE     =    5 # seconds
+PREVIEW_TIME   =    3 # seconds
+DEBUG          = True
+MAX_OUTPUT_LEN = 10
 
 def log(string):
     if DEBUG: print(string)
@@ -36,8 +41,20 @@ def log(string):
 ## Run board setup
 led = DigitalInOut(board.USER_LED)
 led.direction = Direction.OUTPUT
+display = board.DISPLAY
+
 log("-----")
 log("Running in serial mode.")
+
+
+# Middle of the word truncating (GPT says so)
+def trunc(long):
+    if len(long) <= MAX_OUTPUT_LEN:
+        return long    
+    trunc_replacement = "..."
+    left_pad = len(trunc_replacement) + 1
+    right_pad = -len(trunc_replacement)
+    return long[:left_pad] + "..." + long[right_pad:]
 
 
 # Keep alive pinger
@@ -46,7 +63,8 @@ def log_keep_alive():
     global iteration
     keep_alive_cycle = int(KEEP_ALIVE / LOOP_CYCLE)
     if iteration % keep_alive_cycle == 0:
-        time_string = "{:0>2}".format(time.localtime().tm_min)
+        time_string = "--:"
+        time_string += "{:0>2}".format(time.localtime().tm_min)
         time_string += ":{:0>2}".format(time.localtime().tm_sec)
         log("Awaiting commands… (%s)" % time_string)
 
@@ -71,7 +89,7 @@ def read_command():
         log("No serial connection, skipping read")
         return None
     while supervisor.runtime.serial_bytes_available:
-        buffer += sys.stdin.read(1)
+        buffer += sys.stdin.readline()
     cleaned = re.sub(r'\s', " ", buffer).strip()
     return cleaned if len(cleaned) > 0 else None
 
@@ -103,13 +121,12 @@ def parse_command(base64_string):
             raise Exception("Invalid command format: '%s'" % plain_string)
         return plain_string.split(":")
     except Exception as e:
-        message = str(e) if len(str(e)) > 0 else "🤷"
-        log(f"Failed to decode '{base64_string}'. Reason: %s" % message)
+        log(f"Failed to decode '{base64_string}'.\n%s" % format_e(e))
         return COMMAND_NONE
 
 
 # Handle commands in format Base64<command:metadata:payload>
-allowed_commands = ['blink', 'reload', 'exit', 'preview']
+allowed_commands = ["blink", "reload", "exit", "preview"]
 def handle_commands():
     global allowed_commands
     command_raw = read_command()
@@ -132,6 +149,7 @@ def handle_commands():
 
 
 # For the blinking command
+# debug:blink::
 def handle_command_blink():
     global should_blink_led
     log("Changing blink status…")
@@ -139,6 +157,7 @@ def handle_command_blink():
 
 
 # For the reloading command
+# debug:reload::
 def handle_command_reload():
     log("Reloading…")
     time.sleep(1)
@@ -146,54 +165,62 @@ def handle_command_reload():
 
 
 # For the exiting command
+# debug:exit::
 def handle_command_exit():
     sys.exit()
 
 
 # For the previewing command
+# debug:preview::Qk1WAAAAAAAAAD4AAAAoAAAABgAAAPr///8BAAEAAAAAABgAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAP///wAAAAAABAAAAAwAAAAcAAAAPAAAAHwAAAA=
 def handle_command_preview(base64_metadata, base64_payload):
     log("Previewing image…")
+    command_name = "preview"
     metadata = ""
     try:
         base64_metadata_bytes = base64_metadata.encode("utf-8")
         metadata_bytes_plain = base64.decodebytes(base64_metadata_bytes)
         metadata = str(metadata_bytes_plain, "utf-8")
         log("Decoded metadata: '%s'" % metadata)
+        store_b64_as_bitmap(base64_payload, command_name)
+        render_stored_bitmap(command_name)        
     except Exception as e:
-        message = str(e) if len(str(e)) > 0 else "🤷"
-        log(f"Metadata decoding failed for: '{base64_string}'. Reason: %s" % message)
-    store_bitmap("preview", base64_payload)
-    log("TODO: Not implemented!")
+        log(f"Preview failed for: '{base64_metadata}':'{trunc(base64_payload)}'.\n%s" % format_e(e))
 
 
-# Storing a Base64 image as bitmap
-def store_bitmap(name, base64_string):
-    log("Storing a Base64 image: '%s'" % base64_string)
-    decoded_data = base64.b64decode(base64_string.encode("utf-8"))
-    stream = io.BytesIO(decoded_data)
-    bitmap_image, palette = adafruit_imageload.load(
-        stream,
+# Rendering a stored bitmap onto the screen
+def render_stored_bitmap(name):
+    global display
+    bitmap = displayio.OnDiskBitmap(file_path_for(name))
+    tile_grid = displayio.TileGrid(bitmap, pixel_shader=bitmap.pixel_shader)
+    group = displayio.Group()
+    group.append(tile_grid)
+    display.show(group)
+    time.sleep(PREVIEW_TIME)
+    
+
+# Rendering an in-memory bitmap
+def render_bitmap_bytes(raw_bytes):
+    global display
+    raw_bytes = fetch_bitmap_bytes(command_name)
+    raw_stream = io.BytesIO(raw_bytes)
+    bitmap, palette = adafruit_imageload.load(
+        raw_stream,
         bitmap=displayio.Bitmap,
         palette=displayio.Palette,
     )
-    with open("/%s.bmp" % name, "wb") as file:
-        bitmap_data = bitmap_image.to_bytes()
-        file.write(bitmap_data)
+    tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
+    group = displayio.Group()
+    group.append(tile_grid)
+    display.show(group)
+    time.sleep(PREVIEW_TIME)
+    
+
+# Storing a Base64 string as a bitmap image
+def store_b64_as_bitmap(base64_str, name):
+    file_path = file_path_for(name)
+    with open(file_path, "wb") as file:
+        raw_bytes = base64.b64decode(base64_str)
+        file.write(raw_bytes)
 
 
-# Reading a Base64 image as bitmap
-def fetch_bitmap(name):
-    with open("/%s.bmp" % name, "rb") as file:
-        bitmap_data = file.read()
-        encoded_data = base64.b64encode(bitmap_data)
-        return encoded_data.decode("utf-8")
-
-
-### The Main Loop ###
-
-while True:
-    time.sleep(LOOP_CYCLE)
-    log_keep_alive()
-    update_blinking()
-    handle_commands()
-    iteration += 1
+# Reading a bitmap image as 
