@@ -192,4 +192,5 @@ private fun ByteArray.zipit(): ByteArray {
     return output.toByteArray()
 }
 
-private fun ByteArray.base64(): String = Base64.getEncoder().encodeToString(this)
+fun ByteArray.base64(): String = Base64.getEncoder().encodeToString(this)
+fun String.debase64(): ByteArray = Base64.getDecoder().decode(this)

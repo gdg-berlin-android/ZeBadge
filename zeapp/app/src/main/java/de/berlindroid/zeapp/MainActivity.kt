@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -84,7 +85,7 @@ class MainActivity : ComponentActivity() {
         ZeBadgeAppTheme(content = {
             Scaffold(
                 topBar = {
-                    ZeTopBar()
+                    ZeTopBar(vm)
                 },
                 content = { paddingValues ->
                     ZePages(this, paddingValues, vm)
@@ -96,9 +97,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun ZeTopBar() {
+private fun ZeTopBar(vm: BadgeViewModel) {
     TopAppBar(
         title = { Text(stringResource(id = R.string.app_name)) },
+        actions = {
+            IconButton(onClick = { vm.saveAll() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.save_all),
+                    contentDescription = null
+                )
+            }
+        }
     )
 }
 
@@ -142,10 +151,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
                         { vm.resetSlot(slot) }
                     },
                     sendToDevice = {
-                        vm.sendPageToDevice(
-                            slot,
-                            slots[slot]!!.bitmap
-                        )
+                        vm.sendPageToDevice(slot)
                     }
                 )
             }
