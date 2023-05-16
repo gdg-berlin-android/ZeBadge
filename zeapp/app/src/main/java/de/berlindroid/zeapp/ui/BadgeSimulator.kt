@@ -21,10 +21,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.scale
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.bits.scaleIfNeeded
 import de.berlindroid.zeapp.vm.BadgeViewModel.Slot
 
 @Composable
@@ -49,7 +49,7 @@ fun BadgeSimulator(
                     .width(550.dp)
                     .fillMaxHeight(),
                 bitmap = page
-                    .scale(PAGE_WIDTH, PAGE_HEIGHT)
+                    .scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
                     .asImageBitmap(),
                 contentDescription = null,
                 filterQuality = FilterQuality.None,

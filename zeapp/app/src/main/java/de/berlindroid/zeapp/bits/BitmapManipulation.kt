@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
@@ -17,6 +18,7 @@ import androidx.core.graphics.scale
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import java.nio.IntBuffer
+import kotlin.experimental.and
 import kotlin.experimental.or
 import kotlin.random.Random
 
@@ -196,7 +198,7 @@ fun Bitmap.toBinary(): ByteArray {
     val output = mutableListOf<Byte>()
     var bitIndex = 0
     var currentByte: Byte = 0
-    buffer.forEachIndexed { i, pixel ->
+    buffer.forEach { pixel ->
         val value = Color.green(pixel)
         currentByte = currentByte or ((if (value == 255) 1 else 0) shl bitIndex).toByte()
         bitIndex += 1
@@ -212,6 +214,40 @@ fun Bitmap.toBinary(): ByteArray {
 }
 
 /**
+ * Converts a given binary array to a black / white image.
+ */
+fun ByteArray.toBitmap(): Bitmap {
+    val output = Bitmap.createBitmap(PAGE_WIDTH, PAGE_HEIGHT, Bitmap.Config.ARGB_8888)
+    val buffer = IntBuffer.allocate(PAGE_WIDTH * PAGE_HEIGHT)
+
+    var pixelIndex = 0
+    // loop through all bytes
+    forEach { byte ->
+        // loop through all bits
+        (0 until Byte.SIZE_BITS).forEach { bitNumber ->
+            // have we found a byte whose bit at the current position is not null?
+            // aka is the current byte null?
+            val bitOnlyByte = byte and (1 shl bitNumber).toByte()
+            val color = if (bitOnlyByte == 0.toByte()) {
+                Color.BLACK
+            } else {
+                Color.WHITE
+            }
+
+            buffer.put(pixelIndex, color)
+
+            pixelIndex++
+        }
+    }
+
+    buffer.rewind()
+    output.copyPixelsFromBuffer(buffer)
+
+    return output
+}
+
+
+/**
  * Check if a given bitmap can be converted into binary form.
  *
  * The binary form consists of pixel whos color values are either all zeros or all 255.
@@ -223,8 +259,18 @@ fun Bitmap.isBinary(): Boolean {
 
     var allBinaryPixel = true
 
-    buffer.forEach { pixelColor ->
-        allBinaryPixel = allBinaryPixel && pixelColor.isBinary()
+    buffer.forEachIndexed(
+        exitIf = { !allBinaryPixel }
+    ) { index, pixelColor ->
+        val binary = pixelColor.isBinary()
+        if (!binary) {
+            val x = index % width
+            val y = index / height
+
+            Log.d("Binary Editor", "Pixel nr $index at $x, $y is not binary!")
+        }
+
+        allBinaryPixel = allBinaryPixel && binary
     }
 
     return allBinaryPixel
@@ -259,12 +305,29 @@ fun IntBuffer.forEach(mapper: (it: Int) -> Unit) {
 /**
  * Iterate over all values of an IntBuffer
  */
-fun IntBuffer.forEachIndexed(mapper: (index: Int, it: Int) -> Unit) {
-    for (i in 0 until limit()) {
-        mapper(i, get(i))
+fun IntBuffer.forEachIndexed(
+    exitIf: (() -> Boolean)? = null,
+    mapper: (index: Int, it: Int) -> Unit
+) {
+    if (exitIf != null) {
+        for (i in 0 until limit()) {
+            mapper(i, get(i))
+            if (exitIf()) {
+                break
+            }
+        }
+    } else {
+        for (i in 0 until limit()) {
+            mapper(i, get(i))
+        }
     }
 }
 
+/**
+ * Take this bitmap and crop out a page from it's center.
+ *
+ * The width will be scaled to PAGE_WIDTH, but the height will be cropped.
+ */
 fun Bitmap.cropPageFromCenter() = scale(PAGE_WIDTH, PAGE_WIDTH)
     .crop(
         fromX = 0,
@@ -280,4 +343,17 @@ private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: 
     return result
 }
 
+/**
+ * Copy the bitmap, keeping its config and make it modifiable
+ */
 fun Bitmap.copy(): Bitmap = copy(config, true)
+
+/**
+ * Only scale an image if it is needed, otherwise return a copy.
+ */
+fun Bitmap.scaleIfNeeded(targetWidth: Int, targetHeight: Int): Bitmap =
+    if (width != targetWidth || height != targetHeight) {
+        scale(targetWidth, targetHeight)
+    } else {
+        copy()
+    }

@@ -31,6 +31,7 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.copy
 import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
+import de.berlindroid.zeapp.bits.scaleIfNeeded
 import de.berlindroid.zeapp.vm.BadgeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -130,7 +131,7 @@ fun ImageGenerationEditorDialog(
                                 bitmap = BitmapFactory.decodeResource(
                                     context.resources,
                                     R.drawable.error
-                                ).scale(PAGE_WIDTH, PAGE_HEIGHT)
+                                ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
                                 lastLoadedBitmap = null
                             }
                             progress = null
