@@ -19,6 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.R
 
+/**
+ * Simple Icon Button used for inside editor dialogs.
+ */
 @Composable
 @Preview
 fun ToolButton(
@@ -48,6 +51,10 @@ fun ToolButton(
     }
 }
 
+
+/**
+ * Simple Icon Button used for inside editor dialogs.
+ */
 @Composable
 @Preview
 fun ToolButton(

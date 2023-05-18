@@ -23,22 +23,57 @@ private const val ACTION_USB_PERMISSION = "ACTION_USB_PERMISSION"
 private const val DEVICE_PRODUCT_NAME = "Badger 2040"
 private const val ACTION_USB_PERMISSION_REQUEST_CODE = 4711
 
+/**
+ * Hardware communication abstraction.
+ */
 class Badge {
+    /**
+     * What to be send over to the badge?
+     *
+     * @param type what command should be executed
+     * @param meta any meta information you want to receive back?
+     * @param payload the payload of the command of type 'type'.
+     */
     data class Payload(
+        val debug: Boolean = false,
         val type: String,
         val meta: String,
         val payload: String,
     ) {
-        fun toBadgeCommand(): String = "$type:$meta:$payload".encodeToByteArray().base64()
+        /**
+         * Convert the payload to a format the badge understands
+         */
+        fun toBadgeCommand(): String =
+            "${
+                if (debug) "debug:" else ""
+            }$type:$meta:$payload"
+                .encodeToByteArray()
+                .base64()
     }
 
+    /**
+     * Parameters of a connection, that suits our needs.
+
+     * @param usbInterface the interface found and happy
+     * @param usbEndpoint the endpoint to be used for communication
+     */
     data class FoundUSBConnectionParameters(
         val usbInterface: UsbInterface,
         val usbEndpoint: UsbEndpoint,
     )
 
+    /**
+     * last result of communication with the badge
+     */
     var lastResult: Int = 0
 
+    /**
+     * Send a bitmap to the badge for the name slot
+     *
+     * @param context Android context to communicate with the usb interface
+     * @param name the name of the page / slot for the bitmap
+     * @param page the bitmap in black / white to be send to the badge
+     */
     fun sendPage(context: Context, name: String, page: Bitmap) {
         val payload = Payload(
             type = "blink",
@@ -192,5 +227,12 @@ private fun ByteArray.zipit(): ByteArray {
     return output.toByteArray()
 }
 
+/**
+ * Helper to convert a bytearray to base64
+ */
 fun ByteArray.base64(): String = Base64.getEncoder().encodeToString(this)
+
+/**
+ * Take a base64 encoded string and convert it back to å bytearray.
+ */
 fun String.debase64(): ByteArray = Base64.getDecoder().decode(this)

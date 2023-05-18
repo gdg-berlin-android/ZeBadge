@@ -27,6 +27,11 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.scaleIfNeeded
 import de.berlindroid.zeapp.vm.BadgeViewModel.Slot
 
+/**
+ * This is the simulator composable for the badge.
+ *
+ * Use it to simulate the badge and show the a given page in the composable.
+ */
 @Composable
 @Preview(device = "spec:parent=pixel_3a_xl,orientation=landscape", showSystemUi = true)
 fun BadgeSimulator(

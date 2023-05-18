@@ -13,28 +13,36 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.vm.BadgeViewModel
 
+/**
+ * Editor Dialog for adding an image as a badge page.
+ *
+ * @param dismissed callback called when dismissed or cancelled
+ * @param accepted callback called when user wants to take the selected image.
+ */
 @Composable
 fun PictureEditorDialog(
-    activity: Activity,
     dismissed: () -> Unit = {},
     accepted: (config: BadgeViewModel.Configuration.Picture) -> Unit
-
 ) {
+    var context = LocalContext.current
+
     var bitmap by remember {
         mutableStateOf(
             BitmapFactory.decodeResource(
-                activity.resources,
+                context.resources,
                 R.drawable.error,
             )
         )
@@ -48,13 +56,13 @@ fun PictureEditorDialog(
             // nope, so show error bitmap
             Log.d("Picture", "Not found")
             BitmapFactory.decodeResource(
-                activity.resources,
+                context.resources,
                 R.drawable.error,
             )
         } else {
             // yes, so read image
             BitmapFactory.decodeStream(
-                activity.contentResolver.openInputStream(uri)
+                context.contentResolver.openInputStream(uri)
             )
         }.cropPageFromCenter()
     }
@@ -66,7 +74,7 @@ fun PictureEditorDialog(
                 if (bitmap.isBinary()) {
                     accepted(BadgeViewModel.Configuration.Picture(bitmap))
                 } else {
-                    Toast.makeText(activity, "Not a binary image.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Not a binary image.", Toast.LENGTH_LONG).show()
                 }
             }) {
                 Text(stringResource(id = android.R.string.ok))

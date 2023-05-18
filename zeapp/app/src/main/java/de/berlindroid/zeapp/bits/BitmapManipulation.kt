@@ -246,7 +246,6 @@ fun ByteArray.toBitmap(): Bitmap {
     return output
 }
 
-
 /**
  * Check if a given bitmap can be converted into binary form.
  *
@@ -274,14 +273,6 @@ fun Bitmap.isBinary(): Boolean {
     }
 
     return allBinaryPixel
-}
-
-private fun Int.isBinary(): Boolean {
-    val r = Color.red(this)
-    val g = Color.green(this)
-    val b = Color.blue(this)
-
-    return r == g && g == b && (r == 0 || r == 255)
 }
 
 /**
@@ -336,13 +327,6 @@ fun Bitmap.cropPageFromCenter() = scale(PAGE_WIDTH, PAGE_WIDTH)
         targetHeight = PAGE_HEIGHT,
     )
 
-private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: Int): Bitmap {
-    val result = Bitmap.createBitmap(targetWidth, targetHeight, config)
-    val canvas = Canvas(result)
-    canvas.drawBitmap(this, fromX.toFloat(), fromY.toFloat(), null)
-    return result
-}
-
 /**
  * Copy the bitmap, keeping its config and make it modifiable
  */
@@ -357,3 +341,18 @@ fun Bitmap.scaleIfNeeded(targetWidth: Int, targetHeight: Int): Bitmap =
     } else {
         copy()
     }
+
+private fun Int.isBinary(): Boolean {
+    val r = Color.red(this)
+    val g = Color.green(this)
+    val b = Color.blue(this)
+
+    return r == g && g == b && (r == 0 || r == 255)
+}
+
+private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: Int): Bitmap {
+    val result = Bitmap.createBitmap(targetWidth, targetHeight, config)
+    val canvas = Canvas(result)
+    canvas.drawBitmap(this, fromX.toFloat(), fromY.toFloat(), null)
+    return result
+}

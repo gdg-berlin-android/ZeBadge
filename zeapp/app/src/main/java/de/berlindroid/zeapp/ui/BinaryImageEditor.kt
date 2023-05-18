@@ -34,6 +34,12 @@ import de.berlindroid.zeapp.bits.invert
 import de.berlindroid.zeapp.bits.threshold
 import de.berlindroid.zeapp.bits.copy
 
+/**
+ * Embeddable editor that let's the user turn a given bitmap into a binary image
+ *
+ * @param bitmap the initial bitmap to be converted
+ * @param bitmapUpdated update callback to be called when the bitmap is updated.
+ */
 @Composable
 @Preview
 fun BinaryImageEditor(

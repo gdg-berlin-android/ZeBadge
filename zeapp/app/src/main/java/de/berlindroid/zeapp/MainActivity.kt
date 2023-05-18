@@ -62,10 +62,16 @@ import de.berlindroid.zeapp.vm.BadgeViewModel.*
 import android.content.res.Configuration as AndroidConfig
 import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
 
+/**
+ * Main View entrance for the app
+ */
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
     private val vm: BadgeViewModel by viewModels()
 
+    /**
+     * Once created, use the main view composables.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -120,9 +126,8 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
             .padding(paddingValues)
             .padding(4.dp)
     ) {
-        val editor by remember { vm.currentPageEditor }
+        val editor by remember { vm.currentSlotEditor }
         val templateChooser by remember { vm.currentTemplateChooser }
-        val slots by remember { vm.slots }
 
         if (editor != null) {
             SelectedEditor(editor!!, activity, vm)
@@ -184,7 +189,6 @@ private fun SelectedEditor(
 
             is Configuration.Picture -> {
                 PictureEditorDialog(
-                    activity = activity,
                     dismissed = {
                         vm.slotConfigured(null, null)
                     }

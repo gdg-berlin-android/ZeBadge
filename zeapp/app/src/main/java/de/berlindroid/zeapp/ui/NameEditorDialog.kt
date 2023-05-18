@@ -25,6 +25,14 @@ import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.ui.pages.NamePage
 import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
 
+/**
+ * Editor dialog for changing the name of the participant badge.
+ *
+ * @param activity Android activity to be used for rendering the composable.
+ * @param config configuration of the slot, containing details to be displayed
+ * @param dismissed callback called when dialog is dismissed / cancelled
+ * @param accepted callback called with the new configuration configured.
+ */
 @Composable
 fun NameEditorDialog(
     activity: Activity,

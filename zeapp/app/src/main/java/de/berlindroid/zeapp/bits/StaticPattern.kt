@@ -92,7 +92,7 @@ private val PATTERN_BITS_NEEDED = 2 pow PATTERN_PLACE_COUNT
 //private val PATTERNS = bruteForce() // ignored due to size constraints
 private val PATTERNS = handPicked()
 
-fun handPicked() = mutableListOf(
+private fun handPicked() = mutableListOf(
     arrayOf(
         0x00, 0x00, 0x00,
         0x00, 0x00, 0x00,

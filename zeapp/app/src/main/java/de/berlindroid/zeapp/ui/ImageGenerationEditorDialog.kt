@@ -45,6 +45,14 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 
+
+/**
+ * Use Dall-e 2 to build a bitmap for the badge.
+ *
+ * @param initialPrompt the initial prompt to be used to generate an image.
+ * @param dismissed callback called when the editor dialog is dismissed
+ * @param accepted callback called when the image is accepted
+ */
 @ExperimentalMaterial3Api
 @Preview
 @Composable

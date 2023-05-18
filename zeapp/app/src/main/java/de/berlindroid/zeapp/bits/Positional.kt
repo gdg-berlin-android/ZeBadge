@@ -5,6 +5,12 @@ import android.graphics.Color
 import java.nio.IntBuffer
 import kotlin.math.roundToInt
 
+/**
+ * Attempt on a static positional pattern dithering algorithm.
+ *
+ * This will convert a color bitmap into a black and white image following a set amount of static
+ * positional 3x3 patterns.
+ */
 fun Bitmap.ditherPositional(): Bitmap {
     val outputBitmap = grayscale()
 
