@@ -11,6 +11,7 @@
 # Thonny's interactive mode (REPL) should be the best option.
 
 import adafruit_imageload
+import bitmaptools
 import board
 import circuitpython_base64 as base64
 import displayio
@@ -22,6 +23,7 @@ import supervisor
 import sys
 import time
 import traceback
+import zlib
 from digitalio import DigitalInOut, Direction
 
 
@@ -31,9 +33,31 @@ READ_TIMEOUT    =     2 # seconds
 LOOP_CYCLE      =   0.3 # seconds
 KEEP_ALIVE      =     5 # seconds
 REFRESH_RATE    =     3 # seconds
-PREVIEW_TIME    =     3 # seconds
 DEBUG           =  True
 MAX_OUTPUT_LEN  =    10
+
+COMMANDS = [
+    "reload",
+    "exit",
+
+    "blink",
+    "terminal",
+    "preview",
+    "refresh",
+
+    "store-a",
+    "store-b",
+    "store-c",
+    "store-up",
+    "store-down",
+
+    "show-a",
+    "show-b",
+    "show-c",
+    "show-up",
+    "show-down",
+]
+COMMAND_NONE = [None, None, None]
 
 # Debugging tools
 def log(string):
@@ -123,7 +147,6 @@ def read_command():
 
 # Base64<command:metadata:payload> -> [command, metadata, payload]
 # For debug, you can skip Base64 and put "debug:" in front
-COMMAND_NONE = [None, None, None]
 def parse_command(base64_string):
     if base64_string == None:
         return COMMAND_NONE
@@ -153,14 +176,12 @@ def parse_command(base64_string):
 
 
 # Handle commands in format Base64<command:metadata:payload>
-allowed_commands = ["blink", "reload", "exit", "preview", "terminal", "refresh"]
 def handle_commands():
-    global allowed_commands
     command_raw = read_command()
     command_name, metadata, payload = parse_command(command_raw)
     if command_name == None:
         return
-    elif command_name not in allowed_commands:
+    elif command_name not in COMMANDS:
         log("Unknown command '%s'" % command_name)
         return
     elif command_name == "blink":
@@ -170,7 +191,7 @@ def handle_commands():
     elif command_name == "exit":
         handle_command_exit()
     elif command_name == "preview":
-        handle_command_preview(metadata, payload)
+        handle_command_preview(payload)
     elif command_name == "terminal":
         handle_terminal_command()
     elif command_name == "refresh":
@@ -185,7 +206,7 @@ def handle_refresh_command():
     global should_refresh
     log("Scheduling screen refresh…")
     should_refresh = True
-    
+
 
 # For the terminal command
 # debug:terminal::
@@ -219,51 +240,43 @@ def handle_command_exit():
 
 
 # For the previewing command
-# debug:preview::Qk0CAQAAAAAAAIoAAAB8AAAABgAAAAYAAAABABgAAAAAAHgAAAAwdQAAMHUAAAAAAAAAAAAAAAD/AAD/AAD/AAAAAAAA/0JHUnOAwvUoYLgeFSCF6wFAMzMTgGZmJkBmZgagmZkJPArXAyRcjzIAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAA////////////////////AAAAAAAAAAD///////////////8AAAAAAAAAAAAAAP///////////wAAAAAAAAAAAAAAAAAA////////AAD///////////8AAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-def handle_command_preview(base64_metadata, base64_payload):
+# debug:preview::eJy12F9MG3UcAPDvtef16q5wdTquKbPXQpgPaFq6MCbRnWwhI2Ga+GCM+OcGhGCCpIsJLBmO60IaSbpQ5GUVl+3RF5NFzeBl5gBlI06HPjHZYiNkmsgiaCAlAvXau/vdUXr87sVfSO9+5ZPf99v7+/v+AOy0wRyu7QCBNbmc5JKwsYhMmY2MYpU2UANnA3Hh0t+7TGkDY4EaTBkBI5ZGsrHLAFUaOXftWyDKtE9IFojeFdoC7TowvAXizZ2wHcRaIMHcoS2QbO4wFkgyd8jSiNjVc/zfyKHSHjU1QkGcnN9R+yCa0BM1nUVIG4M3Ic9XdQj5UhJV5qGgMVjLQC3Tx+nI//BTWUfPvCl5/H4/HAjW10Hf0UPVOqrvX0kh1CL5vKOjwASjPIRCXJeO+m9NdOro0Byw7OhhoKuClRDqZS/qaO6LxdM6euoMsN5RL9CRqjJoF1lBR8nFnl90xH4HnNebAjoackCIZ0VWQ+3Nj79EiIJC4lxFVR2E6sM1nIoIR3isVtJRMyiHoAye9eVzqhzg9JHYS2/c4TUEZOnT4pDh1Ot6OOXuK4mczwPxNEJ7m4omuqFawCBqvkbt7YdcGfIOHoGPxyJqcNwGyv0+NY9FCWqqFYcIyZ/AhiOFkabC5bzvSNyt2cL9sR+Cmi7PWgyHiIPDI2ENBYrfN6sqCkMLtaKHI4NkkG5ihwofvPKtdj3VCO7mzgwmXJQFZxR3CI7OQTyNQ0d6eDjFYlBj/cf57PdH9X9/i0fHfn1F7e2HDn5Eqg9YA5F7UMXXO5mikcqIYkRu/Tt5mt+FGFemCDnbBAcr6SiQK4QWi9FblVI8hUFwM7e0JOqIg9Lo8p/vUzJCc1L55ACIgXi2d2mgXNaR+zrjQjn5stLhFQbE41PJ/nM/5t/vKgrFwgEGobRE31VQbIbsiCY4XkfwKjuIjpPfrSAKRHFGCkUTDMqJdMbXEfJxEpcfSTy72hFxlktoJNb1GbpUfFfVcKI40BGhnBmEgPneGCmnIFJBMhOKUiAaKFSFEOeAQriwzLRHnQYSAKoNpLyw75ZB5vhMsiOSqERI0t5d6mnZUtDg7S3lYHZEqXKUk6wFVVG2MDchSfXxgA6B7DChvU397yol4NGmJ4xHDz1JPNp4N4NHf7XF8OjxtXk8uvDBAh59+N4fePTS4g088oxnEbJ6ZgL12jZC7upPWkx/XlrQkOPBOj4c4f8Gj6BlQsIjZt0Gcrwj4BG02EFPhm2gUMoGUhsOVdtBppH0ebxQhAgTIgrpKcWDoN+QJRAaCYXWw/2MUEU4lcm8IC7ffLu54dLt+LA7i9AcQoFsevNG4+bWo53Wi7P35DQzidDKdR1xyXEfGxlOzk6fnz21IKzRYYQ2jNnh5TF3JuImE03np1uvwFlaROgCmmd6h8boWPAAk5junu5eEM4xsoEeyfpIQ+M+LuhOJqZbZxsW5J+uSAi9vJ1C4dJr/0SGtxInmwca7l1Nbxq/7sR9Ho2UEk8G6U6pqYkDp5v+4XNjpLZJ5dO599wRnDHPD+ysQMlCgsgaFUOgv6s0yp8cIqOhE+PKJ2VRJqn3N5TnNiXLMgkeaGhjW7IuuPrVjevajmhdujWqmVNnFiXrIrBOLmycy70L1uVkJV/YOI6NPKf8XAvk0bbx9WXrEld7YShlSp/rvlWx7FQTB0cyTRwByqLK/02bBXXliC3LpYAXjd2YJdq9qGBrecLWQoetJRNbiy+2lnFsLQjZav8BwW4yIQ==
+def handle_command_preview(base64_payload):
     log("Previewing image…")
     command_name = "preview"
-    metadata = ""
     try:
-        base64_metadata_bytes = base64_metadata.encode("utf-8")
-        metadata_bytes_plain = base64.decodebytes(base64_metadata_bytes)
-        metadata = str(metadata_bytes_plain, "utf-8")
-        log("Decoded metadata: '%s'" % metadata)
-        store_b64_as_bitmap(base64_payload, command_name)
-        render_stored_bitmap(command_name)        
+        bitmap, palette = decode_payload(base64_payload)
+        show_bitmap(bitmap, palette)
     except Exception as e:
-        log(f"Preview failed for: '{base64_metadata}':'{trunc(base64_payload)}'.\n%s" % format_e(e))
+        log(f"Preview failed for: {trunc(base64_payload)}'.\n%s" % format_e(e))
 
 
 # Rendering a stored bitmap onto the screen
 def render_stored_bitmap(name):
-    global display, should_refresh
     bitmap = displayio.OnDiskBitmap(file_path_for(name))
-    tile_grid = displayio.TileGrid(bitmap, pixel_shader=bitmap.pixel_shader)
-    group = displayio.Group()
-    group.append(tile_grid)
-    display.root_group = group
-    should_refresh = True
-    time.sleep(PREVIEW_TIME)
-    
+    show_bitmap(bitmap, bitmap.pixel_shader)
 
-# Rendering an in-memory bitmap
+
+# Rendering a byte array representing a bitmap
 def render_bitmap_bytes(raw_bytes):
-    global display, should_refresh
-    raw_bytes = fetch_bitmap_bytes(command_name)
     raw_stream = io.BytesIO(raw_bytes)
     bitmap, palette = adafruit_imageload.load(
         raw_stream,
         bitmap=displayio.Bitmap,
         palette=displayio.Palette,
     )
+    show_bitmap(bitmap, palette)
+
+
+# Showing a bitmap with a palette
+def show_bitmap(bitmap, palette):
+    global display, should_refresh
     tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
     group = displayio.Group()
     group.append(tile_grid)
     display.root_group = group
     should_refresh = True
-    time.sleep(PREVIEW_TIME)
-    
+
 
 # Storing a Base64 string as a bitmap image
 def store_b64_as_bitmap(base64_str, name):
@@ -286,6 +299,25 @@ def fetch_bitmap_as_b64(name):
     b64_bytes = base64.b64encode(data)
     b64_string = b64_bytes.decode("utf-8")
     return b64_string
+
+
+# Decoding a Base64ed, compressed a binarized bitmap
+def decode_payload(payload):
+    global display
+    compressed_bytes = base64.b64decode(payload)
+    binarized_bytes = zlib.decompress(compressed_bytes)
+    bitmap = displayio.Bitmap(display.width, display.height, 2)
+    palette = displayio.Palette(2)
+    palette[0] = 0x000000
+    palette[1] = 0xFFFFFF
+    for y in range(display.height):
+        for x in range(display.width):
+            # Pretend you understand this part
+            byte_index = (y * (display.width // 8)) + (x // 8)
+            bit_index = 7 - (x % 8)
+            pixel_value = (binarized_bytes[byte_index] >> bit_index) & 1
+            bitmap[x, y] = pixel_value
+    return bitmap, palette
 
 
 # Getting a file path out of a command name
