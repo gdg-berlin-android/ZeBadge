@@ -83,7 +83,7 @@ log("-----")
 log("Running in serial mode.")
 
 
-# Middle of the word truncating (GPT says so)
+# Middle of the word truncating
 def trunc(long):
     if len(long) <= MAX_OUTPUT_LEN:
         return long    
@@ -91,6 +91,17 @@ def trunc(long):
     left_pad = len(trunc_replacement) + 1
     right_pad = -len(trunc_replacement)
     return long[:left_pad] + "..." + long[right_pad:]
+
+
+# Formatting an exception
+def format_e(exception):
+    message = str(exception)
+    trace = traceback.format_exception(exception)
+    result = "Reason: "
+    result += message if len(message) > 0 else "🤷"
+    result += "\n"
+    result += "\n  ".join(trace)
+    return result
 
 
 # Keep alive pinger
@@ -196,6 +207,12 @@ def handle_commands():
         handle_terminal_command()
     elif command_name == "refresh":
         handle_refresh_command()
+    elif command_name.startswith("show"):
+        page = command_name.split("-")[1]
+        handle_show_command(page)
+    elif command_name.startswith("store"):
+        page = command_name.split("-")[1]
+        handle_store_command(page, metadata, payload)
     else:
         log("Command not implemented yet!")
 
@@ -229,13 +246,15 @@ def handle_command_blink():
 # debug:reload::
 def handle_command_reload():
     log("Reloading…")
-    time.sleep(1)
+    time.sleep(0.5)
     supervisor.reload()
 
 
 # For the exiting command
 # debug:exit::
 def handle_command_exit():
+    log("Exiting…")
+    time.sleep(0.5)
     sys.exit()
 
 
@@ -243,7 +262,6 @@ def handle_command_exit():
 # debug:preview::eJy12F9MG3UcAPDvtef16q5wdTquKbPXQpgPaFq6MCbRnWwhI2Ga+GCM+OcGhGCCpIsJLBmO60IaSbpQ5GUVl+3RF5NFzeBl5gBlI06HPjHZYiNkmsgiaCAlAvXau/vdUXr87sVfSO9+5ZPf99v7+/v+AOy0wRyu7QCBNbmc5JKwsYhMmY2MYpU2UANnA3Hh0t+7TGkDY4EaTBkBI5ZGsrHLAFUaOXftWyDKtE9IFojeFdoC7TowvAXizZ2wHcRaIMHcoS2QbO4wFkgyd8jSiNjVc/zfyKHSHjU1QkGcnN9R+yCa0BM1nUVIG4M3Ic9XdQj5UhJV5qGgMVjLQC3Tx+nI//BTWUfPvCl5/H4/HAjW10Hf0UPVOqrvX0kh1CL5vKOjwASjPIRCXJeO+m9NdOro0Byw7OhhoKuClRDqZS/qaO6LxdM6euoMsN5RL9CRqjJoF1lBR8nFnl90xH4HnNebAjoackCIZ0VWQ+3Nj79EiIJC4lxFVR2E6sM1nIoIR3isVtJRMyiHoAye9eVzqhzg9JHYS2/c4TUEZOnT4pDh1Ot6OOXuK4mczwPxNEJ7m4omuqFawCBqvkbt7YdcGfIOHoGPxyJqcNwGyv0+NY9FCWqqFYcIyZ/AhiOFkabC5bzvSNyt2cL9sR+Cmi7PWgyHiIPDI2ENBYrfN6sqCkMLtaKHI4NkkG5ihwofvPKtdj3VCO7mzgwmXJQFZxR3CI7OQTyNQ0d6eDjFYlBj/cf57PdH9X9/i0fHfn1F7e2HDn5Eqg9YA5F7UMXXO5mikcqIYkRu/Tt5mt+FGFemCDnbBAcr6SiQK4QWi9FblVI8hUFwM7e0JOqIg9Lo8p/vUzJCc1L55ACIgXi2d2mgXNaR+zrjQjn5stLhFQbE41PJ/nM/5t/vKgrFwgEGobRE31VQbIbsiCY4XkfwKjuIjpPfrSAKRHFGCkUTDMqJdMbXEfJxEpcfSTy72hFxlktoJNb1GbpUfFfVcKI40BGhnBmEgPneGCmnIFJBMhOKUiAaKFSFEOeAQriwzLRHnQYSAKoNpLyw75ZB5vhMsiOSqERI0t5d6mnZUtDg7S3lYHZEqXKUk6wFVVG2MDchSfXxgA6B7DChvU397yol4NGmJ4xHDz1JPNp4N4NHf7XF8OjxtXk8uvDBAh59+N4fePTS4g088oxnEbJ6ZgL12jZC7upPWkx/XlrQkOPBOj4c4f8Gj6BlQsIjZt0Gcrwj4BG02EFPhm2gUMoGUhsOVdtBppH0ebxQhAgTIgrpKcWDoN+QJRAaCYXWw/2MUEU4lcm8IC7ffLu54dLt+LA7i9AcQoFsevNG4+bWo53Wi7P35DQzidDKdR1xyXEfGxlOzk6fnz21IKzRYYQ2jNnh5TF3JuImE03np1uvwFlaROgCmmd6h8boWPAAk5junu5eEM4xsoEeyfpIQ+M+LuhOJqZbZxsW5J+uSAi9vJ1C4dJr/0SGtxInmwca7l1Nbxq/7sR9Ho2UEk8G6U6pqYkDp5v+4XNjpLZJ5dO599wRnDHPD+ysQMlCgsgaFUOgv6s0yp8cIqOhE+PKJ2VRJqn3N5TnNiXLMgkeaGhjW7IuuPrVjevajmhdujWqmVNnFiXrIrBOLmycy70L1uVkJV/YOI6NPKf8XAvk0bbx9WXrEld7YShlSp/rvlWx7FQTB0cyTRwByqLK/02bBXXliC3LpYAXjd2YJdq9qGBrecLWQoetJRNbiy+2lnFsLQjZav8BwW4yIQ==
 def handle_command_preview(base64_payload):
     log("Previewing image…")
-    command_name = "preview"
     try:
         bitmap, palette = decode_payload(base64_payload)
         show_bitmap(bitmap, palette)
@@ -251,21 +269,32 @@ def handle_command_preview(base64_payload):
         log(f"Preview failed for: {trunc(base64_payload)}'.\n%s" % format_e(e))
 
 
-# Rendering a stored bitmap onto the screen
-def render_stored_bitmap(name):
-    bitmap = displayio.OnDiskBitmap(file_path_for(name))
-    show_bitmap(bitmap, bitmap.pixel_shader)
+# For the storing command
+# debug:store-a:bmFtZT1NaWtl:eJy12F9MG3UcAPDvtef16q5wdTquKbPXQpgPaFq6MCbRnWwhI2Ga+GCM+OcGhGCCpIsJLBmO60IaSbpQ5GUVl+3RF5NFzeBl5gBlI06HPjHZYiNkmsgiaCAlAvXau/vdUXr87sVfSO9+5ZPf99v7+/v+AOy0wRyu7QCBNbmc5JKwsYhMmY2MYpU2UANnA3Hh0t+7TGkDY4EaTBkBI5ZGsrHLAFUaOXftWyDKtE9IFojeFdoC7TowvAXizZ2wHcRaIMHcoS2QbO4wFkgyd8jSiNjVc/zfyKHSHjU1QkGcnN9R+yCa0BM1nUVIG4M3Ic9XdQj5UhJV5qGgMVjLQC3Tx+nI//BTWUfPvCl5/H4/HAjW10Hf0UPVOqrvX0kh1CL5vKOjwASjPIRCXJeO+m9NdOro0Byw7OhhoKuClRDqZS/qaO6LxdM6euoMsN5RL9CRqjJoF1lBR8nFnl90xH4HnNebAjoackCIZ0VWQ+3Nj79EiIJC4lxFVR2E6sM1nIoIR3isVtJRMyiHoAye9eVzqhzg9JHYS2/c4TUEZOnT4pDh1Ot6OOXuK4mczwPxNEJ7m4omuqFawCBqvkbt7YdcGfIOHoGPxyJqcNwGyv0+NY9FCWqqFYcIyZ/AhiOFkabC5bzvSNyt2cL9sR+Cmi7PWgyHiIPDI2ENBYrfN6sqCkMLtaKHI4NkkG5ihwofvPKtdj3VCO7mzgwmXJQFZxR3CI7OQTyNQ0d6eDjFYlBj/cf57PdH9X9/i0fHfn1F7e2HDn5Eqg9YA5F7UMXXO5mikcqIYkRu/Tt5mt+FGFemCDnbBAcr6SiQK4QWi9FblVI8hUFwM7e0JOqIg9Lo8p/vUzJCc1L55ACIgXi2d2mgXNaR+zrjQjn5stLhFQbE41PJ/nM/5t/vKgrFwgEGobRE31VQbIbsiCY4XkfwKjuIjpPfrSAKRHFGCkUTDMqJdMbXEfJxEpcfSTy72hFxlktoJNb1GbpUfFfVcKI40BGhnBmEgPneGCmnIFJBMhOKUiAaKFSFEOeAQriwzLRHnQYSAKoNpLyw75ZB5vhMsiOSqERI0t5d6mnZUtDg7S3lYHZEqXKUk6wFVVG2MDchSfXxgA6B7DChvU397yol4NGmJ4xHDz1JPNp4N4NHf7XF8OjxtXk8uvDBAh59+N4fePTS4g088oxnEbJ6ZgL12jZC7upPWkx/XlrQkOPBOj4c4f8Gj6BlQsIjZt0Gcrwj4BG02EFPhm2gUMoGUhsOVdtBppH0ebxQhAgTIgrpKcWDoN+QJRAaCYXWw/2MUEU4lcm8IC7ffLu54dLt+LA7i9AcQoFsevNG4+bWo53Wi7P35DQzidDKdR1xyXEfGxlOzk6fnz21IKzRYYQ2jNnh5TF3JuImE03np1uvwFlaROgCmmd6h8boWPAAk5junu5eEM4xsoEeyfpIQ+M+LuhOJqZbZxsW5J+uSAi9vJ1C4dJr/0SGtxInmwca7l1Nbxq/7sR9Ho2UEk8G6U6pqYkDp5v+4XNjpLZJ5dO599wRnDHPD+ysQMlCgsgaFUOgv6s0yp8cIqOhE+PKJ2VRJqn3N5TnNiXLMgkeaGhjW7IuuPrVjevajmhdujWqmVNnFiXrIrBOLmycy70L1uVkJV/YOI6NPKf8XAvk0bbx9WXrEld7YShlSp/rvlWx7FQTB0cyTRwByqLK/02bBXXliC3LpYAXjd2YJdq9qGBrecLWQoetJRNbiy+2lnFsLQjZav8BwW4yIQ==
+def handle_store_command(name, metadata, payload):
+    log("Storing image…")
+    try:
+        write_b64_as_file(metadata, "%s.metadata.base64" % name)
+        write_b64_as_file(payload, "%s.bin.gz.base64" % name)
+    except Exception as e:
+        log(f"Storing failed for: '{trunc(metadata)}':'{trunc(payload)}'.\n%s" % format_e(e))
 
 
-# Rendering a byte array representing a bitmap
-def render_bitmap_bytes(raw_bytes):
-    raw_stream = io.BytesIO(raw_bytes)
-    bitmap, palette = adafruit_imageload.load(
-        raw_stream,
-        bitmap=displayio.Bitmap,
-        palette=displayio.Palette,
-    )
-    show_bitmap(bitmap, palette)
+# For the showing command
+# debug:show-a::
+def handle_show_command(name):
+    log("Showing image…")
+    file_name_meta = "%s.metadata.base64" % name
+    file_name_payload = "%s.bin.gz.base64" % name
+    meta_b64 = ""
+    payload_b64 = ""
+    try:
+        meta_b64 = read_file_as_b64(file_name_meta)
+        payload_b64 = read_file_as_b64(file_name_payload)
+        bitmap, palette = decode_payload(payload_b64)
+        show_bitmap(bitmap, palette)
+    except Exception as e:
+        log(f"Showing failed for: '{trunc(meta_b64)}':'{trunc(payload_b64)}'.\n%s" % format_e(e))
 
 
 # Showing a bitmap with a palette
@@ -278,25 +307,19 @@ def show_bitmap(bitmap, palette):
     should_refresh = True
 
 
-# Storing a Base64 string as a bitmap image
-def store_b64_as_bitmap(base64_str, name):
-    file_path = file_path_for(name)
-    with open(file_path, "wb") as file:
+# Storing a Base64 string as a file
+def write_b64_as_file(base64_str, file_name):
+    with open(file_name, "wb") as file:
         raw_bytes = base64.b64decode(base64_str)
         file.write(raw_bytes)
 
 
-# Reading a bitmap image as raw bytes
-def fetch_bitmap_bytes(name):
-    with open(file_path_for(name), "rb") as file:
+# Reading a bytes file as a Base64 string
+def read_file_as_b64(file_name):
+    raw_bytes = []
+    with open(file_name, "rb") as file:
         raw_bytes = file.read()
-        return raw_bytes
-
-
-# Reading a bitmap image as a Base64 string
-def fetch_bitmap_as_b64(name):
-    raw_bytes = fetch_bitmap_bytes(name)
-    b64_bytes = base64.b64encode(data)
+    b64_bytes = base64.b64encode(raw_bytes)
     b64_string = b64_bytes.decode("utf-8")
     return b64_string
 
@@ -318,22 +341,6 @@ def decode_payload(payload):
             pixel_value = (binarized_bytes[byte_index] >> bit_index) & 1
             bitmap[x, y] = pixel_value
     return bitmap, palette
-
-
-# Getting a file path out of a command name
-def file_path_for(name):
-    return "/%s.bmp" % name
-
-
-# Formatting an exception
-def format_e(exception):
-    message = str(exception)
-    trace = traceback.format_exception(exception)
-    result = "Reason: "
-    result += message if len(message) > 0 else "🤷"
-    result += "\n"
-    result += "\n  ".join(trace)
-    return result
 
 
 ### The Main Loop ###
