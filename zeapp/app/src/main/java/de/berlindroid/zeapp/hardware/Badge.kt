@@ -12,6 +12,7 @@ import android.hardware.usb.UsbEndpoint
 import android.hardware.usb.UsbInterface
 import android.hardware.usb.UsbManager
 import android.util.Log
+import android.widget.Toast
 import de.berlindroid.zeapp.bits.toBinary
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -103,8 +104,9 @@ class Badge {
                 val parameter = device.findParameter()
                 if (parameter != null) {
                     val (iface, endpoint) = parameter
-                    val data = "${payload.toBadgeCommand()}\n"
-                    val bulkData = data.toByteArray()
+//                    val data = "${payload.toBadgeCommand()}\n"
+                    val data = "farts\n"
+                    val bulkData = data.toByteArray(Charsets.UTF_8)
 
                     val connection = manager.openDevice(device)
                     try {
@@ -116,17 +118,27 @@ class Badge {
                             3_000
                         )
                         connection.releaseInterface(iface)
-
                         lastResult = result
 
                         if (result > 0) {
                             Log.d("Badge Connection", "Success")
+                            Toast.makeText(
+                                context,
+                                "Sent '$result' bytes successfully.",
+                                Toast.LENGTH_LONG
+                            ).show()
                         } else {
                             Log.e("Badge Connection", "Failed with result $result.")
+                            Toast.makeText(
+                                context,
+                                "Couldn't send '${String(bulkData)}' to '$iface' and '$endpoint'.\n\nResult was '$result'.",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     } catch (th: Throwable) {
                         Log.e("Badge Connection", "Error while sending.", th)
                     } finally {
+                        connection.releaseInterface(iface)
                         connection.close()
                     }
                 }
@@ -162,7 +174,7 @@ class Badge {
             context,
             ACTION_USB_PERMISSION_REQUEST_CODE,
             Intent(ACTION_USB_PERMISSION),
-            PendingIntent.FLAG_UPDATE_CURRENT,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
         )
 
         val filter = IntentFilter(ACTION_USB_PERMISSION)
@@ -184,34 +196,32 @@ private fun UsbManager.connectedProductNames() =
     deviceList.values.map { it.productName ?: "<none>" }
 
 private fun UsbDevice.findParameter(): Badge.FoundUSBConnectionParameters? {
-    var foundInterface: UsbInterface? = null
-    var foundEndpoint: UsbEndpoint? = null
+    val foundInterfaces = mutableListOf<UsbInterface>()
+    val foundEndpoints = mutableListOf<UsbEndpoint>()
 
     for (interfaceIndex in 0 until interfaceCount) {
         val interf = getInterface(interfaceIndex)
-        for (endpointIndex in 0 until interf.endpointCount) {
-            val endpoint = interf.getEndpoint(endpointIndex)
 
-            if (endpoint.isCompatible()) {
-                foundInterface = interf
-                foundEndpoint = endpoint
-                break;
+        if (interf.name.orEmpty().contains("CDC2 data")) {
+            for (endpointIndex in 0 until interf.endpointCount) {
+                val endpoint = interf.getEndpoint(endpointIndex)
+
+                if (endpoint.isCompatible()) {
+                    foundInterfaces.add(interf)
+                    foundEndpoints.add(endpoint)
+                }
             }
-        }
-
-        if (foundEndpoint != null) {
-            break
         }
     }
 
-    return if (foundInterface != null && foundEndpoint != null) {
-        Badge.FoundUSBConnectionParameters(foundInterface, foundEndpoint)
+    return if (foundInterfaces.isNotEmpty() && foundEndpoints.isNotEmpty()) {
+        Badge.FoundUSBConnectionParameters(foundInterfaces.first(), foundEndpoints.first())
     } else {
         null
     }
 }
 
-private fun UsbEndpoint.isCompatible(): Boolean = type == UsbConstants.USB_ENDPOINT_XFER_BULK
+private fun UsbEndpoint.isCompatible(): Boolean = direction == UsbConstants.USB_DIR_OUT
 
 private fun ByteArray.zipit(): ByteArray {
     val output = ByteArrayOutputStream()
