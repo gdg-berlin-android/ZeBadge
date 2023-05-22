@@ -89,14 +89,14 @@ class Badge {
         val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
         val device = manager.findConnectedBadge()
         if (device == null) {
-            Log.e(
-                "Badge Connection",
-                "Could not find usb device with product name '${
-                    DEVICE_PRODUCT_NAME
-                }'.\nFound product(s):\n${
-                    manager.connectedProductNames().joinToString("\n •")
-                }"
-            )
+            val message = "Could not find usb device with product name '${
+                DEVICE_PRODUCT_NAME
+            }'.\nFound product(s):\n${
+                manager.connectedProductNames().joinToString("\n •")
+            }"
+
+            Log.e("Badge Connection", message)
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         } else {
             if (!manager.hasPermission(device)) {
                 askPermissionAndRetry(context, manager, device, payload)
@@ -202,7 +202,7 @@ private fun UsbDevice.findParameter(): Badge.FoundUSBConnectionParameters? {
     for (interfaceIndex in 0 until interfaceCount) {
         val interf = getInterface(interfaceIndex)
 
-        if (interf.name.orEmpty().contains("CDC2 data")) {
+        if (interf.name.orEmpty().contains("CDC data")) {
             for (endpointIndex in 0 until interf.endpointCount) {
                 val endpoint = interf.getEndpoint(endpointIndex)
 
