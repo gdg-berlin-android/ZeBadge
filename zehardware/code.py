@@ -24,17 +24,18 @@ import sys
 import time
 import traceback
 import zlib
-from digitalio import DigitalInOut, Direction
+from digitalio import DigitalInOut, Direction, Pull
 
 
 # Configuration
 
+DEBUG           =  True
+MAX_OUTPUT_LEN  =    10
 READ_TIMEOUT    =     2 # seconds
 LOOP_CYCLE      =   0.3 # seconds
 KEEP_ALIVE      =     5 # seconds
 REFRESH_RATE    =     3 # seconds
-DEBUG           =  True
-MAX_OUTPUT_LEN  =    10
+DEBOUNCE_TIME   =     2 # seconds
 
 COMMANDS = [
     "reload",
@@ -48,40 +49,25 @@ COMMANDS = [
     "store-a",
     "store-b",
     "store-c",
-    "store-up",
     "store-down",
+    "store-up",
 
     "show-a",
     "show-b",
     "show-c",
-    "show-up",
     "show-down",
+    "show-up",
 ]
 COMMAND_NONE = [None, None, None]
 
-# Debugging tools
+# Debug logging
 def log(string):
     if DEBUG: print(string)
 
+# Dumping object properties and functions
 def dump(obj):
     for attr in dir(obj):
         print("obj.%s = %r" % (attr, getattr(obj, attr)))
-
-
-### Run board setup ###
-    
-led = DigitalInOut(board.USER_LED)
-led.direction = Direction.OUTPUT
-
-display = board.DISPLAY
-if DEBUG:
-    display.root_group = displayio.CIRCUITPYTHON_TERMINAL
-else:
-    display.root_group = None
-
-log("-----")
-log("Running in serial mode.")
-
 
 # Middle of the word truncating
 def trunc(long):
@@ -92,7 +78,6 @@ def trunc(long):
     right_pad = -len(trunc_replacement)
     return long[:left_pad] + "..." + long[right_pad:]
 
-
 # Formatting an exception
 def format_e(exception):
     message = str(exception)
@@ -102,6 +87,30 @@ def format_e(exception):
     result += "\n"
     result += "\n  ".join(trace)
     return result
+
+# Setting up hardware buttons
+def prep_button(identifier):
+    button = DigitalInOut(identifier)
+    button.direction = Direction.INPUT
+    button.pull = Pull.DOWN
+    return button
+
+
+### Set up hardware ###
+    
+led = DigitalInOut(board.USER_LED)
+led.direction = Direction.OUTPUT
+display = board.DISPLAY
+buttons = {
+    "a": prep_button(board.SW_A),
+    "b": prep_button(board.SW_B),
+    "c": prep_button(board.SW_C),
+    "down": prep_button(board.SW_DOWN),
+    "up": prep_button(board.SW_UP),
+}
+
+log("-----")
+log("Running in serial mode.")
 
 
 # Keep alive pinger
@@ -139,6 +148,30 @@ def update_blinking():
         led.value = not led.value
     else:
         led.value = False
+
+
+# Handle button clicks
+last_click_time = time.time() # seconds
+last_button = None
+def handle_buttons():
+    global buttons, last_click_time, last_button
+    if time.time() - last_click_time <= DEBOUNCE_TIME:
+        return
+    if buttons["a"].value and last_button != "a":
+        handle_show_command("a")
+        last_click_time = time.time()
+    elif buttons["b"].value and last_button != "b":
+        handle_show_command("b")
+        last_click_time = time.time()
+    elif buttons["c"].value and last_button != "c":
+        handle_show_command("c")
+        last_click_time = time.time()
+    elif buttons["down"].value and last_button != "down":
+        handle_show_command("down")
+        last_click_time = time.time()
+    elif buttons["up"].value and last_button != "up":
+        handle_show_command("up")
+        last_click_time = time.time()
 
 
 # Read a single command from the serial interface
@@ -283,7 +316,7 @@ def handle_store_command(name, metadata, payload):
 # For the showing command
 # debug:show-a::
 def handle_show_command(name):
-    log("Showing image…")
+    log("Showing page '%s'…" % name)
     file_name_meta = "%s.metadata.base64" % name
     file_name_payload = "%s.bin.gz.base64" % name
     meta_b64 = ""
@@ -350,5 +383,6 @@ while True:
     log_keep_alive()
     update_blinking()
     handle_commands()
+    handle_buttons()
     refresh_if_needed()
     iteration += 1
