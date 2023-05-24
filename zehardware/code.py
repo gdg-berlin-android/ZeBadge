@@ -23,6 +23,7 @@ import supervisor
 import sys
 import time
 import traceback
+import usb_cdc
 import zlib
 from digitalio import DigitalInOut, Direction, Pull
 
@@ -62,7 +63,11 @@ COMMAND_NONE = [None, None, None]
 
 # Debug logging
 def log(string):
-    if DEBUG: print(string)
+    if DEBUG:
+        with open("log.txt", "a") as file:
+            file.write(string)
+            file.write("\n")
+        print(string)
 
 # Dumping object properties and functions
 def dump(obj):
@@ -97,7 +102,7 @@ def prep_button(identifier):
 
 
 ### Set up hardware ###
-    
+
 led = DigitalInOut(board.USER_LED)
 led.direction = Direction.OUTPUT
 display = board.DISPLAY
@@ -108,6 +113,8 @@ buttons = {
     "down": prep_button(board.SW_DOWN),
     "up": prep_button(board.SW_UP),
 }
+if usb_cdc.data != None:
+    usb_cdc.data.timeout = 2
 
 log("-----")
 log("Running in serial mode.")
@@ -174,8 +181,9 @@ def handle_buttons():
         last_click_time = time.time()
 
 
-# Read a single command from the serial interface
-def read_command():
+# Read a single command from the stdin interface
+def read_command_stdin():
+    global should_refresh
     buffer = ""
     if not supervisor.runtime.usb_connected:
         log("No USB connection, skipping read")
@@ -186,6 +194,25 @@ def read_command():
     while supervisor.runtime.serial_bytes_available:
         buffer += sys.stdin.readline()
     cleaned = re.sub(r'\s', " ", buffer).strip()
+    if len(cleaned) > 0 and DEBUG:
+        log("Cleaned input (stdin) = '%s'" % cleaned)
+        should_refresh = True
+    return cleaned if len(cleaned) > 0 else None
+
+
+# Read a single command from the CDC interface
+def read_command_cdc():
+    global should_refresh
+    buffer = ""
+    if usb_cdc.data == None:
+        log("No data connection, skipping read")
+        return None
+    while usb_cdc.data.in_waiting > 0:
+        buffer += usb_cdc.data.readline().decode()
+    cleaned = re.sub(r'\s', " ", buffer).strip()
+    if len(cleaned) > 0 and DEBUG:
+        log("Cleaned input (CDC) = '%s'" % cleaned)
+        should_refresh = True
     return cleaned if len(cleaned) > 0 else None
 
 
@@ -221,7 +248,9 @@ def parse_command(base64_string):
 
 # Handle commands in format Base64<command:metadata:payload>
 def handle_commands():
-    command_raw = read_command()
+    command_raw = read_command_cdc()
+    if command_raw == None or DEBUG:
+        command_raw = read_command_stdin()
     command_name, metadata, payload = parse_command(command_raw)
     if command_name == None:
         return
