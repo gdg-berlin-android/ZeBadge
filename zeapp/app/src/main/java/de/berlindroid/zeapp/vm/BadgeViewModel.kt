@@ -176,7 +176,21 @@ class BadgeViewModel(
             )
 
     // hardware interface
-    private val badge = Badge()
+    private val badge = Badge(
+        ::badgeSuccess,
+        ::badgeFailure,
+    )
+
+    private fun badgeFailure(error: String) {
+        message.value = "❗$error ❗️"
+    }
+
+    private fun badgeSuccess(bytesSent: Int) {
+        message.value = "$bytesSent bytes were sent."
+    }
+
+    // message to be displayed to the user
+    val message = mutableStateOf("")
 
     // if that is not null, we are currently editing a slot
     val currentSlotEditor = mutableStateOf<Editor?>(null)
@@ -208,6 +222,8 @@ class BadgeViewModel(
      * @param slot to be send.
      */
     fun sendPageToDevice(slot: Slot) {
+        message.value = ""
+
         if (!slots.value.contains(slot)) {
             Log.e("VM", "Slot $slot is not one of our slots.")
             return
@@ -235,6 +251,8 @@ class BadgeViewModel(
      * @param slot the slot to be configured.
      */
     fun customizeSlot(slot: Slot) {
+        message.value = ""
+
         // Do we need a template chooser first? Aka are we selecting a custom slot?
         if (slot in listOf(Slot.FirstCustom, Slot.SecondCustom)) {
             // yes, so let the user choose
@@ -339,6 +357,8 @@ class BadgeViewModel(
      * @param slot the slot to be defaulted
      */
     fun resetSlot(slot: Slot) {
+        message.value = ""
+
         slots.value[slot] = initialConfiguration(slot)
     }
 

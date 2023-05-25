@@ -128,6 +128,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
     ) {
         val editor by remember { vm.currentSlotEditor }
         val templateChooser by remember { vm.currentTemplateChooser }
+        val message by remember { vm.message }
 
         if (editor != null) {
             SelectedEditor(editor!!, activity, vm)
@@ -135,6 +136,10 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
 
         if (templateChooser != null) {
             TemplateChooserDialog(vm, templateChooser)
+        }
+
+        if (message.isNotEmpty()) {
+            Text(text = message)
         }
 
         LazyColumn {
@@ -164,6 +169,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SelectedEditor(
     editor: Editor,
