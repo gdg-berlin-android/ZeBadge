@@ -70,7 +70,7 @@ fun ImageGenerationEditorDialog(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            )
+            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
         )
     }
 
@@ -185,7 +185,7 @@ private suspend fun requestImageGeneration(
                     BitmapFactory.decodeResource(
                         context.resources,
                         R.drawable.error
-                    )
+                    ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
                 }
             }
 

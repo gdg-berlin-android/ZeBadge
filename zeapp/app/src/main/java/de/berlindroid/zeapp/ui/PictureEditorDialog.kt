@@ -21,9 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import de.berlindroid.zeapp.PAGE_HEIGHT
+import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
+import de.berlindroid.zeapp.bits.scaleIfNeeded
 import de.berlindroid.zeapp.vm.BadgeViewModel
 
 /**
@@ -44,7 +47,7 @@ fun PictureEditorDialog(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            )
+            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
         )
     }
 
@@ -58,7 +61,7 @@ fun PictureEditorDialog(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            )
+            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
         } else {
             // yes, so read image
             BitmapFactory.decodeStream(

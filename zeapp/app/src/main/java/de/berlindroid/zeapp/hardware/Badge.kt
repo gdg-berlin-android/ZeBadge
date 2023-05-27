@@ -111,6 +111,7 @@ class Badge(
             success(command.length)
         } catch (e: Exception) {
             Log.e("badge", "Couldn't write to port ${port.portNumber}.", e)
+            failure("Couldn't write")
         } finally {
             if (port.isOpen) {
                 port.close()
