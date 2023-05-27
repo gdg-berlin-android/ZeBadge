@@ -27,16 +27,15 @@ import usb_cdc
 import zlib
 from digitalio import DigitalInOut, Direction, Pull
 
-
 # Configuration
 
-DEBUG           =  True
-MAX_OUTPUT_LEN  =    10
-READ_TIMEOUT    =     2 # seconds
-LOOP_CYCLE      =   0.3 # seconds
-KEEP_ALIVE      =     5 # seconds
-REFRESH_RATE    =     3 # seconds
-DEBOUNCE_TIME   =     2 # seconds
+DEBUG = True
+MAX_OUTPUT_LEN = 10
+READ_TIMEOUT = 2  # seconds
+LOOP_CYCLE = 0.3  # seconds
+KEEP_ALIVE = 5  # seconds
+REFRESH_RATE = 3  # seconds
+DEBOUNCE_TIME = 2  # seconds
 
 COMMANDS = [
     "reload",
@@ -61,6 +60,7 @@ COMMANDS = [
 ]
 COMMAND_NONE = [None, None, None]
 
+
 # Debug logging
 def log(string):
     if DEBUG:
@@ -69,10 +69,12 @@ def log(string):
             file.write("\n")
         print(string)
 
+
 # Dumping object properties and functions
 def dump(obj):
     for attr in dir(obj):
         print(f"obj.{attr} = {getattr(obj, attr)}")
+
 
 # Middle of the word truncating
 def trunc(long):
@@ -83,6 +85,7 @@ def trunc(long):
     right_pad = -len(trunc_replacement)
     return long[:left_pad] + "..." + long[right_pad:]
 
+
 # Formatting an exception
 def format_e(exception):
     message = str(exception)
@@ -92,6 +95,7 @@ def format_e(exception):
     result += "\n"
     result += "\n  ".join(trace)
     return result
+
 
 # Setting up hardware buttons
 def prep_button(identifier):
@@ -119,20 +123,23 @@ if usb_cdc.data != None:
 log("-----")
 log("Running in serial mode.")
 
-
 # Keep alive pinger
 iteration = 0
+
+
 def log_keep_alive():
     global iteration
     keep_alive_cycle = int(KEEP_ALIVE / LOOP_CYCLE)
     if iteration % keep_alive_cycle == 0:
         now = time.localtime()
-        time_string = f"{now.tm_hour}:{now.tm_min}:{now.tm_sec}"
+        time_string = f"{now.tm_hour:02d}:{now.tm_min:02d}:{now.tm_sec:02d}"
         log(f"Awaiting commands… ({time_string})")
 
 
 # Refreshing the screen
 should_refresh = True
+
+
 def refresh_if_needed():
     global iteration, should_refresh
     refresh_cycle = int(REFRESH_RATE / LOOP_CYCLE)
@@ -148,6 +155,8 @@ def refresh_if_needed():
 
 # Blink it when doing some work
 led_on = False
+
+
 def update_blinking():
     global led, led_on
     led.value = led_on
@@ -156,8 +165,10 @@ def update_blinking():
 
 
 # Handle button clicks
-last_click_time = time.time() # seconds
+last_click_time = time.time()  # seconds
 last_button = None
+
+
 def handle_buttons():
     global buttons, last_click_time, last_button
     if time.time() - last_click_time <= DEBOUNCE_TIME:
@@ -233,7 +244,7 @@ def parse_command(base64_string):
     try:
         base64_bytes = base64_string.encode("utf-8")
         bytes_plain = base64.decodebytes(base64_bytes)
-        plain_string = str(bytes_plain, "utf-8")
+        plain_string = bytes_plain.decode("utf-8")
         parts = plain_string.split(":")
         if len(parts) != 3:
             raise Exception(f"Invalid command format: '{plain_string}'.")
@@ -418,4 +429,3 @@ while True:
         print("X", end="")
         time.sleep(0.10)
     print("")
-
