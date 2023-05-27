@@ -246,8 +246,8 @@ def parse_command(base64_string):
 # Handle commands in format Base64<command:metadata:payload>
 def handle_commands():
     command_raw = read_command_cdc()
-    if command_raw == None or DEBUG:
-        command_raw = read_command_stdin()
+    if command_raw == None:
+        print("Command is empty, ignore")
     command_name, metadata, payload = parse_command(command_raw)
     if command_name == None:
         return
