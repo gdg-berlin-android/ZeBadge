@@ -117,7 +117,8 @@ buttons = {
     "down": prep_button(board.SW_DOWN),
     "up": prep_button(board.SW_UP),
 }
-if usb_cdc.data is None:
+
+if usb_cdc.data is not None:
     usb_cdc.data.timeout = READ_TIMEOUT
 
 log("-----")
