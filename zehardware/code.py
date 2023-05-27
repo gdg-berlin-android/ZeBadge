@@ -153,6 +153,7 @@ def update_blinking():
     global led, led_on
     led.value = led_on
     led_on = not led_on
+    print(f"led is {led_on}.")
 
 
 # Handle button clicks
