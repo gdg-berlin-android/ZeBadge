@@ -126,10 +126,9 @@ def log_keep_alive():
     global iteration
     keep_alive_cycle = int(KEEP_ALIVE / LOOP_CYCLE)
     if iteration % keep_alive_cycle == 0:
-        time_string = "--:"
-        time_string += "{:0>2}".format(time.localtime().tm_min)
-        time_string += ":{:0>2}".format(time.localtime().tm_sec)
-        log("Awaiting commands… (%s)" % time_string)
+        now = time.localtime()
+        time_string = f"{now.tm_hour}:{now.tm_min}:{now.tm_sec}"
+        log(f"Awaiting commands… ({time_string})")
 
 
 # Refreshing the screen
