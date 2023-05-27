@@ -201,7 +201,7 @@ def read_command_stdin():
 def read_command_cdc():
     global should_refresh
     buffer = ""
-    if usb_cdc.data == None:
+    if usb_cdc.data is None:
         log("No data connection, skipping read")
         return None
 
@@ -216,7 +216,7 @@ def read_command_cdc():
 # Base64<command:metadata:payload> -> [command, metadata, payload]
 # For debug, you can skip Base64 and put "debug:" in front
 def parse_command(base64_string):
-    if base64_string == None:
+    if base64_string is None:
         return COMMAND_NONE
     if DEBUG and base64_string.startswith("debug:"):
         debug_command = base64_string.replace("debug:", "")
@@ -246,10 +246,10 @@ def parse_command(base64_string):
 # Handle commands in format Base64<command:metadata:payload>
 def handle_commands():
     command_raw = read_command_cdc()
-    if command_raw == None:
+    if command_raw is None:
         print("Command is empty, ignore")
     command_name, metadata, payload = parse_command(command_raw)
-    if command_name == None:
+    if command_name is None:
         return
     elif command_name not in COMMANDS:
         log(f"Unknown command '{command_name}'.")
@@ -418,3 +418,4 @@ while True:
         print("X", end="")
         time.sleep(0.10)
     print("")
+
