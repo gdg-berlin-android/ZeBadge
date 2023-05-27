@@ -13,7 +13,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,6 +34,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,6 +42,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
@@ -48,9 +52,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.ui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.ui.NameEditorDialog
@@ -129,6 +135,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
         val editor by remember { vm.currentSlotEditor }
         val templateChooser by remember { vm.currentTemplateChooser }
         val message by remember { vm.message }
+        val messageProgress by remember { vm.messageProgress }
 
         if (editor != null) {
             SelectedEditor(editor!!, activity, vm)
@@ -138,34 +145,81 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
             TemplateChooserDialog(vm, templateChooser)
         }
 
-        if (message.isNotEmpty()) {
-            Text(text = message)
-        }
+        // column surrounding a lazycolumn: so the message stays ontop.
+        Column {
+            if (message.isNotEmpty()) {
+                InfoBar(message, messageProgress, vm::copyInfoToClipboard)
+            }
 
-        LazyColumn {
-            items(
-                listOf(
-                    Slot.Name,
-                    Slot.FirstSponsor,
-                    Slot.SecondSponsor,
-                    Slot.FirstCustom,
-                    Slot.SecondCustom,
-                )
-            ) { slot ->
-                PagePreview(
-                    bitmap = vm.slotToBitmap(slot),
-                    customizeThisPage = if (slot.isLocked) null else {
-                        { vm.customizeSlot(slot) }
-                    },
-                    resetThisPage = if (slot.isLocked) null else {
-                        { vm.resetSlot(slot) }
-                    },
-                    sendToDevice = {
-                        vm.sendPageToDevice(slot)
-                    }
+            LazyColumn {
+                items(
+                    listOf(
+                        Slot.Name,
+                        Slot.FirstSponsor,
+                        Slot.SecondSponsor,
+                        Slot.FirstCustom,
+                        Slot.SecondCustom,
+                    )
+                ) { slot ->
+                    PagePreview(
+                        bitmap = vm.slotToBitmap(slot),
+                        customizeThisPage = if (slot.isLocked) null else {
+                            { vm.customizeSlot(slot) }
+                        },
+                        resetThisPage = if (slot.isLocked) null else {
+                            { vm.resetSlot(slot) }
+                        },
+                        sendToDevice = {
+                            vm.sendPageToDevice(slot)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Show a message to the user with a timer ticking down.
+ */
+@Composable
+@Preview
+private fun InfoBar(
+    message: String = "Very Important",
+    progress: Float = 0.5f,
+    copyMoreToClipboard: (() -> Unit) = {},
+) {
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .background(Color.Black, RoundedCornerShape(8.dp)),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1.0f),
+                fontSize = 20.sp,
+                fontFamily = FontFamily.Monospace,
+                color = Color.White,
+                text = message,
+            )
+
+            IconButton(onClick = copyMoreToClipboard) {
+                Icon(
+                    painter = painterResource(
+                        id = R.drawable.copy_clipboard
+                    ),
+                    contentDescription = null
                 )
             }
         }
+
+        LinearProgressIndicator(
+            modifier = Modifier.fillMaxWidth(),
+            progress = progress
+        )
     }
 }
 

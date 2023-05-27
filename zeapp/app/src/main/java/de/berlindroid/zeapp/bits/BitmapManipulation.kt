@@ -200,7 +200,7 @@ fun Bitmap.toBinary(): ByteArray {
     var currentByte: Byte = 0
     buffer.forEach { pixel ->
         val value = Color.green(pixel)
-        currentByte = currentByte or ((if (value == 255) 1 else 0) shl bitIndex).toByte()
+        currentByte = currentByte or ((if (value == 255) 1 else 0) shl (7 - bitIndex)).toByte()
         bitIndex += 1
 
         if (bitIndex == Byte.SIZE_BITS) {
@@ -227,7 +227,7 @@ fun ByteArray.toBitmap(): Bitmap {
         (0 until Byte.SIZE_BITS).forEach { bitNumber ->
             // have we found a byte whose bit at the current position is not null?
             // aka is the current byte null?
-            val bitOnlyByte = byte and (1 shl bitNumber).toByte()
+            val bitOnlyByte = byte and (1 shl (7 - bitNumber)).toByte()
             val color = if (bitOnlyByte == 0.toByte()) {
                 Color.BLACK
             } else {

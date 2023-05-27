@@ -1,13 +1,18 @@
 package de.berlindroid.zeapp.vm
 
 import android.app.Application
+import android.content.ClipData
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
@@ -19,8 +24,14 @@ import de.berlindroid.zeapp.bits.toBitmap
 import de.berlindroid.zeapp.hardware.Badge
 import de.berlindroid.zeapp.hardware.base64
 import de.berlindroid.zeapp.hardware.debase64
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val OPEN_API_PREFERENCES_KEY = "openapi"
+
+private const val MESSAGE_DISPLAY_DURATION = 3_000L
+private const val MESSAGE_DISPLAY_UPDATES = 5
 
 /**
  * Base ViewModel building a list of pages for the badge and offering simulator support.
@@ -175,22 +186,48 @@ class BadgeViewModel(
                 Application.MODE_PRIVATE
             )
 
-    // hardware interface
+    // Hardware communication interface
     private val badge = Badge(
         ::badgeSuccess,
         ::badgeFailure,
     )
 
+    // See if disappearing message is ongoing
+    private var hideMessageJob: Job? = null
+    private var messageProgressJob: Job? = null
+
     private fun badgeFailure(error: String) {
         message.value = "❗$error ❗️"
+
+        scheduleMessageDisappearance()
     }
 
     private fun badgeSuccess(bytesSent: Int) {
         message.value = "$bytesSent bytes were sent."
+
+        scheduleMessageDisappearance()
+    }
+
+    private fun scheduleMessageDisappearance() {
+        hideMessageJob?.cancel()
+        hideMessageJob = viewModelScope.launch {
+            delay(MESSAGE_DISPLAY_DURATION)
+            message.value = ""
+        }
+
+        messageProgressJob?.cancel()
+        messageProgressJob = viewModelScope.launch {
+            (0 until 10).forEach { progress ->
+                messageProgress.value = 1.0f - progress / MESSAGE_DISPLAY_UPDATES.toFloat()
+                delay(MESSAGE_DISPLAY_DURATION / MESSAGE_DISPLAY_UPDATES)
+            }
+        }
+
     }
 
     // message to be displayed to the user
     val message = mutableStateOf("")
+    val messageProgress = mutableStateOf(0.0f)
 
     // if that is not null, we are currently editing a slot
     val currentSlotEditor = mutableStateOf<Editor?>(null)
@@ -500,6 +537,16 @@ class BadgeViewModel(
     private fun Slot.preferencesValue(field: String): String =
         sharedPreferences.getString(preferencesKey(field), "")
             .orEmpty()
+
+    fun copyInfoToClipboard() {
+        message.value?.let {
+            val context = getApplication<Application>().applicationContext
+            val manager = context.getSystemService(android.content.ClipboardManager::class.java)
+
+            manager.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.app_name), it))
+            Toast.makeText(context, "Copied", Toast.LENGTH_LONG).show()
+        }
+    }
 }
 
 private fun String?.isNeitherNullNorBlank(): Boolean = !this.isNullOrBlank()
