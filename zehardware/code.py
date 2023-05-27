@@ -148,13 +148,11 @@ def refresh_if_needed():
 
 
 # Blink it when doing some work
-should_blink_led = False
+led_on = False
 def update_blinking():
-    global led
-    if should_blink_led:
-        led.value = not led.value
-    else:
-        led.value = False
+    global led, led_on
+    led.value = led_on
+    led_on = not led_on
 
 
 # Handle button clicks
