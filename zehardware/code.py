@@ -189,11 +189,10 @@ def read_command_stdin():
     if not supervisor.runtime.serial_connected:
         log("No serial connection, skipping read")
         return None
-    while supervisor.runtime.serial_bytes_available:
-        buffer += sys.stdin.readline()
+    buffer = sys.stdin.readline()
     cleaned = re.sub(r'\s', " ", buffer).strip()
     if len(cleaned) > 0 and DEBUG:
-        log("Cleaned input (stdin) = '%s'" % cleaned)
+        log(f"Cleaned input (stdin) = '{cleaned[:20]}'")
         should_refresh = True
     return cleaned if len(cleaned) > 0 else None
 
@@ -205,11 +204,11 @@ def read_command_cdc():
     if usb_cdc.data == None:
         log("No data connection, skipping read")
         return None
-    while usb_cdc.data.in_waiting > 0:
-        buffer += usb_cdc.data.readline().decode()
+
+    buffer = usb_cdc.data.readline().decode()
     cleaned = re.sub(r'\s', " ", buffer).strip()
     if len(cleaned) > 0 and DEBUG:
-        log("Cleaned input (CDC) = '%s'" % cleaned)
+        log(f"Cleaned input (CDC) = '{cleaned[:20]}'")
         should_refresh = True
     return cleaned if len(cleaned) > 0 else None
 
