@@ -72,7 +72,7 @@ def log(string):
 # Dumping object properties and functions
 def dump(obj):
     for attr in dir(obj):
-        print("obj.%s = %r" % (attr, getattr(obj, attr)))
+        print(f"obj.{attr} = {getattr(obj, attr)}")
 
 # Middle of the word truncating
 def trunc(long):
@@ -142,7 +142,7 @@ def refresh_if_needed():
             try:
                 display.refresh()
             except Exception as e:
-                log(f"Failed to decode '{base64_string}'.\n%s" % format_e(e))
+                log(f"Failed to refresh.\n{format_e(e)}.")
             should_refresh = False
 
 
@@ -222,8 +222,8 @@ def parse_command(base64_string):
         debug_command = base64_string.replace("debug:", "")
         parts = debug_command.split(":")
         if len(parts) != 3:
-            log("Invalid debug command: '%s'" % debug_command)
-            log("  - Did you forget to add colons?")
+            log(f"Invalid debug command: '{debug_command}'")
+            log(" - Did you forget to add colons?")
             return COMMAND_NONE
         return [
             parts[0].strip(),
@@ -236,10 +236,10 @@ def parse_command(base64_string):
         plain_string = str(bytes_plain, "utf-8")
         parts = plain_string.split(":")
         if len(parts) != 3:
-            raise Exception("Invalid command format: '%s'" % plain_string)
+            raise Exception(f"Invalid command format: '{plain_string}'.")
         return plain_string.split(":")
     except Exception as e:
-        log(f"Failed to decode '{base64_string}'.\n%s" % format_e(e))
+        log(f"Failed to decode '{base64_string[:20]}'.\n {format_e(e)}.")
         return COMMAND_NONE
 
 
@@ -252,7 +252,7 @@ def handle_commands():
     if command_name == None:
         return
     elif command_name not in COMMANDS:
-        log("Unknown command '%s'" % command_name)
+        log(f"Unknown command '{command_name}'.")
         return
     elif command_name == "blink":
         handle_command_blink()
@@ -325,7 +325,7 @@ def handle_command_preview(base64_payload):
         bitmap, palette = decode_payload(base64_payload)
         show_bitmap(bitmap, palette)
     except Exception as e:
-        log(f"Preview failed for: {trunc(base64_payload)}'.\n%s" % format_e(e))
+        log(f"Preview failed for: {trunc(base64_payload)}'.\n{format_e(e)}.")
 
 
 # For the storing command
@@ -333,18 +333,18 @@ def handle_command_preview(base64_payload):
 def handle_store_command(name, metadata, payload):
     log("Storing image…")
     try:
-        write_b64_as_file(metadata, "%s.metadata.base64" % name)
-        write_b64_as_file(payload, "%s.bin.gz.base64" % name)
+        write_b64_as_file(metadata, f"{name}.metadata.base64")
+        write_b64_as_file(payload, f"{name}.bin.gz.base64")
     except Exception as e:
-        log(f"Storing failed for: '{trunc(metadata)}':'{trunc(payload)}'.\n%s" % format_e(e))
+        log(f"Storing failed for: '{trunc(metadata)}':'{trunc(payload)}'.\n{format_e(e)}.")
 
 
 # For the showing command
 # debug:show-a::
 def handle_show_command(name):
-    log("Showing page '%s'…" % name)
-    file_name_meta = "%s.metadata.base64" % name
-    file_name_payload = "%s.bin.gz.base64" % name
+    log(f"Showing page '{name}'…")
+    file_name_meta = f"{name}.metadata.base64"
+    file_name_payload = f"{name}.bin.gz.base64"
     meta_b64 = ""
     payload_b64 = ""
     try:
@@ -353,7 +353,7 @@ def handle_show_command(name):
         bitmap, palette = decode_payload(payload_b64)
         show_bitmap(bitmap, palette)
     except Exception as e:
-        log(f"Showing failed for: '{trunc(meta_b64)}':'{trunc(payload_b64)}'.\n%s" % format_e(e))
+        log(f"Showing failed for: '{trunc(meta_b64)}':'{trunc(payload_b64)}'.\n{format_e(e)}.")
 
 
 # Showing a bitmap with a palette
