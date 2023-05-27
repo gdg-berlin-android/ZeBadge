@@ -77,7 +77,7 @@ def dump(obj):
 # Middle of the word truncating
 def trunc(long):
     if len(long) <= MAX_OUTPUT_LEN:
-        return long    
+        return long
     trunc_replacement = "..."
     left_pad = len(trunc_replacement) + 1
     right_pad = -len(trunc_replacement)
@@ -395,12 +395,14 @@ def decode_payload(payload):
     palette[0] = 0x000000
     palette[1] = 0xFFFFFF
     for y in range(display.height):
+        print(".", end="")
         for x in range(display.width):
             # Pretend you understand this part
             byte_index = (y * (display.width // 8)) + (x // 8)
             bit_index = 7 - (x % 8)
             pixel_value = (binarized_bytes[byte_index] >> bit_index) & 1
             bitmap[x, y] = pixel_value
+    print("done")
     return bitmap, palette
 
 
@@ -414,3 +416,7 @@ while True:
     handle_buttons()
     refresh_if_needed()
     iteration += 1
+    while board.DISPLAY.busy:
+        print("X", end="")
+        time.sleep(0.10)
+    print("")
