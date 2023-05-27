@@ -31,8 +31,8 @@ from digitalio import DigitalInOut, Direction, Pull
 
 DEBUG = True
 MAX_OUTPUT_LEN = 10
-READ_TIMEOUT = 2  # seconds
-LOOP_CYCLE = 0.3  # seconds
+READ_TIMEOUT = 0.1  # seconds
+LOOP_CYCLE = 0.1  # seconds
 KEEP_ALIVE = 5  # seconds
 REFRESH_RATE = 3  # seconds
 DEBOUNCE_TIME = 2  # seconds
@@ -77,13 +77,13 @@ def dump(obj):
 
 
 # Middle of the word truncating
-def trunc(long):
-    if len(long) <= MAX_OUTPUT_LEN:
-        return long
-    trunc_replacement = "..."
+def trunc(message):
+    if len(message) <= MAX_OUTPUT_LEN:
+        return message
+    trunc_replacement = "…"
     left_pad = len(trunc_replacement) + 1
     right_pad = -len(trunc_replacement)
-    return long[:left_pad] + "..." + long[right_pad:]
+    return message[:left_pad] + trunc_replacement + message[right_pad:]
 
 
 # Formatting an exception
@@ -117,8 +117,8 @@ buttons = {
     "down": prep_button(board.SW_DOWN),
     "up": prep_button(board.SW_UP),
 }
-if usb_cdc.data != None:
-    usb_cdc.data.timeout = 2
+if usb_cdc.data is None:
+    usb_cdc.data.timeout = READ_TIMEOUT
 
 log("-----")
 log("Running in serial mode.")
@@ -161,7 +161,6 @@ def update_blinking():
     global led, led_on
     led.value = led_on
     led_on = not led_on
-    print(f"led is {led_on}.")
 
 
 # Handle button clicks
@@ -203,15 +202,12 @@ def read_command_stdin():
     buffer = sys.stdin.readline()
     cleaned = re.sub(r'\s', " ", buffer).strip()
     if len(cleaned) > 0 and DEBUG:
-        log(f"Cleaned input (stdin) = '{cleaned[:20]}'")
-        should_refresh = True
+        log(f"Cleaned input (stdin) = '{trunc(cleaned)}'")
     return cleaned if len(cleaned) > 0 else None
 
 
 # Read a single command from the CDC interface
 def read_command_cdc():
-    global should_refresh
-    buffer = ""
     if usb_cdc.data is None:
         log("No data connection, skipping read")
         return None
@@ -290,18 +286,15 @@ def handle_commands():
 # For the refresh command
 # debug:refresh::
 def handle_refresh_command():
-    global should_refresh
     log("Scheduling screen refresh…")
-    should_refresh = True
+    refresh_if_needed()
 
 
 # For the terminal command
 # debug:terminal::
 def handle_terminal_command():
-    global should_refresh
     log("Showing terminal…")
     display.root_group = displayio.CIRCUITPYTHON_TERMINAL
-    should_refresh = True
 
 
 # For the blinking command
@@ -336,7 +329,7 @@ def handle_command_preview(base64_payload):
         bitmap, palette = decode_payload(base64_payload)
         show_bitmap(bitmap, palette)
     except Exception as e:
-        log(f"Preview failed for: {trunc(base64_payload)}'.\n{format_e(e)}.")
+        log(f"Preview failed for:'{trunc(base64_payload)}'.\n{format_e(e)}.")
 
 
 # For the storing command
@@ -369,12 +362,12 @@ def handle_show_command(name):
 
 # Showing a bitmap with a palette
 def show_bitmap(bitmap, palette):
-    global display, should_refresh
+    global display
     tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
     group = displayio.Group()
     group.append(tile_grid)
     display.root_group = group
-    should_refresh = True
+    refresh_if_needed()
 
 
 # Storing a Base64 string as a file
@@ -397,6 +390,7 @@ def read_file_as_b64(file_name):
 # Decoding a Base64ed, compressed a binarized bitmap
 def decode_payload(payload):
     global display
+    log(f"pload : '{trunc(payload)}'.")
     compressed_bytes = base64.b64decode(payload)
     binarized_bytes = zlib.decompress(compressed_bytes)
     bitmap = displayio.Bitmap(display.width, display.height, 2)
@@ -405,6 +399,7 @@ def decode_payload(payload):
     palette[1] = 0xFFFFFF
     for y in range(display.height):
         print(".", end="")
+        update_blinking()
         for x in range(display.width):
             # Pretend you understand this part
             byte_index = (y * (display.width // 8)) + (x // 8)
@@ -418,14 +413,9 @@ def decode_payload(payload):
 ### The Main Loop ###
 
 while True:
-    time.sleep(LOOP_CYCLE)
     log_keep_alive()
     update_blinking()
     handle_commands()
     handle_buttons()
-    refresh_if_needed()
     iteration += 1
-    while board.DISPLAY.busy:
-        print("X", end="")
-        time.sleep(0.10)
-    print("")
+    time.sleep(LOOP_CYCLE)
