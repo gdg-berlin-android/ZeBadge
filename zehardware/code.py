@@ -136,21 +136,16 @@ def log_keep_alive():
         log(f"Awaiting commands… ({time_string})")
 
 
-# Refreshing the screen
-should_refresh = True
-
-
 def refresh_if_needed():
-    global iteration, should_refresh
-    refresh_cycle = int(REFRESH_RATE / LOOP_CYCLE)
-    if iteration % refresh_cycle == 0:
-        if should_refresh:
-            log("Refreshing the screen…")
-            try:
-                display.refresh()
-            except Exception as e:
-                log(f"Failed to refresh.\n{format_e(e)}.")
-            should_refresh = False
+    while board.DISPLAY.busy:
+        print("X", end="")
+        time.sleep(0.10)
+    print("")
+
+    try:
+        display.refresh()
+    except Exception as e:
+        log(f"Failed to refresh.\n{format_e(e)}.")
 
 
 # Blink it when doing some work
@@ -191,7 +186,6 @@ def handle_buttons():
 
 # Read a single command from the stdin interface
 def read_command_stdin():
-    global should_refresh
     buffer = ""
     if not supervisor.runtime.usb_connected:
         log("No USB connection, skipping read")
@@ -212,12 +206,16 @@ def read_command_cdc():
         log("No data connection, skipping read")
         return None
 
-    buffer = usb_cdc.data.readline().decode()
-    cleaned = re.sub(r'\s', " ", buffer).strip()
-    if len(cleaned) > 0 and DEBUG:
-        log(f"Cleaned input (CDC) = '{cleaned[:20]}'")
-        should_refresh = True
-    return cleaned if len(cleaned) > 0 else None
+    bytes_read = usb_cdc.data.readline()
+    if bytes_read:
+        line = bytes_read.decode()
+        log(f"input (CDC) = '{trunc(line)}'")
+        cleaned = re.sub(r'\s', " ", line).strip()
+        if len(cleaned) > 0 and DEBUG:
+            log(f"Cleaned input (CDC) = '{trunc(cleaned)}'")
+        return cleaned if len(cleaned) > 0 else None
+    else:
+        return None
 
 
 # Base64<command:metadata:payload> -> [command, metadata, payload]
@@ -225,29 +223,18 @@ def read_command_cdc():
 def parse_command(base64_string):
     if base64_string is None:
         return COMMAND_NONE
-    if DEBUG and base64_string.startswith("debug:"):
-        debug_command = base64_string.replace("debug:", "")
-        parts = debug_command.split(":")
-        if len(parts) != 3:
-            log(f"Invalid debug command: '{debug_command}'")
-            log(" - Did you forget to add colons?")
-            return COMMAND_NONE
-        return [
-            parts[0].strip(),
-            parts[1].strip(),
-            parts[2].strip(),
-        ]
-    try:
-        base64_bytes = base64_string.encode("utf-8")
-        bytes_plain = base64.decodebytes(base64_bytes)
-        plain_string = bytes_plain.decode("utf-8")
-        parts = plain_string.split(":")
-        if len(parts) != 3:
-            raise Exception(f"Invalid command format: '{plain_string}'.")
-        return plain_string.split(":")
-    except Exception as e:
-        log(f"Failed to decode '{base64_string[:20]}'.\n {format_e(e)}.")
+
+    debug_command = base64_string.replace("debug:", "")
+    parts = debug_command.split(":")
+    if len(parts) != 3:
+        log(f"Invalid debug command: '{debug_command}'")
+        log(" - Did you forget to add colons?")
         return COMMAND_NONE
+    return [
+        parts[0].strip(),
+        parts[1].strip(),
+        parts[2].strip(),
+    ]
 
 
 # Handle commands in format Base64<command:metadata:payload>
