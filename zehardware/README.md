@@ -21,6 +21,19 @@ Device should now appear as a new drive on your PC, containing some Python and c
 
 **Alternatively**, you can use [Thonny](https://thonny.org) to set up everything using their user-friendly app interface. If you get stuck or need more help, see the [Pimoroni website](https://pimoroni.com/badger2040).
 
+#### Other examples : [rpi/pico-examples](https://github.com/pimoroni/pimoroni-pico/tree/main/examples)
+
+Here are some examples for the Pico, which can be used as a reference for the badge.
+Compiled binaries are available [here](/zehardware/experiments/c++/flash). For the testing purposes, we used the "badger2040_image" binary. And experiments' images are available [here](/zehardware/experiments/c++/images).
+
+#### Building the examples
+
+1) Install [C++ SDK](https://github.com/pimoroni/pimoroni-pico/blob/main/setting-up-the-pico-sdk.md)
+2) Build & After the project is built, under the build directory we have all the examples’ flash files.
+3) For testing purposes, flash your device with "badger2040_image".<br>
+
+  Side note, the build (cmake&make) took around 30 minutes (all examples)
+
 #### Writing code
 
 You might want to reconfigure or rewrite everything to your liking. The device normally runs a micro-version of Python, with most default Python APIs built-in. 
