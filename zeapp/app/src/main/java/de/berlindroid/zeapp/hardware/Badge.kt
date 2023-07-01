@@ -100,10 +100,10 @@ class Badge(
             port.open(connection)
             port.dtr = true
             port.setParameters(
-                /*baudRate = */115200,
-                /*dataBits = */DATABITS_8,
-                /*stopBits = */STOPBITS_1,
-                /*parity = */PARITY_NONE,
+                /* baudRate = */115200,
+                /* dataBits = */DATABITS_8,
+                /* stopBits = */STOPBITS_1,
+                /* parity = */PARITY_NONE,
             )
             port.write(command.toByteArray(), 3_000)
             Log.i("badge", "Wrote '$command' to port ${port.portNumber}.")
@@ -141,10 +141,10 @@ class Badge(
         class BoundUsbReceiver : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (ACTION_USB_PERMISSION == intent.action) {
-                    val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+                    val boundDevice: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
 
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        device?.apply {
+                        boundDevice?.apply {
                             Log.d("USB Permission", "Permission granted.")
 
                             sendToUsb(context, payload)
