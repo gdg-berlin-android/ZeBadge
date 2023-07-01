@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+#
+# Script for installing new badges
+#
+
+import time
+import shutil
+import glob
+import random
+
+RPI_FOLDER = "/run/media/zeuser/RPI-RP2"
+CPY_FOLDER = "/run/media/zeuser/CIRCUITPY"
+
+COPY_FILES = ["code.py", "boot.py"]
+LIB_FOLDER = "lib"
+
+NUKE_IMAGE = "zefirmware/flash_nuke.uf2"
+OS_IMAGE = glob.glob("zefirmware/adafruit-circuitpython-pimoroni_badger2040*.uf2")[0]
+
+def is_folder_accessible(folder):
+    try:
+        open(folder)
+    except IsADirectoryError:
+        return True
+    except PermissionError:
+        return False
+    except FileNotFoundError:
+        return False
+    else:
+        return True
+
+def check_for_flashable():
+    if is_folder_accessible(RPI_FOLDER):
+        print("\nFound RPI")
+        flash_new_firmware()
+
+def flash_new_firmware():
+    print("Nuking old scripts")
+    shutil.copy(NUKE_IMAGE, RPI_FOLDER)
+    time.sleep(0.5)
+
+    while not is_folder_accessible(RPI_FOLDER):
+        print(":", end="", flush=True)
+        time.sleep(0.2)
+
+    print(f"\nFlashing new os from '{OS_IMAGE}'.")
+    shutil.copy(OS_IMAGE, RPI_FOLDER)
+
+    while is_folder_accessible(RPI_FOLDER):
+        print("-", end="", flush=True)
+        time.sleep(0.2)
+
+    while not is_folder_accessible(CPY_FOLDER):
+        print(".", end="", flush=True)
+        time.sleep(0.2)
+    time.sleep(0.5)
+
+    print(f"\nCopying Libs")
+    shutil.copytree(LIB_FOLDER, f"{CPY_FOLDER}/{LIB_FOLDER}", dirs_exist_ok=True)
+
+    print("Copying code")
+    for f in COPY_FILES:
+        print(f"  {f}")
+        shutil.copy(f, CPY_FOLDER)
+
+    print("Done.\n\n")
+    iteration = 1
+
+
+iteration = 1
+
+print("       ZeFlasher ")
+print("Flashes ZeBadges ZeFirmware")
+print()
+while True:
+    check_for_flashable()
+    
+    print(
+            "╱" if(random.random() > 0.5) else "╲", 
+            end=" = connect flashable\n" if iteration % 30 == 0 else "",
+            flush=True
+    )
+    iteration += 1
+    
+    time.sleep(0.1)
