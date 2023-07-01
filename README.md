@@ -8,7 +8,7 @@ And this is the Android app:
 
 > __TBD__
 
-Together they make magick happen. 🪄🦄
+Together they make magic happen. 🪄🦄
 
 # Getting Started
 
