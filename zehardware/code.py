@@ -29,7 +29,7 @@ from digitalio import DigitalInOut, Direction, Pull
 
 # Configuration
 
-DEBUG = True
+DEBUG = False
 MAX_OUTPUT_LEN = 10
 READ_TIMEOUT = 0.1  # seconds
 LOOP_CYCLE = 0.1  # seconds
