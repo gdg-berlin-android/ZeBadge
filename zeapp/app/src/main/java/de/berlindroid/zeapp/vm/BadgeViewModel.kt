@@ -296,6 +296,7 @@ class BadgeViewModel(
                         listOf(
                             R.drawable.page_google,
                             R.drawable.page_google_2,
+                            R.drawable.page_google_3,
                         )
                             .random()
                             .toBitmap()
