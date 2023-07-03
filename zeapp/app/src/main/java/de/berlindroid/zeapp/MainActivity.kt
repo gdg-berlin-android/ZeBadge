@@ -136,6 +136,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
         val templateChooser by remember { vm.currentTemplateChooser }
         val message by remember { vm.message }
         val messageProgress by remember { vm.messageProgress }
+        val slots by remember { vm.slots }
 
         if (editor != null) {
             SelectedEditor(editor!!, activity, vm)
@@ -153,20 +154,16 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
 
             LazyColumn {
                 items(
-                    listOf(
-                        Slot.Name,
-                        Slot.FirstSponsor,
-                        Slot.SecondSponsor,
-                        Slot.FirstCustom,
-                        Slot.SecondCustom,
-                    )
+                    slots.keys.toList()
                 ) { slot ->
                     PagePreview(
                         bitmap = vm.slotToBitmap(slot),
-                        customizeThisPage = if (slot.isLocked) null else {
+                        customizeThisPage = if (slot.isSponsor) {
+                            { vm.customizeSponsorSlot(slot) }
+                        } else {
                             { vm.customizeSlot(slot) }
                         },
-                        resetThisPage = if (slot.isLocked) null else {
+                        resetThisPage = if (slot.isSponsor) null else {
                             { vm.resetSlot(slot) }
                         },
                         sendToDevice = {
@@ -390,5 +387,5 @@ private fun PagePreview(
     }
 }
 
-private val Slot.isLocked: Boolean
+private val Slot.isSponsor: Boolean
     get() = this is Slot.FirstSponsor || this is Slot.SecondSponsor

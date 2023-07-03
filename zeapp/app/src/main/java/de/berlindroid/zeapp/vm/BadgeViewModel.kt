@@ -17,6 +17,7 @@ import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.bits.ditherFloydSteinberg
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.bits.scaleIfNeeded
 import de.berlindroid.zeapp.bits.toBinary
@@ -244,7 +245,7 @@ class BadgeViewModel(
     )
 
     val slots = mutableStateOf(
-        mutableMapOf(
+        mapOf(
             Slot.Name to initialConfiguration(Slot.Name),
             Slot.FirstSponsor to initialConfiguration(Slot.FirstSponsor),
             Slot.SecondSponsor to initialConfiguration(Slot.SecondSponsor),
@@ -279,6 +280,46 @@ class BadgeViewModel(
                 "Please give binary image for page '${slot.name}'.",
                 Toast.LENGTH_LONG
             ).show()
+        }
+    }
+
+    /**
+     * Loop through given sponsor images.
+     *
+     * @param slot the slot to be configured.
+     */
+    fun customizeSponsorSlot(slot: Slot) {
+        when (slot) {
+            is Slot.FirstSponsor -> {
+                slots.value = slots.value.copy(
+                    slot to Configuration.Picture(
+                        listOf(
+                            R.drawable.page_google,
+                            R.drawable.page_google_2,
+                        )
+                            .random()
+                            .toBitmap()
+                            .ditherFloydSteinberg()
+                    )
+                )
+            }
+
+            is Slot.SecondSponsor -> {
+                slots.value = slots.value.copy(
+                    slot to Configuration.Picture(
+                        listOf(
+                            R.drawable.page_telekom_2,
+                            R.drawable.page_telekom_3,
+                            R.drawable.page_telekom,
+                        )
+                            .random()
+                            .toBitmap()
+                            .ditherFloydSteinberg()
+                    )
+                )
+            }
+
+            else -> {}
         }
     }
 
@@ -362,7 +403,7 @@ class BadgeViewModel(
         currentSlotEditor.value = null
 
         if (slot != null && configuration != null) {
-            slots.value[slot] = configuration
+            slots.value = slots.value.copy(slot to configuration)
             slot.save()
         }
     }
@@ -396,7 +437,7 @@ class BadgeViewModel(
     fun resetSlot(slot: Slot) {
         message.value = ""
 
-        slots.value[slot] = initialConfiguration(slot)
+        slots.value = slots.value.copy(slot to initialConfiguration(slot))
     }
 
     private fun initialConfiguration(slot: Slot): Configuration {
@@ -547,6 +588,24 @@ class BadgeViewModel(
             Toast.makeText(context, "Copied", Toast.LENGTH_LONG).show()
         }
     }
+}
+
+private fun <K, V> Map<K, V>.copy(vararg entries: Pair<K, V>): Map<K, V> {
+    val result = mutableMapOf<K, V>()
+
+    entries.forEach { entry ->
+        val (replaceKey: K, replaceValue: V) = entry
+
+        forEach { (key, value) ->
+            result[key] = if (replaceKey == key) {
+                replaceValue
+            } else {
+                value
+            }
+        }
+    }
+
+    return result.toMap()
 }
 
 private fun String?.isNeitherNullNorBlank(): Boolean = !this.isNullOrBlank()
