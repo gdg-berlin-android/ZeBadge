@@ -75,6 +75,8 @@ import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
 class MainActivity : ComponentActivity() {
     private val vm: BadgeViewModel by viewModels()
 
+
+
     /**
      * Once created, use the main view composables.
      */
