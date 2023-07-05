@@ -2,7 +2,6 @@
 
 package de.berlindroid.zeapp
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -104,18 +103,19 @@ class ZeMainActivity : ComponentActivity() {
 
 @Composable
 private fun ZeScreen(vm: ZeBadgeViewModel) {
-  val lazyListState = rememberLazyListState()ZeBadgeAppTheme(content = {
-      ZeScaffold(
-          floatingActionButton = {
-                    NavigationPad(lazyListState)
-                },topBar = {
-              ZeTopBar(vm)
-          },
-          content = { paddingValues ->
-              ZePages(paddingValues, vm, lazyListState)
-          }
-      )
-  })
+    val lazyListState = rememberLazyListState()
+    ZeBadgeAppTheme(content = {
+        ZeScaffold(
+            floatingActionButton = {
+                NavigationPad(lazyListState)
+            }, topBar = {
+                ZeTopBar(vm)
+            },
+            content = { paddingValues ->
+                ZePages(paddingValues, vm, lazyListState)
+            }
+        )
+    })
 }
 
 

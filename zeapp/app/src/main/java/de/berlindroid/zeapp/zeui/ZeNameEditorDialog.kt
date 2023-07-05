@@ -146,7 +146,6 @@ fun NameEditorDialog(
         }
     )
 }
-<<<<<<< Updated upstream
 
 @Composable
 fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
@@ -160,5 +159,3 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
         )
     }
 }
-=======
->>>>>>> Stashed changes
