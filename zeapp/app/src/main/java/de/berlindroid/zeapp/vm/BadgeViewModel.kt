@@ -50,6 +50,7 @@ class BadgeViewModel(
         object SecondSponsor : Slot("C")
         object FirstCustom : Slot("Up")
         object SecondCustom : Slot("Down")
+        object QRCode : Slot("Q")
     }
 
     /**
@@ -81,6 +82,22 @@ class BadgeViewModel(
         ) : Configuration(TYPE, bitmap) {
             companion object {
                 const val TYPE: String = "Name Tag"
+            }
+        }
+
+        /**
+         * Store the name and contact of an attendee.
+         *
+         * @param url the URL of the attendee github profile ("https://github.com/gdg-berlin-android")
+         * @param bitmap (overriden) final page
+         */
+        data class QRCode(
+            val title:String,
+            val url: String,
+            override val bitmap: Bitmap,
+        ) : Configuration(TYPE, bitmap) {
+            companion object {
+                const val TYPE: String = "QRCode Tag"
             }
         }
 
@@ -247,10 +264,12 @@ class BadgeViewModel(
     val slots = mutableStateOf(
         mapOf(
             Slot.Name to initialConfiguration(Slot.Name),
+            Slot.Name to initialConfiguration(Slot.Name),
             Slot.FirstSponsor to initialConfiguration(Slot.FirstSponsor),
             Slot.SecondSponsor to initialConfiguration(Slot.SecondSponsor),
             Slot.FirstCustom to initialConfiguration(Slot.FirstCustom),
             Slot.SecondCustom to initialConfiguration(Slot.SecondCustom),
+            Slot.QRCode to initialConfiguration(Slot.QRCode),
         )
     )
 
@@ -374,6 +393,11 @@ class BadgeViewModel(
                     slot,
                     slots.value[Slot.Name]!!
                 )
+            }else if (slot is Slot.QRCode) {
+                currentSlotEditor.value = Editor(
+                    slot,
+                    slots.value[Slot.QRCode]!!
+                )
             } else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
@@ -460,6 +484,11 @@ class BadgeViewModel(
             is Slot.SecondSponsor -> Configuration.Picture(R.drawable.page_telekom.toBitmap())
             is Slot.FirstCustom -> Configuration.Picture(R.drawable.soon.toBitmap())
             is Slot.SecondCustom -> Configuration.Picture(R.drawable.soon.toBitmap())
+            Slot.QRCode -> Configuration.QRCode(
+                "Your title",
+                "",
+                R.drawable.soon.toBitmap()
+            )
         }
     }
 
@@ -521,6 +550,11 @@ class BadgeViewModel(
             is Configuration.Weather -> {
                 // TODO: Save weather
             }
+
+            is Configuration.QRCode -> {
+                putString(slot.preferencesKey("qr_title"), config.title)
+                putString(slot.preferencesKey("url"), config.url)
+            }
         }
 
         return this
@@ -552,6 +586,12 @@ class BadgeViewModel(
             Configuration.Schedule.TYPE -> Configuration.Schedule(bitmap)
 
             Configuration.Weather.TYPE -> Configuration.Weather(bitmap)
+
+            Configuration.QRCode.TYPE -> Configuration.QRCode(
+                title = preferencesValue("qr_title"),
+                url = preferencesValue("url"),
+                bitmap = bitmap
+            )
 
             else -> {
                 Log.e(
