@@ -64,7 +64,7 @@ import de.berlindroid.zeapp.ui.NameEditorDialog
 import de.berlindroid.zeapp.ui.PictureEditorDialog
 import de.berlindroid.zeapp.ui.QRCodeEditorDialog
 import de.berlindroid.zeapp.ui.ToolButton as ZeToolButton
-import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
+import de.berlindroid.zeapp.ui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel.*
 import android.content.res.Configuration as AndroidConfig

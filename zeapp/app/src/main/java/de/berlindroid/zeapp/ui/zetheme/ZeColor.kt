@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui.theme
+package de.berlindroid.zeapp.ui.zetheme
 
 import androidx.compose.ui.graphics.Color
 

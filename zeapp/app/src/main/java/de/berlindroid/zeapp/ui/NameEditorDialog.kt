@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.ui.pages.NamePage
+import de.berlindroid.zeapp.ui.zepages.NamePage
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Configuration
 
 

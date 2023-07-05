@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui.pages
+package de.berlindroid.zeapp.ui.zepages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
