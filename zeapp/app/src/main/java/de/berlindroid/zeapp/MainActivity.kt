@@ -377,7 +377,7 @@ private fun PagePreview(
                     item {
                         ToolButton(
                             imageVector = Icons.Filled.Edit,
-                            text = "Change",
+                            text = "Edit",
                             onClick = customizeThisPage,
                         )
                     }
