@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -66,7 +65,6 @@ import de.berlindroid.zeapp.ui.NameEditorDialog
 import de.berlindroid.zeapp.ui.PictureEditorDialog
 import de.berlindroid.zeapp.ui.QRCodeEditorDialog
 import de.berlindroid.zeapp.ui.ToolButton
-import de.berlindroid.zeapp.ui.rememberQrBitmapPainter
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.vm.BadgeViewModel
 import de.berlindroid.zeapp.vm.BadgeViewModel.*

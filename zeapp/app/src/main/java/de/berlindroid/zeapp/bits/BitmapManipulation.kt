@@ -190,8 +190,8 @@ fun composableToBitmap(
 
 fun qrComposableToBitmap(
     activity: Activity,
-    title:String,
-    url:String,
+    title: String,
+    url: String,
     callback: (Bitmap) -> Unit
 ) {
     // create a custom view like in the good old days
