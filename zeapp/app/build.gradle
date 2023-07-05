@@ -81,7 +81,7 @@ dependencies {
 // Ktlint
 ktlint {
     debug = true
-    verbose = true
+    verbose = false
     android = true
     outputToConsole = true
     outputColorName = "RED"
@@ -92,6 +92,5 @@ ktlint {
     }
     filter {
         exclude("**/generated/**")
-        include("**/kotlin/**")
     }
 }
