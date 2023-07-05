@@ -48,6 +48,7 @@ class ZeBadgeViewModel(
         object FirstCustom : Slot("Up")
         object SecondCustom : Slot("Down")
         object QRCode : Slot("Q")
+        object Kodee : Slot("hu?")
     }
 
     /**
@@ -267,6 +268,7 @@ class ZeBadgeViewModel(
             Slot.FirstCustom to initialConfiguration(Slot.FirstCustom),
             Slot.SecondCustom to initialConfiguration(Slot.SecondCustom),
             Slot.QRCode to initialConfiguration(Slot.QRCode),
+            Slot.Kodee to initialConfiguration(Slot.Kodee),
         )
     )
 
@@ -486,6 +488,7 @@ class ZeBadgeViewModel(
                 "",
                 R.drawable.soon.toBitmap()
             )
+            Slot.Kodee -> Configuration.Picture(R.drawable.kodee.toBitmap().ditherFloydSteinberg())
         }
     }
 
