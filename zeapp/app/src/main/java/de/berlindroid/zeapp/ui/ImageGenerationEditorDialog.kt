@@ -86,14 +86,14 @@ fun ImageGenerationEditorDialog(
                     if (bitmap.isBinary()) {
                         accepted(BadgeViewModel.Configuration.ImageGen(prompt, bitmap))
                     } else {
-                        Toast.makeText(context, "Not a binary image.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG).show()
                     }
                 }) {
                 Text(stringResource(id = android.R.string.ok))
             }
         },
         title = {
-            Text("Generate Image Page")
+            Text(stringResource(id = R.string.generate_image_page))
         },
         text = {
             Column {
@@ -114,7 +114,7 @@ fun ImageGenerationEditorDialog(
                     value = prompt,
                     enabled = progress == null,
                     singleLine = true,
-                    label = { Text(text = "Enter your prompt here") },
+                    label = { Text(text = stringResource(id = R.string.enter_prompt)) },
                     onValueChange = { prompt = it }
                 )
 
@@ -135,7 +135,7 @@ fun ImageGenerationEditorDialog(
                                     withContext(Dispatchers.Main) {
                                         Toast.makeText(
                                             context,
-                                            "Could not generate an image",
+                                            R.string.could_not_generate_image,
                                             Toast.LENGTH_LONG
                                         ).show()
                                     }
@@ -150,7 +150,7 @@ fun ImageGenerationEditorDialog(
                         }
                     }
                 ) {
-                    Text(text = "Generate")
+                    Text(text = stringResource(id = R.string.generate))
                 }
             }
         }

@@ -2,7 +2,6 @@
 
 package de.berlindroid.zeapp.ui
 
-import android.R
 import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.bits.qrComposableToBitmap
 import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
@@ -62,16 +62,15 @@ fun QRCodeEditorDialog(
                         accepted(Configuration.QRCode(title, url, image))
                     } else {
                         Toast.makeText(
-                            activity,
-                            "Binary image needed. Press one of the buttons below the image.",
+                            activity, R.string.image_needed,
                             Toast.LENGTH_LONG
                         ).show()
                     }
                 }) {
-                Text(text = stringResource(id = R.string.ok))
+                Text(text = stringResource(id = android.R.string.ok))
             }
         },
-        title = { Text(text = "Add your QR url") },
+        title = { Text(text = stringResource(id = R.string.add_qr_url)) },
         properties = DialogProperties(),
         text = {
             LazyColumn {
@@ -87,7 +86,7 @@ fun QRCodeEditorDialog(
                         modifier = Modifier.fillMaxWidth(),
                         value = title,
                         maxLines = 1,
-                        label = { Text(text = "QR Code title") },
+                        label = { Text(text = stringResource(id = R.string.qr_code_title)) },
                         onValueChange = { newValue ->
                             title = newValue
                             redrawComposableImage()
@@ -100,7 +99,7 @@ fun QRCodeEditorDialog(
                         modifier = Modifier.fillMaxWidth(),
                         value = url,
                         maxLines = 1,
-                        label = { Text(text = "URL") },
+                        label = { Text(text = stringResource(id = R.string.url)) },
                         onValueChange = { newValue ->
                             url = newValue
                             redrawComposableImage()
