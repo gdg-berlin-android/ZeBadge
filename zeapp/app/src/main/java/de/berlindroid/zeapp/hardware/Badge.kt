@@ -48,7 +48,6 @@ class Badge(
          * Convert the payload to a format the badge understands
          */
         fun toBadgeCommand(): String = "${if (debug) "debug:" else ""}$type:$meta:$payload"
-
     }
 
     /**

@@ -1,6 +1,10 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ktlint.gradle)
+    id("io.gitlab.arturbosch.detekt") version "1.23.0"
 }
 
 android {
@@ -8,7 +12,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId "de.berlindroid.zeapp"
+        applicationId = "de.berlindroid.zeapp"
         minSdk = 29
         targetSdk = 33
         versionCode = 1
@@ -25,7 +29,7 @@ android {
 
     buildTypes {
         configureEach {
-            it.buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
+            buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
         }
 
         release {
@@ -40,7 +44,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
 
     buildFeatures {
@@ -53,7 +57,7 @@ android {
 
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
@@ -77,4 +81,21 @@ dependencies {
 
 	testImplementation(libs.test.assertk)
 	testImplementation(libs.test.junit)
+}
+
+// Ktlint
+ktlint {
+    debug.set(true)
+    verbose.set(false)
+    android.set(true)
+    outputToConsole.set(true)
+    outputColorName.set("RED")
+    ignoreFailures.set(true)
+    reporters {
+        reporter(ReporterType.PLAIN)
+        reporter(ReporterType.CHECKSTYLE)
+    }
+    filter {
+        exclude("**/generated/**")
+    }
 }
