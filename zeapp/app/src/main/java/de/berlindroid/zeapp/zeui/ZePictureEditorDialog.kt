@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui
+package de.berlindroid.zeapp.zeui
 
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -22,10 +22,10 @@ import androidx.compose.ui.res.stringResource
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.cropPageFromCenter
-import de.berlindroid.zeapp.bits.isBinary
-import de.berlindroid.zeapp.bits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zebits.cropPageFromCenter
+import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zebits.scaleIfNeeded
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 
 /**
  * Editor Dialog for adding an image as a badge page.
