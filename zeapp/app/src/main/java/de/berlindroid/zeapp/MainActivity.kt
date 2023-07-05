@@ -10,47 +10,46 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement as ZeArrangement
+import androidx.compose.foundation.layout.Column as ZeColumn
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row as ZeRow
+import androidx.compose.foundation.layout.Spacer as ZeSpacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
+import androidx.compose.foundation.lazy.LazyRow as ZeLazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape as ZeRoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.AlertDialog as ZeAlertDialog
+import androidx.compose.material3.Button as ZeButton
+import androidx.compose.material3.Card as ZeCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
+import androidx.compose.material3.Icon as ZeIcon
+import androidx.compose.material3.Scaffold as ZeScaffold
+import androidx.compose.material3.Surface as ZeSurface
+import androidx.compose.material3.Text as ZeText
+import androidx.compose.material3.TopAppBar as ZeTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.Alignment as ZeAlignment
+import androidx.compose.ui.Modifier as ZeModifier
+import androidx.compose.ui.graphics.Color as ZeColor
+import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
+import androidx.compose.ui.layout.ContentScale as ZeContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -64,11 +63,12 @@ import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.ui.NameEditorDialog
 import de.berlindroid.zeapp.ui.PictureEditorDialog
 import de.berlindroid.zeapp.ui.QRCodeEditorDialog
-import de.berlindroid.zeapp.ui.ToolButton
+import de.berlindroid.zeapp.ui.ToolButton as ZeToolButton
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
-import de.berlindroid.zeapp.vm.BadgeViewModel
-import de.berlindroid.zeapp.vm.BadgeViewModel.*
+import de.berlindroid.zeapp.vm.ZeBadgeViewModel
+import de.berlindroid.zeapp.vm.ZeBadgeViewModel.*
 import android.content.res.Configuration as AndroidConfig
+import androidx.compose.material3.IconButton as ZeIconButton
 import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
 
 /**
@@ -76,7 +76,7 @@ import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
  */
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
-    private val vm: BadgeViewModel by viewModels()
+    private val vm: ZeBadgeViewModel by viewModels()
 
     /**
      * Once created, use the main view composables.
@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun ZeScreen() {
         ZeBadgeAppTheme(content = {
-            Scaffold(
+            ZeScaffold(
                 topBar = {
                     ZeTopBar(vm)
                 },
@@ -112,18 +112,18 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun ZeTopBar(vm: BadgeViewModel) {
-    TopAppBar(
-        title = { Text(stringResource(id = R.string.app_name)) },
+private fun ZeTopBar(vm: ZeBadgeViewModel) {
+    ZeTopAppBar(
+        title = { ZeText(stringResource(id = R.string.app_name)) },
         actions = {
-            IconButton(onClick = { vm.sendRandomPageToDevice() }) {
-                Icon(
+            ZeIconButton(onClick = { vm.sendRandomPageToDevice() }) {
+                ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
                     contentDescription = "Send random page to badge"
                 )
             }
-            IconButton(onClick = { vm.saveAll() }) {
-                Icon(
+            ZeIconButton(onClick = { vm.saveAll() }) {
+                ZeIcon(
                     painter = painterResource(id = R.drawable.save_all),
                     contentDescription = null
                 )
@@ -134,9 +134,9 @@ private fun ZeTopBar(vm: BadgeViewModel) {
 
 
 @Composable
-private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeViewModel) {
-    Surface(
-        modifier = Modifier
+private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: ZeBadgeViewModel) {
+    ZeSurface(
+        modifier = ZeModifier
             .fillMaxSize()
             .padding(paddingValues)
             .padding(4.dp)
@@ -156,11 +156,11 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
         }
 
         // column surrounding a lazycolumn: so the message stays ontop.
-        Column {
+        ZeColumn {
             if (message.isNotEmpty()) {
                 InfoBar(message, messageProgress, vm::copyInfoToClipboard)
             }
-            LazyColumn(
+            ZeLazyColumn(
                 contentPadding = PaddingValues(
                     horizontal = 8.dp,
                     vertical = 4.dp
@@ -184,7 +184,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
                         }
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    ZeSpacer(modifier = ZeModifier.height(8.dp))
                 }
             }
         }
@@ -201,25 +201,25 @@ private fun InfoBar(
     progress: Float = 0.5f,
     copyMoreToClipboard: (() -> Unit) = {},
 ) {
-    Card(
-        modifier = Modifier
+    ZeCard(
+        modifier = ZeModifier
             .padding(horizontal = 8.dp, vertical = 8.dp)
-            .background(Color.Black, RoundedCornerShape(8.dp)),
+            .background(ZeColor.Black, ZeRoundedCornerShape(8.dp)),
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+        ZeRow(
+            modifier = ZeModifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = ZeAlignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.weight(1.0f),
+            ZeText(
+                modifier = ZeModifier.weight(1.0f),
                 fontSize = 20.sp,
                 fontFamily = FontFamily.Monospace,
-                color = Color.White,
+                color = ZeColor.White,
                 text = message,
             )
 
-            IconButton(onClick = copyMoreToClipboard) {
-                Icon(
+            ZeIconButton(onClick = copyMoreToClipboard) {
+                ZeIcon(
                     painter = painterResource(
                         id = R.drawable.copy_clipboard
                     ),
@@ -228,8 +228,8 @@ private fun InfoBar(
             }
         }
 
-        LinearProgressIndicator(
-            modifier = Modifier.fillMaxWidth(),
+        ZeLinearProgressIndicator(
+            modifier = ZeModifier.fillMaxWidth(),
             progress = progress
         )
     }
@@ -240,7 +240,7 @@ private fun InfoBar(
 private fun SelectedEditor(
     editor: Editor,
     activity: Activity,
-    vm: BadgeViewModel
+    vm: ZeBadgeViewModel
 ) {
     if (editor.slot !in listOf(
             Slot.Name,
@@ -314,31 +314,31 @@ private fun SelectedEditor(
 
 @Composable
 private fun TemplateChooserDialog(
-    vm: BadgeViewModel,
+    vm: ZeBadgeViewModel,
     templateChooser: TemplateChooser?
 ) {
-    AlertDialog(
+    ZeAlertDialog(
         onDismissRequest = {
             vm.templateSelected(null, null)
         },
         confirmButton = {
-            Button(onClick = { vm.templateSelected(null, null) }) {
-                Text(text = stringResource(id = android.R.string.ok))
+            ZeButton(onClick = { vm.templateSelected(null, null) }) {
+                ZeText(text = stringResource(id = android.R.string.ok))
             }
         },
         title = {
-            Text(text = "Select Content")
+            ZeText(text = "Select Content")
         },
         text = {
-            LazyColumn {
+            ZeLazyColumn {
                 items(templateChooser?.configurations.orEmpty()) { config ->
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
+                    ZeButton(
+                        modifier = ZeModifier.fillMaxWidth(),
                         onClick = {
                             vm.templateSelected(templateChooser?.slot, config)
                         },
                     ) {
-                        Text(text = config.humanTitle)
+                        ZeText(text = config.humanTitle)
                     }
                 }
             }
@@ -355,33 +355,33 @@ private fun PagePreview(
     resetThisPage: (() -> Unit)? = null,
     sendToDevice: (() -> Unit)? = null,
 ) {
-    Card(
-        modifier = Modifier
-            .background(Color.Black, RoundedCornerShape(8.dp))
+    ZeCard(
+        modifier = ZeModifier
+            .background(ZeColor.Black, ZeRoundedCornerShape(8.dp))
             .padding(2.dp),
     ) {
-        Image(
-            modifier = Modifier
+        ZeImage(
+            modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
                 .padding(horizontal = 8.dp, vertical = 4.dp),
-            painter = BitmapPainter(
+            painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
-                filterQuality = FilterQuality.None,
+                filterQuality = ZeFilterQuality.None,
             ),
-            contentScale = ContentScale.FillWidth,
+            contentScale = ZeContentScale.FillWidth,
             contentDescription = null,
         )
 
         if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
+            ZeLazyRow(
+                modifier = ZeModifier.fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = 2.dp),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = ZeArrangement.End
             ) {
                 if (sendToDevice != null) {
                     item {
-                        ToolButton(
+                        ZeToolButton(
                             imageVector = Icons.Filled.Send,
                             text = "Send",
                             onClick = sendToDevice,
@@ -390,7 +390,7 @@ private fun PagePreview(
                 }
                 if (resetThisPage != null) {
                     item {
-                        ToolButton(
+                        ZeToolButton(
                             imageVector = Icons.Filled.Refresh,
                             text = "Reset",
                             onClick = resetThisPage,
@@ -399,7 +399,7 @@ private fun PagePreview(
                 }
                 if (customizeThisPage != null) {
                     item {
-                        ToolButton(
+                        ZeToolButton(
                             imageVector = Icons.Filled.Edit,
                             text = "Edit",
                             onClick = customizeThisPage,
