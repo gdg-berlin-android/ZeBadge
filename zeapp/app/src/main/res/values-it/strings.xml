@@ -1,0 +1,19 @@
+<resources>
+    <string name="black_and_white">B/N</string>
+    <string name="reset">Reset</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Positionale</string>
+    <string name="invert">Inverti</string>
+    <string name="static_tool">Statico</string>
+
+    <string name="generate">Genera</string>
+    <string name="not_binary_image">Errore: non è un\'immagine binaria.</string>
+    <string name="generate_image_page">Genera immagine</string>
+    <string name="enter_prompt">Inserisci il testo qui</string>
+    <string name="could_not_generate_image">Impossibile generare un\'immagine</string>
+
+    <string name="image_needed">Richiesta immagine binaria. Premi uno dei pulsanti sotto l\immagine.</string>
+    <string name="add_qr_url">Inserisci il tuo URL QR</string>
+    <string name="qr_code_title">Titolo QR Code</string>
+    <string name="url">URL</string>
+</resources>
