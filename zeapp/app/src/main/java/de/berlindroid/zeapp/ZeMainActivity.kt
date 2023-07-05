@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
-
 package de.berlindroid.zeapp
 
 import android.app.Activity
@@ -24,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -77,7 +74,6 @@ import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
 /**
  * Main View entrance for the app
  */
-@ExperimentalMaterial3Api
 class ZeMainActivity : ComponentActivity() {
     private val vm: ZeBadgeViewModel by viewModels()
 
@@ -119,7 +115,6 @@ class ZeMainActivity : ComponentActivity() {
 
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun ZeTopBar(vm: ZeBadgeViewModel) {
     ZeTopAppBar(
         title = { ZeText(stringResource(id = R.string.app_name)) },
@@ -250,7 +245,6 @@ private fun InfoBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SelectedEditor(
     editor: Editor,
