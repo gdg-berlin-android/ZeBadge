@@ -1,6 +1,7 @@
 plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
+    alias libs.plugins.ktlint.gradle
 }
 
 android {
@@ -75,4 +76,21 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.0'
     debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
+}
+
+// Ktlint
+ktlint {
+    debug = true
+    verbose = false
+    android = true
+    outputToConsole = true
+    outputColorName = "RED"
+    ignoreFailures = true
+    reporters {
+        reporter "plain"
+        reporter "checkstyle"
+    }
+    filter {
+        exclude("**/generated/**")
+    }
 }
