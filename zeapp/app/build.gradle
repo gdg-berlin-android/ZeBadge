@@ -71,7 +71,8 @@ dependencies {
     implementation libs.retrofit2.retrofit
     implementation libs.retrofit2.converter.gson
     implementation libs.mik3y.usb.serial.android
-
+    implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
+    implementation 'com.google.zxing:core:3.5.0'
     debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
 }
