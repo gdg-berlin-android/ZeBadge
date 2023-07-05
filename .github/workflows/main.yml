@@ -28,6 +28,17 @@ jobs:
         with:
           name: Debug APK
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: "Upload binaries to a release"
+        uses: svenstaro/upload-release-action@v2
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          release_name: ${{ format('Release v{0}', steps.versioning.outputs.app_version) }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: app/build/outputs/apk/release/app-debug.apk
+          asset_name: ze-badge.apk
+          tag: ${{ format('v{0}', steps.versioning.outputs.app_version) }}
+          overwrite: true
+
   lint:
     runs-on: ubuntu-latest
     steps:
