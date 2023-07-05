@@ -2,6 +2,7 @@
 
 package de.berlindroid.zeapp
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -85,97 +86,113 @@ import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
  */
 @ExperimentalMaterial3Api
 class ZeMainActivity : ComponentActivity() {
-    private val vm: ZeBadgeViewModel by viewModels()
 
-  /**
-   * Once created, use the main view composables.
-   */
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {
-      DrawUi()
-        }
+    private val viewModel: ZeBadgeViewModel by viewModels()
+
+    /**
+     * Once created, use the main view composables.
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        updateContent()
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        setContent {
-            DrawUi()
-        }
+        updateContent()
     }
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-    @Composable
-    private fun DrawUi() {
-        val wsc = calculateWindowSizeClass(activity = this)
-
-        if(wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
-            CompactUi()
-        } else {
-            LargeScreenUi()
-        }
-
-    }
-
-    @Composable
-    private fun CompactUi() {if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
-        ZeSimulator(
-          page = vm.slotToBitmap(),
-          onButtonPressed = vm::simulatorButtonPressed,
-        )
-      } else {
-        CompositionLocalProvider(LocalActivity provides this) {
-          ZeScreen(vm)
-        }
-      }@Composable
-    private fun LargeScreenUi() {
-        ZeRow {
-            ZeScreen(modifier = Modifier.weight(.3f))
-            Spacer(modifier = Modifier.width(16.dp))
-            ZeSimulator(
-                page = vm.slotToBitmap(),
-                onButtonPressed = vm::simulatorButtonPressed,
-                modifier = Modifier.weight(.3f)
-            )
+    private fun updateContent() = setContent {
+        ProvideLocalActivity {
+            DrawUi(viewModel)
         }
     }
-  }
 }
 
-    @Composable
-    private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
-        val lazyListState = rememberLazyListState()
-        ZeBadgeAppTheme(content = {
-            ZeScaffold(
-                modifier = modifier,
-                floatingActionButton = {
-                    NavigationPad(lazyListState)
-                },
-                topBar = {
-                    ZeTopBar(vm)
-                },
-                content = { paddingValues ->
-                    ZePages(paddingValues, vm, lazyListState)
-                }
-            )
-        })
+@Composable
+private fun Activity.ProvideLocalActivity(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalActivity provides this, content = content)
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+private fun DrawUi(viewModel: ZeBadgeViewModel) {
+    val wsc = calculateWindowSizeClass(activity = LocalActivity.current)
+    if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+        CompactUi(viewModel)
+    } else {
+        LargeScreenUi(viewModel)
     }
+}
+
+@Composable
+private fun CompactUi(vm: ZeBadgeViewModel) {
+    if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
+        ZeSimulator(
+            page = vm.slotToBitmap(),
+            onButtonPressed = vm::simulatorButtonPressed,
+        )
+    } else {
+        ZeScreen(vm)
+    }
+}
+
+@Composable
+private fun LargeScreenUi(vm: ZeBadgeViewModel) {
+    ZeRow {
+        ZeScreen(vm, modifier = Modifier.weight(.3f))
+        Spacer(modifier = Modifier.width(16.dp))
+        ZeSimulator(
+            page = vm.slotToBitmap(),
+            onButtonPressed = vm::simulatorButtonPressed,
+            modifier = Modifier.weight(.3f)
+        )
+    }
+}
+
+@Composable
+private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
+    val lazyListState = rememberLazyListState()
+    ZeBadgeAppTheme(content = {
+        ZeScaffold(
+            modifier = modifier,
+            floatingActionButton = {
+                NavigationPad(lazyListState)
+            },
+            topBar = {
+                ZeTopBar(
+                    onRandomClick = { vm.sendRandomPageToDevice() },
+                    onSaveAllClick = { vm.saveAll() },
+                )
+            },
+            content = { paddingValues ->
+                ZePages(
+                    paddingValues = paddingValues,
+                    lazyListState = lazyListState,
+                    vm = vm,
+                )
+            }
+        )
+    })
 }
 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun ZeTopBar(vm: ZeBadgeViewModel) {
+private fun ZeTopBar(
+    onSaveAllClick: () -> Unit,
+    onRandomClick: () -> Unit,
+) {
     ZeTopAppBar(
         title = { ZeText(stringResource(id = R.string.app_name)) },
         actions = {
-            ZeIconButton(onClick = { vm.sendRandomPageToDevice() }) {
+            ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
                     contentDescription = "Send random page to badge"
                 )
             }
-            ZeIconButton(onClick = { vm.saveAll() }) {
+            ZeIconButton(onClick = onRandomClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.save_all),
                     contentDescription = null
@@ -185,10 +202,10 @@ private fun ZeTopBar(vm: ZeBadgeViewModel) {
     )
 }
 
-
 @Composable
 private fun ZePages(
-    paddingValues: PaddingValues, vm: ZeBadgeViewModel,
+    paddingValues: PaddingValues,
+    vm: ZeBadgeViewModel,
     lazyListState: LazyListState
 ) {
     ZeSurface(
