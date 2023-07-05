@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.LocalActivity
 import de.berlindroid.zeapp.bits.composableToBitmap
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.ui.pages.NamePage
@@ -33,7 +34,6 @@ import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
 /**
  * Editor dialog for changing the name of the participant badge.
  *
- * @param activity Android activity to be used for rendering the composable.
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
@@ -44,7 +44,6 @@ private const val Empty = ""
 
 @Composable
 fun NameEditorDialog(
-    activity: Activity,
     config: Configuration.Name,
     dismissed: () -> Unit = {},
     accepted: (config: Configuration.Name) -> Unit
@@ -52,6 +51,7 @@ fun NameEditorDialog(
     var name by remember { mutableStateOf(config.name) }
     var contact by remember { mutableStateOf(config.contact) }
     var image by remember { mutableStateOf(config.bitmap) }
+    val activity = LocalActivity.current
 
     fun redrawComposableImage() {
         composableToBitmap(
@@ -146,6 +146,7 @@ fun NameEditorDialog(
         }
     )
 }
+<<<<<<< Updated upstream
 
 @Composable
 fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
@@ -159,3 +160,5 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
         )
     }
 }
+=======
+>>>>>>> Stashed changes

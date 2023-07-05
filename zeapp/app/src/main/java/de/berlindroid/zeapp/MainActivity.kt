@@ -42,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -76,38 +77,40 @@ import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
  */
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
-    private val vm: BadgeViewModel by viewModels()
+  private val vm: BadgeViewModel by viewModels()
 
-    /**
-     * Once created, use the main view composables.
-     */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
-                ZeSimulator(
-                    page = vm.slotToBitmap(),
-                    onButtonPressed = vm::simulatorButtonPressed,
-                )
-            } else {
-                ZeScreen()
-            }
+  /**
+   * Once created, use the main view composables.
+   */
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
+        ZeSimulator(
+          page = vm.slotToBitmap(),
+          onButtonPressed = vm::simulatorButtonPressed,
+        )
+      } else {
+        CompositionLocalProvider(LocalActivity provides this) {
+          ZeScreen(vm)
         }
+      }
     }
+  }
+}
 
-    @Composable
-    private fun ZeScreen() {
-        ZeBadgeAppTheme(content = {
-            Scaffold(
-                topBar = {
-                    ZeTopBar(vm)
-                },
-                content = { paddingValues ->
-                    ZePages(this, paddingValues, vm)
-                }
-            )
-        })
-    }
+@Composable
+private fun ZeScreen(vm: BadgeViewModel) {
+  ZeBadgeAppTheme(content = {
+    Scaffold(
+      topBar = {
+        ZeTopBar(vm)
+      },
+      content = { paddingValues ->
+        ZePages(paddingValues, vm)
+      }
+    )
+  })
 }
 
 @Composable
@@ -134,12 +137,12 @@ private fun ZeTopBar(vm: BadgeViewModel) {
 
 
 @Composable
-private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeViewModel) {
+private fun ZePages(paddingValues: PaddingValues, vm: BadgeViewModel) {
     Surface(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(4.dp)
+          .fillMaxSize()
+          .padding(paddingValues)
+          .padding(4.dp)
     ) {
         val editor by remember { vm.currentSlotEditor }
         val templateChooser by remember { vm.currentTemplateChooser }
@@ -148,7 +151,7 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
         val slots by remember { vm.slots }
 
         if (editor != null) {
-            SelectedEditor(editor!!, activity, vm)
+            SelectedEditor(editor!!, vm)
         }
 
         if (templateChooser != null) {
@@ -203,8 +206,8 @@ private fun InfoBar(
 ) {
     Card(
         modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 8.dp)
-            .background(Color.Black, RoundedCornerShape(8.dp)),
+          .padding(horizontal = 8.dp, vertical = 8.dp)
+          .background(Color.Black, RoundedCornerShape(8.dp)),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -239,7 +242,6 @@ private fun InfoBar(
 @Composable
 private fun SelectedEditor(
     editor: Editor,
-    activity: Activity,
     vm: BadgeViewModel
 ) {
     if (editor.slot !in listOf(
@@ -253,7 +255,6 @@ private fun SelectedEditor(
     } else {
         when (val config = editor.config) {
             is Configuration.Name -> NameEditorDialog(
-                activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
             ) { newConfig ->
@@ -283,7 +284,7 @@ private fun SelectedEditor(
 
             is Configuration.Schedule -> {
                 Toast.makeText(
-                    activity,
+                    LocalActivity.current,
                     "Not added by you yet, please feel free to contribute this editor",
                     Toast.LENGTH_LONG
                 ).show()
@@ -293,7 +294,7 @@ private fun SelectedEditor(
 
             is Configuration.Weather -> {
                 Toast.makeText(
-                    activity,
+                  LocalActivity.current,
                     "Need the weather report? Think about editing the source code!",
                     Toast.LENGTH_LONG
                 ).show()
@@ -302,7 +303,6 @@ private fun SelectedEditor(
             }
 
             is Configuration.QRCode -> QRCodeEditorDialog(
-                activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
             ) { newConfig ->
@@ -357,14 +357,14 @@ private fun PagePreview(
 ) {
     Card(
         modifier = Modifier
-            .background(Color.Black, RoundedCornerShape(8.dp))
-            .padding(2.dp),
+          .background(Color.Black, RoundedCornerShape(8.dp))
+          .padding(2.dp),
     ) {
         Image(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(unbounded = true)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+              .fillMaxWidth()
+              .wrapContentHeight(unbounded = true)
+              .padding(horizontal = 8.dp, vertical = 4.dp),
             painter = BitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = FilterQuality.None,
