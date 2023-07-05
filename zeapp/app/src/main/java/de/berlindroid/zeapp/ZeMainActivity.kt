@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -38,7 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
@@ -104,7 +102,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun DrawUi() {
         val wsc = calculateWindowSizeClass(activity = this)
 
-        if(wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+        if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
             CompactUi()
         } else {
             LargeScreenUi()
@@ -128,7 +126,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun LargeScreenUi() {
         ZeRow {
             ZeScreen(modifier = Modifier.weight(.3f))
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(Dimen.Two))
             ZeSimulator(
                 page = vm.slotToBitmap(),
                 onButtonPressed = vm::simulatorButtonPressed,
@@ -191,7 +189,7 @@ private fun ZePages(
         modifier = ZeModifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(4.dp)
+            .padding(Dimen.Half)
     ) {
         val editor by remember { vm.currentSlotEditor }
         val templateChooser by remember { vm.currentTemplateChooser }
@@ -216,8 +214,8 @@ private fun ZePages(
             ZeLazyColumn(
                 state = lazyListState,
                 contentPadding = PaddingValues(
-                    horizontal = 8.dp,
-                    vertical = 4.dp
+                    horizontal = Dimen.One,
+                    vertical = Dimen.Half
                 )
             ) {
                 items(
@@ -238,7 +236,7 @@ private fun ZePages(
                         }
                     )
 
-                    ZeSpacer(modifier = ZeModifier.height(8.dp))
+                    ZeSpacer(modifier = ZeModifier.height(Dimen.One))
                 }
             }
         }
@@ -257,11 +255,11 @@ private fun InfoBar(
 ) {
     ZeCard(
         modifier = ZeModifier
-            .padding(horizontal = 8.dp, vertical = 8.dp)
-            .background(ZeColor.Black, ZeRoundedCornerShape(8.dp)),
+            .padding(horizontal = Dimen.One, vertical = Dimen.One)
+            .background(ZeColor.Black, ZeRoundedCornerShape(Dimen.One)),
     ) {
         ZeRow(
-            modifier = ZeModifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = ZeModifier.padding(horizontal = Dimen.Two, vertical = Dimen.One),
             verticalAlignment = ZeAlignment.CenterVertically
         ) {
             ZeText(
@@ -414,14 +412,14 @@ private fun PagePreview(
 ) {
     ZeCard(
         modifier = ZeModifier
-            .background(ZeColor.Black, ZeRoundedCornerShape(8.dp))
-            .padding(2.dp),
+            .background(ZeColor.Black, ZeRoundedCornerShape(Dimen.One))
+            .padding(Dimen.Quarter),
     ) {
         ZeImage(
             modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .padding(horizontal = Dimen.One, vertical = Dimen.Half),
             painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = ZeFilterQuality.None,
@@ -433,7 +431,7 @@ private fun PagePreview(
         if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
             ZeLazyRow(
                 modifier = ZeModifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 2.dp),
+                contentPadding = PaddingValues(horizontal = Dimen.Quarter),
                 horizontalArrangement = ZeArrangement.End
             ) {
                 if (sendToDevice != null) {
