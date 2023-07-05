@@ -10,47 +10,26 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement as ZeArrangement
-import androidx.compose.foundation.layout.Column as ZeColumn
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row as ZeRow
-import androidx.compose.foundation.layout.Spacer as ZeSpacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
-import androidx.compose.foundation.lazy.LazyRow as ZeLazyRow
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape as ZeRoundedCornerShape
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.AlertDialog as ZeAlertDialog
-import androidx.compose.material3.Button as ZeButton
-import androidx.compose.material3.Card as ZeCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
-import androidx.compose.material3.Icon as ZeIcon
-import androidx.compose.material3.Scaffold as ZeScaffold
-import androidx.compose.material3.Surface as ZeSurface
-import androidx.compose.material3.Text as ZeText
-import androidx.compose.material3.TopAppBar as ZeTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment as ZeAlignment
-import androidx.compose.ui.Modifier as ZeModifier
-import androidx.compose.ui.graphics.Color as ZeColor
-import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
-import androidx.compose.ui.layout.ContentScale as ZeContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -59,24 +38,48 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.berlindroid.zeapp.ui.BinaryBitmapPageProvider
-import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
-import de.berlindroid.zeapp.ui.NameEditorDialog
-import de.berlindroid.zeapp.ui.PictureEditorDialog
-import de.berlindroid.zeapp.ui.QRCodeEditorDialog
-import de.berlindroid.zeapp.ui.ToolButton as ZeToolButton
-import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel.*
+import de.berlindroid.zeapp.zeui.NavigationPad
+import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
+import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
+import de.berlindroid.zeapp.zeui.NameEditorDialog
+import de.berlindroid.zeapp.zeui.PictureEditorDialog
+import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
+import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
+import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.*
 import android.content.res.Configuration as AndroidConfig
+import androidx.compose.foundation.Image as ZeImage
+import androidx.compose.foundation.layout.Arrangement as ZeArrangement
+import androidx.compose.foundation.layout.Column as ZeColumn
+import androidx.compose.foundation.layout.Row as ZeRow
+import androidx.compose.foundation.layout.Spacer as ZeSpacer
+import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
+import androidx.compose.foundation.lazy.LazyRow as ZeLazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape as ZeRoundedCornerShape
+import androidx.compose.material3.AlertDialog as ZeAlertDialog
+import androidx.compose.material3.Button as ZeButton
+import androidx.compose.material3.Card as ZeCard
+import androidx.compose.material3.Icon as ZeIcon
 import androidx.compose.material3.IconButton as ZeIconButton
-import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
+import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
+import androidx.compose.material3.Scaffold as ZeScaffold
+import androidx.compose.material3.Surface as ZeSurface
+import androidx.compose.material3.Text as ZeText
+import androidx.compose.material3.TopAppBar as ZeTopAppBar
+import androidx.compose.ui.Alignment as ZeAlignment
+import androidx.compose.ui.Modifier as ZeModifier
+import androidx.compose.ui.graphics.Color as ZeColor
+import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
+import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
+import androidx.compose.ui.layout.ContentScale as ZeContentScale
+import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
 
 /**
  * Main View entrance for the app
  */
 @ExperimentalMaterial3Api
-class MainActivity : ComponentActivity() {
+class ZeMainActivity : ComponentActivity() {
     private val vm: ZeBadgeViewModel by viewModels()
 
   /**
@@ -101,17 +104,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun ZeScreen(vm: ZeBadgeViewModel) {
-  ZeBadgeAppTheme(content = {
+  val lazyListState = rememberLazyListState()ZeBadgeAppTheme(content = {
       ZeScaffold(
-          topBar = {
+          floatingActionButton = {
+                    NavigationPad(lazyListState)
+                },topBar = {
               ZeTopBar(vm)
           },
           content = { paddingValues ->
-              ZePages(paddingValues, vm)
+              ZePages(paddingValues, vm, lazyListState)
           }
       )
   })
 }
+
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -137,7 +143,10 @@ private fun ZeTopBar(vm: ZeBadgeViewModel) {
 
 
 @Composable
-private fun ZePages(paddingValues: PaddingValues, vm: ZeBadgeViewModel) {
+private fun ZePages(
+    paddingValues: PaddingValues, vm: ZeBadgeViewModel,
+    lazyListState: LazyListState
+) {
     ZeSurface(
         modifier = ZeModifier
             .fillMaxSize()
@@ -163,7 +172,9 @@ private fun ZePages(paddingValues: PaddingValues, vm: ZeBadgeViewModel) {
             if (message.isNotEmpty()) {
                 InfoBar(message, messageProgress, vm::copyInfoToClipboard)
             }
+
             ZeLazyColumn(
+                state = lazyListState,
                 contentPadding = PaddingValues(
                     horizontal = 8.dp,
                     vertical = 4.dp
