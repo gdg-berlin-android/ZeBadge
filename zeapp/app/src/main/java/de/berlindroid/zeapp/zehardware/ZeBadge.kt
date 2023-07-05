@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.hardware
+package de.berlindroid.zeapp.zehardware
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver

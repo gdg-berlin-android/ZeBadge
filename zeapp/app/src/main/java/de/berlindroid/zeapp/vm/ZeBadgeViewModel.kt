@@ -19,9 +19,9 @@ import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zebits.toBitmap
-import de.berlindroid.zeapp.hardware.Badge
-import de.berlindroid.zeapp.hardware.base64
-import de.berlindroid.zeapp.hardware.debase64
+import de.berlindroid.zeapp.zehardware.Badge
+import de.berlindroid.zeapp.zehardware.base64
+import de.berlindroid.zeapp.zehardware.debase64
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
