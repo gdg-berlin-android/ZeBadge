@@ -32,7 +32,7 @@ import de.berlindroid.zeapp.bits.copy
 import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.bits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.BadgeViewModel
+import de.berlindroid.zeapp.vm.ZeBadgeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,7 +59,7 @@ import retrofit2.http.POST
 fun ImageGenerationEditorDialog(
     initialPrompt: String = "Unicorn at an android conference in isometric view.",
     dismissed: () -> Unit = {},
-    accepted: (config: BadgeViewModel.Configuration.ImageGen) -> Unit = {},
+    accepted: (config: ZeBadgeViewModel.Configuration.ImageGen) -> Unit = {},
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -84,7 +84,7 @@ fun ImageGenerationEditorDialog(
                 enabled = progress == null,
                 onClick = {
                     if (bitmap.isBinary()) {
-                        accepted(BadgeViewModel.Configuration.ImageGen(prompt, bitmap))
+                        accepted(ZeBadgeViewModel.Configuration.ImageGen(prompt, bitmap))
                     } else {
                         Toast.makeText(context, "Not a binary image.", Toast.LENGTH_LONG).show()
                     }
