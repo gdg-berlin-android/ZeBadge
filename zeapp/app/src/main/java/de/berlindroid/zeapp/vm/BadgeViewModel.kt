@@ -89,7 +89,7 @@ class BadgeViewModel(
          * @param bitmap (overriden) final page
          */
         data class QRCode(
-            val title:String,
+            val title: String,
             val url: String,
             override val bitmap: Bitmap,
         ) : Configuration(TYPE, bitmap) {
@@ -390,7 +390,7 @@ class BadgeViewModel(
                     slot,
                     slots.value[Slot.Name]!!
                 )
-            }else if (slot is Slot.QRCode) {
+            } else if (slot is Slot.QRCode) {
                 currentSlotEditor.value = Editor(
                     slot,
                     slots.value[Slot.QRCode]!!

@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
@@ -27,12 +27,12 @@ import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.bits.copy
 import de.berlindroid.zeapp.bits.ditherFloydSteinberg
 import de.berlindroid.zeapp.bits.ditherPositional
 import de.berlindroid.zeapp.bits.ditherStaticPattern
 import de.berlindroid.zeapp.bits.invert
 import de.berlindroid.zeapp.bits.threshold
-import de.berlindroid.zeapp.bits.copy
 
 /**
  * Embeddable editor that let's the user turn a given bitmap into a binary image

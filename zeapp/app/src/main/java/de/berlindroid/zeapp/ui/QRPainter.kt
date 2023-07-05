@@ -17,8 +17,6 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
 fun rememberQrBitmapPainter(
@@ -39,41 +37,41 @@ fun rememberQrBitmapPainter(
     LaunchedEffect(bitmap) {
         if (bitmap != null) return@LaunchedEffect
 
-            val qrCodeWriter = QRCodeWriter()
+        val qrCodeWriter = QRCodeWriter()
 
-            val encodeHints = mutableMapOf<EncodeHintType, Any?>()
-                .apply {
-                    this[EncodeHintType.MARGIN] = paddingPx
-                }
-
-            val bitmapMatrix = try {
-                qrCodeWriter.encode(
-                    content, BarcodeFormat.QR_CODE,
-                    sizePx, sizePx, encodeHints
-                )
-            } catch (ex: WriterException) {
-                null
+        val encodeHints = mutableMapOf<EncodeHintType, Any?>()
+            .apply {
+                this[EncodeHintType.MARGIN] = paddingPx
             }
 
-            val matrixWidth = bitmapMatrix?.width ?: sizePx
-            val matrixHeight = bitmapMatrix?.height ?: sizePx
-
-            val newBitmap = Bitmap.createBitmap(
-                bitmapMatrix?.width ?: sizePx,
-                bitmapMatrix?.height ?: sizePx,
-                Bitmap.Config.ARGB_8888,
+        val bitmapMatrix = try {
+            qrCodeWriter.encode(
+                content, BarcodeFormat.QR_CODE,
+                sizePx, sizePx, encodeHints
             )
+        } catch (ex: WriterException) {
+            null
+        }
 
-            for (x in 0 until matrixWidth) {
-                for (y in 0 until matrixHeight) {
-                    val shouldColorPixel = bitmapMatrix?.get(x, y) ?: false
-                    val pixelColor = if (shouldColorPixel) Color.BLACK else Color.WHITE
+        val matrixWidth = bitmapMatrix?.width ?: sizePx
+        val matrixHeight = bitmapMatrix?.height ?: sizePx
 
-                    newBitmap.setPixel(x, y, pixelColor)
-                }
+        val newBitmap = Bitmap.createBitmap(
+            bitmapMatrix?.width ?: sizePx,
+            bitmapMatrix?.height ?: sizePx,
+            Bitmap.Config.ARGB_8888,
+        )
+
+        for (x in 0 until matrixWidth) {
+            for (y in 0 until matrixHeight) {
+                val shouldColorPixel = bitmapMatrix?.get(x, y) ?: false
+                val pixelColor = if (shouldColorPixel) Color.BLACK else Color.WHITE
+
+                newBitmap.setPixel(x, y, pixelColor)
             }
+        }
 
-            bitmap = newBitmap
+        bitmap = newBitmap
     }
 
     return remember(bitmap) {
