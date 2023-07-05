@@ -37,15 +37,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.berlindroid.zeapp.ui.BinaryBitmapPageProvider
-import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
-import de.berlindroid.zeapp.ui.NameEditorDialog
-import de.berlindroid.zeapp.ui.NavigationPad
-import de.berlindroid.zeapp.ui.PictureEditorDialog
-import de.berlindroid.zeapp.ui.QRCodeEditorDialog
-import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zeui.NavigationPad
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel.*
+import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
+import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
+import de.berlindroid.zeapp.zeui.NameEditorDialog
+import de.berlindroid.zeapp.zeui.PictureEditorDialog
+import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
+import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
+import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.*
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -71,14 +73,13 @@ import androidx.compose.ui.graphics.Color as ZeColor
 import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
 import androidx.compose.ui.layout.ContentScale as ZeContentScale
-import de.berlindroid.zeapp.ui.BadgeSimulator as ZeSimulator
-import de.berlindroid.zeapp.ui.ToolButton as ZeToolButton
+import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
 
 /**
  * Main View entrance for the app
  */
 @ExperimentalMaterial3Api
-class MainActivity : ComponentActivity() {
+class ZeMainActivity : ComponentActivity() {
     private val vm: ZeBadgeViewModel by viewModels()
 
     /**

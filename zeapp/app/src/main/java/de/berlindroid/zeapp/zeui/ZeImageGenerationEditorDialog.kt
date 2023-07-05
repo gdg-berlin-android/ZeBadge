@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui
+package de.berlindroid.zeapp.zeui
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -28,11 +28,11 @@ import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.copy
-import de.berlindroid.zeapp.bits.cropPageFromCenter
-import de.berlindroid.zeapp.bits.isBinary
-import de.berlindroid.zeapp.bits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zebits.copy
+import de.berlindroid.zeapp.zebits.cropPageFromCenter
+import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zebits.scaleIfNeeded
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -86,14 +86,14 @@ fun ImageGenerationEditorDialog(
                     if (bitmap.isBinary()) {
                         accepted(ZeBadgeViewModel.Configuration.ImageGen(prompt, bitmap))
                     } else {
-                        Toast.makeText(context, "Not a binary image.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG).show()
                     }
                 }) {
                 Text(stringResource(id = android.R.string.ok))
             }
         },
         title = {
-            Text("Generate Image Page")
+            Text(stringResource(id = R.string.generate_image_page))
         },
         text = {
             Column {
@@ -114,7 +114,7 @@ fun ImageGenerationEditorDialog(
                     value = prompt,
                     enabled = progress == null,
                     singleLine = true,
-                    label = { Text(text = "Enter your prompt here") },
+                    label = { Text(text = stringResource(id = R.string.enter_prompt)) },
                     onValueChange = { prompt = it }
                 )
 
@@ -135,7 +135,7 @@ fun ImageGenerationEditorDialog(
                                     withContext(Dispatchers.Main) {
                                         Toast.makeText(
                                             context,
-                                            "Could not generate an image",
+                                            R.string.could_not_generate_image,
                                             Toast.LENGTH_LONG
                                         ).show()
                                     }
@@ -150,7 +150,7 @@ fun ImageGenerationEditorDialog(
                         }
                     }
                 ) {
-                    Text(text = "Generate")
+                    Text(text = stringResource(id = R.string.generate))
                 }
             }
         }

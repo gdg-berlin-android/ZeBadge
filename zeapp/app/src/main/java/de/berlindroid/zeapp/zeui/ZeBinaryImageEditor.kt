@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui
+package de.berlindroid.zeapp.zeui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -27,12 +28,12 @@ import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.copy
-import de.berlindroid.zeapp.bits.ditherFloydSteinberg
-import de.berlindroid.zeapp.bits.ditherPositional
-import de.berlindroid.zeapp.bits.ditherStaticPattern
-import de.berlindroid.zeapp.bits.invert
-import de.berlindroid.zeapp.bits.threshold
+import de.berlindroid.zeapp.zebits.copy
+import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zebits.ditherPositional
+import de.berlindroid.zeapp.zebits.ditherStaticPattern
+import de.berlindroid.zeapp.zebits.invert
+import de.berlindroid.zeapp.zebits.threshold
 
 /**
  * Embeddable editor that let's the user turn a given bitmap into a binary image
@@ -72,7 +73,7 @@ fun BinaryImageEditor(
                 item {
                     ToolButton(
                         painter = painterResource(id = R.drawable.binary_bitmap_modificator_undo),
-                        text = "Reset",
+                        text = stringResource(id = R.string.reset),
                         onClick = {
                             bitmapUpdated(last!!)
                             last = null
@@ -83,7 +84,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_threshold),
-                    text = "B/W"
+                    text = stringResource(id = R.string.black_and_white)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -94,7 +95,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_floyd_steinberg),
-                    text = "FS"
+                    text = stringResource(id = R.string.floyd_steninberg_initials)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -118,7 +119,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_positional),
-                    text = "Positional"
+                    text = stringResource(id = R.string.positional)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -129,7 +130,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_invert),
-                    text = "Invert"
+                    text = stringResource(id = R.string.invert)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
