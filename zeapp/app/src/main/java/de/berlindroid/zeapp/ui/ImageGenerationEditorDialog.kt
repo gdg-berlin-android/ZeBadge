@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +37,7 @@ import de.berlindroid.zeapp.vm.BadgeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Response
@@ -62,6 +64,7 @@ fun ImageGenerationEditorDialog(
     accepted: (config: BadgeViewModel.Configuration.ImageGen) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     var progress by remember { mutableStateOf<Float?>(null) }
     var prompt by remember { mutableStateOf(initialPrompt) }
@@ -121,28 +124,31 @@ fun ImageGenerationEditorDialog(
                     enabled = progress == null,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            progress = 0.1f
-                            val generatedBitmap = requestImageGeneration(context, prompt)
-                            progress = 0.8f
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+                                progress = 0.1f
+                                val generatedBitmap = requestImageGeneration(context, prompt)
+                                progress = 0.8f
 
-                            if (generatedBitmap != null) {
-                                bitmap = generatedBitmap
-                                lastLoadedBitmap = bitmap.copy()
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Could not generate an image",
-                                    Toast.LENGTH_LONG
-                                ).show()
-
-                                bitmap = BitmapFactory.decodeResource(
-                                    context.resources,
-                                    R.drawable.error
-                                ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
-                                lastLoadedBitmap = null
+                                if (generatedBitmap != null) {
+                                    bitmap = generatedBitmap
+                                    lastLoadedBitmap = bitmap.copy()
+                                } else {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "Could not generate an image",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    bitmap = BitmapFactory.decodeResource(
+                                        context.resources,
+                                        R.drawable.error
+                                    ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+                                    lastLoadedBitmap = null
+                                }
+                                progress = null
                             }
-                            progress = null
                         }
                     }
                 ) {
