@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui.zetheme
+package de.berlindroid.zeapp.zeui.zetheme
 
 import android.app.Activity
 import android.os.Build

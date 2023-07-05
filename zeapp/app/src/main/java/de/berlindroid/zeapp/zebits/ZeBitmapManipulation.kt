@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.graphics.scale
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
-import de.berlindroid.zeapp.ui.zepages.QRCodePage
+import de.berlindroid.zeapp.zeui.zepages.QRCodePage
 import java.nio.IntBuffer
 import kotlin.experimental.and
 import kotlin.experimental.or

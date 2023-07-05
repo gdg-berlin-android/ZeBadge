@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
-package de.berlindroid.zeapp.ui
+package de.berlindroid.zeapp.zeui
 
 import android.R
 import android.app.Activity
@@ -10,8 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,9 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.zebits.qrComposableToBitmap
+import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Configuration
+
 
 /**
  * Editor dialog for changing the name of the participant badge.
@@ -32,22 +34,24 @@ import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Configuration
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
  */
+
+const val MaxCharacters: Int = 20
+
 @Composable
-fun QRCodeEditorDialog(
+fun NameEditorDialog(
     activity: Activity,
-    config: Configuration.QRCode,
+    config: Configuration.Name,
     dismissed: () -> Unit = {},
-    accepted: (config: Configuration.QRCode) -> Unit
+    accepted: (config: Configuration.Name) -> Unit
 ) {
-    var title by remember { mutableStateOf(config.title) }
-    var url by remember { mutableStateOf(config.url) }
+    var name by remember { mutableStateOf(config.name) }
+    var contact by remember { mutableStateOf(config.contact) }
     var image by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
-        qrComposableToBitmap(
+        composableToBitmap(
             activity = activity,
-            title = title,
-            url = url,
+            content = { NamePage(name, contact) },
         ) {
             image = it
         }
@@ -59,7 +63,7 @@ fun QRCodeEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(Configuration.QRCode(title, url, image))
+                        accepted(Configuration.Name(name, contact, image))
                     } else {
                         Toast.makeText(
                             activity,
@@ -71,7 +75,12 @@ fun QRCodeEditorDialog(
                 Text(text = stringResource(id = R.string.ok))
             }
         },
-        title = { Text(text = "Add your QR url") },
+        dismissButton = {
+            Button(onClick = dismissed) {
+                Text(text = "Cancel")
+            }
+        },
+        title = { Text(text = "Add your contact details") },
         properties = DialogProperties(),
         text = {
             LazyColumn {
@@ -83,27 +92,38 @@ fun QRCodeEditorDialog(
                 }
 
                 item {
-                    TextField(
+                    OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = title,
+                        value = name,
                         maxLines = 1,
-                        label = { Text(text = "QR Code title") },
+                        label = { Text(text = "Name") },
                         onValueChange = { newValue ->
-                            title = newValue
-                            redrawComposableImage()
+                            if (newValue.length <= MaxCharacters * 2) {
+                                name = newValue
+                                redrawComposableImage()
+                            }
+                        },
+                        supportingText = {
+                            Text(text = "${name.length}/${MaxCharacters * 2}")
                         }
                     )
                 }
 
                 item {
-                    TextField(
+                    OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = url,
+                        value = contact,
                         maxLines = 1,
-                        label = { Text(text = "URL") },
+                        label = { Text(text = "Contact") },
                         onValueChange = { newValue ->
-                            url = newValue
-                            redrawComposableImage()
+                            // Limit Characters so they're displayed correctly in the screen
+                            if (newValue.length <= MaxCharacters) {
+                                contact = newValue
+                                redrawComposableImage()
+                            }
+                        },
+                        supportingText = {
+                            Text(text = "${contact.length}/$MaxCharacters")
                         }
                     )
                 }

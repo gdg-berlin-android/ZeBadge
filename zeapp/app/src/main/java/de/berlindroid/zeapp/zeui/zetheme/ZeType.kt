@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui.zetheme
+package de.berlindroid.zeapp.zeui.zetheme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

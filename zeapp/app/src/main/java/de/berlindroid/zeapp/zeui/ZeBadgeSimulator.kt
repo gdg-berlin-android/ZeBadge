@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui
+package de.berlindroid.zeapp.zeui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
