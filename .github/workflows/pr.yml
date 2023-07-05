@@ -1,8 +1,7 @@
-name: Main
+name: PR
 
 on:
-  push:
-    branches: [ main ]
+  pull_request:
     paths-ignore:
       - "**/README.md"
       - "assets/**"
@@ -33,16 +32,6 @@ jobs:
         with:
           name: Debug APK
           path: zeapp/app/build/outputs/apk/debug/app-debug.apk
-      - name: "Upload binaries to a release"
-        uses: svenstaro/upload-release-action@v2
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          release_name: ${{ format('Release v{0}', github.run_number) }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: zeapp/app/build/outputs/apk/debug/app-debug.apk
-          asset_name: ze-badge.apk
-          tag: ${{ github.run_number }}
-          overwrite: true
 
   lint:
     runs-on: ubuntu-latest

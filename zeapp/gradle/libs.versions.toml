@@ -8,6 +8,9 @@ androidx-lifecycle = "2.6.1"
 androidx-activity = "1.7.1"
 retrofit = "2.9.0"
 mik3y-usb-serial = "3.5.1"
+ktlint-gradle = "11.5.0"
+detekt-gradle = "1.23.0"
+zxing = "3.5.0"
 
 [libraries]
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
@@ -23,8 +26,14 @@ androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
+zxing = { module = "com.google.zxing:core", version.ref = "zxing" }
+
+test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
+test-junit = "junit:junit:4.13.2"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin"  }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"  }
+ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
+detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -72,7 +73,7 @@ fun BinaryImageEditor(
                 item {
                     ToolButton(
                         painter = painterResource(id = R.drawable.binary_bitmap_modificator_undo),
-                        text = "Reset",
+                        text = stringResource(id = R.string.reset),
                         onClick = {
                             bitmapUpdated(last!!)
                             last = null
@@ -83,7 +84,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_threshold),
-                    text = "B/W"
+                    text = stringResource(id = R.string.black_and_white)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -94,7 +95,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_floyd_steinberg),
-                    text = "FS"
+                    text = stringResource(id = R.string.floyd_steninberg_initials)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -118,7 +119,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_positional),
-                    text = "Positional"
+                    text = stringResource(id = R.string.positional)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -129,7 +130,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_invert),
-                    text = "Invert"
+                    text = stringResource(id = R.string.invert)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
