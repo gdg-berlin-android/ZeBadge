@@ -505,6 +505,21 @@ class ZeBadgeViewModel(
         sendPageToDevice(slots.value.keys.random())
     }
 
+    /**
+     * Stores a bitmap on a button of the badge
+     */
+    fun storePageOnButton(slot: Slot, button: Badge.BadgeButton) {
+        slots.value[slot]?.bitmap?.let { bitmap ->
+            val context = getApplication<Application>().applicationContext
+            badge.storePageOnButton(context, bitmap, button) {
+                Toast.makeText(
+                    context, "Slot successfully saved on button ${button.name}!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
     private fun initialNameBitmap(): Bitmap =
         BitmapFactory.decodeResource(
             getApplication<Application>().resources,

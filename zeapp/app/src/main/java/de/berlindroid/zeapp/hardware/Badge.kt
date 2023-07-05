@@ -67,7 +67,34 @@ class Badge(
         sendToUsb(context, payload)
     }
 
-    private fun sendToUsb(context: Context, payload: Payload) {
+    /**
+     * Stores a bitmap on a button of the badge
+     *
+     * @param context Android context to communicate with the usb interface
+     * @param page the bitmap in black / white to be send to the badge
+     * @param button the button selected to store the bitmap on
+     * @param onSuccess the action to run after the page is successfully stored on a button
+     */
+    fun storePageOnButton(
+        context: Context,
+        page: Bitmap,
+        button: BadgeButton,
+        onSuccess: (() -> Unit)
+    ) {
+        val payload = Payload(
+            type = "store-${button.name.lowercase()}",
+            meta = "",
+            payload = page.toBinary().zipit().base64()
+        )
+
+        sendToUsb(context, payload, onSuccess)
+    }
+
+    enum class BadgeButton {
+        A, B, C, UP, DOWN
+    }
+
+    private fun sendToUsb(context: Context, payload: Payload, onSuccess: (() -> Unit)? = null) {
         val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
         val device = manager.findConnectedBadge()
 
@@ -80,7 +107,8 @@ class Badge(
                 val actualCommand = payload.toBadgeCommand()
                 sendCommandToBadge(
                     manager,
-                    actualCommand
+                    actualCommand,
+                    onSuccess
                 )
             }
         }
@@ -89,6 +117,7 @@ class Badge(
     private fun sendCommandToBadge(
         manager: UsbManager,
         command: String,
+        onSuccess: (() -> Unit)? = null
     ) {
         val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
 
@@ -108,6 +137,9 @@ class Badge(
             Log.i("badge", "Wrote '$command' to port ${port.portNumber}.")
 
             success(command.length)
+            onSuccess?.let {
+                it()
+            }
         } catch (e: Exception) {
             Log.e("badge", "Couldn't write to port ${port.portNumber}.", e)
             failure("Couldn't write")

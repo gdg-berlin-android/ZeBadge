@@ -12,6 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
 import androidx.compose.foundation.layout.Column as ZeColumn
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,10 +31,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.AlertDialog as ZeAlertDialog
 import androidx.compose.material3.Button as ZeButton
 import androidx.compose.material3.Card as ZeCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
 import androidx.compose.material3.Icon as ZeIcon
 import androidx.compose.material3.Scaffold as ZeScaffold
@@ -42,7 +47,9 @@ import androidx.compose.material3.Text as ZeText
 import androidx.compose.material3.TopAppBar as ZeTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment as ZeAlignment
 import androidx.compose.ui.Modifier as ZeModifier
 import androidx.compose.ui.graphics.Color as ZeColor
@@ -58,6 +65,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.berlindroid.zeapp.hardware.Badge
 import de.berlindroid.zeapp.ui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.ui.NameEditorDialog
@@ -181,6 +189,9 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: ZeBadg
                         },
                         sendToDevice = {
                             vm.sendPageToDevice(slot)
+                        },
+                        storePageAtButton = { button ->
+                            vm.storePageOnButton(slot, button)
                         }
                     )
 
@@ -354,6 +365,7 @@ private fun PagePreview(
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,
     sendToDevice: (() -> Unit)? = null,
+    storePageAtButton: ((Badge.BadgeButton) -> Unit)? = null
 ) {
     ZeCard(
         modifier = ZeModifier
@@ -373,38 +385,63 @@ private fun PagePreview(
             contentDescription = null,
         )
 
-        if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
-            ZeLazyRow(
-                modifier = ZeModifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 2.dp),
-                horizontalArrangement = ZeArrangement.End
-            ) {
-                if (sendToDevice != null) {
-                    item {
+        ZeLazyRow(
+            modifier = ZeModifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 2.dp),
+            horizontalArrangement = ZeArrangement.End
+        ) {
+            if (storePageAtButton != null) {
+                item {
+                    var dropdownExpanded by remember { mutableStateOf(false) }
+
+                    Column {
                         ZeToolButton(
-                            imageVector = Icons.Filled.Send,
-                            text = "Send",
-                            onClick = sendToDevice,
+                            imageVector = Icons.Filled.Star,
+                            text = "Store",
+                            onClick = { dropdownExpanded = true }
                         )
+
+                        DropdownMenu(
+                            expanded = dropdownExpanded,
+                            onDismissRequest = { dropdownExpanded = false }) {
+                            Badge.BadgeButton.values().forEach { button ->
+                                DropdownMenuItem(
+                                    text = { Text(button.name) },
+                                    onClick = {
+                                        storePageAtButton(button)
+                                        dropdownExpanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
-                if (resetThisPage != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Refresh,
-                            text = "Reset",
-                            onClick = resetThisPage,
-                        )
-                    }
+            }
+            if (sendToDevice != null) {
+                item {
+                    ZeToolButton(
+                        imageVector = Icons.Filled.Send,
+                        text = "Send",
+                        onClick = sendToDevice,
+                    )
                 }
-                if (customizeThisPage != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Edit,
-                            text = "Edit",
-                            onClick = customizeThisPage,
-                        )
-                    }
+            }
+            if (resetThisPage != null) {
+                item {
+                    ZeToolButton(
+                        imageVector = Icons.Filled.Refresh,
+                        text = "Reset",
+                        onClick = resetThisPage,
+                    )
+                }
+            }
+            if (customizeThisPage != null) {
+                item {
+                    ZeToolButton(
+                        imageVector = Icons.Filled.Edit,
+                        text = "Edit",
+                        onClick = customizeThisPage,
+                    )
                 }
             }
         }
