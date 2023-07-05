@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
+    implementation(libs.material3.wsc)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

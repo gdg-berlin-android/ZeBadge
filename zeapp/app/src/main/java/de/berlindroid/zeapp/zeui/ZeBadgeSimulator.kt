@@ -37,9 +37,10 @@ import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Slot
 fun BadgeSimulator(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1) page: Bitmap,
     onButtonPressed: (buttonForSlot: Slot) -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .paint(
                 painterResource(id = R.drawable.badgerrpi2040),
