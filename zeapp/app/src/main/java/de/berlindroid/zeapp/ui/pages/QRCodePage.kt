@@ -29,7 +29,7 @@ import de.berlindroid.zeapp.ui.rememberQrBitmapPainter
 @Composable
 @Preview
 fun QRCodePage(
-    title:String = "Hello, my github profile is",
+    title: String = "Hello, my github profile is",
     url: String = "https://github.com/gdg-berlin-android",
 ) {
     Column(

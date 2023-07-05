@@ -31,7 +31,7 @@ fun Bitmap.ditherPositional(): Bitmap {
             // select weight according to the index of the pixel
             val weights = if ((x + y) % 2 == 0) EVEN_NEIGHBOR_WEIGHTS else ODD_NEIGHBOR_WEIGHTS
             weights.forEachIndexed { index, weight ->
-                val i = index % 2 -1
+                val i = index % 2 - 1
                 val j = index / 2
 
                 if (weight > 0.0f) {

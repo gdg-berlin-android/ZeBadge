@@ -5,7 +5,6 @@ package de.berlindroid.zeapp.ui
 import android.R
 import android.app.Activity
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog

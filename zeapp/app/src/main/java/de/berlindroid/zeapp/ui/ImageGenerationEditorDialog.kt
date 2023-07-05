@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.graphics.scale
 import com.google.gson.annotations.SerializedName
 import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.PAGE_HEIGHT
@@ -34,7 +33,6 @@ import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.bits.scaleIfNeeded
 import de.berlindroid.zeapp.vm.BadgeViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
