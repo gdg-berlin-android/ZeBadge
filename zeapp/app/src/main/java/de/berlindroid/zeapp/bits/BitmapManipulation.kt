@@ -387,13 +387,16 @@ fun IntBuffer.forEachIndexed(
  *
  * The width will be scaled to PAGE_WIDTH, but the height will be cropped.
  */
-fun Bitmap.cropPageFromCenter() = scale(PAGE_WIDTH, PAGE_WIDTH)
-    .crop(
-        fromX = 0,
-        fromY = (PAGE_WIDTH - PAGE_HEIGHT) / -2,
-        targetWidth = PAGE_WIDTH,
-        targetHeight = PAGE_HEIGHT,
-    )
+fun Bitmap.cropPageFromCenter() : Bitmap {
+    val aspectRation = this.width.toFloat().div(this.height.toFloat())
+    return scale(PAGE_WIDTH, PAGE_WIDTH.div(aspectRation).toInt())
+        .crop(
+            fromX = 0,
+            fromY = 0,
+            targetWidth = PAGE_WIDTH,
+            targetHeight = PAGE_HEIGHT,
+        )
+}
 
 /**
  * Copy the bitmap, keeping its config and make it modifiable
