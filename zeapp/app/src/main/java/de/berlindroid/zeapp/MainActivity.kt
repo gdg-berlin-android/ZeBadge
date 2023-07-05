@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -158,7 +160,12 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
                 InfoBar(message, messageProgress, vm::copyInfoToClipboard)
             }
 
-            LazyColumn {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    horizontal = 8.dp,
+                    vertical = 4.dp
+                )
+            ) {
                 items(
                     slots.keys.toList()
                 ) { slot ->
@@ -176,6 +183,8 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
                             vm.sendPageToDevice(slot)
                         }
                     )
+
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
