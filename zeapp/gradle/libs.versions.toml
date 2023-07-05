@@ -1,0 +1,30 @@
+[versions]
+kotlin = "1.8.22"
+android-gradle-plugin = "8.0.2"
+androidx-compose-compiler = "1.4.8"
+androidx-compose-bom = "2022.10.00"
+androidx-core = "1.10.1"
+androidx-lifecycle = "2.6.1"
+androidx-activity = "1.7.1"
+retrofit = "2.9.0"
+mik3y-usb-serial = "3.5.1"
+
+[libraries]
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-compose-ui-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui-toolingpreview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-plugin"  }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"  }

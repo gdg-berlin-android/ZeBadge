@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -63,7 +64,9 @@ import de.berlindroid.zeapp.ui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.ui.NameEditorDialog
 import de.berlindroid.zeapp.ui.PictureEditorDialog
+import de.berlindroid.zeapp.ui.QRCodeEditorDialog
 import de.berlindroid.zeapp.ui.ToolButton
+import de.berlindroid.zeapp.ui.rememberQrBitmapPainter
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.vm.BadgeViewModel
 import de.berlindroid.zeapp.vm.BadgeViewModel.*
@@ -159,7 +162,6 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: BadgeV
             if (message.isNotEmpty()) {
                 InfoBar(message, messageProgress, vm::copyInfoToClipboard)
             }
-
             LazyColumn(
                 contentPadding = PaddingValues(
                     horizontal = 8.dp,
@@ -245,7 +247,8 @@ private fun SelectedEditor(
     if (editor.slot !in listOf(
             Slot.Name,
             Slot.FirstCustom,
-            Slot.SecondCustom
+            Slot.SecondCustom,
+            Slot.QRCode
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
@@ -298,6 +301,14 @@ private fun SelectedEditor(
                 ).show()
 
                 vm.slotConfigured(null, null)
+            }
+
+            is Configuration.QRCode -> QRCodeEditorDialog(
+                activity,
+                config,
+                dismissed = { vm.slotConfigured(editor.slot, null) }
+            ) { newConfig ->
+                vm.slotConfigured(editor.slot, newConfig)
             }
         }
     }
