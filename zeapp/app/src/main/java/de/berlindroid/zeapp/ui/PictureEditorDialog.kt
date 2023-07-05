@@ -25,7 +25,7 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.bits.cropPageFromCenter
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.bits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.BadgeViewModel
+import de.berlindroid.zeapp.vm.ZeBadgeViewModel
 
 /**
  * Editor Dialog for adding an image as a badge page.
@@ -36,7 +36,7 @@ import de.berlindroid.zeapp.vm.BadgeViewModel
 @Composable
 fun PictureEditorDialog(
     dismissed: () -> Unit = {},
-    accepted: (config: BadgeViewModel.Configuration.Picture) -> Unit
+    accepted: (config: ZeBadgeViewModel.Configuration.Picture) -> Unit
 ) {
     var context = LocalContext.current
 
@@ -73,7 +73,7 @@ fun PictureEditorDialog(
         confirmButton = {
             Button(onClick = {
                 if (bitmap.isBinary()) {
-                    accepted(BadgeViewModel.Configuration.Picture(bitmap))
+                    accepted(ZeBadgeViewModel.Configuration.Picture(bitmap))
                 } else {
                     Toast.makeText(context, "Not a binary image.", Toast.LENGTH_LONG).show()
                 }

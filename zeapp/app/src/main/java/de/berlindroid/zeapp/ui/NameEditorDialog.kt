@@ -5,11 +5,15 @@ package de.berlindroid.zeapp.ui
 import android.R
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +27,7 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.bits.composableToBitmap
 import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.ui.pages.NamePage
-import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
+import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Configuration
 
 
 /**
@@ -36,6 +40,7 @@ import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
  */
 
 const val MaxCharacters: Int = 20
+private const val Empty = ""
 
 @Composable
 fun NameEditorDialog(
@@ -105,6 +110,11 @@ fun NameEditorDialog(
                         },
                         supportingText = {
                             Text(text = "${name.length}/${MaxCharacters * 2}")
+                        },
+                        trailingIcon = {
+                            ClearIcon(isEmpty = name.isEmpty()) {
+                                name = Empty
+                            }
                         }
                     )
                 }
@@ -124,10 +134,28 @@ fun NameEditorDialog(
                         },
                         supportingText = {
                             Text(text = "${contact.length}/$MaxCharacters")
+                        },
+                        trailingIcon = {
+                            ClearIcon(isEmpty = contact.isEmpty()) {
+                                contact = Empty
+                            }
                         }
                     )
                 }
             }
         }
     )
+}
+
+@Composable
+fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    if (!isEmpty) {
+        Icon(
+            Icons.Rounded.Clear,
+            contentDescription = "Clear",
+            modifier = modifier.clickable {
+                onClick()
+            }
+        )
+    }
 }
