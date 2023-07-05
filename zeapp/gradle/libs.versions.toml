@@ -25,6 +25,9 @@ retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref =
 retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
 
+test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
+test-junit = "junit:junit:4.13.2"
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin"  }
