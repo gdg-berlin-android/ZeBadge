@@ -2,9 +2,7 @@
 
 package de.berlindroid.zeapp.zeui
 
-import android.R
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.zebits.composableToBitmap
@@ -29,26 +28,27 @@ import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
 
+const val MaxCharacters: Int = 20
+private const val Empty = ""
 
 /**
  * Editor dialog for changing the name of the participant badge.
  *
- * @param activity Android activity to be used for rendering the composable.
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
+ * @param snackbarMessage callback to show a snackbar message
  */
-
-const val MaxCharacters: Int = 20
-private const val Empty = ""
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NameEditorDialog(
-    activity: Activity,
     config: Configuration.Name,
     dismissed: () -> Unit = {},
-    accepted: (config: Configuration.Name) -> Unit
+    accepted: (config: Configuration.Name) -> Unit,
+    snackbarMessage: (String) -> Unit,
 ) {
+    val activity = LocalContext.current as Activity
+
     var name by remember { mutableStateOf(config.name) }
     var contact by remember { mutableStateOf(config.contact) }
     var image by remember { mutableStateOf(config.bitmap) }
@@ -70,14 +70,11 @@ fun NameEditorDialog(
                     if (image.isBinary()) {
                         accepted(Configuration.Name(name, contact, image))
                     } else {
-                        Toast.makeText(
-                            activity,
-                            "Binary image needed. Press one of the buttons below the image.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        snackbarMessage("Binary image needed. Press one of the buttons below the image.")
                     }
-                }) {
-                Text(text = stringResource(id = R.string.ok))
+                },
+            ) {
+                Text(text = stringResource(id = android.R.string.ok))
             }
         },
         dismissButton = {
@@ -92,7 +89,7 @@ fun NameEditorDialog(
                 item {
                     BinaryImageEditor(
                         bitmap = image,
-                        bitmapUpdated = { image = it }
+                        bitmapUpdated = { image = it },
                     )
                 }
 
@@ -115,7 +112,7 @@ fun NameEditorDialog(
                             ClearIcon(isEmpty = name.isEmpty()) {
                                 name = Empty
                             }
-                        }
+                        },
                     )
                 }
 
@@ -139,11 +136,11 @@ fun NameEditorDialog(
                             ClearIcon(isEmpty = contact.isEmpty()) {
                                 contact = Empty
                             }
-                        }
+                        },
                     )
                 }
             }
-        }
+        },
     )
 }
 
@@ -155,7 +152,7 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
             contentDescription = "Clear",
             modifier = modifier.clickable {
                 onClick()
-            }
+            },
         )
     }
 }

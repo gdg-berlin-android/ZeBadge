@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,6 +39,18 @@ private const val MESSAGE_DISPLAY_UPDATES = 5
 class ZeBadgeViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
+
+    val snackbarHostState = SnackbarHostState()
+
+    fun showSnackBar(
+        message: String,
+        duration: SnackbarDuration = SnackbarDuration.Long,
+    ) {
+        viewModelScope.launch {
+            snackbarHostState.showSnackbar(message = message, duration = duration)
+        }
+    }
+
     /**
      * Slot a page can reside in.
      *
@@ -177,7 +191,7 @@ class ZeBadgeViewModel(
      */
     data class Editor(
         val slot: Slot,
-        val config: Configuration
+        val config: Configuration,
     )
 
     /**
@@ -198,7 +212,7 @@ class ZeBadgeViewModel(
         getApplication<Application>()
             .getSharedPreferences(
                 "defaults",
-                Application.MODE_PRIVATE
+                Application.MODE_PRIVATE,
             )
 
     // Hardware communication interface
@@ -237,7 +251,6 @@ class ZeBadgeViewModel(
                 delay(MESSAGE_DISPLAY_DURATION / MESSAGE_DISPLAY_UPDATES)
             }
         }
-
     }
 
     // message to be displayed to the user
@@ -255,7 +268,7 @@ class ZeBadgeViewModel(
     val openApiKey = mutableStateOf(
         OPENAI_API_KEY.ifBlank {
             sharedPreferences.getString(OPEN_API_PREFERENCES_KEY, "")
-        }
+        },
     )
 
     val slots = mutableStateOf(
@@ -267,7 +280,7 @@ class ZeBadgeViewModel(
             Slot.FirstCustom to initialConfiguration(Slot.FirstCustom),
             Slot.SecondCustom to initialConfiguration(Slot.SecondCustom),
             Slot.QRCode to initialConfiguration(Slot.QRCode),
-        )
+        ),
     )
 
     /**
@@ -288,13 +301,13 @@ class ZeBadgeViewModel(
             badge.sendPage(
                 getApplication<Application>().applicationContext,
                 slot.name,
-                bitmap
+                bitmap,
             )
         } else {
             Toast.makeText(
                 getApplication(),
                 "Please give binary image for page '${slot.name}'.",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_LONG,
             ).show()
         }
     }
@@ -316,8 +329,8 @@ class ZeBadgeViewModel(
                         )
                             .random()
                             .toBitmap()
-                            .ditherFloydSteinberg()
-                    )
+                            .ditherFloydSteinberg(),
+                    ),
                 )
             }
 
@@ -331,8 +344,8 @@ class ZeBadgeViewModel(
                         )
                             .random()
                             .toBitmap()
-                            .ditherFloydSteinberg()
-                    )
+                            .ditherFloydSteinberg(),
+                    ),
                 )
             }
 
@@ -357,17 +370,17 @@ class ZeBadgeViewModel(
                     Configuration.Name(
                         "Your Name",
                         "Your Contact",
-                        initialNameBitmap()
+                        initialNameBitmap(),
                     ), // TODO: Fetch from shared
 
                     Configuration.Picture(R.drawable.soon.toBitmap()),
 
                     Configuration.Schedule(
-                        R.drawable.soon.toBitmap()
+                        R.drawable.soon.toBitmap(),
                     ), // TODO: Fetch Schedule here.
 
                     Configuration.Weather(
-                        R.drawable.soon.toBitmap()
+                        R.drawable.soon.toBitmap(),
                     ), // TODO: Fetch weather here
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
@@ -377,23 +390,23 @@ class ZeBadgeViewModel(
                             Configuration
                                 .ImageGen(
                                     prompt = "An Android developer at a conference in Berlin.",
-                                    bitmap = R.drawable.soon.toBitmap()
-                                )
+                                    bitmap = R.drawable.soon.toBitmap(),
+                                ),
                         )
                     }
-                }
+                },
             )
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
             if (slot is Slot.Name) {
                 currentSlotEditor.value = Editor(
                     slot,
-                    slots.value[Slot.Name]!!
+                    slots.value[Slot.Name]!!,
                 )
             } else if (slot is Slot.QRCode) {
                 currentSlotEditor.value = Editor(
                     slot,
-                    slots.value[Slot.QRCode]!!
+                    slots.value[Slot.QRCode]!!,
                 )
             } else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
@@ -474,7 +487,7 @@ class ZeBadgeViewModel(
             is Slot.Name -> Configuration.Name(
                 "Your Name",
                 "Your Contact",
-                initialNameBitmap()
+                initialNameBitmap(),
             )
 
             is Slot.FirstSponsor -> Configuration.Picture(R.drawable.page_google.toBitmap())
@@ -484,7 +497,7 @@ class ZeBadgeViewModel(
             Slot.QRCode -> Configuration.QRCode(
                 "Your title",
                 "",
-                R.drawable.soon.toBitmap()
+                R.drawable.soon.toBitmap(),
             )
         }
     }
@@ -515,7 +528,7 @@ class ZeBadgeViewModel(
         BitmapFactory.decodeResource(
             getApplication<Application>().resources,
             this,
-            BitmapFactory.Options().apply { inScaled = false }
+            BitmapFactory.Options().apply { inScaled = false },
         ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
 
     private fun Slot.save() {
@@ -528,7 +541,7 @@ class ZeBadgeViewModel(
 
     private fun SharedPreferences.Editor.putConfig(
         slot: Slot,
-        config: Configuration
+        config: Configuration,
     ): SharedPreferences.Editor {
         putString(slot.preferencesTypeKey(), config.humanTitle)
         putString(slot.preferencesBitmapKey(), config.bitmap.toBinary().base64())
@@ -584,7 +597,7 @@ class ZeBadgeViewModel(
 
             Configuration.ImageGen.TYPE -> Configuration.ImageGen(
                 prompt = preferencesValue("prompt"),
-                bitmap = bitmap
+                bitmap = bitmap,
             )
 
             Configuration.Schedule.TYPE -> Configuration.Schedule(bitmap)
@@ -594,13 +607,13 @@ class ZeBadgeViewModel(
             Configuration.QRCode.TYPE -> Configuration.QRCode(
                 title = preferencesValue("qr_title"),
                 url = preferencesValue("url"),
-                bitmap = bitmap
+                bitmap = bitmap,
             )
 
             else -> {
                 Log.e(
                     "Slot from Prefs",
-                    "Cannot find $type slot in preferences."
+                    "Cannot find $type slot in preferences.",
                 )
                 null
             }
