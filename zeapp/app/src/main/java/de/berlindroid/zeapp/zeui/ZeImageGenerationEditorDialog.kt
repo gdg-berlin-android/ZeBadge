@@ -179,7 +179,7 @@ private suspend fun requestImageGeneration(
 
                 val response = ok.newCall(request).execute()
                 if (response.isSuccessful) {
-                    val bytes = response.body()?.bytes() ?: byteArrayOf()
+                    val bytes = response.body?.bytes() ?: byteArrayOf()
                     BitmapFactory.decodeByteArray(
                         bytes,
                         0,
