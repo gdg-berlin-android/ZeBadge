@@ -4,7 +4,7 @@
 
 It's a simple circuitboard hardware badge with an integrated E-Ink display. See the root [README](../README.md) for more info.
 
-Looking for commands? Jump to [the Commands List](#the-command-list) directly.
+⚠️  Looking for commands? Jump to [the Commands List](#the-command-list) directly.
 
 ## How do I set up the badge?
 

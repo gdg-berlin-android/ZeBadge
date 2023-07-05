@@ -116,6 +116,12 @@ private fun ZeTopBar(vm: BadgeViewModel) {
     TopAppBar(
         title = { Text(stringResource(id = R.string.app_name)) },
         actions = {
+            IconButton(onClick = { vm.sendRandomPageToDevice() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_random),
+                    contentDescription = "Send random page to badge"
+                )
+            }
             IconButton(onClick = { vm.saveAll() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.save_all),
@@ -388,7 +394,7 @@ private fun PagePreview(
                     item {
                         ToolButton(
                             imageVector = Icons.Filled.Edit,
-                            text = "Change",
+                            text = "Edit",
                             onClick = customizeThisPage,
                         )
                     }
