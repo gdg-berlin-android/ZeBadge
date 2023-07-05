@@ -32,6 +32,8 @@ material3-wsc = { module = "androidx.compose.material3:material3-window-size-cla
 
 test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
 test-junit = "junit:junit:4.13.2"
+test-compose-junit = "androidx.compose.ui:ui-test-junit4:1.4.3"
+test-compose-manifest = "androidx.compose.ui:ui-test-manifest:1.4.3"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }

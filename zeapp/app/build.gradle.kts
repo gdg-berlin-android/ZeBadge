@@ -21,6 +21,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -99,6 +101,9 @@ dependencies {
 
 	testImplementation(libs.test.assertk)
 	testImplementation(libs.test.junit)
+
+    androidTestImplementation(libs.test.compose.junit)
+    debugImplementation(libs.test.compose.manifest)
 }
 
 // Ktlint
