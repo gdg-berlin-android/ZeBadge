@@ -388,8 +388,8 @@ fun IntBuffer.forEachIndexed(
  * The width will be scaled to PAGE_WIDTH, but the height will be cropped.
  */
 fun Bitmap.cropPageFromCenter() : Bitmap {
-    val aspectRation = this.width.toFloat().div(this.height.toFloat())
-    return scale(PAGE_WIDTH, PAGE_WIDTH.div(aspectRation).toInt())
+    val aspectRatio = this.width.toFloat().div(this.height.toFloat())
+    return scale(PAGE_WIDTH, PAGE_WIDTH.div(aspectRatio).toInt())
         .crop(
             fromX = 0,
             fromY = 0,
