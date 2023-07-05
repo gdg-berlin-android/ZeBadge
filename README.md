@@ -12,7 +12,7 @@ Together they make magic happen. 🪄🦄
 
 # Droidcon contribution guide: 
 1. Fork the repo & make write your code
-2. Use "droidcon/${name}" format for the branch name so we can find you
+2. Use "droidcon/${name}" format for the branch name so we can find it.
 3. When done, open a PR and come to the booth to get you badge.
 
 # Getting Started
