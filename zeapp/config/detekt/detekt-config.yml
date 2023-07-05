@@ -5,13 +5,67 @@ style:
   ReturnCount:
     max: 5
 
+  UnusedParameter:
+    active: false
+
+  ForbiddenComment:
+    active: false
+
+  MagicNumber:
+    active: false
+
+  WildcardImport:
+    active: false
+    excludeImports: [ ]
+
+  NewLineAtEndOfFile:
+    active: false
+
 complexity:
   LongParameterList:
     constructorThreshold: 15
 
+
   TooManyFunctions:
-    thresholdInFiles: 16
-    ignorePrivate: true
+    active: false
+
+  CyclomaticComplexMethod:
+    active: false
+
+  NestedBlockDepth:
+    active: false
 
   ComplexCondition:
     threshold: 10
+
+  LongMethod:
+    threshold: 100
+
+naming:
+  FunctionNaming:
+    active: false
+
+  TopLevelPropertyNaming:
+    active: false
+
+
+exceptions:
+  active: true
+  ExceptionRaisedInUnexpectedLocation:
+    active: false
+    methodNames: 'toString,hashCode,equals,finalize'
+  InstanceOfCheckForException:
+    active: false
+  NotImplementedDeclaration:
+    active: false
+  PrintStackTrace:
+    active: false
+  TooGenericExceptionCaught:
+    active: false
+  SwallowedException:
+    active: false
+
+performance:
+  active: false
+  ForEachOnRange:
+    active: false
