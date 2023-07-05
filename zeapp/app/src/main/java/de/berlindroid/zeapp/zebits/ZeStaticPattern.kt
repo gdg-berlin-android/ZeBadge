@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.bits
+package de.berlindroid.zeapp.zebits
 
 import android.graphics.Bitmap
 import android.graphics.Color
