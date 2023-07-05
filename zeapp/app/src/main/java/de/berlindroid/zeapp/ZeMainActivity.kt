@@ -368,6 +368,10 @@ private fun SelectedEditor(
             ) { newConfig ->
                 vm.slotConfigured(editor.slot, newConfig)
             }
+
+            is Configuration.Kodee -> {
+                vm.slotConfigured(editor.slot, config)
+            }
         }
     }
 }
