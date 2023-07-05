@@ -44,6 +44,7 @@ import de.berlindroid.zeapp.zebits.threshold
 @Composable
 @Preview
 fun BinaryImageEditor(
+    modifier: Modifier = Modifier,
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
     bitmapUpdated: (Bitmap) -> Unit = {}
@@ -52,7 +53,7 @@ fun BinaryImageEditor(
 
     Column {
         Image(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
                 .padding(horizontal = 8.dp, vertical = 4.dp),
@@ -142,7 +143,7 @@ fun BinaryImageEditor(
     }
 }
 
-class BinaryBitmapPageProvider : PreviewParameterProvider<Bitmap> {
+private class BinaryBitmapPageProvider : PreviewParameterProvider<Bitmap> {
     override val values: Sequence<Bitmap>
         get() {
             return sequenceOf(

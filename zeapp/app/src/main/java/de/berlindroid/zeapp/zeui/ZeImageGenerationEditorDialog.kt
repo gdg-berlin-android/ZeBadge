@@ -57,6 +57,7 @@ import retrofit2.http.POST
 @Preview
 @Composable
 fun ImageGenerationEditorDialog(
+    modifier: Modifier = Modifier,
     initialPrompt: String = "Unicorn at an android conference in isometric view.",
     dismissed: () -> Unit = {},
     accepted: (config: ZeBadgeViewModel.Configuration.ImageGen) -> Unit = {},
@@ -78,6 +79,7 @@ fun ImageGenerationEditorDialog(
     var lastLoadedBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     AlertDialog(
+        modifier = modifier,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(

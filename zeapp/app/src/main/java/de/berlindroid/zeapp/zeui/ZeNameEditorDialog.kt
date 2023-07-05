@@ -46,6 +46,7 @@ private const val Empty = ""
 fun NameEditorDialog(
     activity: Activity,
     config: Configuration.Name,
+modifier: Modifier = Modifier,
     dismissed: () -> Unit = {},
     accepted: (config: Configuration.Name) -> Unit
 ) {
@@ -56,7 +57,7 @@ fun NameEditorDialog(
     fun redrawComposableImage() {
         composableToBitmap(
             activity = activity,
-            content = { NamePage(name, contact) },
+            content = { NamePage(name =name, contact = contact) },
         ) {
             image = it
         }
@@ -64,6 +65,7 @@ fun NameEditorDialog(
 
     AlertDialog(
         onDismissRequest = dismissed,
+        modifier=modifier,
         confirmButton = {
             Button(
                 onClick = {

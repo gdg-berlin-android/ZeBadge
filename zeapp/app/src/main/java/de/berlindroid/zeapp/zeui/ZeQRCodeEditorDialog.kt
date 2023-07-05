@@ -36,8 +36,9 @@ import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
 fun QRCodeEditorDialog(
     activity: Activity,
     config: Configuration.QRCode,
+    accepted: (config: Configuration.QRCode) -> Unit,
+    modifier: Modifier = Modifier,
     dismissed: () -> Unit = {},
-    accepted: (config: Configuration.QRCode) -> Unit
 ) {
     var title by remember { mutableStateOf(config.title) }
     var url by remember { mutableStateOf(config.url) }
@@ -54,6 +55,7 @@ fun QRCodeEditorDialog(
     }
 
     AlertDialog(
+        modifier=modifier,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(

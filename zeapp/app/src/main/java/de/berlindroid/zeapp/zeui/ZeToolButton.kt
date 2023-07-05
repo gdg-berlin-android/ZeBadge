@@ -28,11 +28,12 @@ import androidx.core.R
 fun ToolButton(
     painter: Painter = painterResource(id = R.drawable.ic_call_decline),
     text: String = "Decline",
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     TextButton(
         onClick = onClick,
-        modifier = Modifier.wrapContentHeight(),
+        modifier = modifier.wrapContentHeight(),
     ) {
         Column(
             modifier = Modifier.wrapContentHeight(),

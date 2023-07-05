@@ -35,10 +35,11 @@ import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
  */
 @Composable
 fun PictureEditorDialog(
+    accepted: (config: ZeBadgeViewModel.Configuration.Picture) -> Unit,
     dismissed: () -> Unit = {},
-    accepted: (config: ZeBadgeViewModel.Configuration.Picture) -> Unit
+    modifier: Modifier = Modifier,
 ) {
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     var bitmap by remember {
         mutableStateOf(
@@ -69,6 +70,7 @@ fun PictureEditorDialog(
     }
 
     AlertDialog(
+        modifier=modifier,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(onClick = {

@@ -29,11 +29,12 @@ import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 @Composable
 @Preview
 fun QRCodePage(
+    modifier: Modifier = Modifier,
     title: String = "Hello, my github profile is",
     url: String = "https://github.com/gdg-berlin-android",
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = Color.White,
             )

@@ -28,19 +28,20 @@ import de.berlindroid.zeapp.PAGE_WIDTH
 @Composable
 @Preview
 fun NamePage(
+    modifier: Modifier = Modifier,
     name: String = "Your Name Here",
     contact: String = "Contact Me Here",
 ) {
     var size by remember { mutableStateOf(10.sp) }
-
+    val density = LocalDensity.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = Color.White,
             )
             .size(
-                width = with(LocalDensity.current) { PAGE_WIDTH.toDp() },
-                height = with(LocalDensity.current) { PAGE_HEIGHT.toDp() },
+                width = with(density) { PAGE_WIDTH.toDp() },
+                height = with(density) { PAGE_HEIGHT.toDp() },
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
