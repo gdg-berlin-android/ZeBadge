@@ -10,46 +10,31 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement as ZeArrangement
-import androidx.compose.foundation.layout.Column as ZeColumn
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row as ZeRow
-import androidx.compose.foundation.layout.Spacer as ZeSpacer
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
-import androidx.compose.foundation.lazy.LazyRow as ZeLazyRow
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape as ZeRoundedCornerShape
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.AlertDialog as ZeAlertDialog
-import androidx.compose.material3.Button as ZeButton
-import androidx.compose.material3.Card as ZeCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
-import androidx.compose.material3.Icon as ZeIcon
-import androidx.compose.material3.Scaffold as ZeScaffold
-import androidx.compose.material3.Surface as ZeSurface
-import androidx.compose.material3.Text as ZeText
-import androidx.compose.material3.TopAppBar as ZeTopAppBar
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment as ZeAlignment
-import androidx.compose.ui.Modifier as ZeModifier
-import androidx.compose.ui.graphics.Color as ZeColor
-import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
-import androidx.compose.ui.layout.ContentScale as ZeContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,15 +46,39 @@ import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
+import de.berlindroid.zeapp.zeui.NavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
-import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.*
 import android.content.res.Configuration as AndroidConfig
+import androidx.compose.foundation.Image as ZeImage
+import androidx.compose.foundation.layout.Arrangement as ZeArrangement
+import androidx.compose.foundation.layout.Column as ZeColumn
+import androidx.compose.foundation.layout.Row as ZeRow
+import androidx.compose.foundation.layout.Spacer as ZeSpacer
+import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
+import androidx.compose.foundation.lazy.LazyRow as ZeLazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape as ZeRoundedCornerShape
+import androidx.compose.material3.AlertDialog as ZeAlertDialog
+import androidx.compose.material3.Button as ZeButton
+import androidx.compose.material3.Card as ZeCard
+import androidx.compose.material3.Icon as ZeIcon
 import androidx.compose.material3.IconButton as ZeIconButton
+import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
+import androidx.compose.material3.Scaffold as ZeScaffold
+import androidx.compose.material3.Surface as ZeSurface
+import androidx.compose.material3.Text as ZeText
+import androidx.compose.material3.TopAppBar as ZeTopAppBar
+import androidx.compose.ui.Alignment as ZeAlignment
+import androidx.compose.ui.Modifier as ZeModifier
+import androidx.compose.ui.graphics.Color as ZeColor
+import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
+import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
+import androidx.compose.ui.layout.ContentScale as ZeContentScale
 import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
+import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
 
 /**
  * Main View entrance for the app
@@ -84,31 +93,75 @@ class ZeMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
-                ZeSimulator(
-                    page = vm.slotToBitmap(),
-                    onButtonPressed = vm::simulatorButtonPressed,
-                )
-            } else {
-                ZeScreen()
-            }
+            DrawUi()
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        setContent {
+            DrawUi()
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+    @Composable
+    private fun DrawUi() {
+        val wsc = calculateWindowSizeClass(activity = this)
+
+        if(wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+            CompactUi()
+        } else {
+            LargeScreenUi()
+        }
+
+    }
+
+    @Composable
+    private fun CompactUi() {
+        if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
+            ZeSimulator(
+                page = vm.slotToBitmap(),
+                onButtonPressed = vm::simulatorButtonPressed,
+            )
+        } else {
+            ZeScreen()
         }
     }
 
     @Composable
-    private fun ZeScreen() {
+    private fun LargeScreenUi() {
+        ZeRow {
+            ZeScreen(modifier = Modifier.weight(.3f))
+            Spacer(modifier = Modifier.width(16.dp))
+            ZeSimulator(
+                page = vm.slotToBitmap(),
+                onButtonPressed = vm::simulatorButtonPressed,
+                modifier = Modifier.weight(.3f)
+            )
+        }
+    }
+
+    @Composable
+    private fun ZeScreen(modifier: Modifier = Modifier) {
+        val lazyListState = rememberLazyListState()
         ZeBadgeAppTheme(content = {
             ZeScaffold(
+                modifier = modifier,
+                floatingActionButton = {
+                    NavigationPad(lazyListState)
+                },
                 topBar = {
                     ZeTopBar(vm)
                 },
                 content = { paddingValues ->
-                    ZePages(this, paddingValues, vm)
+                    ZePages(this, paddingValues, vm, lazyListState)
                 }
             )
         })
     }
 }
+
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,7 +187,12 @@ private fun ZeTopBar(vm: ZeBadgeViewModel) {
 
 
 @Composable
-private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: ZeBadgeViewModel) {
+private fun ZePages(
+    activity: Activity,
+    paddingValues: PaddingValues,
+    vm: ZeBadgeViewModel,
+    lazyListState: LazyListState
+) {
     ZeSurface(
         modifier = ZeModifier
             .fillMaxSize()
@@ -160,7 +218,9 @@ private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: ZeBadg
             if (message.isNotEmpty()) {
                 InfoBar(message, messageProgress, vm::copyInfoToClipboard)
             }
+
             ZeLazyColumn(
+                state = lazyListState,
                 contentPadding = PaddingValues(
                     horizontal = 8.dp,
                     vertical = 4.dp
