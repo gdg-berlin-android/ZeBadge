@@ -58,10 +58,12 @@ class ZeBadgeViewModel(
      * Every inheritor should contain a companion object TYPE field, so it's type can be retrieved
      * from saved places like shared preferences or the hardware badge.
      *
+     * @param type the type used to store the value in saved places like shared preferences
      * @param humanTitle is the title to be used to interact with so called humans
      * @param bitmap the bitmap created, might be empty or an error bitmap at first
      */
     sealed class Configuration(
+        val type: String,
         open val humanTitle: String,
         open val bitmap: Bitmap,
     ) {
@@ -76,7 +78,7 @@ class ZeBadgeViewModel(
             val name: String,
             val contact: String,
             override val bitmap: Bitmap,
-        ) : Configuration(TYPE, bitmap) {
+        ) : Configuration(TYPE, humanTitle = "Name Tag", bitmap) {
             companion object {
                 const val TYPE: String = "Name Tag"
             }
@@ -92,7 +94,7 @@ class ZeBadgeViewModel(
             val title: String,
             val url: String,
             override val bitmap: Bitmap,
-        ) : Configuration(TYPE, bitmap) {
+        ) : Configuration(TYPE, humanTitle = "QRCode Tag", bitmap) {
             companion object {
                 const val TYPE: String = "QRCode Tag"
             }
@@ -108,7 +110,7 @@ class ZeBadgeViewModel(
          */
         data class Picture(
             override val bitmap: Bitmap,
-        ) : Configuration(TYPE, bitmap) {
+        ) : Configuration(TYPE, humanTitle = "Custom Picture", bitmap) {
             companion object {
                 const val TYPE: String = "Custom Picture"
             }
@@ -126,7 +128,7 @@ class ZeBadgeViewModel(
         data class ImageGen(
             val prompt: String,
             override val bitmap: Bitmap,
-        ) : Configuration(TYPE, bitmap) {
+        ) : Configuration(TYPE, humanTitle = "Image Gen", bitmap) {
             companion object {
                 const val TYPE: String = "Image Gen"
             }
@@ -144,7 +146,7 @@ class ZeBadgeViewModel(
          */
         data class Schedule(
             override val bitmap: Bitmap,
-        ) : Configuration(TYPE, bitmap) {
+        ) : Configuration(TYPE, humanTitle = "Conference Schedule", bitmap) {
             companion object {
                 const val TYPE: String = "Conference Schedule"
             }
@@ -158,9 +160,17 @@ class ZeBadgeViewModel(
          */
         data class Weather(
             override val bitmap: Bitmap,
-        ) : Configuration(TYPE, bitmap) {
+        ) : Configuration(TYPE, humanTitle = "Upcoming Weather", bitmap) {
             companion object {
                 const val TYPE: String = "Upcoming Weather"
+            }
+        }
+
+        data class Kodee(
+            override val bitmap: Bitmap,
+        ) : Configuration(TYPE, humanTitle = "Kodee³", bitmap) {
+            companion object {
+                const val TYPE: String = "Kodee"
             }
         }
 
@@ -369,6 +379,10 @@ class ZeBadgeViewModel(
                     Configuration.Weather(
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch weather here
+
+                    Configuration.Kodee(
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                    ),
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.value.isNeitherNullNorBlank()) {
@@ -530,7 +544,7 @@ class ZeBadgeViewModel(
         slot: Slot,
         config: Configuration
     ): SharedPreferences.Editor {
-        putString(slot.preferencesTypeKey(), config.humanTitle)
+        putString(slot.preferencesTypeKey(), config.type)
         putString(slot.preferencesBitmapKey(), config.bitmap.toBinary().base64())
 
         when (config) {
@@ -559,6 +573,8 @@ class ZeBadgeViewModel(
                 putString(slot.preferencesKey("qr_title"), config.title)
                 putString(slot.preferencesKey("url"), config.url)
             }
+
+            is Configuration.Kodee -> Unit
         }
 
         return this
