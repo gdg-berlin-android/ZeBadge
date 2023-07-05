@@ -17,7 +17,7 @@ Together they make magic happen. 🪄🦄
 
 # Getting Started
 
-The following sections are describing the badge in detail, but if you just want to get started, please feel free to follow our [Getting Started](./GETTING_STARTED.md) guide.
+The following sections are describing the badge in detail, but if you just want to get started, please feel free to follow our [Getting Started](../GETTING_STARTED.md) guide.
 
 # Scenario
 The following lines are the thought experiment on how we imagine a visit to the GDG Berlin Android Droidcon 2023 Berlin booth will look like. Allice is an atenndee and Olivia is an organizer.
