@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">B/W</string>
+    <string name="reset">Reset</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Positional</string>
+    <string name="invert">Invert</string>
 </resources>
