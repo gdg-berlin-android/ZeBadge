@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint.gradle)
-    id("io.gitlab.arturbosch.detekt") version "1.23.0"
+    alias(libs.plugins.detekt.gradle)
 }
 
 android {
@@ -45,6 +45,11 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
+
     }
 
     buildFeatures {
@@ -62,6 +67,18 @@ android {
     }
 }
 
+detekt {
+    allRules = true
+    config = files("$rootDir/config/detekt/detekt-config.yml")
+    baseline = file("detekt-baseline.xml")
+    buildUponDefaultConfig = true
+    reports {
+        html { enabled = true }
+        xml { enabled = true }
+        txt { enabled = false }
+    }
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
 
@@ -76,6 +93,7 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
+    implementation(libs.material3.wsc)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

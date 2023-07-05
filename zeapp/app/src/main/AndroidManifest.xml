@@ -15,9 +15,10 @@
         android:theme="@style/Theme.ZeBadgeApp"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ZeMainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ZeBadgeApp">
+            android:theme="@style/Theme.ZeBadgeApp"
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

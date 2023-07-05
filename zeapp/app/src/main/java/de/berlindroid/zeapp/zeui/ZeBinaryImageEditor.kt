@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui
+package de.berlindroid.zeapp.zeui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -28,12 +28,12 @@ import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.copy
-import de.berlindroid.zeapp.bits.ditherFloydSteinberg
-import de.berlindroid.zeapp.bits.ditherPositional
-import de.berlindroid.zeapp.bits.ditherStaticPattern
-import de.berlindroid.zeapp.bits.invert
-import de.berlindroid.zeapp.bits.threshold
+import de.berlindroid.zeapp.zebits.copy
+import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zebits.ditherPositional
+import de.berlindroid.zeapp.zebits.ditherStaticPattern
+import de.berlindroid.zeapp.zebits.invert
+import de.berlindroid.zeapp.zebits.threshold
 
 /**
  * Embeddable editor that let's the user turn a given bitmap into a binary image

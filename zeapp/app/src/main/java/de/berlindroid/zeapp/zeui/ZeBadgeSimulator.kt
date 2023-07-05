@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.ui
+package de.berlindroid.zeapp.zeui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Slot
+import de.berlindroid.zeapp.zebits.scaleIfNeeded
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Slot
 
 /**
  * This is the simulator composable for the badge.
@@ -37,9 +37,10 @@ import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Slot
 fun BadgeSimulator(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1) page: Bitmap,
     onButtonPressed: (buttonForSlot: Slot) -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .paint(
                 painterResource(id = R.drawable.badgerrpi2040),

@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.hardware
+package de.berlindroid.zeapp.zehardware
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -13,7 +13,7 @@ import com.hoho.android.usbserial.driver.UsbSerialPort.DATABITS_8
 import com.hoho.android.usbserial.driver.UsbSerialPort.PARITY_NONE
 import com.hoho.android.usbserial.driver.UsbSerialPort.STOPBITS_1
 import com.hoho.android.usbserial.driver.UsbSerialProber
-import de.berlindroid.zeapp.bits.toBinary
+import de.berlindroid.zeapp.zebits.toBinary
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.Base64
