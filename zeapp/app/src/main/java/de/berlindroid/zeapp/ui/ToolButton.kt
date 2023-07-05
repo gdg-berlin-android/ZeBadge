@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +29,7 @@ fun ToolButton(
     text: String = "Decline",
     onClick: () -> Unit = {}
 ) {
-    IconButton(
+    TextButton(
         onClick = onClick,
         modifier = Modifier.wrapContentHeight(),
     ) {
@@ -62,7 +62,7 @@ fun ToolButton(
     text: String = "Send",
     onClick: () -> Unit = {}
 ) {
-    IconButton(
+    TextButton(
         onClick = onClick,
         modifier = Modifier.wrapContentHeight(),
     ) {
