@@ -7,10 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import de.berlindroid.zeapp.OPENAI_API_KEY
@@ -470,6 +467,13 @@ class BadgeViewModel(
         for (slot in slots.value.keys) {
             slot.save()
         }
+    }
+
+    /**
+     * Sends a random page to the badge
+     */
+    fun sendRandomPageToDevice() {
+        sendPageToDevice(slots.value.keys.random())
     }
 
     private fun initialNameBitmap(): Bitmap =
