@@ -76,6 +76,9 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.0'
     debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
+
+    testImplementation(libs.test.assertk)
+    testImplementation(libs.test.junit)
 }
 
 // Ktlint
