@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
-
 package de.berlindroid.zeapp
 
 import android.app.Activity
@@ -84,7 +82,6 @@ import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
 /**
  * Main View entrance for the app
  */
-@ExperimentalMaterial3Api
 class ZeMainActivity : ComponentActivity() {
 
     private val viewModel: ZeBadgeViewModel by viewModels()
@@ -175,7 +172,6 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
         )
     })
 }
-
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -310,7 +306,6 @@ private fun InfoBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SelectedEditor(
     editor: Editor,
