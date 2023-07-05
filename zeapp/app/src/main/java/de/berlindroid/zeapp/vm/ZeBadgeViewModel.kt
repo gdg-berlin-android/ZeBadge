@@ -34,7 +34,7 @@ private const val MESSAGE_DISPLAY_UPDATES = 5
 /**
  * Base ViewModel building a list of pages for the badge and offering simulator support.
  */
-class BadgeViewModel(
+class ZeBadgeViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
     /**
