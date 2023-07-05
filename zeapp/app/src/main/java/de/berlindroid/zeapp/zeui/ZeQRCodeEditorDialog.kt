@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.qrComposableToBitmap
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Configuration
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
 
 /**
  * Editor dialog for changing the name of the participant badge.

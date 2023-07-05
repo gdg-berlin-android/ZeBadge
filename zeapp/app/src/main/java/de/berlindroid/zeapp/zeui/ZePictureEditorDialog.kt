@@ -25,7 +25,7 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.cropPageFromCenter
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 
 /**
  * Editor Dialog for adding an image as a badge page.

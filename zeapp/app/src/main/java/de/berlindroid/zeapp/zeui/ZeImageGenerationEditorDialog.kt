@@ -32,7 +32,7 @@ import de.berlindroid.zeapp.zebits.copy
 import de.berlindroid.zeapp.zebits.cropPageFromCenter
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

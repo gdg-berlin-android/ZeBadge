@@ -65,8 +65,8 @@ import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel.*
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.*
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.material3.IconButton as ZeIconButton
 import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
@@ -75,7 +75,7 @@ import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
  * Main View entrance for the app
  */
 @ExperimentalMaterial3Api
-class MainActivity : ComponentActivity() {
+class ZeMainActivity : ComponentActivity() {
     private val vm: ZeBadgeViewModel by viewModels()
 
     /**

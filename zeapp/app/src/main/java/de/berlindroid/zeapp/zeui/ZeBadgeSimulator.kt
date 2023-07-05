@@ -25,7 +25,7 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
-import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Slot
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Slot
 
 /**
  * This is the simulator composable for the badge.

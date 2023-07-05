@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.vm
+package de.berlindroid.zeapp.zevm
 
 import android.app.Application
 import android.content.ClipData
