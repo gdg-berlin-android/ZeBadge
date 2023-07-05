@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
@@ -151,7 +152,10 @@ class ZeMainActivity : ComponentActivity() {
                         hostState = vm.snackbarHostState,
                     ) {
                         vm.snackbarHostState.currentSnackbarData?.let { data ->
-                            Snackbar(snackbarData = data)
+                            Snackbar(
+                                snackbarData = data,
+                                shape = RoundedCornerShape(8.dp),
+                            )
                         }
                     }
                 },
