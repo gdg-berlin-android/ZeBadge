@@ -5,13 +5,14 @@ package de.berlindroid.zeapp.ui
 import android.R
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +26,7 @@ import de.berlindroid.zeapp.bits.isBinary
 import de.berlindroid.zeapp.ui.pages.NamePage
 import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
 
+
 /**
  * Editor dialog for changing the name of the participant badge.
  *
@@ -33,6 +35,9 @@ import de.berlindroid.zeapp.vm.BadgeViewModel.Configuration
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
  */
+
+const val MaxCharacters: Int = 20
+
 @Composable
 fun NameEditorDialog(
     activity: Activity,
@@ -71,6 +76,11 @@ fun NameEditorDialog(
                 Text(text = stringResource(id = R.string.ok))
             }
         },
+        dismissButton = {
+            Button(onClick = dismissed) {
+                Text(text = "Cancel")
+            }
+        },
         title = { Text(text = "Add your contact details") },
         properties = DialogProperties(),
         text = {
@@ -83,27 +93,38 @@ fun NameEditorDialog(
                 }
 
                 item {
-                    TextField(
+                    OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = name,
                         maxLines = 1,
                         label = { Text(text = "Name") },
                         onValueChange = { newValue ->
-                            name = newValue
-                            redrawComposableImage()
+                            if (newValue.length <= MaxCharacters * 2) {
+                                name = newValue
+                                redrawComposableImage()
+                            }
+                        },
+                        supportingText = {
+                            Text(text = "${name.length}/${MaxCharacters * 2}")
                         }
                     )
                 }
 
                 item {
-                    TextField(
+                    OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = contact,
                         maxLines = 1,
                         label = { Text(text = "Contact") },
                         onValueChange = { newValue ->
-                            contact = newValue
-                            redrawComposableImage()
+                            // Limit Characters so they're displayed correctly in the screen
+                            if (newValue.length <= MaxCharacters) {
+                                contact = newValue
+                                redrawComposableImage()
+                            }
+                        },
+                        supportingText = {
+                            Text(text = "${contact.length}/$MaxCharacters")
                         }
                     )
                 }
