@@ -166,6 +166,14 @@ class ZeBadgeViewModel(
             }
         }
 
+        data class Kodee(
+            override val bitmap: Bitmap,
+        ) : Configuration(TYPE, humanTitle = "Kodee³", bitmap) {
+            companion object {
+                const val TYPE: String = "Kodee"
+            }
+        }
+
         // TODO: Add your own pages.
     }
 
@@ -371,6 +379,10 @@ class ZeBadgeViewModel(
                     Configuration.Weather(
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch weather here
+
+                    Configuration.Kodee(
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                    ),
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.value.isNeitherNullNorBlank()) {
@@ -561,6 +573,8 @@ class ZeBadgeViewModel(
                 putString(slot.preferencesKey("qr_title"), config.title)
                 putString(slot.preferencesKey("url"), config.url)
             }
+
+            is Configuration.Kodee -> Unit
         }
 
         return this
