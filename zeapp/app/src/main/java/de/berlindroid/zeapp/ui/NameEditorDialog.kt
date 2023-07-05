@@ -20,8 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
-import de.berlindroid.zeapp.bits.composableToBitmap
-import de.berlindroid.zeapp.bits.isBinary
+import de.berlindroid.zeapp.zebits.composableToBitmap
+import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.ui.pages.NamePage
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Configuration
 

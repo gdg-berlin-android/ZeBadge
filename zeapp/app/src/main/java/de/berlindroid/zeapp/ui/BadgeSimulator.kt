@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.scaleIfNeeded
+import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel.Slot
 
 /**

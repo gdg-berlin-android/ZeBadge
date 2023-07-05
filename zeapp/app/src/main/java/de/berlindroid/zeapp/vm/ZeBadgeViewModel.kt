@@ -14,11 +14,11 @@ import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.ditherFloydSteinberg
-import de.berlindroid.zeapp.bits.isBinary
-import de.berlindroid.zeapp.bits.scaleIfNeeded
-import de.berlindroid.zeapp.bits.toBinary
-import de.berlindroid.zeapp.bits.toBitmap
+import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zebits.scaleIfNeeded
+import de.berlindroid.zeapp.zebits.toBinary
+import de.berlindroid.zeapp.zebits.toBitmap
 import de.berlindroid.zeapp.hardware.Badge
 import de.berlindroid.zeapp.hardware.base64
 import de.berlindroid.zeapp.hardware.debase64

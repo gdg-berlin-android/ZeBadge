@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.bits.cropPageFromCenter
-import de.berlindroid.zeapp.bits.isBinary
-import de.berlindroid.zeapp.bits.scaleIfNeeded
+import de.berlindroid.zeapp.zebits.cropPageFromCenter
+import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.vm.ZeBadgeViewModel
 
 /**
