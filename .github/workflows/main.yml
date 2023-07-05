@@ -7,6 +7,12 @@ on:
       - "**/README.md"
       - "assets/**"
 
+defaults:
+  run:
+    shell: bash
+    working-directory: zeapp
+
+
 jobs:
   build-debug:
     runs-on: ubuntu-latest
