@@ -11,6 +11,7 @@ mik3y-usb-serial = "3.5.1"
 ktlint-gradle = "11.5.0"
 detekt-gradle = "1.23.0"
 zxing = "3.5.0"
+material3-wsc = "1.1.1"
 
 [libraries]
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
@@ -27,6 +28,7 @@ retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref =
 retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
 zxing = { module = "com.google.zxing:core", version.ref = "zxing" }
+material3-wsc = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-wsc"}
 
 test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
 test-junit = "junit:junit:4.13.2"

@@ -45,6 +45,11 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
+
     }
 
     buildFeatures {
@@ -88,6 +93,7 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
+    implementation(libs.material3.wsc)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
