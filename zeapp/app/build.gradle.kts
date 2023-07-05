@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.google.play.services)
     alias(libs.plugins.firebase.appdistribution)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.license.report.gradle)
 }
 
 android {
@@ -38,7 +39,11 @@ android {
 
     buildTypes {
         configureEach {
-            buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
+            buildConfigField(
+                "String",
+                "OPEN_API_TOKEN",
+                "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\""
+            )
 
             firebaseAppDistribution {
                 releaseNotesFile = "./release-notes.txt"
@@ -48,7 +53,10 @@ android {
 
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -78,9 +86,15 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += arrayOf(
+                "META-INF/AL2.0",
+                "META-INF/LGPL2.1",
+                "META-INF/*.kotlin_module",
+                "META-INF/LICENSE.*",
+                "META-INF/LICENSE-notice.*"
+            )
         }
     }
 }
@@ -174,3 +188,9 @@ tasks.create("generateContributorsAsset") {
     File(assetDir, "test.txt").writeText(contributors)
 }
 tasks.getByName("build").dependsOn("generateContributorsAsset")
+
+licenseReport {
+    generateHtmlReport = true
+    generateJsonReport = false
+    copyHtmlReportToAssets = false
+}
