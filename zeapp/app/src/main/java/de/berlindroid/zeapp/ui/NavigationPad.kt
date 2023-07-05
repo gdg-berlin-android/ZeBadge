@@ -6,15 +6,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun NavigationPad(
-    coroutineScope: CoroutineScope,
     lazyListState: LazyListState
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val scrollLength = 425f
     Column {
         ZeVloatingScroller(coroutineScope, lazyListState, -scrollLength, "↑")
