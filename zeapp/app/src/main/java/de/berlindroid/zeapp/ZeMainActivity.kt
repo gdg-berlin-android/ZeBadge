@@ -58,6 +58,7 @@ import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zeui.BarCodeEditorDialog
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
+import de.berlindroid.zeapp.zeui.CustomPhraseEditorDialog
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
@@ -489,6 +490,12 @@ private fun SelectedEditor(
                 config = config,
                 vm = vm,
             )
+            is ZeConfiguration.CustomPhrase -> CustomPhraseEditorDialog(
+                config = config,
+                dismissed = { vm.slotConfigured(editor.slot, null) },
+                snackbarMessage = vm::showSnackBar,
+                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+            )
         }
     }
 }
@@ -531,7 +538,7 @@ private fun TemplateChooserDialog(
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
-    modifier: Modifier = Modifier,
+    modifier: ZeModifier = Modifier,
     name: String = "",
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,

@@ -3,7 +3,6 @@ package de.berlindroid.zeapp.zeui
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,7 +48,7 @@ fun PictureEditorDialog(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT),
         )
     }
 
@@ -67,7 +66,7 @@ fun PictureEditorDialog(
         } else {
             // yes, so read image
             BitmapFactory.decodeStream(
-                context.contentResolver.openInputStream(uri)
+                context.contentResolver.openInputStream(uri),
             )
         }.cropPageFromCenter()
     }
@@ -107,21 +106,21 @@ fun PictureEditorDialog(
                     Text(text = stringResource(id = android.R.string.search_go))
                 }
 
-              Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                bitmap = rotateBitmap(bitmap)
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        bitmap = rotateBitmap(bitmap)
+                    },
+                ) {
+                    Text(text = stringResource(id = R.string.rotate))
                 }
-              ) {
-                Text(text = stringResource(id = R.string.rotate))
-              }
             }
-        }
+        },
     )
 }
 
-private fun rotateBitmap(bitmap: Bitmap): Bitmap{
-  val matrix = android.graphics.Matrix()
-  matrix.postRotate(ROTATE_CLOCKWISE)
-  return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+private fun rotateBitmap(bitmap: Bitmap): Bitmap {
+    val matrix = android.graphics.Matrix()
+    matrix.postRotate(ROTATE_CLOCKWISE)
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
