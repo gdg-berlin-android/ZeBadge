@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -61,7 +62,8 @@ fun QRCodePage(
                 color = Color.White,
                 maxLines = 3,
                 text = title,
-            )
+                textAlign = TextAlign.Center,
+                )
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
