@@ -8,7 +8,7 @@
     <string name="invert">Invert</string>
 
     <string name="generate">Generate</string>
-    <string name="not_binary_image">Not a binary image.</string>
+    <string name="not_binary_image">Not a binary image. Make sure each pixel is either black or white.</string>
     <string name="generate_image_page">Generate Image Page</string>
     <string name="enter_prompt">Enter your prompt here</string>
     <string name="could_not_generate_image">Could not generate an image</string>

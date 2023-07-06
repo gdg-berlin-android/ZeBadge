@@ -75,7 +75,7 @@ fun PictureEditorDialog(
                 if (bitmap.isBinary()) {
                     accepted(ZeConfiguration.Picture(bitmap))
                 } else {
-                    Toast.makeText(context, "Not a binary image.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG).show()
                 }
             }) {
                 Text(stringResource(id = android.R.string.ok))
