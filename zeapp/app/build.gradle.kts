@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.google.play.services)
+    alias(libs.plugins.firebase.appdistribution)
 }
 
 android {
@@ -35,6 +36,11 @@ android {
     buildTypes {
         configureEach {
             buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
+
+            firebaseAppDistribution {
+                releaseNotesFile="./release-notes.txt"
+                groups="testers"
+            }
         }
 
         release {
