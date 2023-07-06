@@ -5,8 +5,10 @@
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin"  }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"  }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
 detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 
 [versions]
 
@@ -24,6 +26,7 @@ ktlint-gradle = "11.5.0"
 detekt-gradle = "1.23.0"
 zxing ="3.5.1"
 material3-wsc = "1.1.1"
+dagger-hilt = "2.44"
 
 [libraries]
 
@@ -44,6 +47,8 @@ retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", v
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
 zxing = { module = "com.google.zxing:core", version.ref = "zxing" }
 material3-wsc = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-wsc"}
+dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
+dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
 
 test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
 ##                                                 ⬆ :0.26"
