@@ -112,7 +112,7 @@ fun PictureEditorDialog(
                 bitmap = rotateBitmap(bitmap)
                 }
               ) {
-                Text(text = "Rotate")
+                Text(text = stringResource(id = R.string.rotate))
               }
             }
         }
