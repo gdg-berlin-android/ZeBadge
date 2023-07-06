@@ -9,14 +9,16 @@
 
     <string name="generate">Generieren</string>
     <string name="not_binary_image">Kein binär Bild. Stelle sicher, dass die Pixel entweder weiß oder schwarz sind.</string>
-    <string name="image_generation_in_progress">Bilderstellung im gang...</string>
     <string name="generate_image_page">Generiere Bildseite</string>
     <string name="draw_image_page">Zeichne Bildseite</string>
     <string name="enter_prompt">Befehl hier eingeben</string>
     <string name="could_not_generate_image">Konnte Bild nicht generieren</string>
 
-    <string name="image_needed">Binär Bild benötigt. Drücker einen der Knöpfe unter dem Bild.</string>
+    <string name="image_needed">Binär Bild benötigt. Drücke einen der Knöpfe unter dem Bild.</string>
     <string name="add_qr_url">Füge deine QR URL hinzu</string>
     <string name="qr_code_title">QR Code Title</string>
     <string name="url">URL</string>
+
+    <string name="add_barcode_url">Barcode URL hinzufügen</string>
+    <string name="bar_code_title">Barcode Titel</string>
 </resources>

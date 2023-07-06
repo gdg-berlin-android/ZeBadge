@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import de.berlindroid.zeapp.Dimen
+import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
@@ -55,7 +55,7 @@ fun BinaryImageEditor(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = Dimen.One, vertical = Dimen.Half),
+                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
             painter = BitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = FilterQuality.None,
@@ -66,7 +66,7 @@ fun BinaryImageEditor(
 
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = Dimen.Quarter),
+            contentPadding = PaddingValues(horizontal = ZeDimen.Quarter),
             horizontalArrangement = Arrangement.End
         ) {
             if (last != null) {
