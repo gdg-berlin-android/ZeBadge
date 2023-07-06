@@ -134,6 +134,20 @@ class ZeBadgeViewModel(
             }
         }
 
+        /**
+         * Configure this slot for image draw by user
+         *
+         * @param prompt describe the contents of the page to be created.
+         * @param bitmap the resulting page.
+         */
+        data class ImageDraw(
+            override val bitmap: Bitmap,
+        ) : Configuration(TYPE, humanTitle = "Image Draw", bitmap) {
+            companion object {
+                const val TYPE: String = "Image Draw"
+            }
+        }
+
         // ADD CUSTOM PAGES HERE
 
         /**
@@ -383,6 +397,9 @@ class ZeBadgeViewModel(
                     Configuration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
+                    Configuration.ImageDraw(
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                    ),
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.value.isNeitherNullNorBlank()) {
@@ -575,6 +592,7 @@ class ZeBadgeViewModel(
             }
 
             is Configuration.Kodee -> Unit
+            is Configuration.ImageDraw -> Unit
         }
 
         return this
