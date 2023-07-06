@@ -28,9 +28,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -105,106 +108,125 @@ import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
  */
 @AndroidEntryPoint
 class ZeMainActivity : ComponentActivity() {
-    private val vm: ZeBadgeViewModel by viewModels()
+
+    private val viewModel: ZeBadgeViewModel by viewModels()
 
     /**
      * Once created, use the main view composables.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            DrawUi()
-        }
+        updateContent()
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        setContent {
-            DrawUi()
-        }
+        updateContent()
     }
 
-    @Composable
-    private fun DrawUi() {
-        LaunchedEffect(Unit) {
-            vm.toastEvent.collect {
-                val duration = when (it.duration) {
-                    ZeToastEvent.Duration.SHORT -> Toast.LENGTH_SHORT
-                    ZeToastEvent.Duration.LONG ->Toast.LENGTH_LONG
-                }
-
-                Toast.makeText(this@ZeMainActivity, it.message, duration).show()
-            }
+    private fun updateContent() = setContent {
+        ProvideLocalActivity {
+            DrawUi(viewModel)
         }
-
-        val wsc = calculateWindowSizeClass(activity = this)
-
-        if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
-            CompactUi()
-        } else {
-            LargeScreenUi()
-        }
-
-    }
-
-    @Composable
-    private fun CompactUi() {
-        if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
-            ZeSimulator(
-                page = vm.slotToBitmap(),
-                onButtonPressed = vm::simulatorButtonPressed,
-            )
-        } else {
-            ZeScreen()
-        }
-    }
-
-    @Composable
-    private fun LargeScreenUi() {
-        ZeRow {
-            ZeScreen(modifier = Modifier.weight(.3f))
-            Spacer(modifier = Modifier.width(Dimen.Two))
-            ZeSimulator(
-                page = vm.slotToBitmap(),
-                onButtonPressed = vm::simulatorButtonPressed,
-                modifier = Modifier.weight(.3f)
-            )
-        }
-    }
-
-    @Composable
-    private fun ZeScreen(modifier: Modifier = Modifier) {
-        val lazyListState = rememberLazyListState()
-        ZeBadgeAppTheme(content = {
-            ZeScaffold(
-                modifier = modifier,
-                floatingActionButton = {
-                    NavigationPad(lazyListState)
-                },
-                topBar = {
-                    ZeTopBar(vm)
-                },
-                content = { paddingValues ->
-                    ZePages(this, paddingValues, vm, lazyListState)
-                }
-            )
-        })
     }
 }
 
+@Composable
+private fun Activity.ProvideLocalActivity(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalActivity provides this, content = content)
+}
 
 @Composable
-private fun ZeTopBar(vm: ZeBadgeViewModel) {
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+private fun DrawUi(viewModel: ZeBadgeViewModel) {
+    val activity = LocalActivity.current
+
+    LaunchedEffect(Unit) {
+        viewModel.toastEvent.collect {
+            val duration = when (it.duration) {
+                ZeToastEvent.Duration.SHORT -> Toast.LENGTH_SHORT
+                ZeToastEvent.Duration.LONG ->Toast.LENGTH_LONG
+            }
+
+            Toast.makeText(activity, it.message, duration).show()
+        }
+    }
+
+    val wsc = calculateWindowSizeClass(activity = LocalActivity.current)
+    if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+        CompactUi(viewModel)
+    } else {
+        LargeScreenUi(viewModel)
+    }
+}
+
+@Composable
+private fun CompactUi(vm: ZeBadgeViewModel) {
+    if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
+        ZeSimulator(
+            page = vm.slotToBitmap(),
+            onButtonPressed = vm::simulatorButtonPressed,
+        )
+    } else {
+        ZeScreen(vm)
+    }
+}
+
+@Composable
+private fun LargeScreenUi(vm: ZeBadgeViewModel) {
+    ZeRow {
+        ZeScreen(vm, modifier = Modifier.weight(.3f))
+        Spacer(modifier = Modifier.width(Dimen.Two))
+        ZeSimulator(
+            page = vm.slotToBitmap(),
+            onButtonPressed = vm::simulatorButtonPressed,
+            modifier = Modifier.weight(.3f)
+        )
+    }
+}
+
+@Composable
+private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
+    val lazyListState = rememberLazyListState()
+    ZeBadgeAppTheme(content = {
+        ZeScaffold(
+            modifier = modifier,
+            floatingActionButton = {
+                NavigationPad(lazyListState)
+            },
+            topBar = {
+                ZeTopBar(
+                    onRandomClick = { vm.sendRandomPageToDevice() },
+                    onSaveAllClick = { vm.saveAll() },
+                )
+            },
+            content = { paddingValues ->
+                ZePages(
+                    paddingValues = paddingValues,
+                    lazyListState = lazyListState,
+                    vm = vm,
+                )
+            }
+        )
+    })
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ZeTopBar(
+    onSaveAllClick: () -> Unit,
+    onRandomClick: () -> Unit,
+) {
     ZeTopAppBar(
         title = { ZeText(stringResource(id = R.string.app_name)) },
         actions = {
-            ZeIconButton(onClick = { vm.sendRandomPageToDevice() }) {
+            ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
                     contentDescription = "Send random page to badge"
                 )
             }
-            ZeIconButton(onClick = { vm.saveAll() }) {
+            ZeIconButton(onClick = onRandomClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.save_all),
                     contentDescription = null
@@ -214,10 +236,8 @@ private fun ZeTopBar(vm: ZeBadgeViewModel) {
     )
 }
 
-
 @Composable
 private fun ZePages(
-    activity: Activity,
     paddingValues: PaddingValues,
     vm: ZeBadgeViewModel,
     lazyListState: LazyListState
@@ -235,7 +255,7 @@ private fun ZePages(
         val slots by remember { vm.slots }
 
         if (editor != null) {
-            SelectedEditor(editor!!, activity, vm)
+            SelectedEditor(editor!!, vm)
         }
 
         if (templateChooser != null) {
@@ -327,7 +347,6 @@ private fun InfoBar(
 @Composable
 private fun SelectedEditor(
     editor: ZeEditor,
-    activity: Activity,
     vm: ZeBadgeViewModel
 ) {
     if (editor.slot !in listOf(
@@ -342,7 +361,6 @@ private fun SelectedEditor(
     } else {
         when (val config = editor.config) {
             is ZeConfiguration.Name -> NameEditorDialog(
-                activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
             ) { newConfig ->
@@ -372,7 +390,7 @@ private fun SelectedEditor(
 
             is ZeConfiguration.Schedule -> {
                 Toast.makeText(
-                    activity,
+                    LocalActivity.current,
                     "Not added by you yet, please feel free to contribute this editor",
                     Toast.LENGTH_LONG
                 ).show()
@@ -381,15 +399,15 @@ private fun SelectedEditor(
             }
 
             is ZeConfiguration.Weather -> {
-                WeatherEditorDialog(activity = activity, config = config, dismissed = {
-                    vm.slotConfigured(null, null)
-                }, {
-                    vm.slotConfigured(editor.slot, it)
-                })
+                WeatherEditorDialog(
+                    accepted = { vm.slotConfigured(editor.slot, it) },
+                    dismissed = { vm.slotConfigured(null, null) },
+                    activity = LocalActivity.current,
+                    config = config,
+                )
             }
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
-                activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
             ) { newConfig ->
@@ -400,7 +418,7 @@ private fun SelectedEditor(
                 vm.slotConfigured(editor.slot, config)
             }
 
-            is ZeConfiguration.ImageDraw -> {
+is ZeConfiguration.ImageDraw -> {
                 ZeImageDrawEditorDialog(dismissed = {
                     vm.slotConfigured(
                         editor.slot,
@@ -420,52 +438,53 @@ private fun CameraEditor(
     editor: ZeEditor,
     config: ZeConfiguration.Camera,
     vm: ZeBadgeViewModel
-) {
-    val context = LocalContext.current
-    val uri = FileProvider.getUriForFile(
-        context,
-        "${BuildConfig.APPLICATION_ID}.files",
-        File(context.cacheDir, "photo.jpg")
+){
+                val context = LocalContext.current
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "${BuildConfig.APPLICATION_ID}.files",
+                    File(context.cacheDir, "photo.jpg")
     )
-    val coroutineScope = rememberCoroutineScope()
-    val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
-        if(pictureTaken) {
-            val imageRequest = ImageRequest.Builder(context)
-                .data(uri)
-                .transformations(CropTransformation())
-                .size(PAGE_WIDTH, PAGE_HEIGHT)
-                .scale(Scale.FIT)
-                .precision(Precision.EXACT)
-                .allowHardware(false)
-                .memoryCachePolicy(CachePolicy.DISABLED)
-                .diskCachePolicy(CachePolicy.DISABLED)
-                .build()
+                val coroutineScope = rememberCoroutineScope()
+                val takePicture =
+                    rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
+                        if (pictureTaken) {
+                            val imageRequest = ImageRequest.Builder(context)
+                                .data(uri)
+                                .transformations(CropTransformation())
+                                .size(PAGE_WIDTH, PAGE_HEIGHT)
+                                .scale(Scale.FIT)
+                                .precision(Precision.EXACT)
+                                .allowHardware(false)
+                                .memoryCachePolicy(CachePolicy.DISABLED)
+                                .diskCachePolicy(CachePolicy.DISABLED)
+                                .build()
 
-            coroutineScope.launch {
-                val drawable =
-                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
-                val bitmap = Bitmap.createBitmap(
-                    PAGE_WIDTH,
-                    PAGE_HEIGHT,
-                    Bitmap.Config.ARGB_8888
-                )
-                val canvas = android.graphics.Canvas(bitmap)
-                canvas.drawColor(Color.WHITE)
-                canvas.drawBitmap(
-                    drawable.bitmap,
-                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
-                    0f,
-                    null
-                )
-                vm.slotConfigured(
-                    editor.slot,
-                    config.copy(bitmap = bitmap.ditherFloydSteinberg())
-                )
-            }
-        } else {
-            vm.slotConfigured(editor.slot, null)
-        }
-    }
+                            coroutineScope.launch {
+                                val drawable =
+                                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
+                                val bitmap = Bitmap.createBitmap(
+                                    PAGE_WIDTH,
+                                    PAGE_HEIGHT,
+                                    Bitmap.Config.ARGB_8888
+                                )
+                                val canvas = android.graphics.Canvas(bitmap)
+                                canvas.drawColor(Color.WHITE)
+                                canvas.drawBitmap(
+                                    drawable.bitmap,
+                                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
+                                    0f,
+                                    null
+                                )
+                                vm.slotConfigured(
+                                    editor.slot,
+                                    config.copy(bitmap = bitmap.ditherFloydSteinberg())
+                                )
+                            }
+                        } else {
+                            vm.slotConfigured(editor.slot, null)
+                        }
+                    }
 
     SideEffect {
         takePicture.launch(uri)
