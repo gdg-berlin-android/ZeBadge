@@ -3,7 +3,6 @@
 package de.berlindroid.zeapp.zeui
 
 import android.R
-import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,8 +26,8 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.LocalActivity
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zepages.NamePage
 
 
 /**
@@ -39,7 +38,7 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
  * @param accepted callback called with the new configuration configured.
  */
 
-const val MaxCharacters: Int = 20
+const val MaxCharacters: Int = 16
 private const val Empty = ""
 
 @Composable
