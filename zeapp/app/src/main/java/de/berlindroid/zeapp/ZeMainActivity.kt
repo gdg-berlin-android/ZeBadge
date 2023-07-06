@@ -430,10 +430,11 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
+@Preview
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
-    name: String,
+    name: String = "",
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,
     sendToDevice: (() -> Unit)? = null,
