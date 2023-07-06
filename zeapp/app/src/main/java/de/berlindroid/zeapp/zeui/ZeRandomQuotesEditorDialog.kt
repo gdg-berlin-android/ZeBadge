@@ -33,8 +33,6 @@ import kotlin.random.Random
  * @param accepted callback called with the new configuration configured.
  */
 
-private const val Empty = ""
-
 @Composable
 fun RandomQuotesEditorDialog(
     activity: Activity,
