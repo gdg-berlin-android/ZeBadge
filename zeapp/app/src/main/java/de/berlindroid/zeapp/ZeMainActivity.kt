@@ -60,6 +60,7 @@ import coil.size.Precision
 import coil.size.Scale
 import com.commit451.coiltransformations.CropTransformation
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zeui.BarCodeEditorDialog
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
@@ -335,7 +336,8 @@ private fun SelectedEditor(
             ZeSlot.FirstCustom,
             ZeSlot.SecondCustom,
             ZeSlot.QRCode,
-            ZeSlot.Weather
+            ZeSlot.Weather,
+            ZeSlot.BarCode,
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
@@ -389,6 +391,14 @@ private fun SelectedEditor(
             }
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
+                activity,
+                config,
+                dismissed = { vm.slotConfigured(editor.slot, null) }
+            ) { newConfig ->
+                vm.slotConfigured(editor.slot, newConfig)
+            }
+
+            is ZeConfiguration.BarCode -> BarCodeEditorDialog(
                 activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }

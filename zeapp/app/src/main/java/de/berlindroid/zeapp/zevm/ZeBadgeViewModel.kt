@@ -93,11 +93,11 @@ class ZeBadgeViewModel @Inject constructor(
     val slots = mutableStateOf(
         mapOf(
             ZeSlot.Name to initialConfiguration(ZeSlot.Name),
-            ZeSlot.Name to initialConfiguration(ZeSlot.Name),
             ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
             ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
             ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
             ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
+            ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
             ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
             ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
         )
@@ -248,7 +248,12 @@ class ZeBadgeViewModel @Inject constructor(
                     slot,
                     slots.value[ZeSlot.Weather]!!
                 )
-            } else {
+            } else if(slot is ZeSlot.BarCode) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.BarCode]!!
+                )
+            }else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
         }
@@ -342,6 +347,12 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.Weather -> ZeConfiguration.Weather(
                 "July 7th",
                 "22C",
+                R.drawable.soon.toBitmap()
+            )
+
+            ZeSlot.BarCode -> ZeConfiguration.BarCode(
+                "Your title for barcode",
+                "",
                 R.drawable.soon.toBitmap()
             )
         }
