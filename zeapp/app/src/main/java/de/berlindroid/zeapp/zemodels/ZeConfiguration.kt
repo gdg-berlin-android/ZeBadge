@@ -1,6 +1,7 @@
 package de.berlindroid.zeapp.zemodels
 
 import android.graphics.Bitmap
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 
 /**
  * The configuration of a slot
@@ -104,13 +105,9 @@ sealed class ZeConfiguration(
         }
     }
 
-    /**
-     * TODO: Teaser nr 2: Build a configuration and editor to create a page showing the weather
-     *
-     * How would you go for getting the weather? What do you need to configure here, so that an
-     * editor can fill it in?
-     */
     data class Weather(
+        val date: String,
+        val temperature: String,
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "Upcoming Weather", bitmap) {
         companion object {
