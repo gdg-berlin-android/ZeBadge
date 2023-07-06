@@ -381,54 +381,65 @@ private fun SelectedEditor(
             is Configuration.Kodee -> {
                 vm.slotConfigured(editor.slot, config)
             }
-            is Configuration.Camera -> {
-                val context = LocalContext.current
-                val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.files", File(context.cacheDir, "photo.jpg"))
-                val coroutineScope = rememberCoroutineScope()
-                val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
-                    if(pictureTaken) {
-                        val imageRequest = ImageRequest.Builder(context)
-                            .data(uri)
-                            .transformations(CropTransformation())
-                            .size(PAGE_WIDTH, PAGE_HEIGHT)
-                            .scale(Scale.FIT)
-                            .precision(Precision.EXACT)
-                            .allowHardware(false)
-                            .memoryCachePolicy(CachePolicy.DISABLED)
-                            .diskCachePolicy(CachePolicy.DISABLED)
-                            .build()
-
-                        coroutineScope.launch {
-                            val drawable =
-                                context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
-                            val bitmap = Bitmap.createBitmap(
-                                PAGE_WIDTH,
-                                PAGE_HEIGHT,
-                                Bitmap.Config.ARGB_8888
-                            )
-                            val canvas = android.graphics.Canvas(bitmap)
-                            canvas.drawColor(Color.WHITE)
-                            canvas.drawBitmap(
-                                drawable.bitmap,
-                                (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
-                                0f,
-                                null
-                            )
-                            vm.slotConfigured(
-                                editor.slot,
-                                config.copy(bitmap = bitmap.ditherFloydSteinberg())
-                            )
-                        }
-                    } else {
-                        vm.slotConfigured(editor.slot, null)
-                    }
-                }
-
-                SideEffect {
-                    takePicture.launch(uri)
-                }
-            }
+            is Configuration.Camera -> CameraEditor(editor, config, vm)
         }
+    }
+}
+
+@Composable
+private fun CameraEditor(
+    editor: Editor,
+    config: Configuration.Camera,
+    vm: ZeBadgeViewModel
+) {
+    val context = LocalContext.current
+    val uri = FileProvider.getUriForFile(
+        context,
+        "${BuildConfig.APPLICATION_ID}.files",
+        File(context.cacheDir, "photo.jpg")
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
+        if(pictureTaken) {
+            val imageRequest = ImageRequest.Builder(context)
+                .data(uri)
+                .transformations(CropTransformation())
+                .size(PAGE_WIDTH, PAGE_HEIGHT)
+                .scale(Scale.FIT)
+                .precision(Precision.EXACT)
+                .allowHardware(false)
+                .memoryCachePolicy(CachePolicy.DISABLED)
+                .diskCachePolicy(CachePolicy.DISABLED)
+                .build()
+
+            coroutineScope.launch {
+                val drawable =
+                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
+                val bitmap = Bitmap.createBitmap(
+                    PAGE_WIDTH,
+                    PAGE_HEIGHT,
+                    Bitmap.Config.ARGB_8888
+                )
+                val canvas = android.graphics.Canvas(bitmap)
+                canvas.drawColor(Color.WHITE)
+                canvas.drawBitmap(
+                    drawable.bitmap,
+                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
+                    0f,
+                    null
+                )
+                vm.slotConfigured(
+                    editor.slot,
+                    config.copy(bitmap = bitmap.ditherFloydSteinberg())
+                )
+            }
+        } else {
+            vm.slotConfigured(editor.slot, null)
+        }
+    }
+
+    SideEffect {
+        takePicture.launch(uri)
     }
 }
 
