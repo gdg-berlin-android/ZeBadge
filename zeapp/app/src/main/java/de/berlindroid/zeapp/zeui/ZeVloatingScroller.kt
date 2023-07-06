@@ -4,6 +4,7 @@ package de.berlindroid.zeapp.zeui
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -20,7 +21,7 @@ fun ZeVloatingScroller(
     text: String
 ) {
     FloatingActionButton(
-        containerColor = Color.Black,
+        containerColor = MaterialTheme.colorScheme.secondary,
         onClick = {
             coroutineScope.launch {
                 lazyListState.animateScrollBy(scrollLength)
@@ -28,7 +29,7 @@ fun ZeVloatingScroller(
         }) {
         ZeText(
             text = text,
-            color = Color.White,
+            color =MaterialTheme.colorScheme.primary,
             fontSize = 40.sp,
             textAlign = TextAlign.Center
         )

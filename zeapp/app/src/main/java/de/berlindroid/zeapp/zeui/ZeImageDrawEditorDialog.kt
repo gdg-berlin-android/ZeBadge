@@ -61,7 +61,7 @@ fun ZeImageDrawEditorDialog(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var motionEvent by remember { mutableStateOf(MotionEvent.Idle) }
+    var zeMotionEvent by remember { mutableStateOf(ZeMotionEvent.Idle) }
     // This is our motion event we get from touch motion
     var currentPosition by remember { mutableStateOf(Offset.Unspecified) }
 
@@ -77,11 +77,11 @@ fun ZeImageDrawEditorDialog(
             )
             setContent {
                 LaunchedEffect(key1 = currentPosition, block = {
-                    if (motionEvent == MotionEvent.Down) {
+                    if (zeMotionEvent == ZeMotionEvent.Down) {
                         path.moveTo(currentPosition.x, currentPosition.y)
-                    } else if (motionEvent == MotionEvent.Move) {
+                    } else if (zeMotionEvent == ZeMotionEvent.Move) {
                         path.lineTo(currentPosition.x, currentPosition.y)
-                    } else if (motionEvent == MotionEvent.Up) {
+                    } else if (zeMotionEvent == ZeMotionEvent.Up) {
                         path.lineTo(currentPosition.x, currentPosition.y)
                     }
                 })
@@ -96,18 +96,18 @@ fun ZeImageDrawEditorDialog(
                             detectDragGestures(
                                 onDragStart = { offset ->
                                     currentPosition = offset
-                                    motionEvent = MotionEvent.Down
+                                    zeMotionEvent = ZeMotionEvent.Down
                                 },
                                 onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
                                     currentPosition =
                                         pointerInputChange.position + offset
-                                    motionEvent = MotionEvent.Move
+                                    zeMotionEvent = ZeMotionEvent.Move
                                 },
                                 onDragEnd = {
-                                    motionEvent = MotionEvent.Up
+                                    zeMotionEvent = ZeMotionEvent.Up
                                 },
                                 onDragCancel = {
-                                    motionEvent = MotionEvent.Up
+                                    zeMotionEvent = ZeMotionEvent.Up
                                 },
                             )
                         }
@@ -162,8 +162,4 @@ fun ZeImageDrawEditorDialog(
                 })
         }
     )
-}
-
-enum class MotionEvent {
-    Idle, Down, Move, Up
 }

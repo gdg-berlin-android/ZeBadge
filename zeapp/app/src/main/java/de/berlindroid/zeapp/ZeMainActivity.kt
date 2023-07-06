@@ -13,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,26 +26,40 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -60,12 +75,14 @@ import coil.size.Precision
 import coil.size.Scale
 import com.commit451.coiltransformations.CropTransformation
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zeui.BarCodeEditorDialog
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
-import de.berlindroid.zeapp.zeui.NavigationPad
+import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
+import de.berlindroid.zeapp.zeui.RandomQuotesEditorDialog
 import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
@@ -105,119 +122,195 @@ import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
  */
 @AndroidEntryPoint
 class ZeMainActivity : ComponentActivity() {
-    private val vm: ZeBadgeViewModel by viewModels()
+
+    private val viewModel: ZeBadgeViewModel by viewModels()
 
     /**
      * Once created, use the main view composables.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            DrawUi()
-        }
+        updateContent()
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        setContent {
-            DrawUi()
-        }
+        updateContent()
     }
 
-    @Composable
-    private fun DrawUi() {
-        LaunchedEffect(Unit) {
-            vm.toastEvent.collect {
-                val duration = when (it.duration) {
-                    ZeToastEvent.Duration.SHORT -> Toast.LENGTH_SHORT
-                    ZeToastEvent.Duration.LONG ->Toast.LENGTH_LONG
-                }
-
-                Toast.makeText(this@ZeMainActivity, it.message, duration).show()
-            }
+    private fun updateContent() = setContent {
+        ProvideLocalActivity {
+            DrawUi(viewModel)
         }
-
-        val wsc = calculateWindowSizeClass(activity = this)
-
-        if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
-            CompactUi()
-        } else {
-            LargeScreenUi()
-        }
-
-    }
-
-    @Composable
-    private fun CompactUi() {
-        if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
-            ZeSimulator(
-                page = vm.slotToBitmap(),
-                onButtonPressed = vm::simulatorButtonPressed,
-            )
-        } else {
-            ZeScreen()
-        }
-    }
-
-    @Composable
-    private fun LargeScreenUi() {
-        ZeRow {
-            ZeScreen(modifier = Modifier.weight(.3f))
-            Spacer(modifier = Modifier.width(Dimen.Two))
-            ZeSimulator(
-                page = vm.slotToBitmap(),
-                onButtonPressed = vm::simulatorButtonPressed,
-                modifier = Modifier.weight(.3f)
-            )
-        }
-    }
-
-    @Composable
-    private fun ZeScreen(modifier: Modifier = Modifier) {
-        val lazyListState = rememberLazyListState()
-        ZeBadgeAppTheme(content = {
-            ZeScaffold(
-                modifier = modifier,
-                floatingActionButton = {
-                    NavigationPad(lazyListState)
-                },
-                topBar = {
-                    ZeTopBar(vm)
-                },
-                content = { paddingValues ->
-                    ZePages(this, paddingValues, vm, lazyListState)
-                }
-            )
-        })
     }
 }
 
+@Composable
+private fun Activity.ProvideLocalActivity(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalZeActivity provides this, content = content)
+}
 
 @Composable
-private fun ZeTopBar(vm: ZeBadgeViewModel) {
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+private fun DrawUi(viewModel: ZeBadgeViewModel) {
+    val activity = LocalZeActivity.current
+
+    LaunchedEffect(Unit) {
+        viewModel.toastEvent.collect {
+            val duration = when (it.duration) {
+                ZeToastEvent.Duration.SHORT -> Toast.LENGTH_SHORT
+                ZeToastEvent.Duration.LONG ->Toast.LENGTH_LONG
+            }
+
+            Toast.makeText(activity, it.message, duration).show()
+        }
+    }
+
+    val wsc = calculateWindowSizeClass(activity = LocalZeActivity.current)
+    if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+        CompactUi(viewModel)
+    } else {
+        LargeScreenUi(viewModel)
+    }
+}
+
+@Composable
+private fun CompactUi(vm: ZeBadgeViewModel) {
+    if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
+        ZeSimulator(
+            page = vm.slotToBitmap(),
+            onButtonPressed = vm::simulatorButtonPressed,
+        )
+    } else {
+        ZeScreen(vm)
+    }
+}
+
+@Composable
+private fun LargeScreenUi(vm: ZeBadgeViewModel) {
+    ZeRow {
+        ZeScreen(vm, modifier = Modifier.weight(.3f))
+        Spacer(modifier = Modifier.width(ZeDimen.Two))
+        ZeSimulator(
+            page = vm.slotToBitmap(),
+            onButtonPressed = vm::simulatorButtonPressed,
+            modifier = Modifier.weight(.3f)
+        )
+    }
+}
+
+@Composable
+private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
+    val lazyListState = rememberLazyListState()
+    var isShowingAbout by remember { mutableStateOf(false) }
+    ZeBadgeAppTheme(content = {
+        ZeScaffold(
+            modifier = modifier,
+            floatingActionButton = {
+                if (!isShowingAbout) {
+                    ZeNavigationPad(lazyListState)
+                }
+            },
+            topBar = {
+                ZeTopBar(
+                    onRandomClick = vm::sendRandomPageToDevice,
+                    onSaveAllClick = vm::saveAll,
+                    onAboutClick = { isShowingAbout = !isShowingAbout },
+                    isShowingAbout = isShowingAbout,
+                )
+            },
+            content = { paddingValues ->
+                if (isShowingAbout) {
+                    ZeAbout(paddingValues, vm)
+                } else {
+                    ZePages(
+                        paddingValues = paddingValues,
+                        lazyListState = lazyListState,
+                        vm = vm,
+                    )
+                }
+            }
+        )
+    })
+}
+
+@Composable
+private fun ZeAbout(
+    paddingValues: PaddingValues,
+    vm: ZeBadgeViewModel,
+) {
+    val lines by vm.lines.collectAsState()
+
+    ZeSurface(
+        modifier = ZeModifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(ZeDimen.Half)
+    ) {
+        Column {
+            ZeText(
+                text = "Contributors",
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 24.sp,
+            )
+            ZeLazyColumn {
+                items(lines) { line ->
+                    ZeText(
+                        text = line,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(8.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 18.sp,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ZeTopBar(
+    onSaveAllClick: () -> Unit,
+    onRandomClick: () -> Unit,
+    onAboutClick: () -> Unit,
+    isShowingAbout: Boolean,
+) {
     ZeTopAppBar(
-        title = { ZeText(stringResource(id = R.string.app_name)) },
+        title = { ZeText(style = MaterialTheme.typography.titleLarge, text = stringResource(id = R.string.app_name)) },
+        colors = topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.secondary,
+            actionIconContentColor = MaterialTheme.colorScheme.secondary,
+            navigationIconContentColor = MaterialTheme.colorScheme.secondary,
+        ),
         actions = {
-            ZeIconButton(onClick = { vm.sendRandomPageToDevice() }) {
+            ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
                     contentDescription = "Send random page to badge"
                 )
             }
-            ZeIconButton(onClick = { vm.saveAll() }) {
+            ZeIconButton(onClick = onRandomClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.save_all),
                     contentDescription = null
                 )
             }
+            ZeIconButton(onClick = onAboutClick) {
+                if (isShowingAbout) {
+                    ZeIcon(Icons.Default.Close, contentDescription = "About")
+                } else {
+                    ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
+                }
+            }
         }
     )
 }
 
-
 @Composable
 private fun ZePages(
-    activity: Activity,
     paddingValues: PaddingValues,
     vm: ZeBadgeViewModel,
     lazyListState: LazyListState
@@ -226,7 +319,7 @@ private fun ZePages(
         modifier = ZeModifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(Dimen.Half)
+            .padding(ZeDimen.Half)
     ) {
         val editor by remember { vm.currentSlotEditor }
         val templateChooser by remember { vm.currentTemplateChooser }
@@ -235,7 +328,7 @@ private fun ZePages(
         val slots by remember { vm.slots }
 
         if (editor != null) {
-            SelectedEditor(editor!!, activity, vm)
+            SelectedEditor(editor!!, vm)
         }
 
         if (templateChooser != null) {
@@ -251,14 +344,17 @@ private fun ZePages(
             ZeLazyColumn(
                 state = lazyListState,
                 contentPadding = PaddingValues(
-                    horizontal = Dimen.One,
-                    vertical = Dimen.Half
+                    start = ZeDimen.One,
+                    end = ZeDimen.One,
+                    top = ZeDimen.Half,
+                    bottom = 140.dp
                 )
             ) {
                 items(
                     slots.keys.toList()
                 ) { slot ->
                     PagePreview(
+                        name = slot::class.simpleName ?: "WTF",
                         bitmap = vm.slotToBitmap(slot),
                         customizeThisPage = if (slot.isSponsor) {
                             { vm.customizeSponsorSlot(slot) }
@@ -273,7 +369,7 @@ private fun ZePages(
                         }
                     )
 
-                    ZeSpacer(modifier = ZeModifier.height(Dimen.One))
+                    ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
                 }
             }
         }
@@ -292,11 +388,11 @@ private fun InfoBar(
 ) {
     ZeCard(
         modifier = ZeModifier
-            .padding(horizontal = Dimen.One, vertical = Dimen.One)
-            .background(ZeColor.Black, ZeRoundedCornerShape(Dimen.One)),
+            .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
+            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One)),
     ) {
         ZeRow(
-            modifier = ZeModifier.padding(horizontal = Dimen.Two, vertical = Dimen.One),
+            modifier = ZeModifier.padding(horizontal = ZeDimen.Two, vertical = ZeDimen.One),
             verticalAlignment = ZeAlignment.CenterVertically
         ) {
             ZeText(
@@ -327,7 +423,6 @@ private fun InfoBar(
 @Composable
 private fun SelectedEditor(
     editor: ZeEditor,
-    activity: Activity,
     vm: ZeBadgeViewModel
 ) {
     if (editor.slot !in listOf(
@@ -335,14 +430,15 @@ private fun SelectedEditor(
             ZeSlot.FirstCustom,
             ZeSlot.SecondCustom,
             ZeSlot.QRCode,
-            ZeSlot.Weather
+            ZeSlot.Weather,
+            ZeSlot.Quote,
+            ZeSlot.BarCode
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
             is ZeConfiguration.Name -> NameEditorDialog(
-                activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
             ) { newConfig ->
@@ -372,7 +468,7 @@ private fun SelectedEditor(
 
             is ZeConfiguration.Schedule -> {
                 Toast.makeText(
-                    activity,
+                    LocalZeActivity.current,
                     "Not added by you yet, please feel free to contribute this editor",
                     Toast.LENGTH_LONG
                 ).show()
@@ -381,15 +477,32 @@ private fun SelectedEditor(
             }
 
             is ZeConfiguration.Weather -> {
-                WeatherEditorDialog(activity = activity, config = config, dismissed = {
-                    vm.slotConfigured(null, null)
-                }, {
-                    vm.slotConfigured(editor.slot, it)
-                })
+                WeatherEditorDialog(
+                    accepted = { vm.slotConfigured(editor.slot, it) },
+                    dismissed = { vm.slotConfigured(null, null) },
+                    activity = LocalZeActivity.current,
+                    config = config,
+                )
+            }
+
+            is ZeConfiguration.Quote -> {
+                RandomQuotesEditorDialog(
+                    accepted = { vm.slotConfigured(editor.slot, it) },
+                    dismissed = { vm.slotConfigured(null, null) },
+                    activity = LocalZeActivity.current,
+                    config = config,
+                )
             }
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
-                activity,
+                config,
+                dismissed = { vm.slotConfigured(editor.slot, null) }
+            ) { newConfig ->
+                vm.slotConfigured(editor.slot, newConfig)
+            }
+
+            is ZeConfiguration.BarCode -> BarCodeEditorDialog(
+                LocalZeActivity.current,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
             ) { newConfig ->
@@ -400,7 +513,7 @@ private fun SelectedEditor(
                 vm.slotConfigured(editor.slot, config)
             }
 
-            is ZeConfiguration.ImageDraw -> {
+is ZeConfiguration.ImageDraw -> {
                 ZeImageDrawEditorDialog(dismissed = {
                     vm.slotConfigured(
                         editor.slot,
@@ -420,52 +533,53 @@ private fun CameraEditor(
     editor: ZeEditor,
     config: ZeConfiguration.Camera,
     vm: ZeBadgeViewModel
-) {
-    val context = LocalContext.current
-    val uri = FileProvider.getUriForFile(
-        context,
-        "${BuildConfig.APPLICATION_ID}.files",
-        File(context.cacheDir, "photo.jpg")
+){
+                val context = LocalContext.current
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "${BuildConfig.APPLICATION_ID}.files",
+                    File(context.cacheDir, "photo.jpg")
     )
-    val coroutineScope = rememberCoroutineScope()
-    val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
-        if(pictureTaken) {
-            val imageRequest = ImageRequest.Builder(context)
-                .data(uri)
-                .transformations(CropTransformation())
-                .size(PAGE_WIDTH, PAGE_HEIGHT)
-                .scale(Scale.FIT)
-                .precision(Precision.EXACT)
-                .allowHardware(false)
-                .memoryCachePolicy(CachePolicy.DISABLED)
-                .diskCachePolicy(CachePolicy.DISABLED)
-                .build()
+                val coroutineScope = rememberCoroutineScope()
+                val takePicture =
+                    rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
+                        if (pictureTaken) {
+                            val imageRequest = ImageRequest.Builder(context)
+                                .data(uri)
+                                .transformations(CropTransformation())
+                                .size(PAGE_WIDTH, PAGE_HEIGHT)
+                                .scale(Scale.FIT)
+                                .precision(Precision.EXACT)
+                                .allowHardware(false)
+                                .memoryCachePolicy(CachePolicy.DISABLED)
+                                .diskCachePolicy(CachePolicy.DISABLED)
+                                .build()
 
-            coroutineScope.launch {
-                val drawable =
-                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
-                val bitmap = Bitmap.createBitmap(
-                    PAGE_WIDTH,
-                    PAGE_HEIGHT,
-                    Bitmap.Config.ARGB_8888
-                )
-                val canvas = android.graphics.Canvas(bitmap)
-                canvas.drawColor(Color.WHITE)
-                canvas.drawBitmap(
-                    drawable.bitmap,
-                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
-                    0f,
-                    null
-                )
-                vm.slotConfigured(
-                    editor.slot,
-                    config.copy(bitmap = bitmap.ditherFloydSteinberg())
-                )
-            }
-        } else {
-            vm.slotConfigured(editor.slot, null)
-        }
-    }
+                            coroutineScope.launch {
+                                val drawable =
+                                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
+                                val bitmap = Bitmap.createBitmap(
+                                    PAGE_WIDTH,
+                                    PAGE_HEIGHT,
+                                    Bitmap.Config.ARGB_8888
+                                )
+                                val canvas = android.graphics.Canvas(bitmap)
+                                canvas.drawColor(Color.WHITE)
+                                canvas.drawBitmap(
+                                    drawable.bitmap,
+                                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
+                                    0f,
+                                    null
+                                )
+                                vm.slotConfigured(
+                                    editor.slot,
+                                    config.copy(bitmap = bitmap.ditherFloydSteinberg())
+                                )
+                            }
+                        } else {
+                            vm.slotConfigured(editor.slot, null)
+                        }
+                    }
 
     SideEffect {
         takePicture.launch(uri)
@@ -507,24 +621,24 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
-@Preview
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
+    name: String,
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,
     sendToDevice: (() -> Unit)? = null,
 ) {
     ZeCard(
         modifier = ZeModifier
-            .background(ZeColor.Black, ZeRoundedCornerShape(Dimen.One))
-            .padding(Dimen.Quarter),
+            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One))
+            .padding(ZeDimen.Quarter),
     ) {
         ZeImage(
             modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = Dimen.One, vertical = Dimen.Half),
+                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
             painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = ZeFilterQuality.None,
@@ -533,37 +647,45 @@ private fun PagePreview(
             contentDescription = null,
         )
 
-        if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
-            ZeLazyRow(
-                modifier = ZeModifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = Dimen.Quarter),
-                horizontalArrangement = ZeArrangement.End
-            ) {
-                if (sendToDevice != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Send,
-                            text = "Send",
-                            onClick = sendToDevice,
-                        )
+
+        ZeRow {
+            ZeText(
+                text = name,
+                modifier = Modifier.align(ZeAlignment.CenterVertically).padding(start = 8.dp),
+                color = ZeColor.Black,
+            )
+            if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
+                ZeLazyRow(
+                    modifier = ZeModifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = ZeDimen.Quarter),
+                    horizontalArrangement = ZeArrangement.End
+                ) {
+                    if (sendToDevice != null) {
+                        item {
+                            ZeToolButton(
+                                imageVector = Icons.Filled.Send,
+                                text = "Send",
+                                onClick = sendToDevice,
+                            )
+                        }
                     }
-                }
-                if (resetThisPage != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Refresh,
-                            text = "Reset",
-                            onClick = resetThisPage,
-                        )
+                    if (resetThisPage != null) {
+                        item {
+                            ZeToolButton(
+                                imageVector = Icons.Filled.Refresh,
+                                text = "Reset",
+                                onClick = resetThisPage,
+                            )
+                        }
                     }
-                }
-                if (customizeThisPage != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Edit,
-                            text = "Edit",
-                            onClick = customizeThisPage,
-                        )
+                    if (customizeThisPage != null) {
+                        item {
+                            ZeToolButton(
+                                imageVector = Icons.Filled.Edit,
+                                text = "Edit",
+                                onClick = customizeThisPage,
+                            )
+                        }
                     }
                 }
             }

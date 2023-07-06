@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.graphics.scale
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zeapp.zeui.zepages.BarCodePage
 import de.berlindroid.zeapp.zeui.zepages.QRCodePage
 import java.nio.IntBuffer
 import kotlin.experimental.and
@@ -255,6 +256,73 @@ fun qrComposableToBitmap(
     )
 }
 
+fun barCodeComposableToBitmap(
+    activity: Activity,
+    title: String,
+    url: String,
+    callback: (Bitmap) -> Unit
+) {
+    // create a custom view like in the good old days
+    class ParentView(context: Context) : LinearLayout(context) {
+        init {
+            val width = PAGE_WIDTH
+            val height = PAGE_HEIGHT
+
+            val view = ComposeView(context)
+            view.visibility = View.GONE
+            view.layoutParams = LayoutParams(width, height)
+            addView(view)
+
+            // add the composable to make it renderable
+            view.setContent {
+                BarCodePage(title, url)
+            }
+
+            // once it is rendered and laid out, make a bitmap
+            viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    val bitmap = createBitmapFromView(view = view, width = width, height = height)
+                    callback(bitmap)
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    removeView(view)
+                }
+            })
+        }
+
+        private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
+            view.layoutParams = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+
+            view.measure(
+                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+            )
+
+            view.layout(0, 0, width, height)
+
+            val canvas = Canvas()
+            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+            canvas.setBitmap(bitmap)
+            view.draw(canvas)
+
+            return bitmap
+        }
+    }
+
+    // Don't look to close, nothing to see here. #handwaving
+    activity.addContentView(
+        ParentView(activity),
+        LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+    )
+}
+
 /**
  * Converts a given black/white image to a binary array.
  */
@@ -389,10 +457,12 @@ fun IntBuffer.forEachIndexed(
  */
 fun Bitmap.cropPageFromCenter() : Bitmap {
     val aspectRatio = this.width.toFloat().div(this.height.toFloat())
-    return scale(PAGE_WIDTH, PAGE_WIDTH.div(aspectRatio).toInt())
+    val targetHeight = PAGE_WIDTH.div(aspectRatio).toInt()
+
+    return scale(PAGE_WIDTH, targetHeight)
         .crop(
             fromX = 0,
-            fromY = 0,
+            fromY = PAGE_HEIGHT/2 - targetHeight / 2,
             targetWidth = PAGE_WIDTH,
             targetHeight = PAGE_HEIGHT,
         )

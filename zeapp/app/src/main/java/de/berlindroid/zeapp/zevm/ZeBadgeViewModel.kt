@@ -17,12 +17,16 @@ import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import de.berlindroid.zeapp.zeservices.ZeBadgeUploader
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
+import de.berlindroid.zeapp.zeservices.ZeContributorsService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +42,7 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeUploader: ZeBadgeUploader,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
+    private val contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
     // See if disappearing message is ongoing
@@ -93,13 +98,14 @@ class ZeBadgeViewModel @Inject constructor(
     val slots = mutableStateOf(
         mapOf(
             ZeSlot.Name to initialConfiguration(ZeSlot.Name),
-            ZeSlot.Name to initialConfiguration(ZeSlot.Name),
             ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
             ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
             ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
             ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
+            ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
             ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
             ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
+            ZeSlot.Quote to initialConfiguration(ZeSlot.Quote),
         )
     )
 
@@ -205,10 +211,10 @@ class ZeBadgeViewModel @Inject constructor(
                     ), // TODO: Fetch Schedule here.
 
                     ZeConfiguration.Weather(
-                        "July 6th",
+                        "2023-07-06",
                         "26C",
                         R.drawable.soon.toBitmap()
-                    ), // TODO: Fetch real weather data
+                    ),
 
                     ZeConfiguration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
@@ -247,6 +253,16 @@ class ZeBadgeViewModel @Inject constructor(
                 currentSlotEditor.value = ZeEditor(
                     slot,
                     slots.value[ZeSlot.Weather]!!
+                )
+            } else if(slot is ZeSlot.BarCode) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.BarCode]!!
+                )
+            } else if (slot is ZeSlot.Quote) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.Quote]!!
                 )
             } else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
@@ -337,11 +353,23 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
                 "Your title",
                 "",
-                R.drawable.soon.toBitmap()
+                R.drawable.qrpage_preview.toBitmap()
             )
             ZeSlot.Weather -> ZeConfiguration.Weather(
-                "July 7th",
+                "2023-07-06",
                 "22C",
+                R.drawable.soon.toBitmap()
+            )
+
+            is ZeSlot.Quote -> ZeConfiguration.Quote(
+                "Test",
+                "Author",
+                R.drawable.page_quote_sample.toBitmap()
+            )
+
+            ZeSlot.BarCode -> ZeConfiguration.BarCode(
+                "Your title for barcode",
+                "",
                 R.drawable.soon.toBitmap()
             )
         }
@@ -376,6 +404,9 @@ class ZeBadgeViewModel @Inject constructor(
         clipboardService.copyToClipboard(message.value)
         _toastEvent.tryEmit(ZeToastEvent("Copied", ZeToastEvent.Duration.LONG))
     }
+
+    val lines: StateFlow<List<String>> = contributorsService.contributors()
+        .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
 }
 
 private fun <K, V> Map<K, V>.copy(vararg entries: Pair<K, V>): Map<K, V> {

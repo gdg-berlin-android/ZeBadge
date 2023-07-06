@@ -23,15 +23,15 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 
 /**
- * A composable that represents a weather card, to be renderd as a bitmap.
+ * A composable that represents a quote card, to be renderd as a bitmap.
  */
 @Composable
 @Preview
-fun WeatherPage(
-    date: String = "2023-07-06",
-    temperature: String = "22C",
+fun RandomQuotePage(
+    message: String = "Don't blame others. it won't make you a better person.",
+    author: String = "Lolly Daskal",
 ) {
-    var size by remember { mutableStateOf(10.sp) }
+    val size by remember { mutableStateOf(6.sp) }
 
     Column(
         modifier = Modifier
@@ -47,13 +47,13 @@ fun WeatherPage(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFF4444FF)),
+                .background(Color.Black),
             fontFamily = FontFamily.Monospace,
-            fontSize = 10.sp,
+            fontSize = 8.sp,
             textAlign = TextAlign.Center,
             color = Color.White,
             maxLines = 1,
-            text = "☀️Upcoming weather",
+            text = "Quote of The Day",
         )
         Text(
             modifier = Modifier
@@ -61,23 +61,18 @@ fun WeatherPage(
                 .weight(1.0f),
             fontSize = size,
             textAlign = TextAlign.Center,
-            text = date,
-            onTextLayout = { result ->
-                if (result.didOverflowWidth) {
-                    size /= 2.0f
-                }
-            },
+            text = message,
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFF4444FF)),
+                .background(Color.Black),
             fontFamily = FontFamily.Monospace,
-            fontSize = 8.sp,
+            fontSize = 6.sp,
             color = Color.White,
             textAlign = TextAlign.Center,
             maxLines = 1,
-            text = temperature,
+            text = author,
         )
     }
 }

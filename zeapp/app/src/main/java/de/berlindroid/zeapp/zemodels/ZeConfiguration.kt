@@ -115,6 +115,16 @@ sealed class ZeConfiguration(
         }
     }
 
+    data class Quote(
+        val message: String,
+        val author: String,
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "Random quotes", bitmap) {
+        companion object {
+            const val TYPE: String = "Random quotes"
+        }
+    }
+
     data class Kodee(
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "Kodee³", bitmap) {
@@ -142,6 +152,22 @@ sealed class ZeConfiguration(
     ) : ZeConfiguration(TYPE, humanTitle = "Image Draw", bitmap) {
         companion object {
             const val TYPE: String = "Image Draw"
+        }
+    }
+
+    /**
+     * Store the name and contact of an attendee.
+     *
+     * @param url the URL of the attendee github profile ("https://github.com/gdg-berlin-android")
+     * @param bitmap (overriden) final page
+     */
+    data class BarCode(
+        val title: String,
+        val url: String,
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "BarCode Tag", bitmap) {
+        companion object {
+            const val TYPE: String = "BarCode Tag"
         }
     }
 
