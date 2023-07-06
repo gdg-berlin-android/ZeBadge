@@ -15,9 +15,9 @@
     <string name="could_not_generate_image">Bir resim oluşturamazsınız</string>
 
     <string name="image_needed">Resim ikilisi gerekli. Görüntünün çeşitli öğelerine dokunun.</string>
-    <string name="add_qr_url">QR URL\'sini oylayın</string>
+    <string name="add_qr_url">\"QR URL\'sini oylayın\"</string>
     <string name="qr_code_title">QR kodunu yazın</string>
     <string name="url">URL</string>
-    <string name="add_barcode_url">Kod çubuğunun URL\'sini ekleyin</string>
+    <string name="add_barcode_url">\"Kod çubuğunun URL\'sini ekleyin\"</string>
     <string name="bar_code_title">Kod çubuğunun adı</string>
 </resources>
