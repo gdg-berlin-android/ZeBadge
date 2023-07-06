@@ -29,8 +29,8 @@ class ZePreferencesService @Inject constructor(
         )
     }
 
-    fun getOpenApiKey(): String? {
-        return sharedPreferences.getString(OPEN_API_PREFERENCES_KEY, "")
+    fun getOpenApiKey(): String {
+        return sharedPreferences.getString(OPEN_API_PREFERENCES_KEY, null).orEmpty()
     }
 
     fun isSlotConfigured(slot: ZeSlot): Boolean {
