@@ -424,7 +424,7 @@ private fun SelectedEditor(
             }
 
             is ZeConfiguration.BarCode -> BarCodeEditorDialog(
-                activity,
+                LocalActivity.current,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
             ) { newConfig ->
