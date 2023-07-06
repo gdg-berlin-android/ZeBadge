@@ -216,12 +216,17 @@ class ZeBadgeViewModel @Inject constructor(
                     ),
 
                     ZeConfiguration.Kodee(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
                     ZeConfiguration.ImageDraw(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
                     ),
                     ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
+                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
+                    ZeConfiguration.CustomPhrase(
+                        "Custom phrase",
+                        R.drawable.page_phrase.toBitmap().ditherFloydSteinberg()
+                    )
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.isNotBlank()) {
@@ -238,33 +243,33 @@ class ZeBadgeViewModel @Inject constructor(
             )
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
-            when (slot) {
-                is ZeSlot.Name -> currentSlotEditor.value = ZeEditor(
+            if (slot is ZeSlot.Name) {
+                currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Name]!!,
+                    slots.value[ZeSlot.Name]!!
                 )
-
-                is ZeSlot.QRCode -> currentSlotEditor.value = ZeEditor(
+            } else if (slot is ZeSlot.QRCode) {
+                currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.QRCode]!!,
+                    slots.value[ZeSlot.QRCode]!!
                 )
-
-                is ZeSlot.Weather -> currentSlotEditor.value = ZeEditor(
+            } else if (slot is ZeSlot.Weather) {
+                currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Weather]!!,
+                    slots.value[ZeSlot.Weather]!!
                 )
-
-                is ZeSlot.BarCode -> currentSlotEditor.value = ZeEditor(
+            } else if(slot is ZeSlot.BarCode) {
+                currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.BarCode]!!,
+                    slots.value[ZeSlot.BarCode]!!
                 )
-
-                is ZeSlot.Quote -> currentSlotEditor.value = ZeEditor(
+            } else if (slot is ZeSlot.Quote) {
+                currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Quote]!!,
+                    slots.value[ZeSlot.Quote]!!
                 )
-
-                else -> Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+            } else {
+                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
         }
     }

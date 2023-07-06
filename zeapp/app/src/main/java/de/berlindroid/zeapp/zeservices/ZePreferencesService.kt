@@ -88,6 +88,9 @@ class ZePreferencesService @Inject constructor(
                     putString(slot.preferencesKey("barcode_title"), config.title)
                     putString(slot.preferencesKey("url"), config.url)
                 }
+                is ZeConfiguration.CustomPhrase -> {
+                    putString(slot.preferencesKey("random_phrase"), config.phrase)
+                }
             }
         }
     }
@@ -124,6 +127,11 @@ class ZePreferencesService @Inject constructor(
                 title = slot.preferencesValue("qr_title"),
                 url = slot.preferencesValue("url"),
                 text = slot.preferencesValue("qr_text"),
+                bitmap = bitmap
+            )
+
+            ZeConfiguration.CustomPhrase.TYPE -> ZeConfiguration.CustomPhrase(
+                phrase = slot.preferencesValue("random_phrase"),
                 bitmap = bitmap
             )
 
