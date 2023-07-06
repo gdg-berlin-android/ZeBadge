@@ -12,6 +12,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,8 +50,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -61,12 +63,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dagger.hilt.android.AndroidEntryPoint
-import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zemodels.ZeEditor
-import de.berlindroid.zeapp.zemodels.ZeSlot
-import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import androidx.core.content.FileProvider
 import coil.imageLoader
 import coil.request.CachePolicy
@@ -74,17 +70,23 @@ import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import com.commit451.coiltransformations.CropTransformation
+import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zemodels.ZeEditor
+import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import de.berlindroid.zeapp.zeui.BarCodeEditorDialog
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
-import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.RandomQuotesEditorDialog
 import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
+import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.launch
@@ -350,10 +352,21 @@ private fun ZePages(
                     bottom = 140.dp
                 )
             ) {
+
                 items(
                     slots.keys.toList()
-                ) { slot ->
+                ) { slot  ->
+                    var isVisible by remember { mutableStateOf(false) }
+                    val alpha: Float by animateFloatAsState(
+                        targetValue = if (isVisible) 1f else 0f, label = "alpha",
+                        animationSpec = tween(durationMillis = 750)
+                    )
+                    LaunchedEffect(slot) {
+                        isVisible = true
+                    }
+
                     PagePreview(
+                        modifier = Modifier.alpha(alpha = alpha),
                         name = slot::class.simpleName ?: "WTF",
                         bitmap = vm.slotToBitmap(slot),
                         customizeThisPage = if (slot.isSponsor) {
@@ -622,6 +635,7 @@ private fun TemplateChooserDialog(
 
 @Composable
 private fun PagePreview(
+    modifier: ZeModifier = ZeModifier,
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
     name: String,
@@ -630,7 +644,7 @@ private fun PagePreview(
     sendToDevice: (() -> Unit)? = null,
 ) {
     ZeCard(
-        modifier = ZeModifier
+        modifier = modifier
             .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One))
             .padding(ZeDimen.Quarter),
     ) {
@@ -651,7 +665,9 @@ private fun PagePreview(
         ZeRow {
             ZeText(
                 text = name,
-                modifier = Modifier.align(ZeAlignment.CenterVertically).padding(start = 8.dp),
+                modifier = Modifier
+                    .align(ZeAlignment.CenterVertically)
+                    .padding(start = 8.dp),
                 color = ZeColor.Black,
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
