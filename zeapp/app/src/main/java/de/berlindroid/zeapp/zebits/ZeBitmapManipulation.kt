@@ -315,7 +315,7 @@ fun ByteArray.toBitmap(): Bitmap {
 }
 
 /**
- * Check if a given bitmap can be converted into binary form.
+ * Check if a given bitmap is in binary form.
  *
  * The binary form consists of pixel whos color values are either all zeros or all 255.
  */
@@ -389,10 +389,12 @@ fun IntBuffer.forEachIndexed(
  */
 fun Bitmap.cropPageFromCenter() : Bitmap {
     val aspectRatio = this.width.toFloat().div(this.height.toFloat())
-    return scale(PAGE_WIDTH, PAGE_WIDTH.div(aspectRatio).toInt())
+    val targetHeight = PAGE_WIDTH.div(aspectRatio).toInt()
+
+    return scale(PAGE_WIDTH, targetHeight)
         .crop(
             fromX = 0,
-            fromY = 0,
+            fromY = PAGE_HEIGHT/2 - targetHeight / 2,
             targetWidth = PAGE_WIDTH,
             targetHeight = PAGE_HEIGHT,
         )

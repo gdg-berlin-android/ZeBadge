@@ -27,7 +27,7 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zeui.zepages.NamePage
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
 
 
 /**
@@ -45,9 +45,9 @@ private const val Empty = ""
 @Composable
 fun NameEditorDialog(
     activity: Activity,
-    config: Configuration.Name,
+    config: ZeConfiguration.Name,
     dismissed: () -> Unit = {},
-    accepted: (config: Configuration.Name) -> Unit
+    accepted: (config: ZeConfiguration.Name) -> Unit
 ) {
     var name by remember { mutableStateOf(config.name) }
     var contact by remember { mutableStateOf(config.contact) }
@@ -68,7 +68,7 @@ fun NameEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(Configuration.Name(name, contact, image))
+                        accepted(ZeConfiguration.Name(name, contact, image))
                     } else {
                         Toast.makeText(
                             activity,
