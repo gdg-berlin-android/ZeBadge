@@ -5,6 +5,7 @@
     <string name="reset">Reset</string>
     <string name="floyd_steninberg_initials">FS</string>
     <string name="positional">Positional</string>
+    <string name="rotate">Rotate</string>
     <string name="invert">Invert</string>
 
     <string name="generate">Generate</string>
