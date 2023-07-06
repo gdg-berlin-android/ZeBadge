@@ -9,7 +9,6 @@
 
     <string name="generate">Generate</string>
     <string name="not_binary_image">Not a binary image. Make sure each pixel is either black or white.</string>
-    <string name="image_generation_in_progress">Image generation in progress</string>
     <string name="generate_image_page">Generate Image Page</string>
     <string name="draw_image_page">Draw Image Page</string>
     <string name="enter_prompt">Enter your prompt here</string>
@@ -19,4 +18,6 @@
     <string name="add_qr_url">Add your QR URL</string>
     <string name="qr_code_title">QR Code title</string>
     <string name="url">URL</string>
+    <string name="add_barcode_url">Add your BarCode URL</string>
+    <string name="bar_code_title">Bar Code title</string>
 </resources>
