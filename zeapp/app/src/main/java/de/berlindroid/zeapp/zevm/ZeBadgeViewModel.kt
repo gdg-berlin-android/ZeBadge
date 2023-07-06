@@ -17,12 +17,16 @@ import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import de.berlindroid.zeapp.zeservices.ZeBadgeUploader
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
+import de.berlindroid.zeapp.zeservices.ZeContributorsService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +42,7 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeUploader: ZeBadgeUploader,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
+    private val contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
     // See if disappearing message is ongoing
@@ -387,6 +392,9 @@ class ZeBadgeViewModel @Inject constructor(
         clipboardService.copyToClipboard(message.value)
         _toastEvent.tryEmit(ZeToastEvent("Copied", ZeToastEvent.Duration.LONG))
     }
+
+    val lines: StateFlow<List<String>> = contributorsService.contributors()
+        .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
 }
 
 private fun <K, V> Map<K, V>.copy(vararg entries: Pair<K, V>): Map<K, V> {
