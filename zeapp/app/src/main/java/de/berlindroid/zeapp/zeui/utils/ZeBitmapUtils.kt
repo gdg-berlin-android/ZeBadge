@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.view.View
 import android.view.ViewGroup
 
-class BitmapUtils {
+class ZeBitmapUtils {
     fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
         view.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,

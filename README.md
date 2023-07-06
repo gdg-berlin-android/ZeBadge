@@ -1,5 +1,5 @@
 # ZeBadge
-Droidcon 2023: The time a new badge saw the light of the day, full with delight and android programming capabillities.
+Droidcon 2023: The time a new badge saw the light of the day, full with delight and android programming capabilities.
 
 This is the badge: 
 ![badgerrpi2040](https://user-images.githubusercontent.com/1162562/236334466-1ccfff65-6744-4304-b4d3-1d200b16ffe8.png)
@@ -21,11 +21,11 @@ Together they make magic happen. 🪄🦄
 The following sections are describing the badge in detail, but if you just want to get started, please feel free to follow our [Getting Started](./zehardware/README.md) guide.
 
 # Scenario
-The following lines are the thought experiment on how we imagine a visit to the GDG Berlin Android Droidcon 2023 Berlin booth will look like. Allice is an atenndee and Olivia is an organizer.
+The following lines are the thought experiment on how we imagine a visit to the GDG Berlin Android Droidcon 2023 Berlin booth will look like. Alice is an atenndee and Olivia is an organizer.
 
 | Actor | Dialog |
 |-------|--------|
-| Alice | Hey, I saw that thing everyone is running arround, that with their name on it? They said I can find it here, is that true?|
+| Alice | Hey, I saw that thing everyone is running around, that with their name on it? They said I can find it here, is that true?|
 | Olivia | Yes, you came to the right place, this is _ZeBadge_, a digital badge that displays your name and can be programmed and changed!|
 | Alice | Oh that is amazing, how does this work? How can I get one?|
 | Olivia | You need to do what we all love to do: Write some code and create a PR on our open source repository, controlling the badge and the android app. You can get started with using one of our loaner badges, and read one of our getting started guides. Once you have done "something code" with it, you can get your own badge.|
