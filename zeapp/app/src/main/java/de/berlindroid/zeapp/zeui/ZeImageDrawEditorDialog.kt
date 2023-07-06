@@ -45,11 +45,6 @@ import de.berlindroid.zeapp.zebits.threshold
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import kotlinx.coroutines.launch
 
-enum class MotionEvent {
-    Idle, Down, Move, Up
-}
-
-
 /**
  * Use Canvas to draw something with a finger on the badge.
  *
