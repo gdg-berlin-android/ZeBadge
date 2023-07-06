@@ -22,7 +22,7 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.qrComposableToBitmap
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
 
 /**
  * Editor dialog for changing the name of the participant badge.
@@ -35,9 +35,9 @@ import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
 @Composable
 fun QRCodeEditorDialog(
     activity: Activity,
-    config: Configuration.QRCode,
+    config: ZeConfiguration.QRCode,
     dismissed: () -> Unit = {},
-    accepted: (config: Configuration.QRCode) -> Unit
+    accepted: (config: ZeConfiguration.QRCode) -> Unit
 ) {
     var title by remember { mutableStateOf(config.title) }
     var url by remember { mutableStateOf(config.url) }
@@ -59,7 +59,7 @@ fun QRCodeEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(Configuration.QRCode(title, url, image))
+                        accepted(ZeConfiguration.QRCode(title, url, image))
                     } else {
                         Toast.makeText(
                             activity, R.string.image_needed,
