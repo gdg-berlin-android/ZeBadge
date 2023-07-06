@@ -23,10 +23,8 @@ import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,7 +41,7 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeUploader: ZeBadgeUploader,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
-    private val contributorsService: ZeContributorsService,
+    contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
     val snackbarHostState = SnackbarHostState()
@@ -115,7 +113,7 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
             ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
             ZeSlot.Quote to initialConfiguration(ZeSlot.Quote),
-        )
+        ),
     )
 
     /**
@@ -208,22 +206,22 @@ class ZeBadgeViewModel @Inject constructor(
                     ZeConfiguration.Picture(R.drawable.soon.toBitmap()),
 
                     ZeConfiguration.Schedule(
-                        R.drawable.soon.toBitmap()
+                        R.drawable.soon.toBitmap(),
                     ), // TODO: Fetch Schedule here.
 
                     ZeConfiguration.Weather(
                         "2023-07-06",
                         "26C",
-                        R.drawable.soon.toBitmap()
+                        R.drawable.soon.toBitmap(),
                     ),
 
                     ZeConfiguration.Kodee(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
                     ),
                     ZeConfiguration.ImageDraw(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
                     ),
-                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())
+                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.isNotBlank()) {
@@ -232,41 +230,41 @@ class ZeBadgeViewModel @Inject constructor(
                             ZeConfiguration
                                 .ImageGen(
                                     prompt = "An Android developer at a conference in Berlin.",
-                                    bitmap = R.drawable.soon.toBitmap()
-                                )
+                                    bitmap = R.drawable.soon.toBitmap(),
+                                ),
                         )
                     }
-                }
+                },
             )
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
-            if (slot is ZeSlot.Name) {
-                currentSlotEditor.value = ZeEditor(
+            when (slot) {
+                is ZeSlot.Name -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Name]!!
+                    slots.value[ZeSlot.Name]!!,
                 )
-            } else if (slot is ZeSlot.QRCode) {
-                currentSlotEditor.value = ZeEditor(
+
+                is ZeSlot.QRCode -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.QRCode]!!
+                    slots.value[ZeSlot.QRCode]!!,
                 )
-            } else if (slot is ZeSlot.Weather) {
-                currentSlotEditor.value = ZeEditor(
+
+                is ZeSlot.Weather -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Weather]!!
+                    slots.value[ZeSlot.Weather]!!,
                 )
-            } else if(slot is ZeSlot.BarCode) {
-                currentSlotEditor.value = ZeEditor(
+
+                is ZeSlot.BarCode -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.BarCode]!!
+                    slots.value[ZeSlot.BarCode]!!,
                 )
-            } else if (slot is ZeSlot.Quote) {
-                currentSlotEditor.value = ZeEditor(
+
+                is ZeSlot.Quote -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Quote]!!
+                    slots.value[ZeSlot.Quote]!!,
                 )
-            } else {
-                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+
+                else -> Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
         }
     }
@@ -344,7 +342,7 @@ class ZeBadgeViewModel @Inject constructor(
             is ZeSlot.Name -> ZeConfiguration.Name(
                 "Your Name",
                 "Your Contact",
-                imageProviderService.getInitialNameBitmap()
+                imageProviderService.getInitialNameBitmap(),
             )
 
             is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
@@ -360,19 +358,19 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.Weather -> ZeConfiguration.Weather(
                 "2023-07-06",
                 "22C",
-                R.drawable.soon.toBitmap()
+                R.drawable.soon.toBitmap(),
             )
 
             is ZeSlot.Quote -> ZeConfiguration.Quote(
                 "Test",
                 "Author",
-                R.drawable.page_quote_sample.toBitmap()
+                R.drawable.page_quote_sample.toBitmap(),
             )
 
             ZeSlot.BarCode -> ZeConfiguration.BarCode(
                 "Your title for barcode",
                 "",
-                R.drawable.soon.toBitmap()
+                R.drawable.soon.toBitmap(),
             )
         }
     }

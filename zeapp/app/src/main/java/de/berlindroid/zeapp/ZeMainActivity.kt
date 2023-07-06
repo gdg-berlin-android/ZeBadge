@@ -400,7 +400,7 @@ private fun SelectedEditor(
             ZeSlot.QRCode,
             ZeSlot.Weather,
             ZeSlot.Quote,
-            ZeSlot.BarCode
+            ZeSlot.BarCode,
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
@@ -441,8 +441,8 @@ private fun SelectedEditor(
                 RandomQuotesEditorDialog(
                     accepted = { vm.slotConfigured(editor.slot, it) },
                     dismissed = { vm.slotConfigured(null, null) },
-                    activity = LocalZeActivity.current,
                     config = config,
+                    snackbarMessage = vm::showSnackBar,
                 )
             }
 
