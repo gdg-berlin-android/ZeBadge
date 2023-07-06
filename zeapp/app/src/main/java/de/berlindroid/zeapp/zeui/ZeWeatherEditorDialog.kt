@@ -22,8 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
 
 
 /**
@@ -40,9 +40,9 @@ private const val Empty = ""
 @Composable
 fun WeatherEditorDialog(
     activity: Activity,
-    config: Configuration.Weather,
+    config: ZeConfiguration.Weather,
     dismissed: () -> Unit = {},
-    accepted: (config: Configuration.Weather) -> Unit
+    accepted: (config: ZeConfiguration.Weather) -> Unit
 ) {
     var date by remember { mutableStateOf(config.date) }
     var temperature by remember { mutableStateOf(config.temperature) }
@@ -65,7 +65,7 @@ fun WeatherEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(Configuration.Weather(date, temperature, image))
+                        accepted(ZeConfiguration.Weather(date, temperature, image))
                     } else {
                         Toast.makeText(
                             activity,
