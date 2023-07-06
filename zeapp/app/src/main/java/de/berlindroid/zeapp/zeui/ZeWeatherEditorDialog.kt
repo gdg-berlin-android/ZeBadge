@@ -5,7 +5,6 @@ package de.berlindroid.zeapp.zeui
 import android.R
 import android.app.Activity
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -16,14 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeservices.WeatherData
+import de.berlindroid.zeapp.zeservices.fetchWeather
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
+import kotlinx.coroutines.launch
 
 
 /**
@@ -35,7 +37,6 @@ import de.berlindroid.zeapp.zeui.zepages.WeatherPage
  * @param accepted callback called with the new configuration configured.
  */
 
-private const val Empty = ""
 
 @Composable
 fun WeatherEditorDialog(
@@ -48,12 +49,21 @@ fun WeatherEditorDialog(
     var temperature by remember { mutableStateOf(config.temperature) }
     var image by remember { mutableStateOf(config.bitmap) }
 
+    var weatherData: WeatherData? by remember {
+        mutableStateOf(null)
+    }
+
+    val scope = rememberCoroutineScope()
+
     fun redrawComposableImage() {
         composableToBitmap(
             activity = activity,
             content = {
-                WeatherPage(date, temperature)
-                      },
+                WeatherPage(
+                    weatherData?.formattedDate() ?: "N/A",
+                    weatherData?.formattedTemperature ?: "N/A"
+                )
+            },
         ) {
             image = it
         }
@@ -95,49 +105,32 @@ fun WeatherEditorDialog(
 
                 item {
                     OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
                         value = date,
                         maxLines = 1,
                         label = { Text(text = "Date") },
                         onValueChange = { newValue ->
                             if (newValue.length <= MaxCharacters * 2) {
                                 date = newValue
-                                redrawComposableImage()
                             }
                         },
                         supportingText = {
-                            Text(text = "${date.length}/${MaxCharacters * 2}")
+                            Text(text = "Format: year-month-day - 2023-07-06")
                         },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = date.isEmpty()) {
-                                date = Empty
-                            }
-                        }
                     )
                 }
 
                 item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = temperature,
-                        maxLines = 1,
-                        label = { Text(text = "Temperature") },
-                        onValueChange = { newValue ->
-                            // Limit Characters so they're displayed correctly in the screen
-                            if (newValue.length <= MaxCharacters) {
-                                temperature = newValue
+                    Button(
+                        onClick = {
+                            // Fix this please :)
+                            scope.launch {
+                                weatherData = fetchWeather(date)
                                 redrawComposableImage()
                             }
-                        },
-                        supportingText = {
-                            Text(text = "${temperature.length}/$MaxCharacters")
-                        },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = temperature.isEmpty()) {
-                                temperature = Empty
-                            }
                         }
-                    )
+                    ) {
+                        Text("Load Weather")
+                    }
                 }
             }
         }

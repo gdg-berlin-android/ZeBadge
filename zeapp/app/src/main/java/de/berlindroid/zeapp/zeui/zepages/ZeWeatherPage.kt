@@ -28,7 +28,7 @@ import de.berlindroid.zeapp.PAGE_WIDTH
 @Composable
 @Preview
 fun WeatherPage(
-    date: String = "July 6th",
+    date: String = "2023-07-06",
     temperature: String = "22C",
 ) {
     var size by remember { mutableStateOf(10.sp) }

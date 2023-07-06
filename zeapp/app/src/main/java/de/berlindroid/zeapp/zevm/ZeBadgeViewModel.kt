@@ -205,10 +205,10 @@ class ZeBadgeViewModel @Inject constructor(
                     ), // TODO: Fetch Schedule here.
 
                     ZeConfiguration.Weather(
-                        "July 6th",
+                        "2023-07-06",
                         "26C",
                         R.drawable.soon.toBitmap()
-                    ), // TODO: Fetch real weather data
+                    ),
 
                     ZeConfiguration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
@@ -345,7 +345,7 @@ class ZeBadgeViewModel @Inject constructor(
                 R.drawable.qrpage_preview.toBitmap()
             )
             ZeSlot.Weather -> ZeConfiguration.Weather(
-                "July 7th",
+                "2023-07-06",
                 "22C",
                 R.drawable.soon.toBitmap()
             )
