@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
@@ -60,6 +59,7 @@ fun ImageGenerationEditorDialog(
     initialPrompt: String = "Unicorn at an android conference in isometric view.",
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.ImageGen) -> Unit = {},
+    snackbarMessage: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -86,7 +86,7 @@ fun ImageGenerationEditorDialog(
                     if (bitmap.isBinary()) {
                         accepted(ZeConfiguration.ImageGen(prompt, bitmap))
                     } else {
-                        Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG).show()
+                        snackbarMessage(context.getString(R.string.not_binary_image))
                     }
                 }) {
                 Text(stringResource(id = android.R.string.ok))
@@ -133,11 +133,7 @@ fun ImageGenerationEditorDialog(
                                     lastLoadedBitmap = bitmap.copy()
                                 } else {
                                     withContext(Dispatchers.Main) {
-                                        Toast.makeText(
-                                            context,
-                                            R.string.could_not_generate_image,
-                                            Toast.LENGTH_LONG
-                                        ).show()
+                                        snackbarMessage(context.getString(R.string.could_not_generate_image))
                                     }
                                     bitmap = BitmapFactory.decodeResource(
                                         context.resources,
