@@ -53,7 +53,7 @@ exceptions:
   active: true
   ExceptionRaisedInUnexpectedLocation:
     active: false
-    methodNames: 'toString,hashCode,equals,finalize'
+    methodNames: ['toString' ,'hashCode', 'equals', 'finalize']
   InstanceOfCheckForException:
     active: false
   NotImplementedDeclaration:
