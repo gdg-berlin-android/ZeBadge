@@ -1,6 +1,5 @@
 package de.berlindroid.zeapp.zeui
 
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
@@ -165,3 +164,6 @@ fun ZeImageDrawEditorDialog(
     )
 }
 
+enum class MotionEvent {
+    Idle, Down, Move, Up
+}
