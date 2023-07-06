@@ -174,6 +174,14 @@ class ZeBadgeViewModel(
             }
         }
 
+        data class Camera(
+            override val bitmap: Bitmap,
+        ) : Configuration(TYPE, humanTitle = "Camera", bitmap) {
+            companion object {
+                const val TYPE: String = "Camera"
+            }
+        }
+
         // TODO: Add your own pages.
     }
 
@@ -383,6 +391,7 @@ class ZeBadgeViewModel(
                     Configuration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
+                    Configuration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.value.isNeitherNullNorBlank()) {
@@ -574,6 +583,7 @@ class ZeBadgeViewModel(
                 putString(slot.preferencesKey("url"), config.url)
             }
 
+            is Configuration.Camera,
             is Configuration.Kodee -> Unit
         }
 
