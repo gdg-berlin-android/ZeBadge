@@ -206,7 +206,7 @@ class ZeBadgeViewModel @Inject constructor(
                     ZeConfiguration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
-                    Configuration.ImageDraw(
+                    ZeConfiguration.ImageDraw(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
                     ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())

@@ -401,7 +401,7 @@ private fun SelectedEditor(
                 vm.slotConfigured(editor.slot, config)
             }
 
-            is Configuration.ImageDraw -> {
+            is ZeConfiguration.ImageDraw -> {
                 ZeImageDrawEditorDialog(dismissed = {
                     vm.slotConfigured(
                         editor.slot,

@@ -134,5 +134,19 @@ sealed class ZeConfiguration(
         }
     }
 
+    /**
+     * Configure this slot for image draw by user
+     *
+     * @param prompt describe the contents of the page to be created.
+     * @param bitmap the resulting page.
+     */
+    data class ImageDraw(
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "Image Draw", bitmap) {
+        companion object {
+            const val TYPE: String = "Image Draw"
+        }
+    }
+
     // TODO: Add your own pages.
 }

@@ -1,8 +1,6 @@
 package de.berlindroid.zeapp.zeui
 
-import android.graphics.Bitmap
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
@@ -44,7 +42,7 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zebits.threshold
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import kotlinx.coroutines.launch
 
 enum class MotionEvent {
@@ -65,7 +63,7 @@ enum class MotionEvent {
 fun ZeImageDrawEditorDialog(
     initialPrompt: String = "Unicorn at an android conference in isometric view.",
     dismissed: () -> Unit = {},
-    accepted: (config: ZeBadgeViewModel.Configuration.ImageDraw) -> Unit = {},
+    accepted: (config: ZeConfiguration.ImageDraw) -> Unit = {},
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -150,7 +148,7 @@ fun ZeImageDrawEditorDialog(
                                 .threshold()
 
                         if (bitmap.isBinary()) {
-                            accepted(ZeBadgeViewModel.Configuration.ImageDraw(bitmap))
+                            accepted(ZeConfiguration.ImageDraw(bitmap))
                         } else {
                             Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG)
                                 .show()

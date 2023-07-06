@@ -71,6 +71,10 @@ class ZePreferencesService @Inject constructor(
 
                 is ZeConfiguration.Camera,
                 is ZeConfiguration.Kodee -> Unit
+
+                is ZeConfiguration.ImageDraw -> {
+                    // Nothing more to configure
+                }
             }
         }
     }
