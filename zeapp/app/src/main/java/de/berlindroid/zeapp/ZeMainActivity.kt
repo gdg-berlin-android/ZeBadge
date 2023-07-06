@@ -331,7 +331,7 @@ private fun ZePages(
                     start = ZeDimen.One,
                     end = ZeDimen.One,
                     top = ZeDimen.Half,
-                    bottom = 140.dp,
+                    bottom = ZeDimen.One
                 ),
             ) {
                 items(
