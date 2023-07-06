@@ -30,6 +30,7 @@ import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 @Preview
 fun QRCodePage(
     title: String = "Hello, my github profile is",
+    text: String = "gdg-berlin-android",
     url: String = "https://github.com/gdg-berlin-android",
 ) {
     val pageWidth = with(LocalDensity.current) { PAGE_WIDTH.toDp() }
@@ -52,12 +53,22 @@ fun QRCodePage(
             Text(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFF000000)),
+                    .background(Color.Black),
                 fontFamily = FontFamily.Cursive,
                 fontSize = 12.sp,
                 color = Color.White,
                 maxLines = 3,
                 text = title,
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center,
+                color = Color.Black,
+                maxLines = 1,
+                text = text,
             )
         }
 
