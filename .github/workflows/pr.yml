@@ -103,15 +103,6 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd
-          
-      - name: working dir
-        run: pwd
-        
-      - name: print files
-        run: ls -la
-          
-      - name: See if things make sense
-        run: ./gradlew help
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -130,4 +121,6 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: pwd
+          script: |
+            cd zeapp
+            ./gradlew cAT --stacktrace
