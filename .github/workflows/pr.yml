@@ -103,6 +103,15 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd
+          
+      - name: working dir
+        run: pwd
+        
+      - name: print files
+        run: ls -la
+          
+      - name: See if things make sense
+        run: ./gradlew help
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
