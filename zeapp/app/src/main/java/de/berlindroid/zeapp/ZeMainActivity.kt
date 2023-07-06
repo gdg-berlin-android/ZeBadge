@@ -28,14 +28,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
@@ -46,12 +49,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
-import dagger.hilt.android.AndroidEntryPoint
-import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zemodels.ZeEditor
-import de.berlindroid.zeapp.zemodels.ZeSlot
-import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import androidx.core.content.FileProvider
 import coil.imageLoader
 import coil.request.CachePolicy
@@ -59,7 +56,14 @@ import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import com.commit451.coiltransformations.CropTransformation
+import dagger.hilt.android.AndroidEntryPoint
+import de.berlindroid.zeapp.zebits.ZeBadgeButton
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zemodels.ZeEditor
+import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
@@ -84,6 +88,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape as ZeRoundedCornerSh
 import androidx.compose.material3.AlertDialog as ZeAlertDialog
 import androidx.compose.material3.Button as ZeButton
 import androidx.compose.material3.Card as ZeCard
+import androidx.compose.material3.DropdownMenu as ZeDropdownMenu
+import androidx.compose.material3.DropdownMenuItem as ZeDropdownMenuItem
 import androidx.compose.material3.Icon as ZeIcon
 import androidx.compose.material3.IconButton as ZeIconButton
 import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
@@ -222,6 +228,8 @@ private fun ZePages(
     vm: ZeBadgeViewModel,
     lazyListState: LazyListState
 ) {
+    val context = LocalContext.current
+
     ZeSurface(
         modifier = ZeModifier
             .fillMaxSize()
@@ -273,6 +281,10 @@ private fun ZePages(
                         },
                         storePageAtButton = { button ->
                             vm.storePageOnButton(slot, button)
+                            Toast.makeText(
+                                context, "Slot successfully saved on button ${button.name}!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     )
 
@@ -517,7 +529,7 @@ private fun PagePreview(
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,
     sendToDevice: (() -> Unit)? = null,
-    storePageAtButton: ((Badge.BadgeButton) -> Unit)? = null
+    storePageAtButton: ((ZeBadgeButton) -> Unit)? = null
 ) {
     ZeCard(
         modifier = ZeModifier
@@ -539,26 +551,26 @@ private fun PagePreview(
 
         ZeLazyRow(
             modifier = ZeModifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 2.dp),
+            contentPadding = PaddingValues(horizontal = Dimen.Quarter),
             horizontalArrangement = ZeArrangement.End
         ) {
             if (storePageAtButton != null) {
                 item {
                     var dropdownExpanded by remember { mutableStateOf(false) }
 
-                    Column {
+                    ZeColumn {
                         ZeToolButton(
                             imageVector = Icons.Filled.Star,
                             text = "Store",
                             onClick = { dropdownExpanded = true }
                         )
 
-                        DropdownMenu(
+                        ZeDropdownMenu(
                             expanded = dropdownExpanded,
                             onDismissRequest = { dropdownExpanded = false }) {
-                            Badge.BadgeButton.values().forEach { button ->
-                                DropdownMenuItem(
-                                    text = { Text(button.name) },
+                            ZeBadgeButton.values().forEach { button ->
+                                ZeDropdownMenuItem(
+                                    text = { ZeText(button.name) },
                                     onClick = {
                                         storePageAtButton(button)
                                         dropdownExpanded = false

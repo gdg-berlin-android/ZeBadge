@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.zebits.ZeBadgeButton
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -366,15 +367,9 @@ class ZeBadgeViewModel @Inject constructor(
     /**
      * Stores a bitmap on a button of the badge
      */
-    fun storePageOnButton(slot: Slot, button: Badge.BadgeButton) {
+    fun storePageOnButton(slot: ZeSlot, button: ZeBadgeButton) = viewModelScope.launch {
         slots.value[slot]?.bitmap?.let { bitmap ->
-            val context = getApplication<Application>().applicationContext
-            badge.storePageOnButton(context, bitmap, button) {
-                Toast.makeText(
-                    context, "Slot successfully saved on button ${button.name}!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            badgeUploader.storePageOnButton(bitmap, button)
         }
     }
 

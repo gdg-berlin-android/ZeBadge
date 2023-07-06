@@ -12,13 +12,13 @@ import android.util.Log
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import dagger.hilt.android.qualifiers.ApplicationContext
+import de.berlindroid.zeapp.zebits.ZeBadgeButton
+import de.berlindroid.zeapp.zebits.base64
 import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zemodels.ZeBadgePayload
-import de.berlindroid.zeapp.zebits.base64
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.lang.RuntimeException
 import java.util.zip.Deflater
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -50,6 +50,26 @@ class ZeBadgeUploader @Inject constructor(
         )
 
         return sendToUsb(payload)
+    }
+
+    /**
+     * Stores a bitmap on a button of the badge
+     *
+     * @param context Android context to communicate with the usb interface
+     * @param page the bitmap in black / white to be send to the badge
+     * @param button the button selected to store the bitmap on
+     */
+    suspend fun storePageOnButton(
+        page: Bitmap,
+        button: ZeBadgeButton,
+    ) {
+        val payload = ZeBadgePayload(
+            type = "store-${button.name.lowercase()}",
+            meta = "",
+            payload = page.toBinary().zipit().base64()
+        )
+
+        sendToUsb(payload)
     }
 
     private suspend fun sendToUsb(payload: ZeBadgePayload): Result<Int> {
@@ -106,9 +126,10 @@ class ZeBadgeUploader @Inject constructor(
     }
 
     private fun informNoBadgeFound(manager: UsbManager): Result<Nothing> {
-        val message = "Could not find usb device with product name '$DEVICE_PRODUCT_NAME'.\nFound product(s):\n${
-            manager.connectedProductNames().joinToString("\n •")
-        }"
+        val message =
+            "Could not find usb device with product name '$DEVICE_PRODUCT_NAME'.\nFound product(s):\n${
+                manager.connectedProductNames().joinToString("\n •")
+            }"
 
         Log.e("Badge Connection", message)
 
