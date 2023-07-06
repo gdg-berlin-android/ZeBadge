@@ -24,6 +24,8 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling-preview
 androidx-compose-ui-toolingpreview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+coil-compose = "io.coil-kt:coil-compose:2.4.0"
+coil-transformations = "com.github.Commit451.coil-transformations:transformations:2.0.2"
 retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
