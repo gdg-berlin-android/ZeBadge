@@ -5,8 +5,8 @@ package de.berlindroid.zeapp.zeui
 import android.R
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.AlertDialog
@@ -26,8 +26,8 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.LocalZeActivity
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zepages.NamePage
 
 
 /**
@@ -87,60 +87,54 @@ fun NameEditorDialog(
         title = { Text(text = "Add your contact details") },
         properties = DialogProperties(),
         text = {
-            LazyColumn {
-                item {
-                    BinaryImageEditor(
-                        bitmap = image,
-                        bitmapUpdated = { image = it }
-                    )
-                }
+            Column {
+                BinaryImageEditor(
+                    bitmap = image,
+                    bitmapUpdated = { image = it }
+                )
 
-                item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = name,
-                        maxLines = 1,
-                        label = { Text(text = "Name") },
-                        onValueChange = { newValue ->
-                            if (newValue.length <= MaxCharacters * 2) {
-                                name = newValue
-                                redrawComposableImage()
-                            }
-                        },
-                        supportingText = {
-                            Text(text = "${name.length}/${MaxCharacters * 2}")
-                        },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = name.isEmpty()) {
-                                name = Empty
-                            }
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = name,
+                    maxLines = 1,
+                    label = { Text(text = "Name") },
+                    onValueChange = { newValue ->
+                        if (newValue.length <= MaxCharacters * 2) {
+                            name = newValue
+                            redrawComposableImage()
                         }
-                    )
-                }
+                    },
+                    supportingText = {
+                        Text(text = "${name.length}/${MaxCharacters * 2}")
+                    },
+                    trailingIcon = {
+                        ClearIcon(isEmpty = name.isEmpty()) {
+                            name = Empty
+                        }
+                    }
+                )
 
-                item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = contact,
-                        maxLines = 1,
-                        label = { Text(text = "Contact") },
-                        onValueChange = { newValue ->
-                            // Limit Characters so they're displayed correctly in the screen
-                            if (newValue.length <= MaxCharacters) {
-                                contact = newValue
-                                redrawComposableImage()
-                            }
-                        },
-                        supportingText = {
-                            Text(text = "${contact.length}/$MaxCharacters")
-                        },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = contact.isEmpty()) {
-                                contact = Empty
-                            }
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = contact,
+                    maxLines = 1,
+                    label = { Text(text = "Contact") },
+                    onValueChange = { newValue ->
+                        // Limit Characters so they're displayed correctly in the screen
+                        if (newValue.length <= MaxCharacters) {
+                            contact = newValue
+                            redrawComposableImage()
                         }
-                    )
-                }
+                    },
+                    supportingText = {
+                        Text(text = "${contact.length}/$MaxCharacters")
+                    },
+                    trailingIcon = {
+                        ClearIcon(isEmpty = contact.isEmpty()) {
+                            contact = Empty
+                        }
+                    }
+                )
             }
         }
     )
