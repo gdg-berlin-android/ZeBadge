@@ -535,6 +535,7 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
