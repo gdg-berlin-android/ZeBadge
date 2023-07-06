@@ -124,12 +124,13 @@ class ZeBadgeViewModel @Inject constructor(
     fun sendPageToDevice(slot: ZeSlot) {
         message.value = ""
 
-        if (!slots.value.contains(slot)) {
+        val configuration = slots.value.getOrElse(slot) {
             Log.e("VM", "Slot $slot is not one of our slots.")
             return
         }
 
-        val bitmap = slots.value[slot]!!.bitmap
+        val bitmap = configuration.bitmap
+
         if (bitmap.isBinary()) {
             viewModelScope.launch {
                 badgeUploader.sendPage(slot.name, bitmap).fold(
