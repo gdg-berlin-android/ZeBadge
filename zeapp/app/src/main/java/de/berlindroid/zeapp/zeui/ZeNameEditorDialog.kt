@@ -3,7 +3,6 @@
 package de.berlindroid.zeapp.zeui
 
 import android.R
-import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,16 +23,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.LocalZeActivity
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zeui.zepages.NamePage
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
 
 
 /**
  * Editor dialog for changing the name of the participant badge.
  *
- * @param activity Android activity to be used for rendering the composable.
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
@@ -44,14 +43,14 @@ private const val Empty = ""
 
 @Composable
 fun NameEditorDialog(
-    activity: Activity,
-    config: Configuration.Name,
+    config: ZeConfiguration.Name,
     dismissed: () -> Unit = {},
-    accepted: (config: Configuration.Name) -> Unit
+    accepted: (config: ZeConfiguration.Name) -> Unit
 ) {
     var name by remember { mutableStateOf(config.name) }
     var contact by remember { mutableStateOf(config.contact) }
     var image by remember { mutableStateOf(config.bitmap) }
+    val activity = LocalZeActivity.current
 
     fun redrawComposableImage() {
         composableToBitmap(
@@ -68,7 +67,7 @@ fun NameEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(Configuration.Name(name, contact, image))
+                        accepted(ZeConfiguration.Name(name, contact, image))
                     } else {
                         Toast.makeText(
                             activity,

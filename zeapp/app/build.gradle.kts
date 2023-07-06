@@ -1,10 +1,14 @@
+import org.jetbrains.kotlin.incremental.createDirectory
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+import java.lang.ProcessBuilder.Redirect
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint.gradle)
     alias(libs.plugins.detekt.gradle)
+    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -21,6 +25,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -38,6 +44,10 @@ android {
         }
     }
 
+    sourceSets.getByName("main").assets.srcDir(
+        "$projectDir/build/generated/assets"
+    )
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -45,6 +55,11 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
+
     }
 
     buildFeatures {
@@ -88,11 +103,19 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
+    implementation(libs.material3.wsc)
+    implementation(libs.dagger.hilt)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.transformations)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-	testImplementation(libs.test.assertk)
-	testImplementation(libs.test.junit)
+    testImplementation(libs.test.assertk)
+    testImplementation(libs.test.junit)
+
+    androidTestImplementation(libs.test.compose.junit)
+    debugImplementation(libs.test.compose.manifest)
+    kapt(libs.dagger.hilt.compiler)
 }
 
 // Ktlint
@@ -111,3 +134,32 @@ ktlint {
         exclude("**/generated/**")
     }
 }
+
+kapt {
+    correctErrorTypes = true
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs::class).configureEach {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+}
+
+tasks.create("generateContributorsAsset") {
+    val command = "git shortlog -sne --all"
+    val process = ProcessBuilder()
+        .command(command.split(" "))
+        .directory(rootProject.projectDir)
+        .redirectOutput(Redirect.PIPE)
+        .redirectError(Redirect.PIPE)
+        .start()
+    process.waitFor(60, TimeUnit.SECONDS)
+    val result = process.inputStream.bufferedReader().readText()
+
+    val contributors = result.lines()
+            .joinToString(separator = System.lineSeparator()) { it.substringAfter("\t") }
+
+    val assetDir = layout.buildDirectory.dir("generated/assets").get().asFile
+    assetDir.createDirectory()
+    File(assetDir, "test.txt").writeText(contributors)
+
+}
+tasks.getByName("build").dependsOn("generateContributorsAsset")
