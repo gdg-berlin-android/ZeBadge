@@ -99,6 +99,7 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
             ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
             ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
+            ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
         )
     )
 
@@ -204,10 +205,15 @@ class ZeBadgeViewModel @Inject constructor(
                     ), // TODO: Fetch Schedule here.
 
                     ZeConfiguration.Weather(
+                        "July 6th",
+                        "26C",
                         R.drawable.soon.toBitmap()
-                    ), // TODO: Fetch weather here
+                    ), // TODO: Fetch real weather data
 
                     ZeConfiguration.Kodee(
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                    ),
+                    ZeConfiguration.ImageDraw(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
                     ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())
@@ -236,6 +242,11 @@ class ZeBadgeViewModel @Inject constructor(
                 currentSlotEditor.value = ZeEditor(
                     slot,
                     slots.value[ZeSlot.QRCode]!!
+                )
+            } else if (slot is ZeSlot.Weather) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.Weather]!!
                 )
             } else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
@@ -326,6 +337,11 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
                 "Your title",
                 "",
+                R.drawable.soon.toBitmap()
+            )
+            ZeSlot.Weather -> ZeConfiguration.Weather(
+                "July 7th",
+                "22C",
                 R.drawable.soon.toBitmap()
             )
         }
