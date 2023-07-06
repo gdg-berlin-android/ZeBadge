@@ -48,7 +48,6 @@ class BadgeViewModel(
         object FirstCustom : Slot("Up")
         object SecondCustom : Slot("Down")
         object QRCode : Slot("Q")
-        object RandomPhrase : Slot("P")
     }
 
     /**
@@ -165,7 +164,7 @@ class BadgeViewModel(
             }
         }
 
-        data class RandomPhrase(
+        data class CustomPhrase(
             val phrase: String,
             override val bitmap: Bitmap
         ) : Configuration(TYPE, bitmap) {
@@ -379,7 +378,7 @@ class BadgeViewModel(
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch weather here
 
-                    Configuration.RandomPhrase(
+                    Configuration.CustomPhrase(
                         "Your phrase",
                         R.drawable.page_phrase.toBitmap()
                     ),
@@ -500,11 +499,6 @@ class BadgeViewModel(
                 "",
                 R.drawable.soon.toBitmap()
             )
-
-            Slot.RandomPhrase -> Configuration.RandomPhrase(
-                "Your phrase",
-                R.drawable.page_phrase.toBitmap()
-            )
         }
     }
 
@@ -579,7 +573,7 @@ class BadgeViewModel(
                 putString(slot.preferencesKey("url"), config.url)
             }
 
-            is Configuration.RandomPhrase -> {
+            is Configuration.CustomPhrase -> {
                 putString(slot.preferencesKey("random_phrase"), config.phrase)
             }
         }
@@ -620,7 +614,7 @@ class BadgeViewModel(
                 bitmap = bitmap
             )
 
-            Configuration.RandomPhrase.TYPE -> Configuration.RandomPhrase(
+            Configuration.CustomPhrase.TYPE -> Configuration.CustomPhrase(
                 phrase = preferencesValue("random_phrase"),
                 bitmap = bitmap
             )

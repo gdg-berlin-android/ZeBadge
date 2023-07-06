@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun RandomPhrasePage(
+fun CustomPhrasePage(
     phrase: String = "Your phrase here"
 ) {
     Box(modifier = Modifier

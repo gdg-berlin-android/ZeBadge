@@ -20,25 +20,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.bits.composableToBitmap
 import de.berlindroid.zeapp.bits.isBinary
-import de.berlindroid.zeapp.ui.pages.NamePage
-import de.berlindroid.zeapp.ui.pages.RandomPhrasePage
+import de.berlindroid.zeapp.ui.pages.CustomPhrasePage
 import de.berlindroid.zeapp.vm.BadgeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RandomPhraseEditorDialog(
+fun CustomPhraseEditorDialog(
     activity: Activity,
-    config: BadgeViewModel.Configuration.RandomPhrase,
+    config: BadgeViewModel.Configuration.CustomPhrase,
     dismissed: () -> Unit,
-    accepted: (BadgeViewModel.Configuration.RandomPhrase) -> Unit
+    accepted: (BadgeViewModel.Configuration.CustomPhrase) -> Unit
 ) {
-    var randomPhrase by remember { mutableStateOf(config.phrase) }
+    var customPhrase by remember { mutableStateOf(config.phrase) }
     var image by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
         composableToBitmap(
             activity = activity,
-            content = { RandomPhrasePage(randomPhrase) },
+            content = { CustomPhrasePage(customPhrase) },
         ) {
             image = it
         }
@@ -50,7 +49,7 @@ fun RandomPhraseEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(BadgeViewModel.Configuration.RandomPhrase(randomPhrase, image))
+                        accepted(BadgeViewModel.Configuration.CustomPhrase(customPhrase, image))
                     } else {
                         Toast.makeText(
                             activity,
@@ -78,17 +77,17 @@ fun RandomPhraseEditorDialog(
             }
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = randomPhrase,
+                value = customPhrase,
                 maxLines = 1,
                 label = { Text(text = "Random Phrase") },
                 onValueChange = { newValue ->
                     if (newValue.length <= MaxCharacters * 2) {
-                        randomPhrase = newValue
+                        customPhrase = newValue
                         redrawComposableImage()
                     }
                 },
                 supportingText = {
-                    Text(text = "${randomPhrase.length}/${MaxCharacters * 2}")
+                    Text(text = "${customPhrase.length}/${MaxCharacters * 2}")
                 }
             )
         }
