@@ -100,6 +100,7 @@ fun QRCodeEditorDialog(
                         modifier = Modifier.fillMaxWidth(),
                         value = text,
                         maxLines = 1,
+                        singleLine = true,
                         label = { Text(text = stringResource(id = R.string.qr_code_text)) },
                         onValueChange = { newValue ->
                             text = newValue
