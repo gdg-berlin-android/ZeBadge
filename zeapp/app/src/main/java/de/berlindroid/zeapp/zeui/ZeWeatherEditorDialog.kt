@@ -37,7 +37,6 @@ import kotlinx.coroutines.launch
  * @param accepted callback called with the new configuration configured.
  */
 
-private const val Empty = ""
 
 @Composable
 fun WeatherEditorDialog(
