@@ -45,6 +45,7 @@ sealed class ZeConfiguration(
      */
     data class QRCode(
         val title: String,
+        val text: String,
         val url: String,
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "QRCode Tag", bitmap) {
@@ -112,6 +113,16 @@ sealed class ZeConfiguration(
     ) : ZeConfiguration(TYPE, humanTitle = "Upcoming Weather", bitmap) {
         companion object {
             const val TYPE: String = "Upcoming Weather"
+        }
+    }
+
+    data class Quote(
+        val message: String,
+        val author: String,
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "Random quotes", bitmap) {
+        companion object {
+            const val TYPE: String = "Random quotes"
         }
     }
 

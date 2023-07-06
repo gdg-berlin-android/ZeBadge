@@ -69,6 +69,7 @@ class ZePreferencesService @Inject constructor(
                 is ZeConfiguration.QRCode -> {
                     putString(slot.preferencesKey("qr_title"), config.title)
                     putString(slot.preferencesKey("url"), config.url)
+                    putString(slot.preferencesKey("qr_text"), config.text)
                 }
 
                 is ZeConfiguration.Camera,
@@ -76,6 +77,11 @@ class ZePreferencesService @Inject constructor(
 
                 is ZeConfiguration.ImageDraw -> {
                     // Nothing more to configure
+                }
+
+                is ZeConfiguration.Quote -> {
+                    putString(slot.preferencesKey("quote_author"), config.author)
+                    putString(slot.preferencesKey("quote_message"), config.message)
                 }
 
                 is ZeConfiguration.BarCode -> {
@@ -117,6 +123,7 @@ class ZePreferencesService @Inject constructor(
             ZeConfiguration.QRCode.TYPE -> ZeConfiguration.QRCode(
                 title = slot.preferencesValue("qr_title"),
                 url = slot.preferencesValue("url"),
+                text = slot.preferencesValue("qr_text"),
                 bitmap = bitmap
             )
 

@@ -58,6 +58,7 @@ import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
+import de.berlindroid.zeapp.zeui.RandomQuotesEditorDialog
 import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
@@ -398,7 +399,8 @@ private fun SelectedEditor(
             ZeSlot.SecondCustom,
             ZeSlot.QRCode,
             ZeSlot.Weather,
-            ZeSlot.BarCode,
+            ZeSlot.Quote,
+            ZeSlot.BarCode
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
@@ -434,6 +436,15 @@ private fun SelectedEditor(
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
                 snackbarMessage = vm::showSnackBar,
             )
+
+            is ZeConfiguration.Quote -> {
+                RandomQuotesEditorDialog(
+                    accepted = { vm.slotConfigured(editor.slot, it) },
+                    dismissed = { vm.slotConfigured(null, null) },
+                    activity = LocalZeActivity.current,
+                    config = config,
+                )
+            }
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
                 config = config,
@@ -501,7 +512,6 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
-@Preview
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,

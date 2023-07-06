@@ -42,6 +42,7 @@ fun QRCodeEditorDialog(
     val activity = LocalContext.current as Activity
 
     var title by remember { mutableStateOf(config.title) }
+    var text by remember { mutableStateOf(config.text) }
     var url by remember { mutableStateOf(config.url) }
     var image by remember { mutableStateOf(config.bitmap) }
 
@@ -49,6 +50,7 @@ fun QRCodeEditorDialog(
         qrComposableToBitmap(
             activity = activity,
             title = title,
+            text = text,
             url = url,
         ) {
             image = it
@@ -61,7 +63,7 @@ fun QRCodeEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(ZeConfiguration.QRCode(title, url, image))
+                        accepted(ZeConfiguration.QRCode(title, text, url, image))
                     } else {
                         snackbarMessage(activity.getString(R.string.image_needed))
                     }
@@ -91,6 +93,19 @@ fun QRCodeEditorDialog(
                             title = newValue
                             redrawComposableImage()
                         },
+                    )
+                }
+
+                item {
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = text,
+                        maxLines = 1,
+                        label = { Text(text = stringResource(id = R.string.qr_code_text)) },
+                        onValueChange = { newValue ->
+                            text = newValue
+                            redrawComposableImage()
+                        }
                     )
                 }
 
