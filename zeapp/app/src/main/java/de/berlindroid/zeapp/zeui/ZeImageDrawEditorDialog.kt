@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp.zeui
 
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -58,10 +57,11 @@ fun ZeImageDrawEditorDialog(
     initialPrompt: String = "Unicorn at an android conference in isometric view.",
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.ImageDraw) -> Unit = {},
+    snackbarMessage: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var zeMotionEvent by remember { mutableStateOf(ZeMotionEvent.Idle) }
+    var motionEvent by remember { mutableStateOf(ZeMotionEvent.Idle) }
     // This is our motion event we get from touch motion
     var currentPosition by remember { mutableStateOf(Offset.Unspecified) }
 
@@ -69,20 +69,18 @@ fun ZeImageDrawEditorDialog(
     val path = remember { Path() }
 
     val drawContainer = remember {
-
         ComposeView(context).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.MATCH_PARENT,
             )
             setContent {
                 LaunchedEffect(key1 = currentPosition, block = {
-                    if (zeMotionEvent == ZeMotionEvent.Down) {
-                        path.moveTo(currentPosition.x, currentPosition.y)
-                    } else if (zeMotionEvent == ZeMotionEvent.Move) {
-                        path.lineTo(currentPosition.x, currentPosition.y)
-                    } else if (zeMotionEvent == ZeMotionEvent.Up) {
-                        path.lineTo(currentPosition.x, currentPosition.y)
+                    when (motionEvent) {
+                        ZeMotionEvent.Down -> path.moveTo(currentPosition.x, currentPosition.y)
+                        ZeMotionEvent.Move -> path.lineTo(currentPosition.x, currentPosition.y)
+                        ZeMotionEvent.Up -> path.lineTo(currentPosition.x, currentPosition.y)
+                        else -> {}
                     }
                 })
                 Canvas(
@@ -92,25 +90,24 @@ fun ZeImageDrawEditorDialog(
                         .clipToBounds()
                         .background(Color.White)
                         .pointerInput(Unit) {
-
                             detectDragGestures(
                                 onDragStart = { offset ->
                                     currentPosition = offset
-                                    zeMotionEvent = ZeMotionEvent.Down
+                                    motionEvent = ZeMotionEvent.Down
                                 },
                                 onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
                                     currentPosition =
                                         pointerInputChange.position + offset
-                                    zeMotionEvent = ZeMotionEvent.Move
+                                    motionEvent = ZeMotionEvent.Move
                                 },
                                 onDragEnd = {
-                                    zeMotionEvent = ZeMotionEvent.Up
+                                    motionEvent = ZeMotionEvent.Up
                                 },
                                 onDragCancel = {
-                                    zeMotionEvent = ZeMotionEvent.Up
+                                    motionEvent = ZeMotionEvent.Up
                                 },
                             )
-                        }
+                        },
                 ) {
                     drawPath(
                         color = Color.Black,
@@ -118,8 +115,8 @@ fun ZeImageDrawEditorDialog(
                         style = Stroke(
                             width = 4.dp.toPx(),
                             cap = StrokeCap.Round,
-                            join = StrokeJoin.Round
-                        )
+                            join = StrokeJoin.Round,
+                        ),
                     )
                 }
             }
@@ -140,11 +137,11 @@ fun ZeImageDrawEditorDialog(
                         if (bitmap.isBinary()) {
                             accepted(ZeConfiguration.ImageDraw(bitmap))
                         } else {
-                            Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG)
-                                .show()
+                            snackbarMessage(context.getString(R.string.not_binary_image))
                         }
                     }
-                }) {
+                },
+            ) {
                 Text(stringResource(id = android.R.string.ok))
             }
         },
@@ -152,14 +149,16 @@ fun ZeImageDrawEditorDialog(
             Text(stringResource(id = R.string.draw_image_page))
         },
         text = {
-            AndroidView(modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(PAGE_WIDTH / PAGE_HEIGHT.toFloat())
-                .clipToBounds()
-                .background(Color.Green),
+            AndroidView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(PAGE_WIDTH / PAGE_HEIGHT.toFloat())
+                    .clipToBounds()
+                    .background(Color.Green),
                 factory = {
                     drawContainer
-                })
-        }
+                },
+            )
+        },
     )
 }
