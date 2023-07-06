@@ -54,3 +54,6 @@ test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
 ##                                                 ⬆ :0.26"
 ##                                                 ⬆ :0.26.1"
 test-junit = "junit:junit:4.13.2"
+test-compose-junit = "androidx.compose.ui:ui-test-junit4:1.4.3"
+test-compose-manifest = "androidx.compose.ui:ui-test-manifest:1.4.3"
+

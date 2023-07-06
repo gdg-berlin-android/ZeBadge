@@ -23,6 +23,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -102,9 +104,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-	testImplementation(libs.test.assertk)
-	testImplementation(libs.test.junit)
+    testImplementation(libs.test.assertk)
+    testImplementation(libs.test.junit)
 
+    androidTestImplementation(libs.test.compose.junit)
+    debugImplementation(libs.test.compose.manifest)
     kapt(libs.dagger.hilt.compiler)
 }
 
