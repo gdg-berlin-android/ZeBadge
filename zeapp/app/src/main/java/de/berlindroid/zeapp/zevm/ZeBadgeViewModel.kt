@@ -85,11 +85,10 @@ class ZeBadgeViewModel @Inject constructor(
 
     // which page should be displayed in the simulator?
     val currentSimulatorSlot = mutableStateOf<ZeSlot>(ZeSlot.Name)
-    val openApiKey = mutableStateOf(
-        OPENAI_API_KEY.ifBlank {
-            preferencesService.getOpenApiKey()
-        }
-    )
+    private val openApiKey = OPENAI_API_KEY.ifBlank {
+        preferencesService.getOpenApiKey()
+    }
+
 
     val slots = mutableStateOf(
         mapOf(
@@ -128,7 +127,12 @@ class ZeBadgeViewModel @Inject constructor(
                 )
             }
         } else {
-            _toastEvent.tryEmit(ZeToastEvent("Please give binary image for page '${slot.name}'.", ZeToastEvent.Duration.LONG))
+            _toastEvent.tryEmit(
+                ZeToastEvent(
+                    "Please give binary image for page '${slot.name}'.",
+                    ZeToastEvent.Duration.LONG
+                )
+            )
         }
     }
 
@@ -212,7 +216,7 @@ class ZeBadgeViewModel @Inject constructor(
                     ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
-                    if (openApiKey.value.isNeitherNullNorBlank()) {
+                    if (openApiKey.isNotBlank()) {
                         add(
                             2,
                             ZeConfiguration
@@ -371,5 +375,3 @@ private fun <K, V> Map<K, V>.copy(vararg entries: Pair<K, V>): Map<K, V> {
 
     return result.toMap()
 }
-
-private fun String?.isNeitherNullNorBlank(): Boolean = !this.isNullOrBlank()
