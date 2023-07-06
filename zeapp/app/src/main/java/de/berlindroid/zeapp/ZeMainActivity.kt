@@ -312,7 +312,7 @@ private fun InfoBar(
                     painter = painterResource(
                         id = R.drawable.copy_clipboard
                     ),
-                    contentDescription = null
+                    contentDescription = "Copy info bar message"
                 )
             }
         }
