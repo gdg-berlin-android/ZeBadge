@@ -25,7 +25,7 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Slot
+import de.berlindroid.zeapp.zemodels.ZeSlot
 
 /**
  * This is the simulator composable for the badge.
@@ -36,7 +36,7 @@ import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Slot
 @Preview(device = "spec:parent=pixel_3a_xl,orientation=landscape", showSystemUi = true)
 fun BadgeSimulator(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1) page: Bitmap,
-    onButtonPressed: (buttonForSlot: Slot) -> Unit = {},
+    onButtonPressed: (buttonForSlot: ZeSlot) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -65,13 +65,13 @@ fun BadgeSimulator(
                 Text(
                     text = "⏺️",
                     fontSize = 43.sp,
-                    modifier = Modifier.clickable { onButtonPressed(Slot.FirstCustom) }
+                    modifier = Modifier.clickable { onButtonPressed(ZeSlot.FirstCustom) }
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
                 Text(
                     text = "⏺️",
                     fontSize = 43.sp,
-                    modifier = Modifier.clickable { onButtonPressed(Slot.SecondCustom) }
+                    modifier = Modifier.clickable { onButtonPressed(ZeSlot.SecondCustom) }
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
             }
@@ -83,17 +83,17 @@ fun BadgeSimulator(
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed(Slot.Name) })
+                modifier = Modifier.clickable { onButtonPressed(ZeSlot.Name) })
             Spacer(modifier = Modifier.weight(1.0f))
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed(Slot.FirstSponsor) })
+                modifier = Modifier.clickable { onButtonPressed(ZeSlot.FirstSponsor) })
             Spacer(modifier = Modifier.weight(1.0f))
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed(Slot.SecondSponsor) })
+                modifier = Modifier.clickable { onButtonPressed(ZeSlot.SecondSponsor) })
             Spacer(modifier = Modifier.weight(1.0f))
         }
     }
