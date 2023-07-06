@@ -1,10 +1,12 @@
 package de.berlindroid.zeapp
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -12,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,11 +28,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -44,6 +46,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
+import dagger.hilt.android.AndroidEntryPoint
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zemodels.ZeEditor
+import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import androidx.core.content.FileProvider
 import coil.imageLoader
 import coil.request.CachePolicy
@@ -51,12 +59,7 @@ import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import com.commit451.coiltransformations.CropTransformation
-import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
-import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zemodels.ZeEditor
-import de.berlindroid.zeapp.zemodels.ZeSlot
-import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
@@ -144,18 +147,18 @@ class ZeMainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    private fun LargeScreenUi() {
-        ZeRow {
-            ZeScreen(modifier = Modifier.weight(.3f))
-            ZeSpacer(modifier = ZeModifier.width(Dimen.Two))
-            ZeSimulator(
-                page = vm.slotToBitmap(),
-                onButtonPressed = vm::simulatorButtonPressed,
-                modifier = Modifier.weight(.3f),
-            )
-        }
+@Composable
+private fun LargeScreenUi(vm: ZeBadgeViewModel) {
+    ZeRow {
+        ZeScreen(vm, modifier = Modifier.weight(.3f))
+        ZeSpacer(modifier = ZeModifier.width(Dimen.Two))
+        ZeSimulator(
+            page = vm.slotToBitmap(),
+            onButtonPressed = vm::simulatorButtonPressed,
+            modifier = Modifier.weight(.3f),
+        )
     }
+}
 
     @Composable
     private fun ZeScreen(modifier: Modifier = Modifier) {
@@ -189,18 +192,23 @@ class ZeMainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
-private fun ZeTopBar(vm: ZeBadgeViewModel) {
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ZeTopBar(
+    onSaveAllClick: () -> Unit,
+    onRandomClick: () -> Unit,
+) {
     ZeTopAppBar(
         title = { ZeText(stringResource(id = R.string.app_name)) },
         actions = {
-            ZeIconButton(onClick = { vm.sendRandomPageToDevice() }) {
+            ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
                     contentDescription = "Send random page to badge",
                 )
             }
-            ZeIconButton(onClick = { vm.saveAll() }) {
+            ZeIconButton(onClick = onRandomClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.save_all),
                     contentDescription = null,
@@ -400,52 +408,53 @@ private fun CameraEditor(
     editor: ZeEditor,
     config: ZeConfiguration.Camera,
     vm: ZeBadgeViewModel,
-) {
-    val context = LocalContext.current
-    val uri = FileProvider.getUriForFile(
-        context,
-        "${BuildConfig.APPLICATION_ID}.files",
-        File(context.cacheDir, "photo.jpg"),
+){
+                val context = LocalContext.current
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "${BuildConfig.APPLICATION_ID}.files",
+                    File(context.cacheDir, "photo.jpg"),
     )
-    val coroutineScope = rememberCoroutineScope()
-    val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
-        if (pictureTaken) {
-            val imageRequest = ImageRequest.Builder(context)
-                .data(uri)
-                .transformations(CropTransformation())
-                .size(PAGE_WIDTH, PAGE_HEIGHT)
-                .scale(Scale.FIT)
-                .precision(Precision.EXACT)
-                .allowHardware(false)
-                .memoryCachePolicy(CachePolicy.DISABLED)
-                .diskCachePolicy(CachePolicy.DISABLED)
-                .build()
+                val coroutineScope = rememberCoroutineScope()
+                val takePicture =
+                    rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
+                        if (pictureTaken) {
+                            val imageRequest = ImageRequest.Builder(context)
+                                .data(uri)
+                                .transformations(CropTransformation())
+                                .size(PAGE_WIDTH, PAGE_HEIGHT)
+                                .scale(Scale.FIT)
+                                .precision(Precision.EXACT)
+                                .allowHardware(false)
+                                .memoryCachePolicy(CachePolicy.DISABLED)
+                                .diskCachePolicy(CachePolicy.DISABLED)
+                                .build()
 
-            coroutineScope.launch {
-                val drawable =
-                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
-                val bitmap = Bitmap.createBitmap(
-                    PAGE_WIDTH,
-                    PAGE_HEIGHT,
-                    Bitmap.Config.ARGB_8888,
-                )
-                val canvas = android.graphics.Canvas(bitmap)
-                canvas.drawColor(Color.WHITE)
-                canvas.drawBitmap(
-                    drawable.bitmap,
-                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
-                    0f,
-                    null,
-                )
-                vm.slotConfigured(
-                    editor.slot,
-                    config.copy(bitmap = bitmap.ditherFloydSteinberg()),
-                )
-            }
-        } else {
-            vm.slotConfigured(editor.slot, null)
-        }
-    }
+                            coroutineScope.launch {
+                                val drawable =
+                                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
+                                val bitmap = Bitmap.createBitmap(
+                                    PAGE_WIDTH,
+                                    PAGE_HEIGHT,
+                                    Bitmap.Config.ARGB_8888,
+                                )
+                                val canvas = android.graphics.Canvas(bitmap)
+                                canvas.drawColor(Color.WHITE)
+                                canvas.drawBitmap(
+                                    drawable.bitmap,
+                                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
+                                    0f,
+                                    null,
+                                )
+                                vm.slotConfigured(
+                                    editor.slot,
+                                    config.copy(bitmap = bitmap.ditherFloydSteinberg()),
+                                )
+                            }
+                        } else {
+                            vm.slotConfigured(editor.slot, null)
+                        }
+                    }
 
     SideEffect {
         takePicture.launch(uri)
@@ -517,7 +526,7 @@ private fun PagePreview(
             ZeLazyRow(
                 modifier = ZeModifier.fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = Dimen.Quarter),
-                horizontalArrangement = ZeArrangement.End,
+                horizontalArrangement = ZeArrangement.End
             ) {
                 if (sendToDevice != null) {
                     item {
