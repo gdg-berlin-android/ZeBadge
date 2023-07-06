@@ -6,6 +6,7 @@
     <string name="floyd_steninberg_initials">FS</string>
     <string name="positional">Positional</string>
     <string name="invert">Invert</string>
+    <string name="rotate">Tourner</string>
 
     <string name="generate">Generate</string>
     <string name="not_binary_image">Pas une image binaire. Assurez-vous que chaque pixel est soit noir, soit blanc</string>

@@ -6,6 +6,7 @@
     <string name="floyd_steninberg_initials">FS</string>
     <string name="positional">Konumsal</string>
     <string name="invert">Ters Çevir</string>
+    <string name="rotate">Döndür</string>
 
     <string name="generate">Oluştur</string>
     <string name="not_binary_image">Görüntü ikilisini aktarın. Pixel est noir noir, soit blanc</string>
