@@ -121,6 +121,7 @@ class ZeMainActivity : ComponentActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.loadData()
         updateContent()
     }
 

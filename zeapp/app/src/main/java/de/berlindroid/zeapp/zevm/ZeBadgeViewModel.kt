@@ -19,11 +19,13 @@ import de.berlindroid.zeapp.zeservices.ZeBadgeUploader
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
@@ -86,22 +88,10 @@ class ZeBadgeViewModel @Inject constructor(
     // which page should be displayed in the simulator?
     val currentSimulatorSlot = mutableStateOf<ZeSlot>(ZeSlot.Name)
     private val openApiKey = OPENAI_API_KEY.ifBlank {
-        preferencesService.getOpenApiKey()
+       runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
     }
 
-
-    val slots = mutableStateOf(
-        mapOf(
-            ZeSlot.Name to initialConfiguration(ZeSlot.Name),
-            ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
-            ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
-            ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
-            ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
-            ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
-            ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
-            ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
-        )
-    )
+    val slots = mutableStateOf(mapOf<ZeSlot, ZeConfiguration>())
 
     private val _toastEvent = MutableSharedFlow<ZeToastEvent>()
     val toastEvent = _toastEvent.asSharedFlow()
@@ -253,7 +243,7 @@ class ZeBadgeViewModel @Inject constructor(
                     slot,
                     slots.value[ZeSlot.BarCode]!!
                 )
-            }else {
+            } else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
         }
@@ -316,11 +306,12 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun resetSlot(slot: ZeSlot) {
         message.value = ""
-
-        slots.value = slots.value.copy(slot to initialConfiguration(slot))
+        viewModelScope.launch {
+            slots.value = slots.value.copy(slot to initialConfiguration(slot))
+        }
     }
 
-    private fun initialConfiguration(slot: ZeSlot): ZeConfiguration {
+    private suspend fun initialConfiguration(slot: ZeSlot): ZeConfiguration {
         if (preferencesService.isSlotConfigured(slot)) {
             val configuration = preferencesService.getSlotConfiguration(slot)
             if (configuration != null) {
@@ -380,12 +371,32 @@ class ZeBadgeViewModel @Inject constructor(
 
     private fun ZeSlot.save() {
         val config = slots.value[this]!!
-        preferencesService.saveSlotConfiguration(this, config)
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesService.saveSlotConfiguration(this@save, config)
+        }
     }
 
     fun copyInfoToClipboard() {
         clipboardService.copyToClipboard(message.value)
         _toastEvent.tryEmit(ZeToastEvent("Copied", ZeToastEvent.Duration.LONG))
+    }
+
+    /**
+     * Loads data from Datastore
+     */
+    fun loadData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            slots.value = mapOf(
+                ZeSlot.Name to initialConfiguration(ZeSlot.Name),
+                ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
+                ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
+                ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
+                ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
+                ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
+                ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
+                ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
+            )
+        }
     }
 }
 
