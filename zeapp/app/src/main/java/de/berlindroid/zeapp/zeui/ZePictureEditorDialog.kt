@@ -1,5 +1,6 @@
 package de.berlindroid.zeapp.zeui
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
@@ -38,7 +39,8 @@ private const val ROTATE_CLOCKWISE = 90f
 @Composable
 fun PictureEditorDialog(
     dismissed: () -> Unit = {},
-    accepted: (config: ZeConfiguration.Picture) -> Unit
+    accepted: (config: ZeConfiguration.Picture) -> Unit,
+    snackbarMessage: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -77,7 +79,7 @@ fun PictureEditorDialog(
                 if (bitmap.isBinary()) {
                     accepted(ZeConfiguration.Picture(bitmap))
                 } else {
-                    Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG).show()
+                    snackbarMessage(context.getString(R.string.not_binary_image))
                 }
             }) {
                 Text(stringResource(id = android.R.string.ok))

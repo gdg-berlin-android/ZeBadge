@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,12 +34,14 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -320,12 +324,24 @@ private fun ZePages(
                 items(
                     slots.keys.toList(),
                 ) { slot ->
+                    var isVisible by remember { mutableStateOf(false) }
+                    val alpha: Float by animateFloatAsState(
+                        targetValue = if (isVisible) 1f else 0f,
+                        label = "alpha",
+                        animationSpec = tween(durationMillis = 750),
+                    )
+                    LaunchedEffect(slot) {
+                        isVisible = true
+                    }
+
                     PagePreview(
-                        name = slot.name,
+                        modifier = Modifier.alpha(alpha = alpha),
+                        name = slot::class.simpleName ?: "WTF",
                         bitmap = vm.slotToBitmap(slot),
-                        customizeThisPage = when {
-                            slot.isSponsor -> { { vm.customizeSponsorSlot(slot) } }
-                            else -> { { vm.customizeSlot(slot) } }
+                        customizeThisPage = if (slot.isSponsor) {
+                            { vm.customizeSponsorSlot(slot) }
+                        } else {
+                            { vm.customizeSlot(slot) }
                         },
                         resetThisPage = if (slot.isSponsor) {
                             null
@@ -515,13 +531,14 @@ private fun TemplateChooserDialog(
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
+    modifier: Modifier = Modifier,
     name: String = "",
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,
     sendToDevice: (() -> Unit)? = null,
 ) {
     ZeCard(
-        modifier = ZeModifier
+        modifier = modifier
             .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One))
             .padding(ZeDimen.Quarter),
     ) {
