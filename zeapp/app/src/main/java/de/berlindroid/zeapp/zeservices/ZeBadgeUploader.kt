@@ -18,6 +18,7 @@ import de.berlindroid.zeapp.zebits.base64
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.RuntimeException
 import java.util.zip.Deflater
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -32,6 +33,8 @@ class ZeBadgeUploader @Inject constructor(
         private const val DEVICE_PRODUCT_NAME = "Badger 2040"
         private const val ACTION_USB_PERMISSION_REQUEST_CODE = 4711
     }
+
+    class BadgeUploadException(message: String) : RuntimeException(message)
 
     /**
      * Send a bitmap to the badge for the name slot
@@ -93,7 +96,7 @@ class ZeBadgeUploader @Inject constructor(
         }.recoverCatching {
             Log.e("badge", "Couldn't write to port ${port.portNumber}.", it)
             // Just send a generic exception with a message we want
-            throw Exception("Failed to write")
+            throw BadgeUploadException("Failed to write")
         }.also {
             if (port.isOpen) {
                 port.close()
@@ -109,7 +112,7 @@ class ZeBadgeUploader @Inject constructor(
 
         Log.e("Badge Connection", message)
 
-        return Result.failure(Exception(message))
+        return Result.failure(BadgeUploadException(message))
     }
 
     private suspend fun askPermission(
@@ -126,11 +129,13 @@ class ZeBadgeUploader @Inject constructor(
                             Log.d("USB Permission", "Permission granted.")
                             continuation.resume(Unit)
                         } else {
-                            continuation.resumeWithException(Exception("No bound device"))
+                            continuation.resumeWithException(BadgeUploadException("No bound device"))
                         }
                     } else {
                         Log.e("USB Permission", "Could not request permission to access to badge.")
-                        continuation.resumeWithException(Exception("Could not request permission to access to badge."))
+                        continuation.resumeWithException(
+                            BadgeUploadException("Could not request permission to access to badge.")
+                        )
                     }
                 }
             }
