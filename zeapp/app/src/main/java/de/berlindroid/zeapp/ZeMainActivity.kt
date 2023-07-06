@@ -46,7 +46,10 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -250,7 +253,16 @@ private fun ZeTopBar(
     isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
-        title = { ZeText(style = MaterialTheme.typography.titleLarge, text = stringResource(id = R.string.app_name)) },
+        title = {
+            ZeText(style = MaterialTheme.typography.titleLarge, text = buildAnnotatedString {
+                pushStyle(SpanStyle(fontWeight = FontWeight.Black))
+                append("Ze")
+                pop()
+                pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
+                append("Androft")
+                pop()
+            })
+        },
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.secondary,
@@ -490,6 +502,7 @@ private fun SelectedEditor(
                 config = config,
                 vm = vm,
             )
+
             is ZeConfiguration.CustomPhrase -> CustomPhraseEditorDialog(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
@@ -566,7 +579,9 @@ private fun PagePreview(
         ZeRow {
             ZeText(
                 text = name,
-                modifier = Modifier.align(ZeAlignment.CenterVertically).padding(start = ZeDimen.One),
+                modifier = Modifier
+                    .align(ZeAlignment.CenterVertically)
+                    .padding(start = ZeDimen.One),
                 color = ZeColor.Black,
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
