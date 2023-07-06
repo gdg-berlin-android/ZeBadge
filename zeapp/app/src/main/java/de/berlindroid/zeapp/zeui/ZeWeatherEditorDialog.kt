@@ -5,17 +5,29 @@ package de.berlindroid.zeapp.zeui
 import android.R
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,8 +35,14 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeservices.WeatherData
+import de.berlindroid.zeapp.zeservices.fetchWeather
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
+import kotlinx.coroutines.launch
 
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 /**
  * Editor dialog for selecting the weather
@@ -35,25 +53,33 @@ import de.berlindroid.zeapp.zeui.zepages.WeatherPage
  * @param accepted callback called with the new configuration configured.
  */
 
-private const val Empty = ""
-
+@Suppress("LongMethod")
 @Composable
 fun WeatherEditorDialog(
     activity: Activity,
     config: ZeConfiguration.Weather,
     dismissed: () -> Unit = {},
-    accepted: (config: ZeConfiguration.Weather) -> Unit
+    accepted: (config: ZeConfiguration.Weather) -> Unit,
 ) {
     var date by remember { mutableStateOf(config.date) }
     var temperature by remember { mutableStateOf(config.temperature) }
     var image by remember { mutableStateOf(config.bitmap) }
 
+    var weatherData: WeatherData? by remember {
+        mutableStateOf(null)
+    }
+
+    val scope = rememberCoroutineScope()
+
     fun redrawComposableImage() {
         composableToBitmap(
             activity = activity,
             content = {
-                WeatherPage(date, temperature)
-                      },
+                WeatherPage(
+                    weatherData?.formattedDate() ?: "N/A",
+                    weatherData?.formattedTemperature ?: "N/A"
+                )
+            },
         ) {
             image = it
         }
@@ -79,7 +105,7 @@ fun WeatherEditorDialog(
         },
         dismissButton = {
             Button(onClick = dismissed) {
-                Text(text = "Cancel")
+                Text(text = stringResource(R.string.cancel))
             }
         },
         title = { Text(text = "Add your contact details") },
@@ -94,50 +120,92 @@ fun WeatherEditorDialog(
                 }
 
                 item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = date,
-                        maxLines = 1,
-                        label = { Text(text = "Date") },
-                        onValueChange = { newValue ->
-                            if (newValue.length <= MaxCharacters * 2) {
-                                date = newValue
-                                redrawComposableImage()
-                            }
-                        },
-                        supportingText = {
-                            Text(text = "${date.length}/${MaxCharacters * 2}")
-                        },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = date.isEmpty()) {
-                                date = Empty
-                            }
+                    var openDialog by remember { mutableStateOf(false) }
+
+                    if (openDialog) {
+                        val datePickerState = rememberDatePickerState(
+                            initialSelectedDateMillis = Instant.now().toEpochMilli()
+                        )
+                        val confirmEnabled by remember {
+                            derivedStateOf { datePickerState.selectedDateMillis != null }
                         }
-                    )
+                        DatePickerDialog(
+                            onDismissRequest = {
+                                openDialog = false
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        openDialog = false
+                                        date = datePickerState.selectedDateMillis?.let {
+                                            Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+                                        }?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString()
+                                    },
+                                    enabled = confirmEnabled
+                                ) {
+                                    Text(stringResource(R.string.ok))
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = {
+                                        openDialog = false
+                                    }
+                                ) {
+                                    Text(stringResource(R.string.cancel))
+                                }
+                            }
+                        ) {
+                            DatePicker(state = datePickerState)
+                        }
+                    }
+
+                    BoxWithConstraints(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .focusable(false),
+                            interactionSource = remember { MutableInteractionSource() },
+                            readOnly = true,
+                            value = date,
+                            maxLines = 1,
+                            label = { Text(text = "Date") },
+                            onValueChange = { newValue ->
+                                if (newValue.length <= MaxCharacters * 2) {
+                                    date = newValue
+                                    redrawComposableImage()
+                                }
+                            },
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clickable {
+                                    if (!openDialog) {
+                                        openDialog = true
+                                    }
+                                },
+                        )
+                    }
                 }
 
                 item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = temperature,
-                        maxLines = 1,
-                        label = { Text(text = "Temperature") },
-                        onValueChange = { newValue ->
-                            // Limit Characters so they're displayed correctly in the screen
-                            if (newValue.length <= MaxCharacters) {
-                                temperature = newValue
+                    Button(
+                        onClick = {
+                            // Fix this please :)
+                            scope.launch {
+                                weatherData = fetchWeather(date)
                                 redrawComposableImage()
                             }
-                        },
-                        supportingText = {
-                            Text(text = "${temperature.length}/$MaxCharacters")
-                        },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = temperature.isEmpty()) {
-                                temperature = Empty
-                            }
                         }
-                    )
+                    ) {
+                        Text("Load Weather")
+                    }
                 }
             }
         }

@@ -12,4 +12,6 @@ sealed class ZeSlot(val name: String) {
     object SecondCustom : ZeSlot("Down")
     object QRCode : ZeSlot("Q")
     object Weather: ZeSlot("Wa")
+    object Quote: ZeSlot("Quite")
+    object BarCode: ZeSlot("Ba")
 }

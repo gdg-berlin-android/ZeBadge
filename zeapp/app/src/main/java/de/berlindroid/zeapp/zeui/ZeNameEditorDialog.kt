@@ -3,7 +3,6 @@
 package de.berlindroid.zeapp.zeui
 
 import android.R
-import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
-import de.berlindroid.zeapp.LocalActivity
+import de.berlindroid.zeapp.LocalZeActivity
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zeui.zepages.NamePage
@@ -51,7 +50,7 @@ fun NameEditorDialog(
     var name by remember { mutableStateOf(config.name) }
     var contact by remember { mutableStateOf(config.contact) }
     var image by remember { mutableStateOf(config.bitmap) }
-    val activity = LocalActivity.current
+    val activity = LocalZeActivity.current
 
     fun redrawComposableImage() {
         composableToBitmap(
