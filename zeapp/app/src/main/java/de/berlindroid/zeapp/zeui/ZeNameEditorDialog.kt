@@ -4,8 +4,8 @@ package de.berlindroid.zeapp.zeui
 
 import android.app.Activity
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
@@ -89,7 +89,7 @@ fun NameEditorDialog(
             Column {
                 BinaryImageEditor(
                     bitmap = image,
-                    bitmapUpdated = { image = it }
+                    bitmapUpdated = { image = it },
                 )
 
                 OutlinedTextField(
@@ -110,7 +110,7 @@ fun NameEditorDialog(
                         ClearIcon(isEmpty = name.isEmpty()) {
                             name = Empty
                         }
-                    }
+                    },
                 )
 
                 OutlinedTextField(
@@ -132,10 +132,10 @@ fun NameEditorDialog(
                         ClearIcon(isEmpty = contact.isEmpty()) {
                             contact = Empty
                         }
-                    }
+                    },
                 )
             }
-        }
+        },
     )
 }
 
@@ -147,7 +147,7 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
             contentDescription = "Clear",
             modifier = modifier.clickable {
                 onClick()
-            }
+            },
         )
     }
 }
