@@ -48,6 +48,7 @@ class ZeBadgeViewModel(
         object FirstCustom : Slot("Up")
         object SecondCustom : Slot("Down")
         object QRCode : Slot("Q")
+        object Weather: Slot("Wa")
     }
 
     /**
@@ -159,6 +160,8 @@ class ZeBadgeViewModel(
          * editor can fill it in?
          */
         data class Weather(
+            val date: String,
+            val temperature: String,
             override val bitmap: Bitmap,
         ) : Configuration(TYPE, humanTitle = "Upcoming Weather", bitmap) {
             companion object {
@@ -285,6 +288,7 @@ class ZeBadgeViewModel(
             Slot.FirstCustom to initialConfiguration(Slot.FirstCustom),
             Slot.SecondCustom to initialConfiguration(Slot.SecondCustom),
             Slot.QRCode to initialConfiguration(Slot.QRCode),
+            Slot.Weather to initialConfiguration(Slot.Weather),
         )
     )
 
@@ -385,8 +389,10 @@ class ZeBadgeViewModel(
                     ), // TODO: Fetch Schedule here.
 
                     Configuration.Weather(
+                        "July 6th",
+                        "26C",
                         R.drawable.soon.toBitmap()
-                    ), // TODO: Fetch weather here
+                    ), // TODO: Fetch real weather data
 
                     Configuration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
@@ -417,6 +423,11 @@ class ZeBadgeViewModel(
                 currentSlotEditor.value = Editor(
                     slot,
                     slots.value[Slot.QRCode]!!
+                )
+            } else if (slot is Slot.Weather) {
+                currentSlotEditor.value = Editor(
+                    slot,
+                    slots.value[Slot.Weather]!!
                 )
             } else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
@@ -509,6 +520,11 @@ class ZeBadgeViewModel(
                 "",
                 R.drawable.soon.toBitmap()
             )
+            Slot.Weather -> Configuration.Weather(
+                "July 7th",
+                "22C",
+                R.drawable.soon.toBitmap()
+            )
         }
     }
 
@@ -575,7 +591,8 @@ class ZeBadgeViewModel(
             }
 
             is Configuration.Weather -> {
-                // TODO: Save weather
+                putString(slot.preferencesKey("weather_date"), config.date)
+                putString(slot.preferencesKey("weather_temperature"), config.temperature)
             }
 
             is Configuration.QRCode -> {
@@ -615,7 +632,11 @@ class ZeBadgeViewModel(
 
             Configuration.Schedule.TYPE -> Configuration.Schedule(bitmap)
 
-            Configuration.Weather.TYPE -> Configuration.Weather(bitmap)
+            Configuration.Weather.TYPE -> Configuration.Weather(
+                date = preferencesValue("weather_date"),
+                temperature = preferencesValue("weather_temperature"),
+                bitmap
+            )
 
             Configuration.QRCode.TYPE -> Configuration.QRCode(
                 title = preferencesValue("qr_title"),

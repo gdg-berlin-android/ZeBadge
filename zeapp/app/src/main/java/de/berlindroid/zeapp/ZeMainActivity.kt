@@ -60,6 +60,7 @@ import de.berlindroid.zeapp.zeui.NameEditorDialog
 import de.berlindroid.zeapp.zeui.NavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
+import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.*
@@ -315,7 +316,8 @@ private fun SelectedEditor(
             Slot.Name,
             Slot.FirstCustom,
             Slot.SecondCustom,
-            Slot.QRCode
+            Slot.QRCode,
+            Slot.Weather
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
@@ -361,13 +363,11 @@ private fun SelectedEditor(
             }
 
             is Configuration.Weather -> {
-                Toast.makeText(
-                    activity,
-                    "Need the weather report? Think about editing the source code!",
-                    Toast.LENGTH_LONG
-                ).show()
-
-                vm.slotConfigured(null, null)
+                WeatherEditorDialog(activity = activity, config = config, dismissed = {
+                    vm.slotConfigured(null, null)
+                }, {
+                    vm.slotConfigured(editor.slot, it)
+                })
             }
 
             is Configuration.QRCode -> QRCodeEditorDialog(
