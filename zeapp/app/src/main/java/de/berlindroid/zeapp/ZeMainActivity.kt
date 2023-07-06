@@ -2,11 +2,15 @@ package de.berlindroid.zeapp
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,15 +28,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -40,6 +47,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dagger.hilt.android.AndroidEntryPoint
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zemodels.ZeEditor
+import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zemodels.ZeToastEvent
+import androidx.core.content.FileProvider
+import coil.imageLoader
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
+import com.commit451.coiltransformations.CropTransformation
+import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
@@ -49,7 +70,8 @@ import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.*
+import kotlinx.coroutines.launch
+import java.io.File
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -81,6 +103,7 @@ import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
 /**
  * Main View entrance for the app
  */
+@AndroidEntryPoint
 class ZeMainActivity : ComponentActivity() {
     private val vm: ZeBadgeViewModel by viewModels()
 
@@ -103,6 +126,17 @@ class ZeMainActivity : ComponentActivity() {
 
     @Composable
     private fun DrawUi() {
+        LaunchedEffect(Unit) {
+            vm.toastEvent.collect {
+                val duration = when (it.duration) {
+                    ZeToastEvent.Duration.SHORT -> Toast.LENGTH_SHORT
+                    ZeToastEvent.Duration.LONG ->Toast.LENGTH_LONG
+                }
+
+                Toast.makeText(this@ZeMainActivity, it.message, duration).show()
+            }
+        }
+
         val wsc = calculateWindowSizeClass(activity = this)
 
         if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
@@ -292,21 +326,21 @@ private fun InfoBar(
 
 @Composable
 private fun SelectedEditor(
-    editor: Editor,
+    editor: ZeEditor,
     activity: Activity,
     vm: ZeBadgeViewModel
 ) {
     if (editor.slot !in listOf(
-            Slot.Name,
-            Slot.FirstCustom,
-            Slot.SecondCustom,
-            Slot.QRCode
+            ZeSlot.Name,
+            ZeSlot.FirstCustom,
+            ZeSlot.SecondCustom,
+            ZeSlot.QRCode
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
-            is Configuration.Name -> NameEditorDialog(
+            is ZeConfiguration.Name -> NameEditorDialog(
                 activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
@@ -314,7 +348,7 @@ private fun SelectedEditor(
                 vm.slotConfigured(editor.slot, newConfig)
             }
 
-            is Configuration.Picture -> {
+            is ZeConfiguration.Picture -> {
                 PictureEditorDialog(
                     dismissed = {
                         vm.slotConfigured(null, null)
@@ -324,7 +358,7 @@ private fun SelectedEditor(
                 }
             }
 
-            is Configuration.ImageGen -> {
+            is ZeConfiguration.ImageGen -> {
                 ImageGenerationEditorDialog(
                     config.prompt,
                     dismissed = {
@@ -335,7 +369,7 @@ private fun SelectedEditor(
                 }
             }
 
-            is Configuration.Schedule -> {
+            is ZeConfiguration.Schedule -> {
                 Toast.makeText(
                     activity,
                     "Not added by you yet, please feel free to contribute this editor",
@@ -345,7 +379,7 @@ private fun SelectedEditor(
                 vm.slotConfigured(null, null)
             }
 
-            is Configuration.Weather -> {
+            is ZeConfiguration.Weather -> {
                 Toast.makeText(
                     activity,
                     "Need the weather report? Think about editing the source code!",
@@ -355,7 +389,7 @@ private fun SelectedEditor(
                 vm.slotConfigured(null, null)
             }
 
-            is Configuration.QRCode -> QRCodeEditorDialog(
+            is ZeConfiguration.QRCode -> QRCodeEditorDialog(
                 activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }
@@ -363,7 +397,7 @@ private fun SelectedEditor(
                 vm.slotConfigured(editor.slot, newConfig)
             }
 
-            is Configuration.Kodee -> {
+            is ZeConfiguration.Kodee -> {
                 vm.slotConfigured(editor.slot, config)
             }
 
@@ -377,14 +411,72 @@ private fun SelectedEditor(
                     vm.slotConfigured(editor.slot, newConfig)
                 }
             }
+            is ZeConfiguration.Camera -> CameraEditor(editor, config, vm)
         }
+    }
+}
+
+@Composable
+private fun CameraEditor(
+    editor: ZeEditor,
+    config: ZeConfiguration.Camera,
+    vm: ZeBadgeViewModel
+) {
+    val context = LocalContext.current
+    val uri = FileProvider.getUriForFile(
+        context,
+        "${BuildConfig.APPLICATION_ID}.files",
+        File(context.cacheDir, "photo.jpg")
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
+        if(pictureTaken) {
+            val imageRequest = ImageRequest.Builder(context)
+                .data(uri)
+                .transformations(CropTransformation())
+                .size(PAGE_WIDTH, PAGE_HEIGHT)
+                .scale(Scale.FIT)
+                .precision(Precision.EXACT)
+                .allowHardware(false)
+                .memoryCachePolicy(CachePolicy.DISABLED)
+                .diskCachePolicy(CachePolicy.DISABLED)
+                .build()
+
+            coroutineScope.launch {
+                val drawable =
+                    context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
+                val bitmap = Bitmap.createBitmap(
+                    PAGE_WIDTH,
+                    PAGE_HEIGHT,
+                    Bitmap.Config.ARGB_8888
+                )
+                val canvas = android.graphics.Canvas(bitmap)
+                canvas.drawColor(Color.WHITE)
+                canvas.drawBitmap(
+                    drawable.bitmap,
+                    (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
+                    0f,
+                    null
+                )
+                vm.slotConfigured(
+                    editor.slot,
+                    config.copy(bitmap = bitmap.ditherFloydSteinberg())
+                )
+            }
+        } else {
+            vm.slotConfigured(editor.slot, null)
+        }
+    }
+
+    SideEffect {
+        takePicture.launch(uri)
     }
 }
 
 @Composable
 private fun TemplateChooserDialog(
     vm: ZeBadgeViewModel,
-    templateChooser: TemplateChooser?
+    templateChooser: ZeTemplateChooser?
 ) {
     ZeAlertDialog(
         onDismissRequest = {
@@ -480,5 +572,5 @@ private fun PagePreview(
     }
 }
 
-private val Slot.isSponsor: Boolean
-    get() = this is Slot.FirstSponsor || this is Slot.SecondSponsor
+private val ZeSlot.isSponsor: Boolean
+    get() = this is ZeSlot.FirstSponsor || this is ZeSlot.SecondSponsor
