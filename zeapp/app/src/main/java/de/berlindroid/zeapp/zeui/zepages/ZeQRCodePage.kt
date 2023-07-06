@@ -56,7 +56,7 @@ fun QRCodePage(
         )
 
         val painter =
-            if (url.isEmpty()) painterResource(id = R.drawable.rewe_logo)
+            if (url.isEmpty()) painterResource(id = R.drawable.page_telekom)
             else rememberQrBitmapPainter(url)
         Image(
             painter = painter,
