@@ -1,6 +1,5 @@
 package de.berlindroid.zeapp.zeui
 
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
@@ -44,11 +43,6 @@ import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zebits.threshold
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import kotlinx.coroutines.launch
-
-enum class MotionEvent {
-    Idle, Down, Move, Up
-}
-
 
 /**
  * Use Canvas to draw something with a finger on the badge.
@@ -170,3 +164,6 @@ fun ZeImageDrawEditorDialog(
     )
 }
 
+enum class MotionEvent {
+    Idle, Down, Move, Up
+}
