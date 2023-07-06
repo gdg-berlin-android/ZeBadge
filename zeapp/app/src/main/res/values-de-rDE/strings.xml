@@ -9,7 +9,6 @@
 
     <string name="generate">Generieren</string>
     <string name="not_binary_image">Kein binär Bild. Stelle sicher, dass die Pixel entweder weiß oder schwarz sind.</string>
-    <string name="image_generation_in_progress">Bilderstellung im gang...</string>
     <string name="generate_image_page">Generiere Bildseite</string>
     <string name="draw_image_page">Zeichne Bildseite</string>
     <string name="enter_prompt">Befehl hier eingeben</string>
