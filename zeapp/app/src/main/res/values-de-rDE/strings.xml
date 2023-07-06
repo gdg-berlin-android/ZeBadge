@@ -17,6 +17,7 @@
     <string name="image_needed">Binär Bild benötigt. Drücke einen der Knöpfe unter dem Bild.</string>
     <string name="add_qr_url">Füge deine QR URL hinzu</string>
     <string name="qr_code_title">QR Code Title</string>
+    <string name="qr_code_text">Zusätzlicher Text</string>
     <string name="url">URL</string>
 
     <string name="add_barcode_url">Barcode URL hinzufügen</string>

@@ -353,6 +353,7 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
                 "Your title",
                 "",
+                "",
                 R.drawable.qrpage_preview.toBitmap()
             )
             ZeSlot.Weather -> ZeConfiguration.Weather(

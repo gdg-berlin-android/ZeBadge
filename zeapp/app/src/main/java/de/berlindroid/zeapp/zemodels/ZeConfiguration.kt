@@ -45,6 +45,7 @@ sealed class ZeConfiguration(
      */
     data class QRCode(
         val title: String,
+        val text: String,
         val url: String,
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "QRCode Tag", bitmap) {
