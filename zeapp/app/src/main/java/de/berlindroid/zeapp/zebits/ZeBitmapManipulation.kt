@@ -315,7 +315,7 @@ fun ByteArray.toBitmap(): Bitmap {
 }
 
 /**
- * Check if a given bitmap can be converted into binary form.
+ * Check if a given bitmap is in binary form.
  *
  * The binary form consists of pixel whos color values are either all zeros or all 255.
  */
