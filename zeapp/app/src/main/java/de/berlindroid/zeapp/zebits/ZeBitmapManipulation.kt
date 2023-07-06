@@ -389,10 +389,12 @@ fun IntBuffer.forEachIndexed(
  */
 fun Bitmap.cropPageFromCenter() : Bitmap {
     val aspectRatio = this.width.toFloat().div(this.height.toFloat())
-    return scale(PAGE_WIDTH, PAGE_WIDTH.div(aspectRatio).toInt())
+    val targetHeight = PAGE_WIDTH.div(aspectRatio).toInt()
+
+    return scale(PAGE_WIDTH, targetHeight)
         .crop(
             fromX = 0,
-            fromY = 0,
+            fromY = PAGE_HEIGHT/2 - targetHeight / 2,
             targetWidth = PAGE_WIDTH,
             targetHeight = PAGE_HEIGHT,
         )
