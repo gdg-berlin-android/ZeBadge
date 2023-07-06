@@ -13,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -26,7 +27,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,9 +41,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -193,27 +199,71 @@ private fun LargeScreenUi(vm: ZeBadgeViewModel) {
 @Composable
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
+    var isShowingAbout by remember { mutableStateOf(false) }
     ZeBadgeAppTheme(content = {
         ZeScaffold(
             modifier = modifier,
             floatingActionButton = {
-                ZeNavigationPad(lazyListState)
+                if (!isShowingAbout) {
+                    ZeNavigationPad(lazyListState)
+                }
             },
             topBar = {
                 ZeTopBar(
                     onRandomClick = vm::sendRandomPageToDevice,
                     onSaveAllClick = vm::saveAll,
+                    onAboutClick = { isShowingAbout = !isShowingAbout },
+                    isShowingAbout = isShowingAbout,
                 )
             },
             content = { paddingValues ->
-                ZePages(
-                    paddingValues = paddingValues,
-                    lazyListState = lazyListState,
-                    vm = vm,
-                )
+                if (isShowingAbout) {
+                    ZeAbout(paddingValues, vm)
+                } else {
+                    ZePages(
+                        paddingValues = paddingValues,
+                        lazyListState = lazyListState,
+                        vm = vm,
+                    )
+                }
             }
         )
     })
+}
+
+@Composable
+private fun ZeAbout(
+    paddingValues: PaddingValues,
+    vm: ZeBadgeViewModel,
+) {
+    val lines by vm.lines.collectAsState()
+
+    ZeSurface(
+        modifier = ZeModifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(Dimen.Half)
+    ) {
+        Column {
+            ZeText(
+                text = "Contributors",
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 24.sp,
+            )
+            ZeLazyColumn {
+                items(lines) { line ->
+                    ZeText(
+                        text = line,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(8.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 18.sp,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -221,6 +271,8 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
 private fun ZeTopBar(
     onSaveAllClick: () -> Unit,
     onRandomClick: () -> Unit,
+    onAboutClick: () -> Unit,
+    isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
         title = { ZeText(stringResource(id = R.string.app_name)) },
@@ -236,6 +288,13 @@ private fun ZeTopBar(
                     painter = painterResource(id = R.drawable.save_all),
                     contentDescription = null
                 )
+            }
+            ZeIconButton(onClick = onAboutClick) {
+                if (isShowingAbout) {
+                    ZeIcon(Icons.Default.Close, contentDescription = "About")
+                } else {
+                    ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
+                }
             }
         }
     )
