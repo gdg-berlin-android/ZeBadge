@@ -12,6 +12,7 @@ import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zebits.toBitmap
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import javax.inject.Inject
 
 class ZePreferencesService @Inject constructor(
@@ -61,7 +62,8 @@ class ZePreferencesService @Inject constructor(
                 }
 
                 is ZeConfiguration.Weather -> {
-                    // TODO: Save weather
+                    putString(slot.preferencesKey("weather_date"), config.date)
+                    putString(slot.preferencesKey("weather_temperature"), config.temperature)
                 }
 
                 is ZeConfiguration.QRCode -> {
@@ -101,7 +103,11 @@ class ZePreferencesService @Inject constructor(
 
             ZeConfiguration.Schedule.TYPE -> ZeConfiguration.Schedule(bitmap)
 
-            ZeConfiguration.Weather.TYPE -> ZeConfiguration.Weather(bitmap)
+            ZeConfiguration.Weather.TYPE -> ZeConfiguration.Weather(
+                date = slot.preferencesValue("weather_date"),
+                temperature = slot.preferencesValue("weather_temperature"),
+                bitmap
+            )
 
             ZeConfiguration.QRCode.TYPE -> ZeConfiguration.QRCode(
                 title = slot.preferencesValue("qr_title"),
