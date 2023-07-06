@@ -94,6 +94,8 @@ dependencies {
     implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
     implementation(libs.material3.wsc)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.transformations)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
