@@ -7,7 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,22 +20,35 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -135,7 +150,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun LargeScreenUi(vm: ZeBadgeViewModel) {
         ZeRow {
             ZeScreen(vm, modifier = Modifier.weight(.3f))
-            ZeSpacer(modifier = ZeModifier.width(Dimen.Two))
+            ZeSpacer(modifier = ZeModifier.width(ZeDimen.Two))
             ZeSimulator(
                 page = vm.slotToBitmap(),
                 onButtonPressed = vm::simulatorButtonPressed,
@@ -148,11 +163,14 @@ class ZeMainActivity : ComponentActivity() {
 @Composable
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
+    var isShowingAbout by remember { mutableStateOf(false) }
     ZeBadgeAppTheme(content = {
         ZeScaffold(
             modifier = modifier,
             floatingActionButton = {
-                ZeNavigationPad(lazyListState)
+                if (!isShowingAbout) {
+                    ZeNavigationPad(lazyListState)
+                }
             },
             snackbarHost = {
                 SnackbarHost(
@@ -170,13 +188,58 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 ZeTopBar(
                     onRandomClick = vm::sendRandomPageToDevice,
                     onSaveAllClick = vm::saveAll,
+                    onAboutClick = { isShowingAbout = !isShowingAbout },
+                    isShowingAbout = isShowingAbout,
                 )
             },
             content = { paddingValues ->
-                ZePages(paddingValues, vm, lazyListState)
-            },
+                if (isShowingAbout) {
+                    ZeAbout(paddingValues, vm)
+                } else {
+                    ZePages(
+                        paddingValues = paddingValues,
+                        lazyListState = lazyListState,
+                        vm = vm,
+                    )
+                }
+            }
         )
     })
+}
+
+@Composable
+private fun ZeAbout(
+    paddingValues: PaddingValues,
+    vm: ZeBadgeViewModel,
+) {
+    val lines by vm.lines.collectAsState()
+
+    ZeSurface(
+        modifier = ZeModifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(ZeDimen.Half)
+    ) {
+        Column {
+            ZeText(
+                text = "Contributors",
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 24.sp,
+            )
+            ZeLazyColumn {
+                items(lines) { line ->
+                    ZeText(
+                        text = line,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(8.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 18.sp,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -184,9 +247,17 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
 private fun ZeTopBar(
     onSaveAllClick: () -> Unit,
     onRandomClick: () -> Unit,
+    onAboutClick: () -> Unit,
+    isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
-        title = { ZeText(stringResource(id = R.string.app_name)) },
+        title = { ZeText(style = MaterialTheme.typography.titleLarge, text = stringResource(id = R.string.app_name)) },
+        colors = topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.secondary,
+            actionIconContentColor = MaterialTheme.colorScheme.secondary,
+            navigationIconContentColor = MaterialTheme.colorScheme.secondary,
+        ),
         actions = {
             ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
@@ -200,6 +271,13 @@ private fun ZeTopBar(
                     contentDescription = null,
                 )
             }
+            ZeIconButton(onClick = onAboutClick) {
+                if (isShowingAbout) {
+                    ZeIcon(Icons.Default.Close, contentDescription = "About")
+                } else {
+                    ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
+                }
+            }
         },
     )
 }
@@ -208,13 +286,13 @@ private fun ZeTopBar(
 private fun ZePages(
     paddingValues: PaddingValues,
     vm: ZeBadgeViewModel,
-    lazyListState: LazyListState,
+    lazyListState: LazyListState
 ) {
     ZeSurface(
         modifier = ZeModifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(Dimen.Half),
+            .padding(ZeDimen.Half),
     ) {
         val editor by remember { vm.currentSlotEditor }
         val templateChooser by remember { vm.currentTemplateChooser }
@@ -239,9 +317,9 @@ private fun ZePages(
             ZeLazyColumn(
                 state = lazyListState,
                 contentPadding = PaddingValues(
-                    start = Dimen.One,
-                    end = Dimen.One,
-                    top = Dimen.Half,
+                    start = ZeDimen.One,
+                    end = ZeDimen.One,
+                    top = ZeDimen.Half,
                     bottom = 140.dp,
                 ),
             ) {
@@ -265,7 +343,7 @@ private fun ZePages(
                         },
                     )
 
-                    ZeSpacer(modifier = ZeModifier.height(Dimen.One))
+                    ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
                 }
             }
         }
@@ -284,11 +362,11 @@ private fun InfoBar(
 ) {
     ZeCard(
         modifier = ZeModifier
-            .padding(horizontal = Dimen.One, vertical = Dimen.One)
-            .background(ZeColor.Black, ZeRoundedCornerShape(Dimen.One)),
+            .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
+            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One)),
     ) {
         ZeRow(
-            modifier = ZeModifier.padding(horizontal = Dimen.Two, vertical = Dimen.One),
+            modifier = ZeModifier.padding(horizontal = ZeDimen.Two, vertical = ZeDimen.One),
             verticalAlignment = ZeAlignment.CenterVertically,
         ) {
             ZeText(
@@ -441,14 +519,14 @@ private fun PagePreview(
 ) {
     ZeCard(
         modifier = ZeModifier
-            .background(ZeColor.Black, ZeRoundedCornerShape(Dimen.One))
-            .padding(Dimen.Quarter),
+            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One))
+            .padding(ZeDimen.Quarter),
     ) {
         ZeImage(
             modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = Dimen.One, vertical = Dimen.Half),
+                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
             painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = ZeFilterQuality.None,
@@ -466,7 +544,7 @@ private fun PagePreview(
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
                 ZeLazyRow(
                     modifier = ZeModifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = Dimen.Quarter),
+                    contentPadding = PaddingValues(horizontal = ZeDimen.Quarter),
                     horizontalArrangement = ZeArrangement.End,
                 ) {
                     if (sendToDevice != null) {
