@@ -1,5 +1,6 @@
 package de.berlindroid.zeapp.zeui
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
@@ -26,6 +27,8 @@ import de.berlindroid.zeapp.zebits.cropPageFromCenter
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+
+private const val ROTATE_CLOCKWISE = 90f
 
 /**
  * Editor Dialog for adding an image as a badge page.
@@ -102,7 +105,22 @@ fun PictureEditorDialog(
                 ) {
                     Text(text = stringResource(id = android.R.string.search_go))
                 }
+
+              Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                bitmap = rotateBitmap(bitmap)
+                }
+              ) {
+                Text(text = stringResource(id = R.string.rotate))
+              }
             }
         }
     )
+}
+
+private fun rotateBitmap(bitmap: Bitmap): Bitmap{
+  val matrix = android.graphics.Matrix()
+  matrix.postRotate(ROTATE_CLOCKWISE)
+  return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
