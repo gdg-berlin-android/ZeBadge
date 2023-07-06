@@ -12,6 +12,7 @@ import kotlin.math.roundToInt
  *
  * @see [Wikpedia](https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering)
  */
+
 fun Bitmap.ditherFloydSteinberg(): Bitmap {
     val outputBitmap = grayscale()
 
