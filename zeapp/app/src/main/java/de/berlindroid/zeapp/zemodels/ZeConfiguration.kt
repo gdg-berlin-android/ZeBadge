@@ -27,8 +27,8 @@ sealed class ZeConfiguration(
      * @param bitmap (overriden) final page
      */
     data class Name(
-        val name: String,
-        val contact: String,
+        val name: String?,
+        val contact: String?,
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "Name Tag", bitmap) {
         companion object {
