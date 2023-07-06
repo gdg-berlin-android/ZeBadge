@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -240,7 +241,7 @@ private fun ZeAbout(
         modifier = ZeModifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(Dimen.Half)
+            .padding(ZeDimen.Half)
     ) {
         Column {
             ZeText(
