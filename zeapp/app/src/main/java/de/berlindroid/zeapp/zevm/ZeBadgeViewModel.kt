@@ -206,6 +206,7 @@ class ZeBadgeViewModel @Inject constructor(
                     ZeConfiguration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
+                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.value.isNeitherNullNorBlank()) {

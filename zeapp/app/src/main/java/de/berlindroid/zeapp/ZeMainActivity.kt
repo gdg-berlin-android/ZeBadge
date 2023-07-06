@@ -2,11 +2,15 @@ package de.berlindroid.zeapp
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,11 +32,14 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -46,6 +53,14 @@ import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zemodels.ZeToastEvent
+import androidx.core.content.FileProvider
+import coil.imageLoader
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
+import com.commit451.coiltransformations.CropTransformation
+import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
@@ -54,6 +69,8 @@ import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import kotlinx.coroutines.launch
+import java.io.File
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -381,6 +398,53 @@ private fun SelectedEditor(
 
             is ZeConfiguration.Kodee -> {
                 vm.slotConfigured(editor.slot, config)
+            }
+            is Configuration.Camera -> {
+                val context = LocalContext.current
+                val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.files", File(context.cacheDir, "photo.jpg"))
+                val coroutineScope = rememberCoroutineScope()
+                val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
+                    if(pictureTaken) {
+                        val imageRequest = ImageRequest.Builder(context)
+                            .data(uri)
+                            .transformations(CropTransformation())
+                            .size(PAGE_WIDTH, PAGE_HEIGHT)
+                            .scale(Scale.FIT)
+                            .precision(Precision.EXACT)
+                            .allowHardware(false)
+                            .memoryCachePolicy(CachePolicy.DISABLED)
+                            .diskCachePolicy(CachePolicy.DISABLED)
+                            .build()
+
+                        coroutineScope.launch {
+                            val drawable =
+                                context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
+                            val bitmap = Bitmap.createBitmap(
+                                PAGE_WIDTH,
+                                PAGE_HEIGHT,
+                                Bitmap.Config.ARGB_8888
+                            )
+                            val canvas = android.graphics.Canvas(bitmap)
+                            canvas.drawColor(Color.WHITE)
+                            canvas.drawBitmap(
+                                drawable.bitmap,
+                                (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
+                                0f,
+                                null
+                            )
+                            vm.slotConfigured(
+                                editor.slot,
+                                config.copy(bitmap = bitmap.ditherFloydSteinberg())
+                            )
+                        }
+                    } else {
+                        vm.slotConfigured(editor.slot, null)
+                    }
+                }
+
+                SideEffect {
+                    takePicture.launch(uri)
+                }
             }
         }
     }
