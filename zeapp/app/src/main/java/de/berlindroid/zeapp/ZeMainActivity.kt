@@ -399,7 +399,7 @@ private fun SelectedEditor(
             is ZeConfiguration.Kodee -> {
                 vm.slotConfigured(editor.slot, config)
             }
-            is Configuration.Camera -> {
+            is ZeConfiguration.Camera -> {
                 val context = LocalContext.current
                 val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.files", File(context.cacheDir, "photo.jpg"))
                 val coroutineScope = rememberCoroutineScope()

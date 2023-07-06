@@ -69,6 +69,7 @@ class ZePreferencesService @Inject constructor(
                     putString(slot.preferencesKey("url"), config.url)
                 }
 
+                is ZeConfiguration.Camera,
                 is ZeConfiguration.Kodee -> Unit
             }
         }

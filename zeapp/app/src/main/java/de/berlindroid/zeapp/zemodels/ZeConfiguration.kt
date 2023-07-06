@@ -126,5 +126,13 @@ sealed class ZeConfiguration(
         }
     }
 
+    data class Camera(
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "Camera", bitmap) {
+        companion object {
+            const val TYPE: String = "Camera"
+        }
+    }
+
     // TODO: Add your own pages.
 }
