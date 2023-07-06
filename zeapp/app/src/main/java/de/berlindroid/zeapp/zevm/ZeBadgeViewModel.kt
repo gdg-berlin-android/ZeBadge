@@ -392,6 +392,12 @@ class ZeBadgeViewModel @Inject constructor(
                 R.drawable.soon.toBitmap()
             )
 
+            is ZeSlot.Quote -> ZeConfiguration.Quote(
+                "Test",
+                "Author",
+                R.drawable.page_quote_sample.toBitmap()
+            )
+
             ZeSlot.BarCode -> ZeConfiguration.BarCode(
                 "Your title for barcode",
                 "",

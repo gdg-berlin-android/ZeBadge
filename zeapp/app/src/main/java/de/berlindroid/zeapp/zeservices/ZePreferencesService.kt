@@ -78,6 +78,11 @@ class ZePreferencesService @Inject constructor(
                     // Nothing more to configure
                 }
 
+                is ZeConfiguration.Quote -> {
+                    putString(slot.preferencesKey("quote_author"), config.author)
+                    putString(slot.preferencesKey("quote_message"), config.message)
+                }
+
                 is ZeConfiguration.BarCode -> {
                     putString(slot.preferencesKey("barcode_title"), config.title)
                     putString(slot.preferencesKey("url"), config.url)
