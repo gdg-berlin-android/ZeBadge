@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.google.play.services)
+    alias(libs.plugins.firebase.appdistribution)
 }
 
 android {
@@ -36,6 +38,11 @@ android {
     buildTypes {
         configureEach {
             buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
+
+            firebaseAppDistribution {
+                releaseNotesFile="./release-notes.txt"
+                groups="testers"
+            }
         }
 
         release {
@@ -107,6 +114,9 @@ dependencies {
     implementation(libs.dagger.hilt)
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
+    implementation(platform(libs.firebase))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
