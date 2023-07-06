@@ -197,8 +197,8 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
             },
             topBar = {
                 ZeTopBar(
-                    onRandomClick = { vm.sendRandomPageToDevice() },
-                    onSaveAllClick = { vm.saveAll() },
+                    onRandomClick = vm::sendRandomPageToDevice,
+                    onSaveAllClick = vm::saveAll,
                 )
             },
             content = { paddingValues ->

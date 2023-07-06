@@ -9,7 +9,6 @@
 
     <string name="generate">Generate</string>
     <string name="not_binary_image">Not a binary image. Make sure each pixel is either black or white.</string>
-    <string name="image_generation_in_progress">Image generation in progress</string>
     <string name="generate_image_page">Generate Image Page</string>
     <string name="draw_image_page">Draw Image Page</string>
     <string name="enter_prompt">Enter your prompt here</string>
