@@ -64,6 +64,7 @@ import de.berlindroid.zeapp.ui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.ui.NameEditorDialog
 import de.berlindroid.zeapp.ui.PictureEditorDialog
 import de.berlindroid.zeapp.ui.QRCodeEditorDialog
+import de.berlindroid.zeapp.ui.RandomPhraseEditorDialog
 import de.berlindroid.zeapp.ui.ToolButton
 import de.berlindroid.zeapp.ui.theme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.vm.BadgeViewModel
@@ -302,6 +303,14 @@ private fun SelectedEditor(
             }
 
             is Configuration.QRCode -> QRCodeEditorDialog(
+                activity,
+                config,
+                dismissed = { vm.slotConfigured(editor.slot, null) }
+            ) { newConfig ->
+                vm.slotConfigured(editor.slot, newConfig)
+            }
+
+            is Configuration.RandomPhrase -> RandomPhraseEditorDialog(
                 activity,
                 config,
                 dismissed = { vm.slotConfigured(editor.slot, null) }

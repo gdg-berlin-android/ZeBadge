@@ -48,6 +48,7 @@ class BadgeViewModel(
         object FirstCustom : Slot("Up")
         object SecondCustom : Slot("Down")
         object QRCode : Slot("Q")
+        object RandomPhrase : Slot("P")
     }
 
     /**
@@ -164,7 +165,15 @@ class BadgeViewModel(
             }
         }
 
-        // TODO: Add your own pages.
+        data class RandomPhrase(
+            val phrase: String,
+            override val bitmap: Bitmap
+        ) : Configuration(TYPE, bitmap) {
+
+            companion object {
+                const val TYPE: String = "Random phrase everyone sees!"
+            }
+        }
     }
 
     /**
@@ -369,6 +378,11 @@ class BadgeViewModel(
                     Configuration.Weather(
                         R.drawable.soon.toBitmap()
                     ), // TODO: Fetch weather here
+
+                    Configuration.RandomPhrase(
+                        "Your phrase",
+                        R.drawable.page_phrase.toBitmap()
+                    ),
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.value.isNeitherNullNorBlank()) {
@@ -486,6 +500,11 @@ class BadgeViewModel(
                 "",
                 R.drawable.soon.toBitmap()
             )
+
+            Slot.RandomPhrase -> Configuration.RandomPhrase(
+                "Your phrase",
+                R.drawable.page_phrase.toBitmap()
+            )
         }
     }
 
@@ -559,6 +578,10 @@ class BadgeViewModel(
                 putString(slot.preferencesKey("qr_title"), config.title)
                 putString(slot.preferencesKey("url"), config.url)
             }
+
+            is Configuration.RandomPhrase -> {
+                putString(slot.preferencesKey("random_phrase"), config.phrase)
+            }
         }
 
         return this
@@ -594,6 +617,11 @@ class BadgeViewModel(
             Configuration.QRCode.TYPE -> Configuration.QRCode(
                 title = preferencesValue("qr_title"),
                 url = preferencesValue("url"),
+                bitmap = bitmap
+            )
+
+            Configuration.RandomPhrase.TYPE -> Configuration.RandomPhrase(
+                phrase = preferencesValue("random_phrase"),
                 bitmap = bitmap
             )
 
