@@ -1,1 +1,25 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
 
+    <string name="black_and_white">Чорне/біле</string>
+    <string name="reset">Скинути</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Позиційний Positional</string>
+    <string name="rotate">Перевернути</string>
+    <string name="invert">Інверсувати</string>
+
+    <string name="generate">Згенерувати</string>
+    <string name="not_binary_image">Не є бінарним зображенням. Переконайтеся, що кожен піксель є або чорним, або білим.</string>
+    <string name="generate_image_page">Згенерувати сторінку зображення</string>
+    <string name="draw_image_page">Намалювати сторінку зображення</string>
+    <string name="enter_prompt">Введіть свій запит</string>
+    <string name="could_not_generate_image">Неможливо згенерувати зображення</string>
+
+    <string name="image_needed">Необхідне бінарне зображення. Натисніть буль-яку кнопку під зображенням.</string>
+    <string name="add_qr_url">Додати свій QR посилання</string>
+    <string name="qr_code_title">Заголовок QA коду</string>
+    <string name="qr_code_text">Додатковий текст</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Додати свій BarCode URL</string>
+    <string name="bar_code_title">Заголовок Bar Code</string>
+</resources>
