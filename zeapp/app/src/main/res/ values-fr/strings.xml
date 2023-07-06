@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">B/W</string>
+    <string name="reset">Reset</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Positional</string>
+    <string name="invert">Invert</string>
+
+    <string name="generate">Generate</string>
+    <string name="not_binary_image">Pas une image binaire. Assurez-vous que chaque pixel est soit noir, soit blanc</string>
+    <string name="generate_image_page">Générer une page d'image</string>
+    <string name="draw_image_page">Dessin d'une page d'image</string>
+    <string name="enter_prompt">Entrez votre invite ici</string>
+    <string name="could_not_generate_image">N'a pas pu générer une image</string>
+
+    <string name="image_needed">Image binaire nécessaire. Appuyez sur l'un des boutons sous l'image.</string>
+    <string name="add_qr_url">Ajouter votre QR URL</string>
+    <string name="qr_code_title">Titre du code QR</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Ajouter l'URL de votre code barre</string>
+    <string name="bar_code_title">Titre du code barre</string>
+</resources>
