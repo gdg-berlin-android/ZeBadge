@@ -3,13 +3,13 @@ package de.berlindroid.zeapp.zeui.utils
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.View
-import androidx.appcompat.widget.LinearLayoutCompat
+import android.view.ViewGroup
 
 class BitmapUtils {
     fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
-        view.layoutParams = LinearLayoutCompat.LayoutParams(
-            LinearLayoutCompat.LayoutParams.WRAP_CONTENT,
-            LinearLayoutCompat.LayoutParams.WRAP_CONTENT
+        view.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
         view.measure(

@@ -94,7 +94,6 @@ dependencies {
     implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
     implementation(libs.material3.wsc)
-    implementation("androidx.appcompat:appcompat:1.4.1")
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
