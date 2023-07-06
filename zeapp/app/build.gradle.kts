@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint.gradle)
     alias(libs.plugins.detekt.gradle)
+    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -94,6 +96,7 @@ dependencies {
     implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
     implementation(libs.material3.wsc)
+    implementation(libs.dagger.hilt)
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
     debugImplementation(libs.androidx.compose.ui.tooling)
@@ -101,6 +104,8 @@ dependencies {
 
 	testImplementation(libs.test.assertk)
 	testImplementation(libs.test.junit)
+
+    kapt(libs.dagger.hilt.compiler)
 }
 
 // Ktlint
@@ -118,4 +123,12 @@ ktlint {
     filter {
         exclude("**/generated/**")
     }
+}
+
+kapt {
+    correctErrorTypes = true
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs::class).configureEach {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
