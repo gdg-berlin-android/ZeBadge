@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.google.play.services)
 }
 
 android {
@@ -101,6 +102,9 @@ dependencies {
     implementation(libs.dagger.hilt)
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
+    implementation(platform(libs.firebase))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

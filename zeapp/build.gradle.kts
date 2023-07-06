@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.detekt.gradle) apply false
     alias(libs.plugins.dagger.hilt) apply false
+    alias(libs.plugins.google.play.services) apply false
 }
