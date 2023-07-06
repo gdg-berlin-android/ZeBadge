@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
-import de.berlindroid.zeapp.LocalActivity
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.qrComposableToBitmap
@@ -45,7 +44,6 @@ fun QRCodeEditorDialog(
     var title by remember { mutableStateOf(config.title) }
     var url by remember { mutableStateOf(config.url) }
     var image by remember { mutableStateOf(config.bitmap) }
-    val activity = LocalActivity.current
 
     fun redrawComposableImage() {
         qrComposableToBitmap(
