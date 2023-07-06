@@ -232,23 +232,30 @@ class ZeBadgeViewModel @Inject constructor(
             )
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
-            if (slot is ZeSlot.Name) {
-                currentSlotEditor.value = ZeEditor(
+            when (slot) {
+                is ZeSlot.Name -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Name]!!
+                    slots.value[ZeSlot.Name]!!,
                 )
-            } else if (slot is ZeSlot.QRCode) {
-                currentSlotEditor.value = ZeEditor(
+
+                is ZeSlot.QRCode -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.QRCode]!!
+                    slots.value[ZeSlot.QRCode]!!,
                 )
-            } else if (slot is ZeSlot.Weather) {
-                currentSlotEditor.value = ZeEditor(
+
+                is ZeSlot.Weather -> currentSlotEditor.value = ZeEditor(
                     slot,
-                    slots.value[ZeSlot.Weather]!!
+                    slots.value[ZeSlot.Weather]!!,
                 )
-            } else {
-                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+
+                is ZeSlot.BarCode -> currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.BarCode]!!,
+                )
+                ZeSlot.FirstCustom -> {}
+                ZeSlot.FirstSponsor -> {}
+                ZeSlot.SecondCustom -> {}
+                ZeSlot.SecondSponsor -> {}
             }
         }
     }
@@ -336,7 +343,7 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
                 "Your title",
                 "",
-                R.drawable.qrpage_preview.toBitmap()
+                R.drawable.qrpage_preview.toBitmap(),
             )
             ZeSlot.Weather -> ZeConfiguration.Weather(
                 "July 7th",
@@ -347,7 +354,7 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.BarCode -> ZeConfiguration.BarCode(
                 "Your title for barcode",
                 "",
-                R.drawable.soon.toBitmap()
+                R.drawable.soon.toBitmap(),
             )
         }
     }

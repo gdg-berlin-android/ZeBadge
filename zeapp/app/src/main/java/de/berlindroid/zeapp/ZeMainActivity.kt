@@ -1,14 +1,10 @@
 package de.berlindroid.zeapp
 
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,47 +27,35 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zemodels.ZeToastEvent
-import androidx.core.content.FileProvider
-import coil.imageLoader
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import coil.size.Precision
-import coil.size.Scale
-import com.commit451.coiltransformations.CropTransformation
-import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zeapp.zeui.BarCodeEditorDialog
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
-import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.WeatherEditorDialog
+import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
-import kotlinx.coroutines.launch
-import java.io.File
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -258,18 +242,18 @@ private fun ZePages(
                     start = Dimen.One,
                     end = Dimen.One,
                     top = Dimen.Half,
-                    bottom = 140.dp
-                )
+                    bottom = 140.dp,
+                ),
             ) {
                 items(
                     slots.keys.toList(),
                 ) { slot ->
                     PagePreview(
+                        name = slot.name,
                         bitmap = vm.slotToBitmap(slot),
-                        customizeThisPage = if (slot.isSponsor) {
-                            { vm.customizeSponsorSlot(slot) }
-                        } else {
-                            { vm.customizeSlot(slot) }
+                        customizeThisPage = when {
+                            slot.isSponsor -> { { vm.customizeSponsorSlot(slot) } }
+                            else -> { { vm.customizeSlot(slot) } }
                         },
                         resetThisPage = if (slot.isSponsor) {
                             null
@@ -356,35 +340,29 @@ private fun SelectedEditor(
                 snackbarMessage = vm::showSnackBar,
             )
 
-            is ZeConfiguration.Picture -> {
-                PictureEditorDialog(
-                    dismissed = { vm.slotConfigured(null, null) },
-                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                    snackbarMessage = vm::showSnackBar,
-                )
-            }
+            is ZeConfiguration.Picture -> PictureEditorDialog(
+                dismissed = { vm.slotConfigured(null, null) },
+                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                snackbarMessage = vm::showSnackBar,
+            )
 
-            is ZeConfiguration.ImageGen -> {
-                ImageGenerationEditorDialog(
-                    initialPrompt = config.prompt,
-                    dismissed = { vm.slotConfigured(null, null) },
-                    accepted = { vm.slotConfigured(editor.slot, it) },
-                )
-            }
+            is ZeConfiguration.ImageGen -> ImageGenerationEditorDialog(
+                initialPrompt = config.prompt,
+                dismissed = { vm.slotConfigured(null, null) },
+                accepted = { vm.slotConfigured(editor.slot, it) },
+            )
 
             is ZeConfiguration.Schedule -> {
                 vm.showSnackBar(message = "Not added by you yet, please feel free to contribute this editor")
                 vm.slotConfigured(null, null)
             }
 
-            is ZeConfiguration.Weather -> {
-                WeatherEditorDialog(
-                    config = config,
-                    dismissed = { vm.slotConfigured(null, null) },
-                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                    snackbarMessage = vm::showSnackBar,
-                )
-            }
+            is ZeConfiguration.Weather -> WeatherEditorDialog(
+                config = config,
+                dismissed = { vm.slotConfigured(null, null) },
+                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                snackbarMessage = vm::showSnackBar,
+            )
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
                 config = config,
@@ -392,91 +370,28 @@ private fun SelectedEditor(
                 snackbarMessage = vm::showSnackBar,
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
             )
-                config,
-                dismissed = { vm.slotConfigured(editor.slot, null) }
-            ) { newConfig ->
-                vm.slotConfigured(editor.slot, newConfig)
-            }
 
             is ZeConfiguration.BarCode -> BarCodeEditorDialog(
-                activity,
-                config,
-                dismissed = { vm.slotConfigured(editor.slot, null) }
-            ) { newConfig ->
-                vm.slotConfigured(editor.slot, newConfig)
-            }
+                config = config,
+                dismissed = { vm.slotConfigured(editor.slot, null) },
+                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+            )
 
             is ZeConfiguration.Kodee -> {
                 vm.slotConfigured(editor.slot, config)
             }
 
-            is ZeConfiguration.ImageDraw -> {
-                ZeImageDrawEditorDialog(
-                    dismissed = { vm.slotConfigured(editor.slot, null) },
-                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                )
-            }
+            is ZeConfiguration.ImageDraw -> ZeImageDrawEditorDialog(
+                dismissed = { vm.slotConfigured(editor.slot, null) },
+                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+            )
 
-            is ZeConfiguration.Camera -> CameraEditor(editor, config, vm)
+            is ZeConfiguration.Camera -> ZeCameraEditor(
+                editor = editor,
+                config = config,
+                vm = vm,
+            )
         }
-    }
-}
-
-@Composable
-private fun CameraEditor(
-    editor: ZeEditor,
-    config: ZeConfiguration.Camera,
-    vm: ZeBadgeViewModel,
-) {
-    val context = LocalContext.current
-    val uri = FileProvider.getUriForFile(
-        context,
-        "${BuildConfig.APPLICATION_ID}.files",
-        File(context.cacheDir, "photo.jpg"),
-    )
-    val coroutineScope = rememberCoroutineScope()
-    val takePicture =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
-            if (pictureTaken) {
-                val imageRequest = ImageRequest.Builder(context)
-                    .data(uri)
-                    .transformations(CropTransformation())
-                    .size(PAGE_WIDTH, PAGE_HEIGHT)
-                    .scale(Scale.FIT)
-                    .precision(Precision.EXACT)
-                    .allowHardware(false)
-                    .memoryCachePolicy(CachePolicy.DISABLED)
-                    .diskCachePolicy(CachePolicy.DISABLED)
-                    .build()
-
-                coroutineScope.launch {
-                    val drawable =
-                        context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
-                    val bitmap = Bitmap.createBitmap(
-                        PAGE_WIDTH,
-                        PAGE_HEIGHT,
-                        Bitmap.Config.ARGB_8888,
-                    )
-                    val canvas = android.graphics.Canvas(bitmap)
-                    canvas.drawColor(Color.WHITE)
-                    canvas.drawBitmap(
-                        drawable.bitmap,
-                        (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
-                        0f,
-                        null,
-                    )
-                    vm.slotConfigured(
-                        editor.slot,
-                        config.copy(bitmap = bitmap.ditherFloydSteinberg()),
-                    )
-                }
-            } else {
-                vm.slotConfigured(editor.slot, null)
-            }
-        }
-
-    SideEffect {
-        takePicture.launch(uri)
     }
 }
 
@@ -515,7 +430,6 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
-@Preview
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
@@ -542,11 +456,10 @@ private fun PagePreview(
             contentDescription = null,
         )
 
-
         ZeRow {
             ZeText(
                 text = name,
-                modifier = Modifier.align(ZeAlignment.CenterVertically).padding(start = 8.dp),
+                modifier = Modifier.align(ZeAlignment.CenterVertically).padding(start = Dimen.One),
                 color = ZeColor.Black,
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {

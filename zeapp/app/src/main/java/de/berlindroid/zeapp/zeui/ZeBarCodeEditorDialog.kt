@@ -17,29 +17,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.barCodeComposableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.zebits.qrComposableToBitmap
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 
 /**
  * Editor dialog for changing the name of the participant badge.
  *
- * @param activity Android activity to be used for rendering the composable.
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
+ * @param snackbarMessage callback to display a snackbar message
  */
 @Composable
 fun BarCodeEditorDialog(
-    activity: Activity,
     config: ZeConfiguration.BarCode,
     dismissed: () -> Unit = {},
-    accepted: (config: ZeConfiguration.BarCode) -> Unit
+    accepted: (config: ZeConfiguration.BarCode) -> Unit,
+    snackbarMessage: (String) -> Unit = {},
 ) {
+    val activity = LocalContext.current as Activity
+
     var title by remember { mutableStateOf(config.title) }
     var url by remember { mutableStateOf(config.url) }
     var image by remember { mutableStateOf(config.bitmap) }
@@ -49,9 +51,8 @@ fun BarCodeEditorDialog(
             activity = activity,
             title = title,
             url = url,
-        ) {
-            image = it
-        }
+            callback = { image = it },
+        )
     }
 
     AlertDialog(
@@ -62,12 +63,10 @@ fun BarCodeEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.BarCode(title, url, image))
                     } else {
-                        Toast.makeText(
-                            activity, R.string.image_needed,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        snackbarMessage(activity.getString(R.string.image_needed))
                     }
-                }) {
+                },
+            ) {
                 Text(text = stringResource(id = android.R.string.ok))
             }
         },
@@ -78,7 +77,7 @@ fun BarCodeEditorDialog(
                 item {
                     BinaryImageEditor(
                         bitmap = image,
-                        bitmapUpdated = { image = it }
+                        bitmapUpdated = { image = it },
                     )
                 }
 
@@ -91,7 +90,7 @@ fun BarCodeEditorDialog(
                         onValueChange = { newValue ->
                             title = newValue
                             redrawComposableImage()
-                        }
+                        },
                     )
                 }
 
@@ -104,10 +103,10 @@ fun BarCodeEditorDialog(
                         onValueChange = { newValue ->
                             url = newValue
                             redrawComposableImage()
-                        }
+                        },
                     )
                 }
             }
-        }
+        },
     )
 }
