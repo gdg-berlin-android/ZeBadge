@@ -1,4 +1,6 @@
+import org.jetbrains.kotlin.incremental.createDirectory
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+import java.lang.ProcessBuilder.Redirect
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,6 +9,8 @@ plugins {
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.google.play.services)
+    alias(libs.plugins.firebase.appdistribution)
 }
 
 android {
@@ -34,6 +38,11 @@ android {
     buildTypes {
         configureEach {
             buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
+
+            firebaseAppDistribution {
+                releaseNotesFile="./release-notes.txt"
+                groups="testers"
+            }
         }
 
         release {
@@ -41,6 +50,10 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
+    sourceSets.getByName("main").assets.srcDir(
+        "$projectDir/build/generated/assets"
+    )
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -102,6 +115,9 @@ dependencies {
     implementation(libs.dagger.hilt)
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
+    implementation(platform(libs.firebase))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
@@ -137,3 +153,24 @@ kapt {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs::class).configureEach {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
+
+tasks.create("generateContributorsAsset") {
+    val command = "git shortlog -sne --all"
+    val process = ProcessBuilder()
+        .command(command.split(" "))
+        .directory(rootProject.projectDir)
+        .redirectOutput(Redirect.PIPE)
+        .redirectError(Redirect.PIPE)
+        .start()
+    process.waitFor(60, TimeUnit.SECONDS)
+    val result = process.inputStream.bufferedReader().readText()
+
+    val contributors = result.lines()
+            .joinToString(separator = System.lineSeparator()) { it.substringAfter("\t") }
+
+    val assetDir = layout.buildDirectory.dir("generated/assets").get().asFile
+    assetDir.createDirectory()
+    File(assetDir, "test.txt").writeText(contributors)
+
+}
+tasks.getByName("build").dependsOn("generateContributorsAsset")

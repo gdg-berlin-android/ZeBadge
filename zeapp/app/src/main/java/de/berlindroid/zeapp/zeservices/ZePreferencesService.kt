@@ -78,6 +78,7 @@ class ZePreferencesService @Inject constructor(
                 is ZeConfiguration.QRCode -> {
                     preferences[slot.preferencesKey("qr_title")] = config.title
                     preferences[slot.preferencesKey("url")] = config.url
+                    preferences[slot.preferencesKey("qr_text")] = config.text
                 }
 
                 is ZeConfiguration.Camera,
@@ -87,9 +88,17 @@ class ZePreferencesService @Inject constructor(
                     // Nothing more to configure
                 }
 
+                is ZeConfiguration.Quote -> {
+                    preferences[slot.preferencesKey("quote_author")] = config.author
+                    preferences[slot.preferencesKey("quote_message")] = config.message
+                }
+
                 is ZeConfiguration.BarCode -> {
                     preferences[slot.preferencesKey("barcode_title")] = config.title
                     preferences[slot.preferencesKey("url")] = config.url
+                }
+                is ZeConfiguration.CustomPhrase -> {
+                    preferences[slot.preferencesKey("random_phrase")] = config.phrase
                 }
             }
         }
@@ -125,11 +134,17 @@ class ZePreferencesService @Inject constructor(
                     bitmap
                 )
 
-                ZeConfiguration.QRCode.TYPE -> ZeConfiguration.QRCode(
-                    title = slot.preferencesValue("qr_title"),
-                    url = slot.preferencesValue("url"),
-                    bitmap = bitmap
-                )
+            ZeConfiguration.QRCode.TYPE -> ZeConfiguration.QRCode(
+                title = slot.preferencesValue("qr_title"),
+                url = slot.preferencesValue("url"),
+                text = slot.preferencesValue("qr_text"),
+                bitmap = bitmap
+            )
+
+            ZeConfiguration.CustomPhrase.TYPE -> ZeConfiguration.CustomPhrase(
+                phrase = slot.preferencesValue("random_phrase"),
+                bitmap = bitmap
+            )
 
                 else -> {
                     Log.e(

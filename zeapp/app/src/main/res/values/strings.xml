@@ -5,6 +5,7 @@
     <string name="reset">Reset</string>
     <string name="floyd_steninberg_initials">FS</string>
     <string name="positional">Positional</string>
+    <string name="rotate">Rotate</string>
     <string name="invert">Invert</string>
 
     <string name="generate">Generate</string>
@@ -17,6 +18,7 @@
     <string name="image_needed">Binary image needed. Press one of the buttons below the image.</string>
     <string name="add_qr_url">Add your QR URL</string>
     <string name="qr_code_title">QR Code title</string>
+    <string name="qr_code_text">Additional text</string>
     <string name="url">URL</string>
     <string name="add_barcode_url">Add your BarCode URL</string>
     <string name="bar_code_title">Bar Code title</string>
