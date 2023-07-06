@@ -222,7 +222,11 @@ class ZeBadgeViewModel @Inject constructor(
                     ZeConfiguration.ImageDraw(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
-                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())
+                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
+                    ZeConfiguration.CustomPhrase(
+                        "Custom phrase",
+                        R.drawable.page_phrase.toBitmap().ditherFloydSteinberg()
+                    )
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.isNotBlank()) {
@@ -254,7 +258,7 @@ class ZeBadgeViewModel @Inject constructor(
                     slot,
                     slots.value[ZeSlot.Weather]!!
                 )
-            } else if(slot is ZeSlot.BarCode) {
+            } else if (slot is ZeSlot.BarCode) {
                 currentSlotEditor.value = ZeEditor(
                     slot,
                     slots.value[ZeSlot.BarCode]!!
@@ -353,8 +357,10 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
                 "Your title",
                 "",
+                "",
                 R.drawable.qrpage_preview.toBitmap()
             )
+
             ZeSlot.Weather -> ZeConfiguration.Weather(
                 "2023-07-06",
                 "22C",
