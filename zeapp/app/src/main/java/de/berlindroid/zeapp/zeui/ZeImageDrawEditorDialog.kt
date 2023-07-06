@@ -61,7 +61,7 @@ fun ZeImageDrawEditorDialog(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var motionEvent by remember { mutableStateOf(MotionEvent.Idle) }
+    var motionEvent by remember { mutableStateOf(ZeMotionEvent.Idle) }
     // This is our motion event we get from touch motion
     var currentPosition by remember { mutableStateOf(Offset.Unspecified) }
 
@@ -77,9 +77,9 @@ fun ZeImageDrawEditorDialog(
             setContent {
                 LaunchedEffect(key1 = currentPosition, block = {
                     when (motionEvent) {
-                        MotionEvent.Down -> path.moveTo(currentPosition.x, currentPosition.y)
-                        MotionEvent.Move -> path.lineTo(currentPosition.x, currentPosition.y)
-                        MotionEvent.Up -> path.lineTo(currentPosition.x, currentPosition.y)
+                        ZeMotionEvent.Down -> path.moveTo(currentPosition.x, currentPosition.y)
+                        ZeMotionEvent.Move -> path.lineTo(currentPosition.x, currentPosition.y)
+                        ZeMotionEvent.Up -> path.lineTo(currentPosition.x, currentPosition.y)
                         else -> {}
                     }
                 })
@@ -93,18 +93,18 @@ fun ZeImageDrawEditorDialog(
                             detectDragGestures(
                                 onDragStart = { offset ->
                                     currentPosition = offset
-                                    motionEvent = MotionEvent.Down
+                                    motionEvent = ZeMotionEvent.Down
                                 },
                                 onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
                                     currentPosition =
                                         pointerInputChange.position + offset
-                                    motionEvent = MotionEvent.Move
+                                    motionEvent = ZeMotionEvent.Move
                                 },
                                 onDragEnd = {
-                                    motionEvent = MotionEvent.Up
+                                    motionEvent = ZeMotionEvent.Up
                                 },
                                 onDragCancel = {
-                                    motionEvent = MotionEvent.Up
+                                    motionEvent = ZeMotionEvent.Up
                                 },
                             )
                         },
