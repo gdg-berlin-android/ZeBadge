@@ -163,7 +163,3 @@ fun ZeImageDrawEditorDialog(
         }
     )
 }
-
-enum class MotionEvent {
-    Idle, Down, Move, Up
-}

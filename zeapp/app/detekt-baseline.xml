@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:ZeQRPainter.kt$@Composable fun rememberQrBitmapPainter( content: String, size: Dp = 150.dp, padding: Dp = 0.dp, ): BitmapPainter</ID>
+    <ID>ForEachOnRange:ZeBadgeViewModel.kt$ZeBadgeViewModel$forEach { progress -&gt; messageProgress.value = 1.0f - progress / MESSAGE_DISPLAY_UPDATES.toFloat() delay(MESSAGE_DISPLAY_DURATION / MESSAGE_DISPLAY_UPDATES) }</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel$// TODO: Fetch Schedule here.</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel$// TODO: Fetch from shared</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel$// TODO: Fetch weather here</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel$// TODO: Save schedule</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel$// TODO: Save weather</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel.Configuration$// TODO: Add your own pages.</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel.Configuration.Schedule$* TODO: This configuration is a place holder to entice you, the reader to build it * * Think of it as a teaser: How would you configure a page that contains the schedule of * the droidcon 2023 in Berlin? * * @param bitmap the schedule to be displayed as a page.</ID>
+    <ID>ForbiddenComment:ZeBadgeViewModel.kt$ZeBadgeViewModel.Configuration.Weather$* TODO: Teaser nr 2: Build a configuration and editor to create a page showing the weather * * How would you go for getting the weather? What do you need to configure here, so that an * editor can fill it in?</ID>
+    <ID>FunctionNaming:ZeBadgeSimulator.kt$@Composable @Preview(device = "spec:parent=pixel_3a_xl,orientation=landscape", showSystemUi = true) fun BadgeSimulator( @PreviewParameter(BinaryBitmapPageProvider::class, 1) page: Bitmap, onButtonPressed: (buttonForSlot: Slot) -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:ZeBinaryImageEditor.kt$@Composable @Preview fun BinaryImageEditor( @PreviewParameter(BinaryBitmapPageProvider::class, 1) bitmap: Bitmap, bitmapUpdated: (Bitmap) -&gt; Unit = {} )</ID>
+    <ID>FunctionNaming:ZeImageGenerationEditorDialog.kt$@ExperimentalMaterial3Api @Preview @Composable fun ImageGenerationEditorDialog( initialPrompt: String = "Unicorn at an android conference in isometric view.", dismissed: () -&gt; Unit = {}, accepted: (config: ZeBadgeViewModel.Configuration.ImageGen) -&gt; Unit = {}, )</ID>
+    <ID>FunctionNaming:ZeMainActivity.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) private fun ZeTopBar(vm: ZeBadgeViewModel)</ID>
+    <ID>FunctionNaming:ZeMainActivity.kt$@Composable @Preview private fun InfoBar( message: String = "Very Important", progress: Float = 0.5f, copyMoreToClipboard: (() -&gt; Unit) = {}, )</ID>
+    <ID>FunctionNaming:ZeMainActivity.kt$@Composable @Preview private fun PagePreview( @PreviewParameter(BinaryBitmapPageProvider::class, 1) bitmap: Bitmap, customizeThisPage: (() -&gt; Unit)? = null, resetThisPage: (() -&gt; Unit)? = null, sendToDevice: (() -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:ZeMainActivity.kt$@Composable private fun TemplateChooserDialog( vm: ZeBadgeViewModel, templateChooser: TemplateChooser? )</ID>
+    <ID>FunctionNaming:ZeMainActivity.kt$@Composable private fun ZePages(activity: Activity, paddingValues: PaddingValues, vm: ZeBadgeViewModel)</ID>
+    <ID>FunctionNaming:ZeMainActivity.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable private fun SelectedEditor( editor: Editor, activity: Activity, vm: ZeBadgeViewModel )</ID>
+    <ID>FunctionNaming:ZeMainActivity.kt$ZeMainActivity$@Composable private fun ZeScreen()</ID>
+    <ID>FunctionNaming:ZeNameEditorDialog.kt$@Composable fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:ZeNameEditorDialog.kt$@Composable fun NameEditorDialog( activity: Activity, config: Configuration.Name, dismissed: () -&gt; Unit = {}, accepted: (config: Configuration.Name) -&gt; Unit )</ID>
+    <ID>FunctionNaming:ZeNamePage.kt$@Composable @Preview fun NamePage( name: String = "Your Name Here", contact: String = "Contact Me Here", )</ID>
+    <ID>FunctionNaming:ZePictureEditorDialog.kt$@Composable fun PictureEditorDialog( dismissed: () -&gt; Unit = {}, accepted: (config: ZeBadgeViewModel.Configuration.Picture) -&gt; Unit )</ID>
+    <ID>FunctionNaming:ZeQRCodeEditorDialog.kt$@Composable fun QRCodeEditorDialog( activity: Activity, config: Configuration.QRCode, dismissed: () -&gt; Unit = {}, accepted: (config: Configuration.QRCode) -&gt; Unit )</ID>
+    <ID>FunctionNaming:ZeQRCodePage.kt$@Composable @Preview fun QRCodePage( title: String = "Hello, my github profile is", url: String = "https://github.com/gdg-berlin-android", )</ID>
+    <ID>FunctionNaming:ZeTheme.kt$@Composable fun ZeBadgeAppTheme( darkTheme: Boolean = isSystemInDarkTheme(), // Dynamic color is available on Android 12+ dynamicColor: Boolean = true, content: @Composable () -&gt; Unit )</ID>
+    <ID>FunctionNaming:ZeToolButton.kt$@Composable @Preview fun ToolButton( imageVector: ImageVector = Icons.Filled.Send, text: String = "Send", onClick: () -&gt; Unit = {} )</ID>
+    <ID>FunctionNaming:ZeToolButton.kt$@Composable @Preview fun ToolButton( painter: Painter = painterResource(id = R.drawable.ic_call_decline), text: String = "Decline", onClick: () -&gt; Unit = {} )</ID>
+    <ID>LongMethod:ZeBadgeSimulator.kt$@Composable @Preview(device = "spec:parent=pixel_3a_xl,orientation=landscape", showSystemUi = true) fun BadgeSimulator( @PreviewParameter(BinaryBitmapPageProvider::class, 1) page: Bitmap, onButtonPressed: (buttonForSlot: Slot) -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:ZeBinaryImageEditor.kt$@Composable @Preview fun BinaryImageEditor( @PreviewParameter(BinaryBitmapPageProvider::class, 1) bitmap: Bitmap, bitmapUpdated: (Bitmap) -&gt; Unit = {} )</ID>
+    <ID>LongMethod:ZeImageGenerationEditorDialog.kt$@ExperimentalMaterial3Api @Preview @Composable fun ImageGenerationEditorDialog( initialPrompt: String = "Unicorn at an android conference in isometric view.", dismissed: () -&gt; Unit = {}, accepted: (config: ZeBadgeViewModel.Configuration.ImageGen) -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:ZeMainActivity.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable private fun SelectedEditor( editor: Editor, activity: Activity, vm: ZeBadgeViewModel )</ID>
+    <ID>LongMethod:ZeNameEditorDialog.kt$@Composable fun NameEditorDialog( activity: Activity, config: Configuration.Name, dismissed: () -&gt; Unit = {}, accepted: (config: Configuration.Name) -&gt; Unit )</ID>
+    <ID>LongMethod:ZePictureEditorDialog.kt$@Composable fun PictureEditorDialog( dismissed: () -&gt; Unit = {}, accepted: (config: ZeBadgeViewModel.Configuration.Picture) -&gt; Unit )</ID>
+    <ID>MagicNumber:ZeBadge.kt$64</ID>
+    <ID>MagicNumber:ZeBadge.kt$Badge$115200</ID>
+    <ID>MagicNumber:ZeBadge.kt$Badge$3_000</ID>
+    <ID>MagicNumber:ZeBadgeSimulator.kt$.1f</ID>
+    <ID>MagicNumber:ZeBadgeSimulator.kt$.2f</ID>
+    <ID>MagicNumber:ZeBadgeSimulator.kt$.76f</ID>
+    <ID>MagicNumber:ZeBadgeSimulator.kt$1.5f</ID>
+    <ID>MagicNumber:ZeBadgeViewModel.kt$ZeBadgeViewModel$10</ID>
+    <ID>MagicNumber:ZeBitmapManipulation.kt$0.0722f</ID>
+    <ID>MagicNumber:ZeBitmapManipulation.kt$0.2126f</ID>
+    <ID>MagicNumber:ZeBitmapManipulation.kt$0.7152f</ID>
+    <ID>MagicNumber:ZeBitmapManipulation.kt$255</ID>
+    <ID>MagicNumber:ZeBitmapManipulation.kt$7</ID>
+    <ID>MagicNumber:ZeColor.kt$0xFF625b71</ID>
+    <ID>MagicNumber:ZeColor.kt$0xFF6650a4</ID>
+    <ID>MagicNumber:ZeColor.kt$0xFF7D5260</ID>
+    <ID>MagicNumber:ZeColor.kt$0xFFCCC2DC</ID>
+    <ID>MagicNumber:ZeColor.kt$0xFFD0BCFF</ID>
+    <ID>MagicNumber:ZeColor.kt$0xFFEFB8C8</ID>
+    <ID>MagicNumber:ZeFloydSteinberg.kt$128</ID>
+    <ID>MagicNumber:ZeFloydSteinberg.kt$16.0f</ID>
+    <ID>MagicNumber:ZeFloydSteinberg.kt$255</ID>
+    <ID>MagicNumber:ZeFloydSteinberg.kt$3</ID>
+    <ID>MagicNumber:ZeFloydSteinberg.kt$5</ID>
+    <ID>MagicNumber:ZeFloydSteinberg.kt$7</ID>
+    <ID>MagicNumber:ZeImageGenerationEditorDialog.kt$0.1f</ID>
+    <ID>MagicNumber:ZeImageGenerationEditorDialog.kt$0.8f</ID>
+    <ID>MagicNumber:ZeNamePage.kt$0xFF801000</ID>
+    <ID>MagicNumber:ZePositional.kt$128</ID>
+    <ID>MagicNumber:ZePositional.kt$255</ID>
+    <ID>MagicNumber:ZePositional.kt$4.0f</ID>
+    <ID>MagicNumber:ZeQRCodePage.kt$0xFF801000</ID>
+    <ID>MagicNumber:ZeStaticPattern.kt$0xFF</ID>
+    <ID>MagicNumber:ZeStaticPattern.kt$128</ID>
+    <ID>MagicNumber:ZeStaticPattern.kt$255</ID>
+    <ID>NestedBlockDepth:ZeStaticPattern.kt$fun Bitmap.ditherStaticPattern(): Bitmap</ID>
+    <ID>NewLineAtEndOfFile:ZeBadgeSimulator.kt$de.berlindroid.zeapp.zeui.ZeBadgeSimulator.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeColor.kt$de.berlindroid.zeapp.zeui.zetheme.ZeColor.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeNameEditorDialog.kt$de.berlindroid.zeapp.zeui.ZeNameEditorDialog.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeNamePage.kt$de.berlindroid.zeapp.zeui.zepages.ZeNamePage.kt</ID>
+    <ID>NewLineAtEndOfFile:ZePictureEditorDialog.kt$de.berlindroid.zeapp.zeui.ZePictureEditorDialog.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeQRCodeEditorDialog.kt$de.berlindroid.zeapp.zeui.ZeQRCodeEditorDialog.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeQRCodePage.kt$de.berlindroid.zeapp.zeui.zepages.ZeQRCodePage.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeQRPainter.kt$de.berlindroid.zeapp.zeui.ZeQRPainter.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeTheme.kt$de.berlindroid.zeapp.zeui.zetheme.ZeTheme.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeToolButton.kt$de.berlindroid.zeapp.zeui.ZeToolButton.kt</ID>
+    <ID>NewLineAtEndOfFile:ZeType.kt$de.berlindroid.zeapp.zeui.zetheme.ZeType.kt</ID>
+    <ID>PrintStackTrace:ZeBadge.kt$e</ID>
+    <ID>SwallowedException:ZeQRPainter.kt$ex: WriterException</ID>
+    <ID>TooGenericExceptionCaught:ZeBadge.kt$Badge$e: Exception</ID>
+    <ID>TooManyFunctions:ZeBadgeViewModel.kt$ZeBadgeViewModel : AndroidViewModel</ID>
+    <ID>TopLevelPropertyNaming:ZeNameEditorDialog.kt$/** * Editor dialog for changing the name of the participant badge. * * @param activity Android activity to be used for rendering the composable. * @param config configuration of the slot, containing details to be displayed * @param dismissed callback called when dialog is dismissed / cancelled * @param accepted callback called with the new configuration configured. */ const val MaxCharacters: Int = 20</ID>
+    <ID>TopLevelPropertyNaming:ZeNameEditorDialog.kt$private const val Empty = ""</ID>
+    <ID>UnusedParameter:ZeBadge.kt$Badge$context: Context</ID>
+    <ID>UnusedParameter:ZeBadge.kt$Badge$name: String</ID>
+    <ID>WildcardImport:ZeMainActivity.kt$import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.*</ID>
+  </CurrentIssues>
+</SmellBaseline>
