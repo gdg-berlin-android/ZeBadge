@@ -103,6 +103,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.datastore)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.toolingpreview)
     implementation(libs.androidx.compose.material3)

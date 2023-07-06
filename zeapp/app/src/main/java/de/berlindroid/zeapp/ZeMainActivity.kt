@@ -110,6 +110,7 @@ class ZeMainActivity : ComponentActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        vm.loadData()
         setContent {
             DrawUi()
         }
