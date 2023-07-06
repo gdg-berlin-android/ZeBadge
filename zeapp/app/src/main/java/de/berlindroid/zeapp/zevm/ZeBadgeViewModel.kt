@@ -100,11 +100,11 @@ class ZeBadgeViewModel @Inject constructor(
     val slots = mutableStateOf(
         mapOf(
             ZeSlot.Name to initialConfiguration(ZeSlot.Name),
-            ZeSlot.Name to initialConfiguration(ZeSlot.Name),
             ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
             ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
             ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
             ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
+            ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
             ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
             ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
         ),
@@ -232,28 +232,23 @@ class ZeBadgeViewModel @Inject constructor(
             )
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
-            when (slot) {
-                is ZeSlot.Name -> {
-                    currentSlotEditor.value = ZeEditor(
-                        slot,
-                        slots.value[ZeSlot.Name]!!,
-                    )
-                }
-                is ZeSlot.QRCode -> {
-                    currentSlotEditor.value = ZeEditor(
-                        slot,
-                        slots.value[ZeSlot.QRCode]!!,
-                    )
-                }
-                is ZeSlot.Weather -> {
-                    currentSlotEditor.value = ZeEditor(
-                        slot,
-                        slots.value[ZeSlot.Weather]!!,
-                    )
-                }
-                else -> {
-                    Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
-                }
+            if (slot is ZeSlot.Name) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.Name]!!
+                )
+            } else if (slot is ZeSlot.QRCode) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.QRCode]!!
+                )
+            } else if (slot is ZeSlot.Weather) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.Weather]!!
+                )
+            } else {
+                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
         }
     }
@@ -341,12 +336,18 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
                 "Your title",
                 "",
-                R.drawable.soon.toBitmap(),
+                R.drawable.qrpage_preview.toBitmap()
             )
             ZeSlot.Weather -> ZeConfiguration.Weather(
                 "July 7th",
                 "22C",
                 R.drawable.soon.toBitmap(),
+            )
+
+            ZeSlot.BarCode -> ZeConfiguration.BarCode(
+                "Your title for barcode",
+                "",
+                R.drawable.soon.toBitmap()
             )
         }
     }

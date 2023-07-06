@@ -45,6 +45,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
+import dagger.hilt.android.AndroidEntryPoint
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zemodels.ZeEditor
+import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import androidx.core.content.FileProvider
 import coil.imageLoader
 import coil.request.CachePolicy
@@ -52,15 +58,11 @@ import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import com.commit451.coiltransformations.CropTransformation
-import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
-import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zemodels.ZeEditor
-import de.berlindroid.zeapp.zemodels.ZeSlot
-import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
+import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.WeatherEditorDialog
@@ -182,8 +184,8 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
             },
             topBar = {
                 ZeTopBar(
-                    onSaveAllClick = { vm.saveAll() },
-                    onRandomClick = { vm.sendRandomPageToDevice() },
+                    onRandomClick = vm::sendRandomPageToDevice,
+                    onSaveAllClick = vm::saveAll,
                 )
             },
             content = { paddingValues ->
@@ -253,9 +255,11 @@ private fun ZePages(
             ZeLazyColumn(
                 state = lazyListState,
                 contentPadding = PaddingValues(
-                    horizontal = Dimen.One,
-                    vertical = Dimen.Half,
-                ),
+                    start = Dimen.One,
+                    end = Dimen.One,
+                    top = Dimen.Half,
+                    bottom = 140.dp
+                )
             ) {
                 items(
                     slots.keys.toList(),
@@ -339,6 +343,7 @@ private fun SelectedEditor(
             ZeSlot.SecondCustom,
             ZeSlot.QRCode,
             ZeSlot.Weather,
+            ZeSlot.BarCode,
         )
     ) {
         Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
@@ -387,6 +392,19 @@ private fun SelectedEditor(
                 snackbarMessage = vm::showSnackBar,
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
             )
+                config,
+                dismissed = { vm.slotConfigured(editor.slot, null) }
+            ) { newConfig ->
+                vm.slotConfigured(editor.slot, newConfig)
+            }
+
+            is ZeConfiguration.BarCode -> BarCodeEditorDialog(
+                activity,
+                config,
+                dismissed = { vm.slotConfigured(editor.slot, null) }
+            ) { newConfig ->
+                vm.slotConfigured(editor.slot, newConfig)
+            }
 
             is ZeConfiguration.Kodee -> {
                 vm.slotConfigured(editor.slot, config)
@@ -501,6 +519,7 @@ private fun TemplateChooserDialog(
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
+    name: String,
     customizeThisPage: (() -> Unit)? = null,
     resetThisPage: (() -> Unit)? = null,
     sendToDevice: (() -> Unit)? = null,
@@ -523,37 +542,45 @@ private fun PagePreview(
             contentDescription = null,
         )
 
-        if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
-            ZeLazyRow(
-                modifier = ZeModifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = Dimen.Quarter),
-                horizontalArrangement = ZeArrangement.End,
-            ) {
-                if (sendToDevice != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Send,
-                            text = "Send",
-                            onClick = sendToDevice,
-                        )
+
+        ZeRow {
+            ZeText(
+                text = name,
+                modifier = Modifier.align(ZeAlignment.CenterVertically).padding(start = 8.dp),
+                color = ZeColor.Black,
+            )
+            if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
+                ZeLazyRow(
+                    modifier = ZeModifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = Dimen.Quarter),
+                    horizontalArrangement = ZeArrangement.End,
+                ) {
+                    if (sendToDevice != null) {
+                        item {
+                            ZeToolButton(
+                                imageVector = Icons.Filled.Send,
+                                text = "Send",
+                                onClick = sendToDevice,
+                            )
+                        }
                     }
-                }
-                if (resetThisPage != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Refresh,
-                            text = "Reset",
-                            onClick = resetThisPage,
-                        )
+                    if (resetThisPage != null) {
+                        item {
+                            ZeToolButton(
+                                imageVector = Icons.Filled.Refresh,
+                                text = "Reset",
+                                onClick = resetThisPage,
+                            )
+                        }
                     }
-                }
-                if (customizeThisPage != null) {
-                    item {
-                        ZeToolButton(
-                            imageVector = Icons.Filled.Edit,
-                            text = "Edit",
-                            onClick = customizeThisPage,
-                        )
+                    if (customizeThisPage != null) {
+                        item {
+                            ZeToolButton(
+                                imageVector = Icons.Filled.Edit,
+                                text = "Edit",
+                                onClick = customizeThisPage,
+                            )
+                        }
                     }
                 }
             }
