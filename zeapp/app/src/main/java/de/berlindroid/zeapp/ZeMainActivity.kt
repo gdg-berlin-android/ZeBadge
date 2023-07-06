@@ -646,6 +646,7 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun PagePreview(
     modifier: ZeModifier = ZeModifier,
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
