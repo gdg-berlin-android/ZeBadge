@@ -77,6 +77,11 @@ class ZePreferencesService @Inject constructor(
                 is ZeConfiguration.ImageDraw -> {
                     // Nothing more to configure
                 }
+
+                is ZeConfiguration.BarCode -> {
+                    putString(slot.preferencesKey("barcode_title"), config.title)
+                    putString(slot.preferencesKey("url"), config.url)
+                }
             }
         }
     }
