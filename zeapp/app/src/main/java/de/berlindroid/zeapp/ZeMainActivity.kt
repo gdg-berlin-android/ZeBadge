@@ -489,7 +489,7 @@ private fun SelectedEditor(
                 RandomQuotesEditorDialog(
                     accepted = { vm.slotConfigured(editor.slot, it) },
                     dismissed = { vm.slotConfigured(null, null) },
-                    activity = LocalActivity.current,
+                    activity = LocalZeActivity.current,
                     config = config,
                 )
             }
@@ -621,7 +621,6 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
-@Preview
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
