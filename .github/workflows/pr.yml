@@ -93,9 +93,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Print current directory
-        run: pwd
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
@@ -125,4 +122,4 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew :app:connectedAndroidTest --stacktrace
+          script: ./gradlew connectedAndroidTest --stacktrace
