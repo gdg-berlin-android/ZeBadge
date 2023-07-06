@@ -9,6 +9,9 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
 detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
+google-play-services = { id = "com.google.gms.google-services", version.ref = "google-play-services" }
+firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-appdistribution" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 
 [versions]
 
@@ -27,6 +30,10 @@ detekt-gradle = "1.23.0"
 zxing ="3.5.1"
 material3-wsc = "1.1.1"
 dagger-hilt = "2.44"
+google-play-services = "4.3.15"
+firebase = "32.1.1"
+firebase-appdistribution = "4.0.0"
+firebase-crashlytics = "2.9.6"
 
 [libraries]
 
@@ -49,6 +56,10 @@ zxing = { module = "com.google.zxing:core", version.ref = "zxing" }
 material3-wsc = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-wsc"}
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
+firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+
 
 test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
 ##                                                 ⬆ :0.26"
