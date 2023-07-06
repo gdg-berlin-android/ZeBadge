@@ -2,7 +2,6 @@ package de.berlindroid.zeapp.zeui
 
 import android.graphics.BitmapFactory
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,20 +31,22 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
  *
  * @param dismissed callback called when dismissed or cancelled
  * @param accepted callback called when user wants to take the selected image.
+ * @param snackbarMessage callback to display a snackbar message
  */
 @Composable
 fun PictureEditorDialog(
     dismissed: () -> Unit = {},
-    accepted: (config: ZeConfiguration.Picture) -> Unit
+    accepted: (config: ZeConfiguration.Picture) -> Unit,
+    snackbarMessage: (String) -> Unit,
 ) {
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     var bitmap by remember {
         mutableStateOf(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT),
         )
     }
 
@@ -63,7 +64,7 @@ fun PictureEditorDialog(
         } else {
             // yes, so read image
             BitmapFactory.decodeStream(
-                context.contentResolver.openInputStream(uri)
+                context.contentResolver.openInputStream(uri),
             )
         }.cropPageFromCenter()
     }
@@ -75,7 +76,7 @@ fun PictureEditorDialog(
                 if (bitmap.isBinary()) {
                     accepted(ZeConfiguration.Picture(bitmap))
                 } else {
-                    Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG).show()
+                    snackbarMessage(context.getString(R.string.not_binary_image))
                 }
             }) {
                 Text(stringResource(id = android.R.string.ok))
@@ -95,14 +96,14 @@ fun PictureEditorDialog(
                     onClick = {
                         launcher.launch(
                             PickVisualMediaRequest(
-                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                            )
+                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly,
+                            ),
                         )
-                    }
+                    },
                 ) {
                     Text(text = stringResource(id = android.R.string.search_go))
                 }
             }
-        }
+        },
     )
 }

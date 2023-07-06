@@ -3,7 +3,6 @@
 package de.berlindroid.zeapp.zeui
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
@@ -17,20 +16,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.qrComposableToBitmap
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel.Configuration
+import de.berlindroid.zeapp.zemodels.ZeConfiguration
 
 /**
  * Editor dialog for changing the name of the participant badge.
  *
- * @param activity Android activity to be used for rendering the composable.
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
+ * @param snackbarMessage callback to display a snackbar message
  */
 @Composable
 fun QRCodeEditorDialog(
@@ -77,7 +77,7 @@ fun QRCodeEditorDialog(
                 item {
                     BinaryImageEditor(
                         bitmap = image,
-                        bitmapUpdated = { image = it }
+                        bitmapUpdated = { image = it },
                     )
                 }
 
@@ -90,7 +90,7 @@ fun QRCodeEditorDialog(
                         onValueChange = { newValue ->
                             title = newValue
                             redrawComposableImage()
-                        }
+                        },
                     )
                 }
 
@@ -103,10 +103,10 @@ fun QRCodeEditorDialog(
                         onValueChange = { newValue ->
                             url = newValue
                             redrawComposableImage()
-                        }
+                        },
                     )
                 }
             }
-        }
+        },
     )
 }
