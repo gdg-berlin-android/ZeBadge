@@ -100,6 +100,7 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
             ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
             ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
+            ZeSlot.Quote to initialConfiguration(ZeSlot.Quote),
         )
     )
 
@@ -248,6 +249,12 @@ class ZeBadgeViewModel @Inject constructor(
                     slot,
                     slots.value[ZeSlot.Weather]!!
                 )
+            }
+            else if (slot is ZeSlot.Quote) {
+                currentSlotEditor.value = ZeEditor(
+                    slot,
+                    slots.value[ZeSlot.Quote]!!
+                )
             } else {
                 Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
             }
@@ -339,10 +346,16 @@ class ZeBadgeViewModel @Inject constructor(
                 "",
                 R.drawable.soon.toBitmap()
             )
-            ZeSlot.Weather -> ZeConfiguration.Weather(
+            is ZeSlot.Weather -> ZeConfiguration.Weather(
                 "July 7th",
                 "22C",
                 R.drawable.soon.toBitmap()
+            )
+
+            is ZeSlot.Quote -> ZeConfiguration.Quote(
+                "Test",
+                "Author",
+                R.drawable.page_quote_sample.toBitmap()
             )
         }
     }

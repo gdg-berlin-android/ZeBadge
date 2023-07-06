@@ -77,6 +77,11 @@ class ZePreferencesService @Inject constructor(
                 is ZeConfiguration.ImageDraw -> {
                     // Nothing more to configure
                 }
+
+                is ZeConfiguration.Quote -> {
+                    putString(slot.preferencesKey("quote_author"), config.author)
+                    putString(slot.preferencesKey("quote_message"), config.message)
+                }
             }
         }
     }

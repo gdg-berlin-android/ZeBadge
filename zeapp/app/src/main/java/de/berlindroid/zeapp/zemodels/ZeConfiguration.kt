@@ -115,6 +115,16 @@ sealed class ZeConfiguration(
         }
     }
 
+    data class Quote(
+        val message: String,
+        val author: String,
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "Random quotes", bitmap) {
+        companion object {
+            const val TYPE: String = "Random quotes"
+        }
+    }
+
     data class Kodee(
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "Kodee³", bitmap) {
