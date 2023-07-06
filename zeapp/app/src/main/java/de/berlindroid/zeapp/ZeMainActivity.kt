@@ -57,7 +57,7 @@ import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zeapp.zeui.ImageGenerationEditorDialog
 import de.berlindroid.zeapp.zeui.NameEditorDialog
-import de.berlindroid.zeapp.zeui.NavigationPad
+import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
@@ -160,7 +160,7 @@ class ZeMainActivity : ComponentActivity() {
             ZeScaffold(
                 modifier = modifier,
                 floatingActionButton = {
-                    NavigationPad(lazyListState)
+                    ZeNavigationPad(lazyListState)
                 },
                 topBar = {
                     ZeTopBar(vm)
