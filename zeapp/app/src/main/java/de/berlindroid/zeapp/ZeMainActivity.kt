@@ -68,6 +68,7 @@ import de.berlindroid.zeapp.zeui.NavigationPad
 import de.berlindroid.zeapp.zeui.PictureEditorDialog
 import de.berlindroid.zeapp.zeui.QRCodeEditorDialog
 import de.berlindroid.zeapp.zeui.WeatherEditorDialog
+import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.launch
@@ -139,7 +140,7 @@ class ZeMainActivity : ComponentActivity() {
 
         val wsc = calculateWindowSizeClass(activity = this)
 
-        if(wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+        if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
             CompactUi()
         } else {
             LargeScreenUi()
@@ -398,6 +399,17 @@ private fun SelectedEditor(
 
             is ZeConfiguration.Kodee -> {
                 vm.slotConfigured(editor.slot, config)
+            }
+
+            is ZeConfiguration.ImageDraw -> {
+                ZeImageDrawEditorDialog(dismissed = {
+                    vm.slotConfigured(
+                        editor.slot,
+                        null
+                    )
+                }) { newConfig ->
+                    vm.slotConfigured(editor.slot, newConfig)
+                }
             }
             is ZeConfiguration.Camera -> CameraEditor(editor, config, vm)
         }
