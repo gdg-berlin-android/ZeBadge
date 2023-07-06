@@ -1,5 +1,5 @@
 <resources>
-    <string name="not_binary_image">Blimey! This doesn't appear to be a binary image. Please make sure each pixel is either black or white.</string>
+    <string name="not_binary_image">Blimey! This does not appear to be a binary image. Please make sure each pixel is either black or white.</string>
     <string name="enter_prompt">Please enter your prompt here, chap</string>
     <string name="could_not_generate_image">Dreadfully sorry old bean, I could not generate an image</string>
     <string name="image_needed">One needs a binary image. Press one of the buttons below the image.</string>
