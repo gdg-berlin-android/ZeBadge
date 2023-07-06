@@ -145,5 +145,21 @@ sealed class ZeConfiguration(
         }
     }
 
+    /**
+     * Store the name and contact of an attendee.
+     *
+     * @param url the URL of the attendee github profile ("https://github.com/gdg-berlin-android")
+     * @param bitmap (overriden) final page
+     */
+    data class BarCode(
+        val title: String,
+        val url: String,
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "BarCode Tag", bitmap) {
+        companion object {
+            const val TYPE: String = "BarCode Tag"
+        }
+    }
+
     // TODO: Add your own pages.
 }
