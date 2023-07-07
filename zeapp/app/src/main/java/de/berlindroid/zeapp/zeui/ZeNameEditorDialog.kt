@@ -105,7 +105,7 @@ fun NameEditorDialog(
                         }
                     },
                     supportingText = {
-                        Text(text = "${name?.length}/${MaxCharacters * 2}")
+                        Text(text = "${name?.length ?: 0}/${MaxCharacters * 2}")
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = name?.isEmpty() ?: true) {
@@ -128,7 +128,7 @@ fun NameEditorDialog(
                         }
                     },
                     supportingText = {
-                        Text(text = "${contact?.length}/$MaxCharacters")
+                        Text(text = "${contact?.length ?: 0}/$MaxCharacters")
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = contact?.isEmpty() ?: true) {
