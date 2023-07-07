@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ze Androft</string>
+    <string name="black_and_white">B/W</string>
+    <string name="reset">リセット</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">位置指定</string>
+    <string name="rotate">回転</string>
+    <string name="invert">反転</string>
+
+    <string name="generate">生成</string>
+    <string name="not_binary_image">バイナリ画像ではありません。各ピクセルが黒または白であることを確認してください。</string>
+    <string name="generate_image_page">画像ページを生成</string>
+    <string name="draw_image_page">画像ページを描画</string>
+    <string name="enter_prompt">ここにプロンプトを入力</string>
+    <string name="could_not_generate_image">画像を生成できませんでした</string>
+
+    <string name="image_needed">バイナリ画像が必要です。画像の下にあるボタンを押してください。</string>
+    <string name="add_qr_url">QRコードのURLを追加</string>
+    <string name="qr_code_title">QRコードのタイトル</string>
+    <string name="qr_code_text">追加テキスト</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">バーコードのURLを追加</string>
+    <string name="bar_code_title">バーコードのタイトル</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Eメール</string>
+    <string name="qr_code_phone">電話</string>
+
+    <string name="your_name_here">ここに名前を入力</string>
+    <string name="contact_me_here">こちらで連絡してください</string>
+    <string name="binary_image_needed">バイナリ画像が必要です。画像の下にあるボタンを押してください。</string>
+    <string name="add_your_phrase_here">ここにフレーズを追加</string>
+    <string name="random_phrase">ランダムなフレーズ</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view">アイソメトリックビューでのAndroidカンファレンスにいるユニコーン。</string>
+    <string name="name">名前</string>
+    <string name="contact">連絡先</string>
+    <string name="clear">クリア</string>
+    <string name="add_your_contact_details">連絡先の詳細を追加</string>
+    <string name="set_picture">画像を設定</string>
+    <string name="click_get_to_show_quote_of_the_day">クリックして今日の名言を表示</string>
+    <string name="get">取得</string>
+    <string name="decline">辞退</string>
+    <string name="send">送信</string>
+    <string name="n_a">該当なし</string>
+    <string name="load_weather">天気を読み込む</string>
+    <string name="hello_my_github_profile_is">こんにちは、私のGitHubプロフィールは</string>
+    <string name="your_phrase_here">ここにフレーズを入力</string>
+    <string name="hello_my_name_is">こんにちは、私の名前は</string>
+    <string name="upcoming_weather">☀️今後の天気</string>
+    <string name="quote_of_the_day">今日の名言</string>
+</resources>
