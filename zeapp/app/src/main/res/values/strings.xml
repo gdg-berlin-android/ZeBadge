@@ -48,5 +48,5 @@
     <string name="hello_my_name_is" tools:ignore="MissingTranslation">Hello, my name is</string>
     <string name="upcoming_weather" tools:ignore="MissingTranslation">☀️Upcoming weather</string>
     <string name="quote_of_the_day" tools:ignore="MissingTranslation">Quote of The Day</string>
-    <string name="send_icon_text">Send</string>
+    <string name="send_icon_text" tools:ignore="MissingTranslation">Send</string>
 </resources>
