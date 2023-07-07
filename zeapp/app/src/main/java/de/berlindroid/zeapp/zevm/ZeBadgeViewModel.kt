@@ -189,8 +189,8 @@ class ZeBadgeViewModel @Inject constructor(
                 slot = slot,
                 configurations = mutableListOf(
                     ZeConfiguration.Name(
-                        "Your Name",
-                        "Your Contact",
+                        null,
+                        null,
                         imageProviderService.getInitialNameBitmap(),
                     ), // TODO: Fetch from shared
 
@@ -337,9 +337,9 @@ class ZeBadgeViewModel @Inject constructor(
 
         return when (slot) {
             is ZeSlot.Name -> ZeConfiguration.Name(
-                "Your Name",
-                "Your Contact",
-                imageProviderService.getInitialNameBitmap(),
+                null,
+                null,
+                imageProviderService.getInitialNameBitmap()
             )
 
             is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
