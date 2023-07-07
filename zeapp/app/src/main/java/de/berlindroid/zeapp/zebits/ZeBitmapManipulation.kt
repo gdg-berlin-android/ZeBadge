@@ -248,9 +248,10 @@ fun barCodeComposableToBitmap(
             val width = PAGE_WIDTH
             val height = PAGE_HEIGHT
 
-            val view = ComposeView(context)
-            view.visibility = View.GONE
-            view.layoutParams = LayoutParams(width, height)
+            val view = ComposeView(context).apply {
+                visibility = View.GONE
+                layoutParams = LayoutParams(width, height)
+            }
             addView(view)
 
             // add the composable to make it renderable
