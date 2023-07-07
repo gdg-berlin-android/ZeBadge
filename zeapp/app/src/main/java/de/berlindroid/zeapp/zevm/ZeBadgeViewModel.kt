@@ -116,12 +116,12 @@ class ZeBadgeViewModel @Inject constructor(
         }
         val slots = _uiState.value.slots
 
-        if (!slots.contains(slot)) {
+        val configuration = slots.getOrElse(slot) {
             Log.e("VM", "Slot $slot is not one of our slots.")
-            return
-        }
+            null
+        } ?: return
 
-        val bitmap = slots[slot]!!.bitmap
+        val bitmap = configuration.bitmap
         if (bitmap.isBinary()) {
             viewModelScope.launch {
                 badgeUploader.sendPage(slot.name, bitmap).fold(
