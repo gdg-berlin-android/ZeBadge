@@ -81,6 +81,9 @@ class ZePreferencesService @Inject constructor(
                     preferences[slot.preferencesKey("qr_title")] = config.title
                     preferences[slot.preferencesKey("url")] = config.url
                     preferences[slot.preferencesKey("qr_text")] = config.text
+                    preferences[slot.preferencesKey("qr_phone")] = config.phone
+                    preferences[slot.preferencesKey("qr_email")] = config.email
+                    preferences[slot.preferencesKey("qr_is_vcard")] = config.isVcard.toString()
                 }
 
                 is ZeConfiguration.Camera,
@@ -141,8 +144,11 @@ class ZePreferencesService @Inject constructor(
                     title = slot.preferencesValue("qr_title"),
                     url = slot.preferencesValue("url"),
                     text = slot.preferencesValue("qr_text"),
-                    bitmap = bitmap
-                )
+                    isVcard = slot.preferencesBooleanValue("qr_is_vcard"),
+                phone = slot.preferencesValue("qr_phone"),
+                email = slot.preferencesValue("qr_email"),
+                bitmap = bitmap
+            )
 
                 ZeConfiguration.CustomPhrase.TYPE -> ZeConfiguration.CustomPhrase(
                     phrase = slot.preferencesValue("random_phrase"),
@@ -176,4 +182,7 @@ class ZePreferencesService @Inject constructor(
                 preferences[key]!!
             } else ""
         }.first()
+
+    private suspend fun ZeSlot.preferencesBooleanValue(field: String): Boolean =
+        preferencesValue(field).toBoolean()
 }

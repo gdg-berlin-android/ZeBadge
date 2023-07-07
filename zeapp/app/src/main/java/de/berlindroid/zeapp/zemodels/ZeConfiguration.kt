@@ -46,6 +46,9 @@ sealed class ZeConfiguration(
         val title: String,
         val text: String,
         val url: String,
+        val isVcard: Boolean,
+        val phone: String,
+        val email: String,
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "QRCode Tag", bitmap) {
         companion object {

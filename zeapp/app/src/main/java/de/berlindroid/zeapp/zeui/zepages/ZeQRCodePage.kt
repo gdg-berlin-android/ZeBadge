@@ -34,7 +34,7 @@ import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 fun QRCodePage(
     title: String = "Hello, my github profile is",
     text: String = "gdg-berlin-android",
-    url: String = "https://github.com/gdg-berlin-android",
+    qrContent: String = "https://github.com/gdg-berlin-android",
 ) {
     val pageWidth = with(LocalDensity.current) { PAGE_WIDTH.toDp() }
     val pageHeight = with(LocalDensity.current) { PAGE_HEIGHT.toDp() }
@@ -78,8 +78,8 @@ fun QRCodePage(
         }
 
         val painter =
-            if (url.isEmpty()) remember { ColorPainter(Color.White) }
-            else rememberQrBitmapPainter(url)
+            if (qrContent.isEmpty()) remember { ColorPainter(Color.White) }
+            else rememberQrBitmapPainter(qrContent)
         Image(
             painter = painter,
             contentDescription = "",
