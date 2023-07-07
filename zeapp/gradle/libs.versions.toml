@@ -11,6 +11,7 @@ detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-grad
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 google-play-services = { id = "com.google.gms.google-services", version.ref = "google-play-services" }
 firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-appdistribution" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 
 [versions]
 
@@ -33,6 +34,7 @@ dagger-hilt = "2.44"
 google-play-services = "4.3.15"
 firebase = "32.1.1"
 firebase-appdistribution = "4.0.0"
+firebase-crashlytics = "2.9.6"
 
 [libraries]
 
