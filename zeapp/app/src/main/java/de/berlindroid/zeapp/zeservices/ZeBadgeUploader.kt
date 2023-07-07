@@ -12,9 +12,9 @@ import android.util.Log
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import dagger.hilt.android.qualifiers.ApplicationContext
+import de.berlindroid.zeapp.zebits.base64
 import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zemodels.ZeBadgePayload
-import de.berlindroid.zeapp.zebits.base64
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -46,7 +46,7 @@ class ZeBadgeUploader @Inject constructor(
         val payload = ZeBadgePayload(
             type = "preview",
             meta = "",
-            payload = page.toBinary().zipit().base64()
+            payload = page.toBinary().zipit().base64(),
         )
 
         return sendToUsb(payload)
@@ -66,7 +66,7 @@ class ZeBadgeUploader @Inject constructor(
             val actualCommand = payload.toBadgeCommand()
             sendCommandToBadge(
                 manager,
-                actualCommand
+                actualCommand,
             )
         }
     }
@@ -107,7 +107,7 @@ class ZeBadgeUploader @Inject constructor(
 
     private fun informNoBadgeFound(manager: UsbManager): Result<Nothing> {
         val message = "Could not find usb device with product name '$DEVICE_PRODUCT_NAME'.\nFound product(s):\n${
-            manager.connectedProductNames().joinToString("\n •")
+        manager.connectedProductNames().joinToString("\n •")
         }"
 
         Log.e("Badge Connection", message)
@@ -134,7 +134,7 @@ class ZeBadgeUploader @Inject constructor(
                     } else {
                         Log.e("USB Permission", "Could not request permission to access to badge.")
                         continuation.resumeWithException(
-                            BadgeUploadException("Could not request permission to access to badge.")
+                            BadgeUploadException("Could not request permission to access to badge."),
                         )
                     }
                 }
@@ -152,7 +152,7 @@ class ZeBadgeUploader @Inject constructor(
         val broadcastReceiver = BoundUsbReceiver()
         context.registerReceiver(
             broadcastReceiver,
-            filter
+            filter,
         )
 
         manager.requestPermission(device, permissionIntent)
@@ -161,7 +161,6 @@ class ZeBadgeUploader @Inject constructor(
             context.unregisterReceiver(broadcastReceiver)
         }
     }
-
 
     private fun UsbManager.findConnectedBadge() =
         deviceList.values.firstOrNull {

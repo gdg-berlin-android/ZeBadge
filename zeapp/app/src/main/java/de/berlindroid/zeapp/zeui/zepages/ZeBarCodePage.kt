@@ -22,7 +22,6 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zeui.rememberBarcodeBitmapPainter
-import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 
 /**
  * A composable that represents a badge, to be rendered as a bitmap.
@@ -57,8 +56,11 @@ fun BarCodePage(
         )
 
         val painter =
-            if (url.isEmpty()) painterResource(id = R.drawable.page_telekom)
-            else rememberBarcodeBitmapPainter(url)
+            if (url.isEmpty()) {
+                painterResource(id = R.drawable.page_telekom)
+            } else {
+                rememberBarcodeBitmapPainter(url)
+            }
         Image(
             painter = painter,
             contentDescription = "",

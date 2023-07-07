@@ -26,7 +26,7 @@ class ZeImageProviderService @Inject constructor(
         return BitmapFactory.decodeResource(
             context.resources,
             imageResource,
-            BitmapFactory.Options().apply { inScaled = false }
+            BitmapFactory.Options().apply { inScaled = false },
         ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
     }
 }
