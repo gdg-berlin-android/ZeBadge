@@ -22,7 +22,6 @@ import timber.log.Timber
 import java.nio.IntBuffer
 import kotlin.experimental.and
 import kotlin.experimental.or
-import kotlin.random.Random
 
 /**
  * Linear invert all pixel values
@@ -96,29 +95,6 @@ fun Bitmap.grayscale(): Bitmap {
 }
 
 /**
- * Return a random image
- */
-fun Bitmap.randomizeColors(): Bitmap {
-    val outputBitmap = copy()
-
-    val buffer = IntBuffer.allocate(width * height)
-    outputBitmap.copyPixelsToBuffer(buffer)
-    buffer.rewind()
-
-    buffer.map {
-        Color.rgb(
-            Random.nextInt(0, 255),
-            Random.nextInt(0, 255),
-            Random.nextInt(0, 255),
-        )
-    }
-
-    buffer.rewind()
-    outputBitmap.copyPixelsFromBuffer(buffer)
-    return outputBitmap
-}
-
-/**
  * Render a composable into a bitmap.
  *
  * Warning: This will add a content view to the activity, gone, but there.
@@ -134,9 +110,11 @@ fun composableToBitmap(
             val width = PAGE_WIDTH
             val height = PAGE_HEIGHT
 
-            val view = ComposeView(context)
-            view.visibility = View.GONE
-            view.layoutParams = LayoutParams(width, height)
+            val view = ComposeView(context).apply {
+                visibility = View.GONE
+                layoutParams = LayoutParams(width, height)
+            }
+
             addView(view)
 
             // add the composable to make it renderable
@@ -202,9 +180,10 @@ fun qrComposableToBitmap(
             val width = PAGE_WIDTH
             val height = PAGE_HEIGHT
 
-            val view = ComposeView(context)
-            view.visibility = View.GONE
-            view.layoutParams = LayoutParams(width, height)
+            val view = ComposeView(context).apply {
+                visibility = View.GONE
+                layoutParams = LayoutParams(width, height)
+            }
             addView(view)
 
             // add the composable to make it renderable
