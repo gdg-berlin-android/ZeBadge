@@ -1,5 +1,6 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Ze Androft</string>
+    <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
 
     <string name="black_and_white">B/W</string>
     <string name="reset">Reset</string>
@@ -25,4 +26,27 @@
     <string name="qr_vcard">vCard</string>
     <string name="qr_code_email">Email</string>
     <string name="qr_code_phone">Phone</string>
+
+    <string name="your_name_here" tools:ignore="MissingTranslation">Your Name Here</string>
+    <string name="contact_me_here" tools:ignore="MissingTranslation">Contact Me Here</string>
+    <string name="binary_image_needed" tools:ignore="MissingTranslation">Binary image needed. Press one of the buttons below the image.</string>
+    <string name="add_your_phrase_here" tools:ignore="MissingTranslation">Add your phrase here</string>
+    <string name="random_phrase" tools:ignore="MissingTranslation">Random Phrase</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view" tools:ignore="MissingTranslation">Unicorn at an android conference in isometric view.</string>
+    <string name="name" tools:ignore="MissingTranslation">Name</string>
+    <string name="contact" tools:ignore="MissingTranslation">Contact</string>
+    <string name="clear" tools:ignore="MissingTranslation">Clear</string>
+    <string name="add_your_contact_details" tools:ignore="MissingTranslation">Add your contact details</string>
+    <string name="set_picture" tools:ignore="MissingTranslation">Set Picture</string>
+    <string name="click_get_to_show_quote_of_the_day" tools:ignore="MissingTranslation">Click Get to show quote of the day</string>
+    <string name="get" tools:ignore="MissingTranslation">Get</string>
+    <string name="decline" tools:ignore="MissingTranslation">Decline</string>
+    <string name="send" tools:ignore="MissingTranslation">Send</string>
+    <string name="n_a" tools:ignore="MissingTranslation">N/A</string>
+    <string name="load_weather" tools:ignore="MissingTranslation">Load Weather</string>
+    <string name="hello_my_github_profile_is" tools:ignore="MissingTranslation">Hello, my github profile is</string>
+    <string name="your_phrase_here" tools:ignore="MissingTranslation">Your phrase here</string>
+    <string name="hello_my_name_is" tools:ignore="MissingTranslation">Hello, my name is</string>
+    <string name="upcoming_weather" tools:ignore="MissingTranslation">☀️Upcoming weather</string>
+    <string name="quote_of_the_day" tools:ignore="MissingTranslation">Quote of The Day</string>
 </resources>
