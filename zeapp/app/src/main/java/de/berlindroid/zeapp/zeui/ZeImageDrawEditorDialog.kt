@@ -11,9 +11,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -61,12 +61,9 @@ fun ZeImageDrawEditorDialog(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var motionEvent by remember { mutableStateOf(ZeMotionEvent.Idle) }
-    // This is our motion event we get from touch motion
-    var currentPosition by remember { mutableStateOf(Offset.Unspecified) }
 
-    // Path is what is used for drawing line on Canvas
-    val path = remember { Path() }
+    // recomposition is triggered by reassigning the same path object
+    var path by remember { mutableStateOf(Path(), policy = neverEqualPolicy()) }
 
     val drawContainer = remember {
         ComposeView(context).apply {
@@ -75,14 +72,6 @@ fun ZeImageDrawEditorDialog(
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
             setContent {
-                LaunchedEffect(key1 = currentPosition, block = {
-                    when (motionEvent) {
-                        ZeMotionEvent.Down -> path.moveTo(currentPosition.x, currentPosition.y)
-                        ZeMotionEvent.Move -> path.lineTo(currentPosition.x, currentPosition.y)
-                        ZeMotionEvent.Up -> path.lineTo(currentPosition.x, currentPosition.y)
-                        else -> {}
-                    }
-                })
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -92,20 +81,14 @@ fun ZeImageDrawEditorDialog(
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = { offset ->
-                                    currentPosition = offset
-                                    motionEvent = ZeMotionEvent.Down
+                                    path = path.apply { moveTo(offset.x, offset.y) }
                                 },
                                 onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
-                                    currentPosition =
-                                        pointerInputChange.position + offset
-                                    motionEvent = ZeMotionEvent.Move
-                                },
-                                onDragEnd = {
-                                    motionEvent = ZeMotionEvent.Up
-                                },
-                                onDragCancel = {
-                                    motionEvent = ZeMotionEvent.Up
-                                },
+                                    val currentPosition = pointerInputChange.position + offset
+                                    path = path.apply {
+                                        lineTo(currentPosition.x, currentPosition.y)
+                                    }
+                                }
                             )
                         },
                 ) {
