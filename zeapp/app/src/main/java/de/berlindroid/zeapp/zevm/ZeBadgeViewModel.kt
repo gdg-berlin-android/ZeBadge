@@ -364,12 +364,14 @@ class ZeBadgeViewModel @Inject constructor(
      *
      * @param slot the slot to be defaulted
      */
-    suspend fun resetSlot(slot: ZeSlot) {
-        _uiState.update {
-            it.copy(
-                message = "",
-                slots = it.slots.copy(slot to initialConfiguration(slot))
-            )
+    fun resetSlot(slot: ZeSlot) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    message = "",
+                    slots = it.slots.copy(slot to initialConfiguration(slot))
+                )
+            }
         }
     }
 

@@ -36,6 +36,7 @@ class ZePreferencesService @Inject constructor(
         const val TYPE_KEY = "type"
         const val IMAGE_KEY = "bitmap"
     }
+
     private val dataStore = context.dataStore
 
     suspend fun getOpenApiKey(): String {
@@ -98,6 +99,7 @@ class ZePreferencesService @Inject constructor(
                     preferences[slot.preferencesKey("barcode_title")] = config.title
                     preferences[slot.preferencesKey("url")] = config.url
                 }
+
                 is ZeConfiguration.CustomPhrase -> {
                     preferences[slot.preferencesKey("random_phrase")] = config.phrase
                 }
@@ -109,7 +111,7 @@ class ZePreferencesService @Inject constructor(
         return dataStore.data.mapNotNull { preferences ->
 
             val type = preferences[slot.preferencesKey(TYPE_KEY)]
-            val bitmap = preferences[slot.preferencesKey(IMAGE_KEY)]?.debase64()?.toBitmap()?: return@mapNotNull null
+            val bitmap = preferences[slot.preferencesKey(IMAGE_KEY)]?.debase64()?.toBitmap() ?: return@mapNotNull null
 
             when (type) {
                 ZeConfiguration.Name.TYPE -> {
@@ -145,6 +147,12 @@ class ZePreferencesService @Inject constructor(
                 ZeConfiguration.CustomPhrase.TYPE -> ZeConfiguration.CustomPhrase(
                     phrase = slot.preferencesValue("random_phrase"),
                     bitmap = bitmap
+                )
+
+                ZeConfiguration.BarCode.TYPE -> ZeConfiguration.BarCode(
+                    title = slot.preferencesValue("barcode_title"),
+                    bitmap = bitmap,
+                    url = slot.preferencesValue("url"),
                 )
 
                 else -> {
