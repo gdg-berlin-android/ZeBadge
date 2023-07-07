@@ -120,8 +120,8 @@ class ZeBadgeViewModel @Inject constructor(
 
         val configuration = slots.value.getOrElse(slot) {
             Log.e("VM", "Slot $slot is not one of our slots.")
-            return
-        }
+            null
+        } ?: return
 
         val bitmap = configuration.bitmap
         if (bitmap.isBinary()) {
