@@ -25,4 +25,5 @@
     <string name="qr_code_phone">Phone</string>
     <string name="add_barcode_url">Add your BarCode URL</string>
     <string name="bar_code_title">Bar Code title</string>
+    <string name="send_icon_text">Send</string>
 </resources>
