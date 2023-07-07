@@ -63,7 +63,7 @@ fun QRCodePage(
                 maxLines = 3,
                 text = title,
                 textAlign = TextAlign.Center,
-                )
+            )
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
