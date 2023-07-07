@@ -108,8 +108,6 @@ class ZeBadgeViewModel @Inject constructor(
         runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
     }
 
-    private val _toastEvent = MutableSharedFlow<ZeToastEvent>()
-    val toastEvent = _toastEvent.asSharedFlow()
 
     /**
      * Call this method to send a given slot to the badge device.
@@ -366,7 +364,7 @@ class ZeBadgeViewModel @Inject constructor(
      *
      * @param slot the slot to be defaulted
      */
-    fun resetSlot(slot: ZeSlot) {
+    suspend fun resetSlot(slot: ZeSlot) {
         _uiState.update {
             it.copy(
                 message = "",
@@ -461,7 +459,8 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
-            slots.value = mapOf(
+
+            val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
                 ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
@@ -472,6 +471,9 @@ class ZeBadgeViewModel @Inject constructor(
                 ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
                 ZeSlot.Quote to initialConfiguration(ZeSlot.Quote),
             )
+            _uiState.update {
+                it.copy(slots = slots)
+            }
         }
     }
 
@@ -485,16 +487,7 @@ class ZeBadgeViewModel @Inject constructor(
             currentSlotEditor = null,
             currentTemplateChooser = null,
             currentSimulatorSlot = ZeSlot.Name,
-            slots = mapOf(
-                ZeSlot.Name to initialConfiguration(ZeSlot.Name),
-                ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
-                ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
-                ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
-                ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
-                ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
-                ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
-                ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
-            )
+            slots = emptyMap()
         )
 }
 
