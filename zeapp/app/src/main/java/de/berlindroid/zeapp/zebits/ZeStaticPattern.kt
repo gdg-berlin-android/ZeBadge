@@ -65,7 +65,7 @@ private fun Array<Int>.differenceToBlock(
     width: Int,
     height: Int,
 ): Int {
-    var error = 0;
+    var error = 0
 
     for (y in 0 until PATTERN_SIZE) {
         for (x in 0 until PATTERN_SIZE) {
@@ -89,7 +89,7 @@ private val PATTERN_BITS_NEEDED = 2 pow PATTERN_PLACE_COUNT
 /**
  * The patterns to compare our blocks with.
  */
-//private val PATTERNS = bruteForce() // ignored due to size constraints
+// private val PATTERNS = bruteForce() // ignored due to size constraints
 private val PATTERNS = handPicked()
 
 private fun handPicked() = mutableListOf(
@@ -180,4 +180,3 @@ fun bruteForce() = (0 until PATTERN_BITS_NEEDED).map { patternAsInt ->
 }
 
 private infix fun Int.pow(power: Int): Int = toDouble().pow(power.toDouble()).toInt()
-

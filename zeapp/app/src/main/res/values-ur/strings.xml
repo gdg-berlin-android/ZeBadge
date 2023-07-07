@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+    <string name="black_and_white">B/W</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="reset">دوبارہ ترتیب دیں</string>
+    <string name="positional">پوزیشنی</string>
+    <string name="rotate">گھمائیں</string>
+    <string name="invert">الٹا</string>
+
+    <string name="generate">پیدا کریں</string>
+    <string name="not_binary_image">بائنری تصویر نہیں ہے۔ یقینی بنائیں کہ ہر پکسل سیاہ یا سفید ہے۔</string>
+    <string name="generate_image_page">تصویری صفحہ بنائیں</string>
+    <string name="draw_image_page">تصویر کا صفحہ بنائیں</string>
+    <string name="enter_prompt">اپنا اشارہ یہاں درج کریں۔</string>
+    <string name="could_not_generate_image">تصویر نہیں بن سکی</string>
+
+    <string name="image_needed">بائنری تصویر کی ضرورت ہے۔ تصویر کے نیچے بٹنوں میں سے ایک کو دبائیں۔</string>
+    <string name="add_qr_url">اپنا کیو آر یو آر ایل شامل کریں۔</string>
+    <string name="qr_code_title">کیو آر کوڈ کا عنوان</string>
+    <string name="qr_code_text">اضافی متن</string>
+    <string name="url">یو آر ایل</string>
+    <string name="add_barcode_url">اپنا بارکوڈ یو آر ایل شامل کریں۔</string>
+    <string name="bar_code_title">بار کوڈ کا عنوان</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Phone</string>
+</resources>

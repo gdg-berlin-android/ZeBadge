@@ -7,6 +7,5 @@ import de.berlindroid.zeapp.R
 
 val montserrat = FontFamily(
     Font(R.font.montserrat),
-    Font(R.font.montserrat_black, weight = FontWeight.Black)
+    Font(R.font.montserrat_black, weight = FontWeight.Black),
 )
-

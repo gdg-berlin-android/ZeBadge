@@ -21,5 +21,4 @@ class ZeMainActivityTest {
         composeTestRule.onNodeWithContentDescription("Copy info bar message")
             .assertIsDisplayed()
     }
-
 }
