@@ -350,10 +350,13 @@ class ZeBadgeViewModel @Inject constructor(
             is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
-                "Your title",
-                "",
-                "",
-                R.drawable.qrpage_preview.toBitmap(),
+                title = "Your title",
+                text = "",
+                url = "",
+                isVcard = false,
+                phone = "",
+                email = "",
+                bitmap = R.drawable.qrpage_preview.toBitmap(),
             )
 
             ZeSlot.Weather -> ZeConfiguration.Weather(

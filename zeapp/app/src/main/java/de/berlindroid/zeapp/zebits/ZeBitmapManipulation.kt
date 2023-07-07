@@ -193,7 +193,7 @@ fun qrComposableToBitmap(
     activity: Activity,
     title: String,
     text: String,
-    url: String,
+    qrContent: String,
     callback: (Bitmap) -> Unit
 ) {
     // create a custom view like in the good old days
@@ -209,7 +209,7 @@ fun qrComposableToBitmap(
 
             // add the composable to make it renderable
             view.setContent {
-                QRCodePage(title, text, url)
+                QRCodePage(title, text, qrContent)
             }
 
             // once it is rendered and laid out, make a bitmap
