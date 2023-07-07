@@ -1,4 +1,6 @@
+import org.jetbrains.kotlin.incremental.createDirectory
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+import java.lang.ProcessBuilder.Redirect
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,6 +9,9 @@ plugins {
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.google.play.services)
+    alias(libs.plugins.firebase.appdistribution)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -18,11 +23,13 @@ android {
         minSdk = 29
         targetSdk = 33
         versionCode = 1
-        versionName =  "1.0"
+        versionName = "1.0"
 
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "mr", "tr", "uk", "ur", "lt", "nl", "sq"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,6 +41,11 @@ android {
     buildTypes {
         configureEach {
             buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
+
+            firebaseAppDistribution {
+                releaseNotesFile = "./release-notes.txt"
+                groups = "testers"
+            }
         }
 
         release {
@@ -41,6 +53,10 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
+    sourceSets.getByName("main").assets.srcDir(
+        "$projectDir/build/generated/assets",
+    )
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -52,8 +68,8 @@ android {
 
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
-
+            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi",
+        )
     }
 
     buildFeatures {
@@ -90,6 +106,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.datastore)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.toolingpreview)
     implementation(libs.androidx.compose.material3)
@@ -101,6 +118,10 @@ dependencies {
     implementation(libs.dagger.hilt)
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
+    implementation(platform(libs.firebase))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
@@ -136,3 +157,23 @@ kapt {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs::class).configureEach {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
+
+tasks.create("generateContributorsAsset") {
+    val command = "git shortlog -sne --all"
+    val process = ProcessBuilder()
+        .command(command.split(" "))
+        .directory(rootProject.projectDir)
+        .redirectOutput(Redirect.PIPE)
+        .redirectError(Redirect.PIPE)
+        .start()
+    process.waitFor(60, TimeUnit.SECONDS)
+    val result = process.inputStream.bufferedReader().readText()
+
+    val contributors = result.lines()
+        .joinToString(separator = System.lineSeparator()) { it.substringAfter("\t") }
+
+    val assetDir = layout.buildDirectory.dir("generated/assets").get().asFile
+    assetDir.createDirectory()
+    File(assetDir, "test.txt").writeText(contributors)
+}
+tasks.getByName("build").dependsOn("generateContributorsAsset")
