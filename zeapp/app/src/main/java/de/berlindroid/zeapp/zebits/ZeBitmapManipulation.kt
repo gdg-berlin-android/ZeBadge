@@ -153,7 +153,8 @@ fun composableToBitmap(
                         viewTreeObserver.removeOnGlobalLayoutListener(this)
                         removeView(view)
                     }
-                },)
+                },
+            )
         }
 
         private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
@@ -221,7 +222,8 @@ fun qrComposableToBitmap(
                         viewTreeObserver.removeOnGlobalLayoutListener(this)
                         removeView(view)
                     }
-                },)
+                },
+            )
         }
 
         private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
@@ -288,7 +290,8 @@ fun barCodeComposableToBitmap(
                         viewTreeObserver.removeOnGlobalLayoutListener(this)
                         removeView(view)
                     }
-                },)
+                },
+            )
         }
 
         private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
