@@ -44,7 +44,6 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 
-
 /**
  * Use Dall-e 2 to build a bitmap for the badge.
  *
@@ -71,7 +70,7 @@ fun ImageGenerationEditorDialog(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT),
         )
     }
 
@@ -88,7 +87,8 @@ fun ImageGenerationEditorDialog(
                     } else {
                         snackbarMessage(context.getString(R.string.not_binary_image))
                     }
-                }) {
+                },
+            ) {
                 Text(stringResource(id = android.R.string.ok))
             }
         },
@@ -106,7 +106,7 @@ fun ImageGenerationEditorDialog(
                 if (progress != null) {
                     LinearProgressIndicator(
                         modifier = Modifier.fillMaxWidth(),
-                        progress = progress!!
+                        progress = progress!!,
                     )
                 }
 
@@ -115,7 +115,7 @@ fun ImageGenerationEditorDialog(
                     enabled = progress == null,
                     singleLine = true,
                     label = { Text(text = stringResource(id = R.string.enter_prompt)) },
-                    onValueChange = { prompt = it }
+                    onValueChange = { prompt = it },
                 )
 
                 Button(
@@ -137,19 +137,19 @@ fun ImageGenerationEditorDialog(
                                     }
                                     bitmap = BitmapFactory.decodeResource(
                                         context.resources,
-                                        R.drawable.error
+                                        R.drawable.error,
                                     ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
                                     lastLoadedBitmap = null
                                 }
                                 progress = null
                             }
                         }
-                    }
+                    },
                 ) {
                     Text(text = stringResource(id = R.string.generate))
                 }
             }
-        }
+        },
     )
 }
 
@@ -160,7 +160,7 @@ private suspend fun requestImageGeneration(
     val maybeImages = openAiApi.generateImage(
         body = OpenAIApi.GenerateImages(
             prompt = prompt,
-        )
+        ),
     )
 
     if (maybeImages.isSuccessful) {
@@ -179,12 +179,12 @@ private suspend fun requestImageGeneration(
                     BitmapFactory.decodeByteArray(
                         bytes,
                         0,
-                        bytes.size
+                        bytes.size,
                     )
                 } else {
                     BitmapFactory.decodeResource(
                         context.resources,
-                        R.drawable.error
+                        R.drawable.error,
                     ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
                 }
             }
@@ -196,13 +196,12 @@ private suspend fun requestImageGeneration(
     } else {
         Log.e(
             "ImageGenError",
-            "Could not fetch images: ${maybeImages.errorBody()?.string()}"
+            "Could not fetch images: ${maybeImages.errorBody()?.string()}",
         )
     }
 
     return null
 }
-
 
 private val ok = OkHttpClient.Builder().build()
 
@@ -219,21 +218,21 @@ private interface OpenAIApi {
         val data: List<ImageLocation>,
     ) {
         data class ImageLocation(
-            val url: String
+            val url: String,
         )
     }
 
     data class GenerateImages(
         val prompt: String,
         @SerializedName("n") val imageCount: Int = 1,
-        val size: String = "512x512"
+        val size: String = "512x512",
     )
 
     @POST("/v1/images/generations")
     suspend fun generateImage(
         @Header("Content-Type") contentType: String = "application/json",
         @Header("Authorization") authorization: String = OPENAI_API_KEY.toBearerToken(),
-        @Body body: GenerateImages
+        @Body body: GenerateImages,
     ): Response<GeneratedImages>
 }
 

@@ -85,8 +85,8 @@ fun Bitmap.grayscale(): Bitmap {
             0.2126f, 0.7152f, 0.0722f, 0f, 0f,
             0.2126f, 0.7152f, 0.0722f, 0f, 0f,
             0.2126f, 0.7152f, 0.0722f, 0f, 0f,
-            0f, 0f, 0f, 1f, 0f
-        )
+            0f, 0f, 0f, 1f, 0f,
+        ),
     )
 
     val colorFilter = ColorMatrixColorFilter(colorMatrix)
@@ -109,7 +109,7 @@ fun Bitmap.randomizeColors(): Bitmap {
         Color.rgb(
             Random.nextInt(0, 255),
             Random.nextInt(0, 255),
-            Random.nextInt(0, 255)
+            Random.nextInt(0, 255),
         )
     }
 
@@ -126,7 +126,7 @@ fun Bitmap.randomizeColors(): Bitmap {
 fun composableToBitmap(
     activity: Activity,
     content: @Composable () -> Unit,
-    callback: (Bitmap) -> Unit
+    callback: (Bitmap) -> Unit,
 ) {
     // create a custom view like in the good old days
     class ParentView(context: Context) : LinearLayout(context) {
@@ -146,25 +146,25 @@ fun composableToBitmap(
 
             // once it is rendered and laid out, make a bitmap
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    val bitmap = createBitmapFromView(view = view, width = width, height = height)
-                    callback(bitmap)
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    removeView(view)
-                }
-            })
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        val bitmap = createBitmapFromView(view = view, width = width, height = height)
+                        callback(bitmap)
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        removeView(view)
+                    }
+                },)
         }
 
         private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
             view.layoutParams = LayoutParams(
                 LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT
+                LayoutParams.WRAP_CONTENT,
             )
 
             view.measure(
                 MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
             )
 
             view.layout(0, 0, width, height)
@@ -184,8 +184,8 @@ fun composableToBitmap(
         ParentView(activity),
         LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+        ),
     )
 }
 
@@ -194,7 +194,7 @@ fun qrComposableToBitmap(
     title: String,
     text: String,
     qrContent: String,
-    callback: (Bitmap) -> Unit
+    callback: (Bitmap) -> Unit,
 ) {
     // create a custom view like in the good old days
     class ParentView(context: Context) : LinearLayout(context) {
@@ -214,25 +214,25 @@ fun qrComposableToBitmap(
 
             // once it is rendered and laid out, make a bitmap
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    val bitmap = createBitmapFromView(view = view, width = width, height = height)
-                    callback(bitmap)
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    removeView(view)
-                }
-            })
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        val bitmap = createBitmapFromView(view = view, width = width, height = height)
+                        callback(bitmap)
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        removeView(view)
+                    }
+                },)
         }
 
         private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
             view.layoutParams = LayoutParams(
                 LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT
+                LayoutParams.WRAP_CONTENT,
             )
 
             view.measure(
                 MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
             )
 
             view.layout(0, 0, width, height)
@@ -252,8 +252,8 @@ fun qrComposableToBitmap(
         ParentView(activity),
         LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+        ),
     )
 }
 
@@ -261,7 +261,7 @@ fun barCodeComposableToBitmap(
     activity: Activity,
     title: String,
     url: String,
-    callback: (Bitmap) -> Unit
+    callback: (Bitmap) -> Unit,
 ) {
     // create a custom view like in the good old days
     class ParentView(context: Context) : LinearLayout(context) {
@@ -281,25 +281,25 @@ fun barCodeComposableToBitmap(
 
             // once it is rendered and laid out, make a bitmap
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    val bitmap = createBitmapFromView(view = view, width = width, height = height)
-                    callback(bitmap)
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    removeView(view)
-                }
-            })
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        val bitmap = createBitmapFromView(view = view, width = width, height = height)
+                        callback(bitmap)
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        removeView(view)
+                    }
+                },)
         }
 
         private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
             view.layoutParams = LayoutParams(
                 LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT
+                LayoutParams.WRAP_CONTENT,
             )
 
             view.measure(
                 MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
             )
 
             view.layout(0, 0, width, height)
@@ -319,8 +319,8 @@ fun barCodeComposableToBitmap(
         ParentView(activity),
         LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+        ),
     )
 }
 
@@ -396,7 +396,7 @@ fun Bitmap.isBinary(): Boolean {
     var allBinaryPixel = true
 
     buffer.forEachIndexed(
-        exitIf = { !allBinaryPixel }
+        exitIf = { !allBinaryPixel },
     ) { index, pixelColor ->
         val binary = pixelColor.isBinary()
         if (!binary) {
@@ -435,7 +435,7 @@ fun IntBuffer.forEach(mapper: (it: Int) -> Unit) {
  */
 fun IntBuffer.forEachIndexed(
     exitIf: (() -> Boolean)? = null,
-    mapper: (index: Int, it: Int) -> Unit
+    mapper: (index: Int, it: Int) -> Unit,
 ) {
     if (exitIf != null) {
         for (i in 0 until limit()) {
@@ -456,14 +456,14 @@ fun IntBuffer.forEachIndexed(
  *
  * The width will be scaled to PAGE_WIDTH, but the height will be cropped.
  */
-fun Bitmap.cropPageFromCenter() : Bitmap {
+fun Bitmap.cropPageFromCenter(): Bitmap {
     val aspectRatio = this.width.toFloat().div(this.height.toFloat())
     val targetHeight = PAGE_WIDTH.div(aspectRatio).toInt()
 
     return scale(PAGE_WIDTH, targetHeight)
         .crop(
             fromX = 0,
-            fromY = PAGE_HEIGHT/2 - targetHeight / 2,
+            fromY = PAGE_HEIGHT / 2 - targetHeight / 2,
             targetWidth = PAGE_WIDTH,
             targetHeight = PAGE_HEIGHT,
         )

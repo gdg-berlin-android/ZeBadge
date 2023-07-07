@@ -57,11 +57,19 @@ fun Bitmap.ditherPositional(): Bitmap {
 }
 
 private val EVEN_NEIGHBOR_WEIGHTS = arrayOf(
-    0 / 4.0f, /**/0.0f, 0 / 4.0f,
-    2 / 4.0f, 0 / 4.0f, 2 / 4.0f,
+    0 / 4.0f, /**/
+    0.0f,
+    0 / 4.0f,
+    2 / 4.0f,
+    0 / 4.0f,
+    2 / 4.0f,
 )
 
 private val ODD_NEIGHBOR_WEIGHTS = arrayOf(
-    0 / 4.0f, /**/0.0f, 2 / 4.0f,
-    0 / 4.0f, 2 / 4.0f, 0 / 4.0f,
+    0 / 4.0f, /**/
+    0.0f,
+    2 / 4.0f,
+    0 / 4.0f,
+    2 / 4.0f,
+    0 / 4.0f,
 )

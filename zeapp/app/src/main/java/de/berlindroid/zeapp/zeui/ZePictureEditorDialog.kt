@@ -80,7 +80,7 @@ fun PictureEditorDialog(
                 } else {
                     snackbarMessage(context.getString(R.string.not_binary_image))
                 }
-            }) {
+            },) {
                 Text(stringResource(id = android.R.string.ok))
             }
         },
