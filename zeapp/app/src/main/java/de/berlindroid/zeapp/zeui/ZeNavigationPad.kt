@@ -23,7 +23,8 @@ fun ZeNavigationPad(
     val coroutineScope = rememberCoroutineScope()
     val scrollLength = 425f
     val topReached by remember { derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.offset == 0 } }
-    val bottomReached by remember { derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1 } }
+    val bottomReached by remember { derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo
+        .lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1 } }
 
     Column(
         Modifier
