@@ -3,12 +3,14 @@
 package de.berlindroid.zeapp.zeui
 
 import android.app.Activity
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -130,73 +132,107 @@ fun QRCodeEditorDialog(
                     }
                 }
 
-                item {
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = title,
-                        maxLines = 1,
-                        label = { Text(text = stringResource(id = R.string.qr_code_title)) },
-                        onValueChange = { newValue ->
-                            title = newValue
-                            redrawComposableImage()
-                        },
-                    )
-                }
-
-                item {
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = text,
-                        maxLines = 1,
-                        singleLine = true,
-                        label = { Text(text = stringResource(id = R.string.qr_code_text)) },
-                        onValueChange = { newValue ->
-                            text = newValue
-                            redrawComposableImage()
-                        }
-                    )
-                }
-
-                item {
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = url,
-                        maxLines = 1,
-                        label = { Text(text = stringResource(id = R.string.url)) },
-                        onValueChange = { newValue ->
-                            url = newValue
-                            redrawComposableImage()
-                        },
-                    )
-                }
+                basicFields(
+                    redrawComposableImage = ::redrawComposableImage,
+                    title = title,
+                    onTitleChange = { title = it },
+                    text = text,
+                    onTextChange = { text = it },
+                    url = url,
+                    onUrlChange = { url = it },
+                )
 
                 if (isVcard) {
-                    item {
-                        TextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = email,
-                            maxLines = 1,
-                            label = { Text(text = stringResource(id = R.string.qr_code_email)) },
-                            onValueChange = { newValue ->
-                                email = newValue
-                                redrawComposableImage()
-                            },
-                        )
-                    }
-                    item {
-                        TextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = phone,
-                            maxLines = 1,
-                            label = { Text(text = stringResource(id = R.string.qr_code_phone)) },
-                            onValueChange = { newValue ->
-                                phone = newValue
-                                redrawComposableImage()
-                            },
-                        )
-                    }
+                    additionalVcardFields(
+                        redrawComposableImage = ::redrawComposableImage,
+                        email = email,
+                        onEmailChange = {email = it},
+                        phone = phone,
+                        onPhoneChange = {phone = it} ,
+                    )
                 }
             }
+        },
+    )
+}
+
+fun LazyListScope.basicFields(
+    redrawComposableImage: ()->Unit,
+    title: String,
+    onTitleChange: (String)->Unit,
+    text: String,
+    onTextChange: (String)->Unit,
+    url: String,
+    onUrlChange: (String)->Unit,
+) {
+    item {
+        RedrawTextField(
+            value = title,
+            textId = R.string.qr_code_title,
+            onValueChange =  onTitleChange,
+            redrawComposableImage = redrawComposableImage
+        )
+    }
+
+    item {
+        RedrawTextField(
+            value = text,
+            textId = R.string.qr_code_text,
+            onValueChange =  onTextChange,
+            redrawComposableImage = redrawComposableImage
+        )
+    }
+
+    item {
+        RedrawTextField(
+            value = url,
+            textId = R.string.url,
+            onValueChange = onUrlChange,
+            redrawComposableImage = redrawComposableImage
+        )
+    }
+}
+fun LazyListScope.additionalVcardFields(
+    redrawComposableImage: ()->Unit,
+    email: String,
+    onEmailChange: (String)->Unit,
+    phone: String,
+    onPhoneChange: (String)->Unit,
+) {
+    item {
+        RedrawTextField(
+            value = email,
+            textId = R.string.qr_code_email,
+            onValueChange =  onEmailChange,
+            redrawComposableImage = redrawComposableImage
+        )
+    }
+    item {
+        RedrawTextField(
+            value = phone,
+            textId = R.string.qr_code_phone,
+            onValueChange =  onPhoneChange,
+            redrawComposableImage = redrawComposableImage
+        )
+    }
+}
+@Composable
+fun RedrawTextField(
+    value: String,
+    @StringRes textId: Int,
+    onValueChange: (String) -> Unit,
+    redrawComposableImage: ()->Unit,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value,
+        maxLines = 1,
+        singleLine = true,
+        label = { Text(text = stringResource(id = textId)) },
+        onValueChange = { newValue ->
+            onValueChange(newValue)
+            redrawComposableImage()
         },
     )
 }
