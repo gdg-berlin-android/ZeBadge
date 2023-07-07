@@ -192,6 +192,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     onRandomClick = vm::sendRandomPageToDevice,
                     onSaveAllClick = vm::saveAll,
                     onAboutClick = { isShowingAbout = !isShowingAbout },
+                    onShareClick = { openShareIntent() }
                     isShowingAbout = isShowingAbout,
                 )
             },
@@ -251,6 +252,7 @@ private fun ZeTopBar(
     onSaveAllClick: () -> Unit,
     onRandomClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onShareClick: () -> Unit,
     isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
@@ -292,6 +294,12 @@ private fun ZeTopBar(
                 } else {
                     ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
                 }
+            }
+            ZeIconButton(onClick = onShareClick) {
+                ZeIcon(
+                    painter = Icons.Default.MoveItem,
+                    contentDescription = "Share",
+                )
             }
         },
     )
@@ -627,6 +635,15 @@ private fun PagePreview(
             }
         }
     }
+}
+
+private fun openShareIntent() {
+    val sendIntent = Intent()
+    sendIntent.setAction(Intent.ACTION_SEND)
+    sendIntent.putExtra(Intent.EXTRA_TEXT,
+            "Hey check out my app at: https://github.com/gdg-berlin-android/ZeBadge/releases)
+    sendIntent.setType("text/plain")
+    startActivity(sendIntent)
 }
 
 private val ZeSlot.isSponsor: Boolean
