@@ -1,3 +1,4 @@
+
 package de.berlindroid.zeapp.zeui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -61,7 +62,8 @@ fun ToolButton(
 @Preview
 fun ToolButton(
     imageVector: ImageVector = Icons.Filled.Send,
-    text: String = stringResource(de.berlindroid.zeapp.R.string.send),
+    text: String = stringResource(id = de.berlindroid.zeapp.R.string.send_icon_text),
+
     onClick: () -> Unit = {}
 ) {
     TextButton(
