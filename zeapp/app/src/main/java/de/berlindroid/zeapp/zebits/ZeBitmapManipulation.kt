@@ -145,7 +145,8 @@ fun composableToBitmap(
             }
 
             // once it is rendered and laid out, make a bitmap
-            viewTreeObserver.addOnGlobalLayoutListener(object :
+            viewTreeObserver.addOnGlobalLayoutListener(
+                object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         val bitmap = createBitmapFromView(view = view, width = width, height = height)
@@ -214,7 +215,8 @@ fun qrComposableToBitmap(
             }
 
             // once it is rendered and laid out, make a bitmap
-            viewTreeObserver.addOnGlobalLayoutListener(object :
+            viewTreeObserver.addOnGlobalLayoutListener(
+                object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         val bitmap = createBitmapFromView(view = view, width = width, height = height)
@@ -282,7 +284,8 @@ fun barCodeComposableToBitmap(
             }
 
             // once it is rendered and laid out, make a bitmap
-            viewTreeObserver.addOnGlobalLayoutListener(object :
+            viewTreeObserver.addOnGlobalLayoutListener(
+                object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         val bitmap = createBitmapFromView(view = view, width = width, height = height)
