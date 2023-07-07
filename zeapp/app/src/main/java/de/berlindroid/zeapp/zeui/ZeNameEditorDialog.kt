@@ -147,9 +147,7 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
         Icon(
             Icons.Rounded.Clear,
             contentDescription = stringResource(R.string.clear),
-            modifier = modifier.clickable {
-                onClick()
-            },
+            modifier = modifier.clickable(onClick = onClick),
         )
     }
 }

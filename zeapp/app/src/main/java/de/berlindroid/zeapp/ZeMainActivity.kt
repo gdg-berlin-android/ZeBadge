@@ -41,8 +41,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -321,7 +321,7 @@ private fun ZePages(
         val slots = uiState.slots
 
         if (editor != null) {
-            SelectedEditor(editor!!, vm)
+            SelectedEditor(editor, vm)
         }
 
         if (templateChooser != null) {
@@ -357,7 +357,7 @@ private fun ZePages(
                     }
 
                     PagePreview(
-                        modifier = Modifier.alpha(alpha = alpha),
+                        modifier = Modifier.graphicsLayer { this.alpha = alpha },
                         name = slot::class.simpleName ?: "WTF",
                         bitmap = vm.slotToBitmap(slot),
                         customizeThisPage = if (slot.isSponsor) {
