@@ -26,16 +26,18 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     name = PREFS_NAME,
     produceMigrations = { context ->
         listOf(SharedPreferencesMigration(context, PREFS_NAME))
-    })
+    },
+)
 
 class ZePreferencesService @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
     private companion object {
         val OPEN_API_PREFERENCES_KEY = stringPreferencesKey("openapi")
         const val TYPE_KEY = "type"
         const val IMAGE_KEY = "bitmap"
     }
+
     private val dataStore = context.dataStore
 
     suspend fun getOpenApiKey(): String {
@@ -80,10 +82,14 @@ class ZePreferencesService @Inject constructor(
                     preferences[slot.preferencesKey("qr_title")] = config.title
                     preferences[slot.preferencesKey("url")] = config.url
                     preferences[slot.preferencesKey("qr_text")] = config.text
+                    preferences[slot.preferencesKey("qr_phone")] = config.phone
+                    preferences[slot.preferencesKey("qr_email")] = config.email
+                    preferences[slot.preferencesKey("qr_is_vcard")] = config.isVcard.toString()
                 }
 
                 is ZeConfiguration.Camera,
-                is ZeConfiguration.Kodee -> Unit
+                is ZeConfiguration.Kodee,
+                -> Unit
 
                 is ZeConfiguration.ImageDraw -> {
                     // Nothing more to configure
@@ -98,6 +104,7 @@ class ZePreferencesService @Inject constructor(
                     preferences[slot.preferencesKey("barcode_title")] = config.title
                     preferences[slot.preferencesKey("url")] = config.url
                 }
+
                 is ZeConfiguration.CustomPhrase -> {
                     preferences[slot.preferencesKey("random_phrase")] = config.phrase
                 }
@@ -109,7 +116,7 @@ class ZePreferencesService @Inject constructor(
         return dataStore.data.mapNotNull { preferences ->
 
             val type = preferences[slot.preferencesKey(TYPE_KEY)]
-            val bitmap = preferences[slot.preferencesKey(IMAGE_KEY)]?.debase64()?.toBitmap()?: return@mapNotNull null
+            val bitmap = preferences[slot.preferencesKey(IMAGE_KEY)]?.debase64()?.toBitmap() ?: return@mapNotNull null
 
             when (type) {
                 ZeConfiguration.Name.TYPE -> {
@@ -124,7 +131,7 @@ class ZePreferencesService @Inject constructor(
 
                 ZeConfiguration.ImageGen.TYPE -> ZeConfiguration.ImageGen(
                     prompt = slot.preferencesValue("prompt"),
-                    bitmap = bitmap
+                    bitmap = bitmap,
                 )
 
                 ZeConfiguration.Schedule.TYPE -> ZeConfiguration.Schedule(bitmap)
@@ -132,25 +139,34 @@ class ZePreferencesService @Inject constructor(
                 ZeConfiguration.Weather.TYPE -> ZeConfiguration.Weather(
                     date = slot.preferencesValue("weather_date"),
                     temperature = slot.preferencesValue("weather_temperature"),
-                    bitmap
+                    bitmap,
                 )
 
                 ZeConfiguration.QRCode.TYPE -> ZeConfiguration.QRCode(
                     title = slot.preferencesValue("qr_title"),
                     url = slot.preferencesValue("url"),
                     text = slot.preferencesValue("qr_text"),
-                    bitmap = bitmap
+                    isVcard = slot.preferencesBooleanValue("qr_is_vcard"),
+                    phone = slot.preferencesValue("qr_phone"),
+                    email = slot.preferencesValue("qr_email"),
+                    bitmap = bitmap,
                 )
 
                 ZeConfiguration.CustomPhrase.TYPE -> ZeConfiguration.CustomPhrase(
                     phrase = slot.preferencesValue("random_phrase"),
-                    bitmap = bitmap
+                    bitmap = bitmap,
+                )
+
+                ZeConfiguration.BarCode.TYPE -> ZeConfiguration.BarCode(
+                    title = slot.preferencesValue("barcode_title"),
+                    bitmap = bitmap,
+                    url = slot.preferencesValue("url"),
                 )
 
                 else -> {
                     Log.e(
                         "Slot from Prefs",
-                        "Cannot find $type slot in preferences."
+                        "Cannot find $type slot in preferences.",
                     )
                     null
                 }
@@ -166,6 +182,11 @@ class ZePreferencesService @Inject constructor(
             val key = preferencesKey(field)
             if (preferences.contains(key)) {
                 preferences[key]!!
-            } else ""
+            } else {
+                ""
+            }
         }.first()
+
+    private suspend fun ZeSlot.preferencesBooleanValue(field: String): Boolean =
+        preferencesValue(field).toBoolean()
 }

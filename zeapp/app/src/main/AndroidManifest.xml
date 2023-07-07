@@ -17,10 +17,10 @@
         tools:targetApi="31">
         <activity
             android:name=".ZeMainActivity"
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden"
             android:exported="true"
             android:theme="@style/Theme.ZeBadgeApp"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
-            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden">
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +32,11 @@
             android:name=".ZeFileProvider"
             android:authorities="${applicationId}.files"
             android:exported="false"
-            android:grantUriPermissions="true" />
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider" />
+        </provider>
     </application>
 
 </manifest>

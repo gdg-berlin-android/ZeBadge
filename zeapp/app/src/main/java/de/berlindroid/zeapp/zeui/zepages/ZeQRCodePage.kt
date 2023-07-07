@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -34,7 +33,7 @@ import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 fun QRCodePage(
     title: String = "Hello, my github profile is",
     text: String = "gdg-berlin-android",
-    url: String = "https://github.com/gdg-berlin-android",
+    qrContent: String = "https://github.com/gdg-berlin-android",
 ) {
     val pageWidth = with(LocalDensity.current) { PAGE_WIDTH.toDp() }
     val pageHeight = with(LocalDensity.current) { PAGE_HEIGHT.toDp() }
@@ -45,13 +44,13 @@ fun QRCodePage(
             )
             .size(
                 width = pageWidth,
-                height = pageHeight
+                height = pageHeight,
             ),
     ) {
         Column(
             modifier = Modifier
                 .width(pageWidth - pageHeight)
-                .fillMaxHeight()
+                .fillMaxHeight(),
         ) {
             Text(
                 modifier = Modifier
@@ -78,8 +77,11 @@ fun QRCodePage(
         }
 
         val painter =
-            if (url.isEmpty()) remember { ColorPainter(Color.White) }
-            else rememberQrBitmapPainter(url)
+            if (qrContent.isEmpty()) {
+                remember { ColorPainter(Color.White) }
+            } else {
+                rememberQrBitmapPainter(qrContent)
+            }
         Image(
             painter = painter,
             contentDescription = "",
