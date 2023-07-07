@@ -174,6 +174,15 @@ class ZeMainActivity : ComponentActivity() {
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     var isShowingAbout by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val gotToReleases: () -> Unit = remember {
+        {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
     ZeBadgeAppTheme(content = {
         ZeScaffold(
             modifier = modifier,
@@ -199,6 +208,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     onRandomClick = vm::sendRandomPageToDevice,
                     onSaveAllClick = vm::saveAll,
                     onAboutClick = { isShowingAbout = !isShowingAbout },
+                    onGotoReleaseClick = gotToReleases,
                     isShowingAbout = isShowingAbout,
                 )
             },
@@ -274,6 +284,7 @@ private fun ZeTopBar(
     onSaveAllClick: () -> Unit,
     onRandomClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onGotoReleaseClick: () -> Unit,
     isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
@@ -297,6 +308,12 @@ private fun ZeTopBar(
             navigationIconContentColor = MaterialTheme.colorScheme.secondary,
         ),
         actions = {
+            ZeIconButton(onClick = onGotoReleaseClick) {
+                ZeIcon(
+                    painter = painterResource(id = R.drawable.ic_update),
+                    contentDescription = "Open the release page in the browser",
+                )
+            }
             ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
