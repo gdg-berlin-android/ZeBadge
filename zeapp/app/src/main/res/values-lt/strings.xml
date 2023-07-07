@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_binary_image">Netinka! Bandei prideti ne binary paveiksliuka.</string>
+    <string name="enter_prompt">Irasykite savo teksta!</string>
+    <string name="could_not_generate_image">Velnias! Nieko nmepavyko sugeneruoti, bandyk dar karta</string>
+    <string name="image_needed">Reikia paveiksliuko! Paspasuk viena is mygtuku apacioje!</string>
+
+    <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">J/B</string>
+    <string name="reset">Perkraut</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Pozicija</string>
+    <string name="rotate">Rotatinti</string>
+    <string name="invert">Invertinti</string>
+
+    <string name="generate">Generuoti</string>
+    <string name="generate_image_page">Generuoti paveiksliuko Puslapi</string>
+    <string name="draw_image_page">Nupiesti Paveiksliuka</string>
+
+    <string name="add_qr_url">Prideti savo QR URL</string>
+    <string name="qr_code_title">QR kodo pavadinimas</string>
+    <string name="qr_code_text">Papildomas tekstas</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Prideti barkodo URL</string>
+    <string name="bar_code_title">BarKodo pavadinimas</string>
+    <string name="qr_vcard">vKortele</string>
+    <string name="qr_code_email">Emailas</string>
+    <string name="qr_code_phone">Telefonas</string>
+</resources>
