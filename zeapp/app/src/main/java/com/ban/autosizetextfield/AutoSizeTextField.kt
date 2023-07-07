@@ -18,6 +18,9 @@ import androidx.compose.ui.unit.sp
 
 private const val TEXT_SCALE_REDUCTION_INTERVAL = 0.7f
 
+/**
+ * copied from https://github.com/banmarkovic/AutoSizeTextField
+ */
 @Composable
 fun AutoSizeTextField(
     modifier: Modifier = Modifier,
