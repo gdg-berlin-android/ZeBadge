@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
-import android.util.Log
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,6 +15,7 @@ import de.berlindroid.zeapp.zebits.base64
 import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zemodels.ZeBadgePayload
 import kotlinx.coroutines.suspendCancellableCoroutine
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.RuntimeException
@@ -90,11 +90,11 @@ class ZeBadgeUploader @Inject constructor(
                 /* parity = */UsbSerialPort.PARITY_NONE,
             )
             port.write(command.toByteArray(), 3_000)
-            Log.i("badge", "Wrote '$command' to port ${port.portNumber}.")
+            Timber.i("badge", "Wrote '$command' to port ${port.portNumber}.")
 
             command.length
         }.recoverCatching {
-            Log.e("badge", "Couldn't write to port ${port.portNumber}.", it)
+            Timber.e("badge", "Couldn't write to port ${port.portNumber}.", it)
             // Just send a generic exception with a message we want
             throw BadgeUploadException("Failed to write")
         }.also {
@@ -110,7 +110,7 @@ class ZeBadgeUploader @Inject constructor(
         manager.connectedProductNames().joinToString("\n •")
         }"
 
-        Log.e("Badge Connection", message)
+        Timber.e("Badge Connection", message)
 
         return Result.failure(BadgeUploadException(message))
     }
@@ -126,13 +126,13 @@ class ZeBadgeUploader @Inject constructor(
 
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (boundDevice != null) {
-                            Log.d("USB Permission", "Permission granted.")
+                            Timber.d("USB Permission", "Permission granted.")
                             continuation.resume(Unit)
                         } else {
                             continuation.resumeWithException(BadgeUploadException("No bound device"))
                         }
                     } else {
-                        Log.e("USB Permission", "Could not request permission to access to badge.")
+                        Timber.e("USB Permission", "Could not request permission to access to badge.")
                         continuation.resumeWithException(
                             BadgeUploadException("Could not request permission to access to badge."),
                         )
