@@ -28,6 +28,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
@@ -216,6 +218,8 @@ class ZeBadgeViewModel @Inject constructor(
                         R.drawable.soon.toBitmap()
                     ),
 
+
+
                     ZeConfiguration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
@@ -362,7 +366,7 @@ class ZeBadgeViewModel @Inject constructor(
             )
 
             ZeSlot.Weather -> ZeConfiguration.Weather(
-                "2023-07-06",
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
                 "22C",
                 R.drawable.soon.toBitmap()
             )
