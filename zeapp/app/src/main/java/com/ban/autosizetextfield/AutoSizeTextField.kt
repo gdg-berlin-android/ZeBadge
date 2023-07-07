@@ -16,29 +16,29 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private const val TEXT_SCALE_REDUCTION_INTERVAL = 0.9f
+private const val TEXT_SCALE_REDUCTION_INTERVAL = 0.7f
 
 @Composable
 fun AutoSizeTextField(
     modifier: Modifier = Modifier,
-    inputValue: String,
-    fontSize: TextUnit = 72.sp,
-    lineHeight: TextUnit = 80.sp,
-    inputValueChanged: (String) -> Unit,
+    value: String,
+    fontSize: TextUnit = 24.sp,
+    lineHeight: TextUnit = 36.sp,
+    onValueChange: (String) -> Unit,
     supportingText: @Composable () -> Unit,
-    label: @Composable () -> Unit,
+    label: @Composable () -> Unit = { },
     trailingIcon: @Composable () -> Unit,
+    placeholder: @Composable () -> Unit,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         var shrunkFontSize = fontSize
         val calculateIntrinsics = @Composable {
             ParagraphIntrinsics(
-                text = inputValue,
+                text = value,
                 style = TextStyle(
                     fontSize = shrunkFontSize,
                     fontWeight = FontWeight.SemiBold,
                     lineHeight = lineHeight,
-                    textAlign = TextAlign.Center,
                 ),
                 density = LocalDensity.current,
                 fontFamilyResolver = createFontFamilyResolver(LocalContext.current),
@@ -59,18 +59,19 @@ fun AutoSizeTextField(
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            label = label,
-            value = inputValue,
-            onValueChange = { inputValueChanged(it) },
+            value = value,
+            onValueChange = { onValueChange(it) },
             textStyle = TextStyle(
                 fontSize = shrunkFontSize,
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = lineHeight,
                 textAlign = TextAlign.Center,
             ),
+            label = label,
             singleLine = true,
             supportingText = supportingText,
-            trailingIcon = trailingIcon
+            trailingIcon = trailingIcon,
+            placeholder = placeholder,
         )
     }
 }
