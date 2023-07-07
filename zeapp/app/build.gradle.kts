@@ -28,7 +28,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "mr", "tr", "uk", "ur"))
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "mr", "nl", "tr", "uk", "ur"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
