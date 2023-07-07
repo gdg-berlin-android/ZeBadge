@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
 private const val MESSAGE_DISPLAY_UPDATES = 5
@@ -205,29 +206,39 @@ class ZeBadgeViewModel @Inject constructor(
             // no selection needed, check for name slot and ignore non configurable slots
             val newCurrentSlotEditor: ZeEditor?
             val slots = _uiState.value.slots
-            if (slot is ZeSlot.Name) {
-                newCurrentSlotEditor = ZeEditor(
-                    slot,
-                    slots[ZeSlot.Name]!!,
-                )
-            } else if (slot is ZeSlot.QRCode) {
-                newCurrentSlotEditor = ZeEditor(
-                    slot,
-                    slots[ZeSlot.QRCode]!!,
-                )
-            } else if (slot is ZeSlot.Weather) {
-                newCurrentSlotEditor = ZeEditor(
-                    slot,
-                    slots[ZeSlot.Weather]!!,
-                )
-            } else if (slot is ZeSlot.BarCode) {
-                newCurrentSlotEditor = ZeEditor(
-                    slot,
-                    slots[ZeSlot.BarCode]!!,
-                )
-            } else {
-                newCurrentSlotEditor = null
-                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+            when (slot) {
+                is ZeSlot.Name -> {
+                    newCurrentSlotEditor = ZeEditor(
+                        slot,
+                        slots[ZeSlot.Name]!!,
+                    )
+                }
+
+                is ZeSlot.QRCode -> {
+                    newCurrentSlotEditor = ZeEditor(
+                        slot,
+                        slots[ZeSlot.QRCode]!!,
+                    )
+                }
+
+                is ZeSlot.Weather -> {
+                    newCurrentSlotEditor = ZeEditor(
+                        slot,
+                        slots[ZeSlot.Weather]!!,
+                    )
+                }
+
+                is ZeSlot.BarCode -> {
+                    newCurrentSlotEditor = ZeEditor(
+                        slot,
+                        slots[ZeSlot.BarCode]!!,
+                    )
+                }
+
+                else -> {
+                    newCurrentSlotEditor = null
+                    Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+                }
             }
             newCurrentSlotEditor?.let { currentSlotEditor ->
                 _uiState.update {
