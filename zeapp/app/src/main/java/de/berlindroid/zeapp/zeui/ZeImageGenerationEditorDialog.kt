@@ -3,7 +3,7 @@ package de.berlindroid.zeapp.zeui
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
@@ -43,6 +43,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
+import timber.log.Timber
 
 /**
  * Use Dall-e 2 to build a bitmap for the badge.
@@ -191,10 +192,10 @@ private suspend fun requestImageGeneration(
 
             return bitmaps.first().cropPageFromCenter()
         } else {
-            Log.e("ImageGenError", "No image returned.")
+            Timber.e("ImageGenError", "No image returned.")
         }
     } else {
-        Log.e(
+        Timber.e(
             "ImageGenError",
             "Could not fetch images: ${maybeImages.errorBody()?.string()}",
         )

@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.R
+import com.ban.autosizetextfield.AutoSizeTextField
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -93,7 +94,7 @@ fun NameEditorDialog(
                     bitmapUpdated = { image = it },
                 )
 
-                OutlinedTextField(
+                AutoSizeTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = name ?: "",
                     maxLines = 2,

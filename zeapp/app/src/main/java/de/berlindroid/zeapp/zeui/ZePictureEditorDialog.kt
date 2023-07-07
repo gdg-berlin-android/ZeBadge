@@ -2,7 +2,7 @@ package de.berlindroid.zeapp.zeui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +26,7 @@ import de.berlindroid.zeapp.zebits.cropPageFromCenter
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import timber.log.Timber
 
 private const val ROTATE_CLOCKWISE = 90f
 
@@ -58,7 +59,7 @@ fun PictureEditorDialog(
         // success?
         bitmap = if (uri == null) {
             // nope, so show error bitmap
-            Log.d("Picture", "Not found")
+            Timber.d("Picture", "Not found")
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
