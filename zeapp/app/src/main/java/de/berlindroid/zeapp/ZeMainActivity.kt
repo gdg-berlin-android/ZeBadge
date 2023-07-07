@@ -306,11 +306,14 @@ private fun ZePages(
             .padding(paddingValues)
             .padding(ZeDimen.Half),
     ) {
-        val editor by remember { vm.currentSlotEditor }
-        val templateChooser by remember { vm.currentTemplateChooser }
-        val message by remember { vm.message }
-        val messageProgress by remember { vm.messageProgress }
-        val slots by remember { vm.slots }
+
+        val uiState by vm.uiState.collectAsState() //should be replace with 'collectAsStateWithLifecycle'
+
+        val editor = uiState.currentSlotEditor
+        val templateChooser = uiState.currentTemplateChooser
+        val message = uiState.message
+        val messageProgress = uiState.messageProgress
+        val slots = uiState.slots
 
         if (editor != null) {
             SelectedEditor(editor!!, vm)
