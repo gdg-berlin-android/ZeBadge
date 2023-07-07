@@ -56,7 +56,7 @@ fun NameEditorDialog(
     fun redrawComposableImage() {
         composableToBitmap(
             activity = activity,
-            content = { NamePage(name, contact) },
+            content = { NamePage(name ?: "", contact ?: "") },
         ) {
             image = it
         }
@@ -94,9 +94,9 @@ fun NameEditorDialog(
 
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = name,
-                    maxLines = 1,
-                    label = { Text(text = "Name") },
+                    value = name ?: "",
+                    maxLines = 2,
+                    placeholder = { Text(text = "Name") },
                     onValueChange = { newValue ->
                         if (newValue.length <= MaxCharacters * 2) {
                             name = newValue
@@ -104,10 +104,10 @@ fun NameEditorDialog(
                         }
                     },
                     supportingText = {
-                        Text(text = "${name.length}/${MaxCharacters * 2}")
+                        Text(text = "${name?.length}/${MaxCharacters * 2}")
                     },
                     trailingIcon = {
-                        ClearIcon(isEmpty = name.isEmpty()) {
+                        ClearIcon(isEmpty = name?.isEmpty() ?: true) {
                             name = Empty
                         }
                     },
@@ -115,9 +115,10 @@ fun NameEditorDialog(
 
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = contact,
+                    value = contact ?: "",
                     maxLines = 1,
-                    label = { Text(text = "Contact") },
+                    singleLine = true,
+                    placeholder = { Text(text = "Contact") },
                     onValueChange = { newValue ->
                         // Limit Characters so they're displayed correctly in the screen
                         if (newValue.length <= MaxCharacters) {
@@ -126,10 +127,10 @@ fun NameEditorDialog(
                         }
                     },
                     supportingText = {
-                        Text(text = "${contact.length}/$MaxCharacters")
+                        Text(text = "${contact?.length}/$MaxCharacters")
                     },
                     trailingIcon = {
-                        ClearIcon(isEmpty = contact.isEmpty()) {
+                        ClearIcon(isEmpty = contact?.isEmpty() ?: true) {
                             contact = Empty
                         }
                     },
