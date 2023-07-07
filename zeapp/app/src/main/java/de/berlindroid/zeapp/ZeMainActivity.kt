@@ -207,7 +207,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 }
             },
         )
-    })
+    },)
 }
 
 @Composable
@@ -255,14 +255,17 @@ private fun ZeTopBar(
 ) {
     ZeTopAppBar(
         title = {
-            ZeText(style = MaterialTheme.typography.titleLarge, text = buildAnnotatedString {
-                pushStyle(SpanStyle(fontWeight = FontWeight.Black))
-                append("Ze")
-                pop()
-                pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
-                append("Androft")
-                pop()
-            })
+            ZeText(
+                style = MaterialTheme.typography.titleLarge,
+                text = buildAnnotatedString {
+                    pushStyle(SpanStyle(fontWeight = FontWeight.Black))
+                    append("Ze")
+                    pop()
+                    pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
+                    append("Androft")
+                    pop()
+                },
+            )
         },
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -306,11 +309,13 @@ private fun ZePages(
             .padding(paddingValues)
             .padding(ZeDimen.Half),
     ) {
-        val editor by remember { vm.currentSlotEditor }
-        val templateChooser by remember { vm.currentTemplateChooser }
-        val message by remember { vm.message }
-        val messageProgress by remember { vm.messageProgress }
-        val slots by remember { vm.slots }
+        val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
+
+        val editor = uiState.currentSlotEditor
+        val templateChooser = uiState.currentTemplateChooser
+        val message = uiState.message
+        val messageProgress = uiState.messageProgress
+        val slots = uiState.slots
 
         if (editor != null) {
             SelectedEditor(editor!!, vm)
@@ -332,7 +337,7 @@ private fun ZePages(
                     start = ZeDimen.One,
                     end = ZeDimen.One,
                     top = ZeDimen.Half,
-                    bottom = ZeDimen.One
+                    bottom = ZeDimen.One,
                 ),
             ) {
                 items(

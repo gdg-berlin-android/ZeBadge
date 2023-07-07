@@ -88,7 +88,7 @@ fun ZeImageDrawEditorDialog(
                                     path = path.apply {
                                         lineTo(currentPosition.x, currentPosition.y)
                                     }
-                                }
+                                },
                             )
                         },
                 ) {
