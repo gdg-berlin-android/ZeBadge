@@ -2,6 +2,9 @@ package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,12 +16,12 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zemodels.ZeToastEvent
 import de.berlindroid.zeapp.zeservices.ZeBadgeUploader
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeContributorsService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
@@ -44,8 +48,19 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeUploader: ZeBadgeUploader,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
-    private val contributorsService: ZeContributorsService,
+    contributorsService: ZeContributorsService,
 ) : ViewModel() {
+
+    val snackbarHostState = SnackbarHostState()
+
+    fun showSnackBar(
+        message: String,
+        duration: SnackbarDuration = SnackbarDuration.Long,
+    ) {
+        viewModelScope.launch {
+            snackbarHostState.showSnackbar(message = message, duration = duration)
+        }
+    }
 
 
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
@@ -87,11 +102,10 @@ class ZeBadgeViewModel @Inject constructor(
                 delay(MESSAGE_DISPLAY_DURATION / MESSAGE_DISPLAY_UPDATES)
             }
         }
-
     }
 
     private val openApiKey = OPENAI_API_KEY.ifBlank {
-        preferencesService.getOpenApiKey()
+        runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
     }
 
     private val _toastEvent = MutableSharedFlow<ZeToastEvent>()
@@ -122,12 +136,7 @@ class ZeBadgeViewModel @Inject constructor(
                 )
             }
         } else {
-            _toastEvent.tryEmit(
-                ZeToastEvent(
-                    "Please give binary image for page '${slot.name}'.",
-                    ZeToastEvent.Duration.LONG
-                )
-            )
+            showSnackBar("Please give binary image for page '${slot.name}'.")
         }
     }
 
@@ -149,8 +158,8 @@ class ZeBadgeViewModel @Inject constructor(
                         )
                             .random()
                             .toBitmap()
-                            .ditherFloydSteinberg()
-                    )
+                            .ditherFloydSteinberg(),
+                    ),
                 )
                 _uiState.update {
                     it.copy(slots = slotsCopy)
@@ -168,8 +177,8 @@ class ZeBadgeViewModel @Inject constructor(
                         )
                             .random()
                             .toBitmap()
-                            .ditherFloydSteinberg()
-                    )
+                            .ditherFloydSteinberg(),
+                    ),
                 )
                 _uiState.update {
                     it.copy(slots = slotsCopy)
@@ -197,30 +206,35 @@ class ZeBadgeViewModel @Inject constructor(
                 slot = slot,
                 configurations = mutableListOf(
                     ZeConfiguration.Name(
-                        "Your Name",
-                        "Your Contact",
+                        null,
+                        null,
                         imageProviderService.getInitialNameBitmap(),
                     ), // TODO: Fetch from shared
 
                     ZeConfiguration.Picture(R.drawable.soon.toBitmap()),
 
                     ZeConfiguration.Schedule(
-                        R.drawable.soon.toBitmap()
+                        R.drawable.soon.toBitmap(),
                     ), // TODO: Fetch Schedule here.
 
                     ZeConfiguration.Weather(
                         "2023-07-06",
                         "26C",
-                        R.drawable.soon.toBitmap()
+                        R.drawable.soon.toBitmap(),
                     ),
 
                     ZeConfiguration.Kodee(
                         R.drawable.kodee.toBitmap().ditherFloydSteinberg()
                     ),
                     ZeConfiguration.ImageDraw(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                        R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
                     ),
-                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg())
+                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
+                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
+                    ZeConfiguration.CustomPhrase(
+                        "Custom phrase",
+                        R.drawable.page_phrase.toBitmap().ditherFloydSteinberg()
+                    )
                 ).apply {
                     // Surprise mechanic: If token is set, show open ai item
                     if (openApiKey.isNotBlank()) {
@@ -229,11 +243,11 @@ class ZeBadgeViewModel @Inject constructor(
                             ZeConfiguration
                                 .ImageGen(
                                     prompt = "An Android developer at a conference in Berlin.",
-                                    bitmap = R.drawable.soon.toBitmap()
-                                )
+                                    bitmap = R.drawable.soon.toBitmap(),
+                                ),
                         )
                     }
-                }
+                },
             )
             _uiState.update {
                 it.copy(currentTemplateChooser = newCurrentTemplateChooser)
@@ -361,7 +375,7 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
-    private fun initialConfiguration(slot: ZeSlot): ZeConfiguration {
+    private suspend fun initialConfiguration(slot: ZeSlot): ZeConfiguration {
         if (preferencesService.isSlotConfigured(slot)) {
             val configuration = preferencesService.getSlotConfiguration(slot)
             if (configuration != null) {
@@ -371,8 +385,8 @@ class ZeBadgeViewModel @Inject constructor(
 
         return when (slot) {
             is ZeSlot.Name -> ZeConfiguration.Name(
-                "Your Name",
-                "Your Contact",
+                null,
+                null,
                 imageProviderService.getInitialNameBitmap()
             )
 
@@ -383,25 +397,26 @@ class ZeBadgeViewModel @Inject constructor(
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
                 "Your title",
                 "",
-                R.drawable.qrpage_preview.toBitmap()
+                "",
+                R.drawable.qrpage_preview.toBitmap(),
             )
 
             ZeSlot.Weather -> ZeConfiguration.Weather(
                 "2023-07-06",
                 "22C",
-                R.drawable.soon.toBitmap()
+                R.drawable.soon.toBitmap(),
             )
 
             is ZeSlot.Quote -> ZeConfiguration.Quote(
                 "Test",
                 "Author",
-                R.drawable.page_quote_sample.toBitmap()
+                R.drawable.page_quote_sample.toBitmap(),
             )
 
             ZeSlot.BarCode -> ZeConfiguration.BarCode(
                 "Your title for barcode",
                 "",
-                R.drawable.soon.toBitmap()
+                R.drawable.soon.toBitmap(),
             )
         }
     }
@@ -431,12 +446,33 @@ class ZeBadgeViewModel @Inject constructor(
     private fun ZeSlot.save() {
         val slots = _uiState.value.slots
         val config = slots[this]!!
-        preferencesService.saveSlotConfiguration(this, config)
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesService.saveSlotConfiguration(this@save, config)
+        }
     }
 
     fun copyInfoToClipboard() {
         clipboardService.copyToClipboard(_uiState.value.message)
-        _toastEvent.tryEmit(ZeToastEvent("Copied", ZeToastEvent.Duration.LONG))
+        showSnackBar("Copied")
+    }
+
+    /**
+     * Loads data from Datastore
+     */
+    fun loadData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            slots.value = mapOf(
+                ZeSlot.Name to initialConfiguration(ZeSlot.Name),
+                ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
+                ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
+                ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
+                ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
+                ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
+                ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
+                ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
+                ZeSlot.Quote to initialConfiguration(ZeSlot.Quote),
+            )
+        }
     }
 
     val lines: StateFlow<List<String>> = contributorsService.contributors()

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
@@ -54,7 +56,8 @@ fun BinaryImageEditor(
         Image(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(unbounded = true)
+                .wrapContentHeight(unbounded = false)
+                .height(PAGE_HEIGHT.dp)
                 .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
             painter = BitmapPainter(
                 image = bitmap.asImageBitmap(),
