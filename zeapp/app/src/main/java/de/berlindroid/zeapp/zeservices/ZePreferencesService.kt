@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp.zeservices
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.Preferences
@@ -15,6 +14,7 @@ import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zebits.toBitmap
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeSlot
+import timber.log.Timber
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -164,7 +164,7 @@ class ZePreferencesService @Inject constructor(
                 )
 
                 else -> {
-                    Log.e(
+                Timber.e(
                         "Slot from Prefs",
                         "Cannot find $type slot in preferences.",
                     )

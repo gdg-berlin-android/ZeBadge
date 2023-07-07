@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
@@ -19,6 +18,7 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.zeui.zepages.BarCodePage
 import de.berlindroid.zeapp.zeui.zepages.QRCodePage
+import timber.log.Timber
 import java.nio.IntBuffer
 import kotlin.experimental.and
 import kotlin.experimental.or
@@ -403,7 +403,7 @@ fun Bitmap.isBinary(): Boolean {
             val x = index % width
             val y = index / height
 
-            Log.d("Binary Editor", "Pixel nr $index at $x, $y is not binary!")
+            Timber.d("Binary Editor", "Pixel nr $index at $x, $y is not binary!")
         }
 
         allBinaryPixel = allBinaryPixel && binary

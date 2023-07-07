@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
@@ -30,6 +29,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -117,7 +119,7 @@ class ZeBadgeViewModel @Inject constructor(
         val slots = _uiState.value.slots
 
         val configuration = slots.getOrElse(slot) {
-            Log.e("VM", "Slot $slot is not one of our slots.")
+            Timber.e("VM", "Slot $slot is not one of our slots.")
             null
         } ?: return
 
@@ -237,7 +239,7 @@ class ZeBadgeViewModel @Inject constructor(
 
                 else -> {
                     newCurrentSlotEditor = null
-                    Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+                    Timber.d("Customize Page", "Cannot configure slot '${slot.name}'.")
                 }
             }
             newCurrentSlotEditor?.let { currentSlotEditor ->
@@ -315,7 +317,7 @@ class ZeBadgeViewModel @Inject constructor(
     fun slotToBitmap(slot: ZeSlot = _uiState.value.currentSimulatorSlot): Bitmap {
         val slots = _uiState.value.slots
         return slots[slot]?.bitmap ?: R.drawable.error.toBitmap().also {
-            Log.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
+            Timber.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
         }
     }
 
@@ -365,7 +367,7 @@ class ZeBadgeViewModel @Inject constructor(
             )
 
             ZeSlot.Weather -> ZeConfiguration.Weather(
-                "2023-07-06",
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
                 "22C",
                 R.drawable.soon.toBitmap(),
             )
