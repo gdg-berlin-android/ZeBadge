@@ -29,6 +29,8 @@ android {
             useSupportLibrary = true
         }
 
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "mr", "tr", "uk", "ur", "lt", "nl", "sq"))
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

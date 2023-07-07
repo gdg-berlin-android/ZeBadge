@@ -105,7 +105,7 @@ fun NameEditorDialog(
                         }
                     },
                     supportingText = {
-                        Text(text = "${name?.length}/${MaxCharacters * 2}")
+                        Text(text = "${name?.length ?: 0}/${MaxCharacters * 2}")
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = name?.isEmpty() ?: true) {
@@ -128,7 +128,7 @@ fun NameEditorDialog(
                         }
                     },
                     supportingText = {
-                        Text(text = "${contact?.length}/$MaxCharacters")
+                        Text(text = "${contact?.length ?: 0}/$MaxCharacters")
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = contact?.isEmpty() ?: true) {
@@ -147,9 +147,7 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
         Icon(
             Icons.Rounded.Clear,
             contentDescription = stringResource(R.string.clear),
-            modifier = modifier.clickable {
-                onClick()
-            },
+            modifier = modifier.clickable(onClick = onClick),
         )
     }
 }
