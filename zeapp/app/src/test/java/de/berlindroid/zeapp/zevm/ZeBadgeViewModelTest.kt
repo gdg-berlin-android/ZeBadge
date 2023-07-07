@@ -42,7 +42,7 @@ class ZeBadgeViewModelTest {
         every { clipboardService.copyToClipboard("") } returns Unit
         val zeBadgeViewModel = provideViewModel()
 
-        //When
+        // When
         zeBadgeViewModel.copyInfoToClipboard()
 
         // Then
@@ -55,7 +55,7 @@ class ZeBadgeViewModelTest {
         preferencesService = zePreferencesService,
         clipboardService = clipboardService,
         getTemplateConfigurations = templateConfigurations,
-        contributorsService = contributorsService
+        contributorsService = contributorsService,
     )
 
     @After
