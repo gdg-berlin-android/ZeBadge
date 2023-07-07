@@ -13,7 +13,7 @@ defaults:
 
 jobs:
   build-debug:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: self-hosted
     steps:
       - name: "Checkout Repo"
         uses: actions/checkout@v3
