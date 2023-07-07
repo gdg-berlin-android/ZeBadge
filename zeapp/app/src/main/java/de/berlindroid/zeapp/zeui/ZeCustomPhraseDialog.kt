@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -50,7 +51,7 @@ fun CustomPhraseEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.CustomPhrase(randomPhrase, image))
                     } else {
-                        snackbarMessage("Binary image needed. Press one of the buttons below the image.")
+                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {
@@ -59,10 +60,10 @@ fun CustomPhraseEditorDialog(
         },
         dismissButton = {
             Button(onClick = dismissed) {
-                Text(text = "Cancel")
+                Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(text = "Add your phrase here") },
+        title = { Text(text = stringResource(R.string.add_your_phrase_here)) },
         properties = DialogProperties(),
         text = {
             Column {
@@ -75,7 +76,7 @@ fun CustomPhraseEditorDialog(
                 modifier = Modifier.fillMaxWidth(),
                 value = randomPhrase,
                 maxLines = 1,
-                label = { Text(text = "Random Phrase") },
+                label = { Text(text = stringResource(R.string.random_phrase)) },
                 onValueChange = { newValue ->
                     if (newValue.length <= MaxCharacters * 2) {
                         randomPhrase = newValue

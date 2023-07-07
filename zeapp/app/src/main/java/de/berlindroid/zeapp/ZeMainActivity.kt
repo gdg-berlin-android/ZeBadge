@@ -2,7 +2,7 @@ package de.berlindroid.zeapp
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -41,8 +41,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -73,6 +73,9 @@ import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.io.File
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -318,7 +321,7 @@ private fun ZePages(
         val slots = uiState.slots
 
         if (editor != null) {
-            SelectedEditor(editor!!, vm)
+            SelectedEditor(editor, vm)
         }
 
         if (templateChooser != null) {
@@ -354,7 +357,7 @@ private fun ZePages(
                     }
 
                     PagePreview(
-                        modifier = Modifier.alpha(alpha = alpha),
+                        modifier = Modifier.graphicsLayer { this.alpha = alpha },
                         name = slot::class.simpleName ?: "WTF",
                         bitmap = vm.slotToBitmap(slot),
                         customizeThisPage = if (slot.isSponsor) {
@@ -438,7 +441,7 @@ private fun SelectedEditor(
             ZeSlot.BarCode,
         )
     ) {
-        Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
+        Timber.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
             is ZeConfiguration.Name -> NameEditorDialog(
