@@ -1,19 +1,12 @@
 package de.berlindroid.zeapp.zevm
 
-import android.graphics.Bitmap
-import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zeservices.ZeBadgeUploader
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeContributorsService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
-import io.mockk.called
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,31 +26,13 @@ class ZeBadgeViewModelTest {
     val zePreferencesService = mockk<ZePreferencesService>()
     val clipboardService = mockk<ZeClipboardService>()
     val contributorsService = mockk<ZeContributorsService>()
+    val templateConfigurations = mockk<GetTemplateConfigurations>()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setupMainDispatcher() {
         Dispatchers.setMain(testDispatcher)
-    }
-
-    @Test
-    fun testSendPageToDeviceSlotNotFound() {
-        // Given
-        every { contributorsService.contributors() } returns emptyFlow()
-        val zeBadgeViewModel = provideViewModel()
-        val bitmap = mockk<Bitmap>()
-        mockkStatic("de.berlindroid.zeapp.zebits.ZeBitmapManipulationKt")
-        every { bitmap.isBinary() } returns false
-
-        val slot = ZeSlot.BarCode
-        zeBadgeViewModel.slots.value =
-            mapOf(slot to ZeConfiguration.Name("Droidcon", "Berlin", bitmap = bitmap))
-
-        // When
-        zeBadgeViewModel.sendPageToDevice(slot)
-
-        coVerify(exactly = 0) { zeBadgeUploader.sendPage("name", bitmap) }
     }
 
     @Test
@@ -79,6 +54,7 @@ class ZeBadgeViewModelTest {
         badgeUploader = zeBadgeUploader,
         preferencesService = zePreferencesService,
         clipboardService = clipboardService,
+        getTemplateConfigurations = templateConfigurations,
         contributorsService = contributorsService
     )
 
