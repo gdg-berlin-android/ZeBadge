@@ -53,6 +53,7 @@ fun NameEditorDialog(
 
     var name by remember { mutableStateOf(config.name) }
     var contact by remember { mutableStateOf(config.contact) }
+    val original by remember { mutableStateOf(config.bitmap) }
     var image by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
@@ -90,7 +91,7 @@ fun NameEditorDialog(
         text = {
             Column {
                 BinaryImageEditor(
-                    bitmap = image,
+                    original = original,
                     bitmapUpdated = { image = it },
                 )
 

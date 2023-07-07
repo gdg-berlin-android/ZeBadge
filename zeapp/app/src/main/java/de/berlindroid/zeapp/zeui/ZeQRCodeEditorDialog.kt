@@ -55,6 +55,7 @@ fun QRCodeEditorDialog(
     var title by remember { mutableStateOf(config.title) }
     var text by remember { mutableStateOf(config.text) }
     var url by remember { mutableStateOf(config.url) }
+    val original by remember { mutableStateOf(config.bitmap) }
     var image by remember { mutableStateOf(config.bitmap) }
     var isVcard by remember { mutableStateOf(config.isVcard) }
     var phone by remember { mutableStateOf(config.phone) }
@@ -114,7 +115,7 @@ fun QRCodeEditorDialog(
             LazyColumn {
                 item {
                     BinaryImageEditor(
-                        bitmap = image,
+                        original = original,
                         bitmapUpdated = { image = it },
                     )
                 }

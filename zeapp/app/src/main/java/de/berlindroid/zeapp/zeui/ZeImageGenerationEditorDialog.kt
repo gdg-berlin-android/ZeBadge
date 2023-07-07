@@ -66,7 +66,7 @@ fun ImageGenerationEditorDialog(
 
     var progress by remember { mutableStateOf<Float?>(null) }
     var prompt by remember { mutableStateOf(initialPrompt) }
-    var bitmap by remember {
+    val original by remember {
         mutableStateOf(
             BitmapFactory.decodeResource(
                 context.resources,
@@ -74,6 +74,7 @@ fun ImageGenerationEditorDialog(
             ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT),
         )
     }
+    var bitmap by remember { mutableStateOf(original) }
 
     var lastLoadedBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -99,7 +100,7 @@ fun ImageGenerationEditorDialog(
         text = {
             Column {
                 BinaryImageEditor(
-                    bitmap = bitmap,
+                    original = original,
                 ) {
                     bitmap = it
                 }

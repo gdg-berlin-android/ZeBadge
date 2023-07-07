@@ -44,7 +44,7 @@ fun PictureEditorDialog(
 ) {
     val context = LocalContext.current
 
-    var bitmap by remember {
+    var original by remember {
         mutableStateOf(
             BitmapFactory.decodeResource(
                 context.resources,
@@ -53,11 +53,13 @@ fun PictureEditorDialog(
         )
     }
 
+    var bitmap by remember { mutableStateOf(original) }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
         // success?
-        bitmap = if (uri == null) {
+        original = if (uri == null) {
             // nope, so show error bitmap
             Timber.d("Picture", "Not found")
             BitmapFactory.decodeResource(
@@ -90,7 +92,7 @@ fun PictureEditorDialog(
         },
         text = {
             Column {
-                BinaryImageEditor(bitmap = bitmap) {
+                BinaryImageEditor(original = original) {
                     bitmap = it
                 }
 
@@ -110,7 +112,7 @@ fun PictureEditorDialog(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        bitmap = rotateBitmap(bitmap)
+                        original = rotateBitmap(original)
                     },
                 ) {
                     Text(text = stringResource(id = R.string.rotate))

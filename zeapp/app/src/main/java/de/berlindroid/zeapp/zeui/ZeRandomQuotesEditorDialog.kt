@@ -42,6 +42,7 @@ fun RandomQuotesEditorDialog(
     var message by remember { mutableStateOf(config.message) }
     var author by remember { mutableStateOf(config.author) }
     var image by remember { mutableStateOf(config.bitmap) }
+    val original by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
         composableToBitmap(
@@ -80,7 +81,7 @@ fun RandomQuotesEditorDialog(
             LazyColumn {
                 item {
                     BinaryImageEditor(
-                        bitmap = image,
+                        original = original,
                         bitmapUpdated = { image = it },
                     )
                 }
