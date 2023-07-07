@@ -2,11 +2,11 @@
 
 package de.berlindroid.zeapp.zeui
 
-import android.R
-import android.widget.Toast
+import android.app.Activity
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.AlertDialog
@@ -21,14 +21,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
-import de.berlindroid.zeapp.LocalZeActivity
+import de.berlindroid.zeapp.R
+import com.ban.autosizetextfield.AutoSizeTextField
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zepages.NamePage
 
+const val MaxCharacters: Int = 20
+private const val Empty = ""
 
 /**
  * Editor dialog for changing the name of the participant badge.
@@ -36,32 +40,32 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
+ * @param snackbarMessage callback to display a snackbar message
  */
-
-const val MaxCharacters: Int = 20
-private const val Empty = ""
-
 @Composable
 fun NameEditorDialog(
     config: ZeConfiguration.Name,
     dismissed: () -> Unit = {},
-    accepted: (config: ZeConfiguration.Name) -> Unit
+    accepted: (config: ZeConfiguration.Name) -> Unit,
+    snackbarMessage: (String) -> Unit,
 ) {
+    val activity = LocalContext.current as Activity
+
     var name by remember { mutableStateOf(config.name) }
     var contact by remember { mutableStateOf(config.contact) }
     var image by remember { mutableStateOf(config.bitmap) }
-    val activity = LocalZeActivity.current
 
     fun redrawComposableImage() {
         composableToBitmap(
             activity = activity,
-            content = { NamePage(name, contact) },
+            content = { NamePage(name ?: "", contact ?: "") },
         ) {
             image = it
         }
     }
 
     AlertDialog(
+        modifier = Modifier.imePadding(),
         onDismissRequest = dismissed,
         confirmButton = {
             Button(
@@ -69,80 +73,71 @@ fun NameEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Name(name, contact, image))
                     } else {
-                        Toast.makeText(
-                            activity,
-                            "Binary image needed. Press one of the buttons below the image.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
-                }) {
-                Text(text = stringResource(id = R.string.ok))
+                },
+            ) {
+                Text(text = stringResource(id = android.R.string.ok))
             }
         },
         dismissButton = {
             Button(onClick = dismissed) {
-                Text(text = "Cancel")
+                Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(text = "Add your contact details") },
-        properties = DialogProperties(),
+        title = { Text(text = stringResource(R.string.add_your_contact_details)) },
+        properties = DialogProperties(decorFitsSystemWindows = false),
         text = {
-            LazyColumn {
-                item {
-                    BinaryImageEditor(
-                        bitmap = image,
-                        bitmapUpdated = { image = it }
-                    )
-                }
+            Column {
+                BinaryImageEditor(
+                    bitmap = image,
+                    bitmapUpdated = { image = it },
+                )
 
-                item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = name,
-                        maxLines = 1,
-                        label = { Text(text = "Name") },
-                        onValueChange = { newValue ->
-                            if (newValue.length <= MaxCharacters * 2) {
-                                name = newValue
-                                redrawComposableImage()
-                            }
-                        },
-                        supportingText = {
-                            Text(text = "${name.length}/${MaxCharacters * 2}")
-                        },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = name.isEmpty()) {
-                                name = Empty
-                            }
+                AutoSizeTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = name ?: "",
+                    placeholder = { Text(text = stringResource(R.string.name)) },
+                    onValueChange = { newValue ->
+                        if (newValue.length <= MaxCharacters * 2) {
+                            name = newValue
+                            redrawComposableImage()
                         }
-                    )
-                }
+                    },
+                    supportingText = {
+                        Text(text = "${name?.length ?: 0}/${MaxCharacters * 2}")
+                    },
+                    trailingIcon = {
+                        ClearIcon(isEmpty = name?.isEmpty() ?: true) {
+                            name = Empty
+                        }
+                    },
+                )
 
-                item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = contact,
-                        maxLines = 1,
-                        label = { Text(text = "Contact") },
-                        onValueChange = { newValue ->
-                            // Limit Characters so they're displayed correctly in the screen
-                            if (newValue.length <= MaxCharacters) {
-                                contact = newValue
-                                redrawComposableImage()
-                            }
-                        },
-                        supportingText = {
-                            Text(text = "${contact.length}/$MaxCharacters")
-                        },
-                        trailingIcon = {
-                            ClearIcon(isEmpty = contact.isEmpty()) {
-                                contact = Empty
-                            }
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = contact ?: "",
+                    maxLines = 1,
+                    singleLine = true,
+                    placeholder = { Text(text = stringResource(R.string.contact)) },
+                    onValueChange = { newValue ->
+                        // Limit Characters so they're displayed correctly in the screen
+                        if (newValue.length <= MaxCharacters) {
+                            contact = newValue
+                            redrawComposableImage()
                         }
-                    )
-                }
+                    },
+                    supportingText = {
+                        Text(text = "${contact?.length ?: 0}/$MaxCharacters")
+                    },
+                    trailingIcon = {
+                        ClearIcon(isEmpty = contact?.isEmpty() ?: true) {
+                            contact = Empty
+                        }
+                    },
+                )
             }
-        }
+        },
     )
 }
 
@@ -151,10 +146,8 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
     if (!isEmpty) {
         Icon(
             Icons.Rounded.Clear,
-            contentDescription = "Clear",
-            modifier = modifier.clickable {
-                onClick()
-            }
+            contentDescription = stringResource(R.string.clear),
+            modifier = modifier.clickable(onClick = onClick),
         )
     }
 }

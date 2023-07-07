@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,10 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import de.berlindroid.zeapp.ZeDimen
+import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.zebits.copy
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
 import de.berlindroid.zeapp.zebits.ditherPositional
@@ -46,7 +48,7 @@ import de.berlindroid.zeapp.zebits.threshold
 fun BinaryImageEditor(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
     bitmap: Bitmap,
-    bitmapUpdated: (Bitmap) -> Unit = {}
+    bitmapUpdated: (Bitmap) -> Unit = {},
 ) {
     var last by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -54,7 +56,8 @@ fun BinaryImageEditor(
         Image(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(unbounded = true)
+                .wrapContentHeight(unbounded = false)
+                .height(PAGE_HEIGHT.dp)
                 .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
             painter = BitmapPainter(
                 image = bitmap.asImageBitmap(),
@@ -67,7 +70,7 @@ fun BinaryImageEditor(
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = ZeDimen.Quarter),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             if (last != null) {
                 item {
@@ -77,14 +80,14 @@ fun BinaryImageEditor(
                         onClick = {
                             bitmapUpdated(last!!)
                             last = null
-                        }
+                        },
                     )
                 }
             }
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_threshold),
-                    text = stringResource(id = R.string.black_and_white)
+                    text = stringResource(id = R.string.black_and_white),
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -95,7 +98,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_floyd_steinberg),
-                    text = stringResource(id = R.string.floyd_steninberg_initials)
+                    text = stringResource(id = R.string.floyd_steninberg_initials),
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -107,7 +110,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_static),
-                    text = "Static"
+                    text = "Static",
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -119,7 +122,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_positional),
-                    text = stringResource(id = R.string.positional)
+                    text = stringResource(id = R.string.positional),
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -130,7 +133,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_invert),
-                    text = stringResource(id = R.string.invert)
+                    text = stringResource(id = R.string.invert),
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
@@ -148,8 +151,7 @@ class BinaryBitmapPageProvider : PreviewParameterProvider<Bitmap> {
             return sequenceOf(
                 with(Bitmap.createBitmap(PAGE_WIDTH, PAGE_HEIGHT, Bitmap.Config.ARGB_8888)) {
                     this
-                }
+                },
             )
         }
 }
-

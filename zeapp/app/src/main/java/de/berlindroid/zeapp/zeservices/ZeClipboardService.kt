@@ -7,7 +7,7 @@ import de.berlindroid.zeapp.R
 import javax.inject.Inject
 
 class ZeClipboardService @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
 
     fun copyToClipboard(text: String) {
