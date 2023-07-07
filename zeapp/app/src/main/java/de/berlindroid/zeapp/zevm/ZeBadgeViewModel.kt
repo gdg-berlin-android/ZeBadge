@@ -116,7 +116,7 @@ class ZeBadgeViewModel @Inject constructor(
         }
         val slots = _uiState.value.slots
 
-        val configuration = slots.value.getOrElse(slot) {
+        val configuration = slots.getOrElse(slot) {
             Log.e("VM", "Slot $slot is not one of our slots.")
             null
         } ?: return
