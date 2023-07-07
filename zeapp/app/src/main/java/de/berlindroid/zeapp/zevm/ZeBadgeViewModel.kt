@@ -24,7 +24,6 @@ import de.berlindroid.zeapp.zeservices.ZePreferencesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -82,7 +81,7 @@ class ZeBadgeViewModel @Inject constructor(
 
         messageProgressJob?.cancel()
         messageProgressJob = viewModelScope.launch {
-            (0 until 10).forEach { progress ->
+            for (progress in 0 until 10) {
                 messageProgress.value = 1.0f - progress / MESSAGE_DISPLAY_UPDATES.toFloat()
                 delay(MESSAGE_DISPLAY_DURATION / MESSAGE_DISPLAY_UPDATES)
             }
@@ -234,33 +233,45 @@ class ZeBadgeViewModel @Inject constructor(
             )
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
-            if (slot is ZeSlot.Name) {
-                currentSlotEditor.value = ZeEditor(
-                    slot,
-                    slots.value[ZeSlot.Name]!!
-                )
-            } else if (slot is ZeSlot.QRCode) {
-                currentSlotEditor.value = ZeEditor(
-                    slot,
-                    slots.value[ZeSlot.QRCode]!!
-                )
-            } else if (slot is ZeSlot.Weather) {
-                currentSlotEditor.value = ZeEditor(
-                    slot,
-                    slots.value[ZeSlot.Weather]!!
-                )
-            } else if (slot is ZeSlot.BarCode) {
-                currentSlotEditor.value = ZeEditor(
-                    slot,
-                    slots.value[ZeSlot.BarCode]!!
-                )
-            } else if (slot is ZeSlot.Quote) {
-                currentSlotEditor.value = ZeEditor(
-                    slot,
-                    slots.value[ZeSlot.Quote]!!
-                )
-            } else {
-                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+            when (slot) {
+                is ZeSlot.Name -> {
+                    currentSlotEditor.value = ZeEditor(
+                        slot,
+                        slots.value[ZeSlot.Name]!!
+                    )
+                }
+
+                is ZeSlot.QRCode -> {
+                    currentSlotEditor.value = ZeEditor(
+                        slot,
+                        slots.value[ZeSlot.QRCode]!!
+                    )
+                }
+
+                is ZeSlot.Weather -> {
+                    currentSlotEditor.value = ZeEditor(
+                        slot,
+                        slots.value[ZeSlot.Weather]!!
+                    )
+                }
+
+                is ZeSlot.BarCode -> {
+                    currentSlotEditor.value = ZeEditor(
+                        slot,
+                        slots.value[ZeSlot.BarCode]!!
+                    )
+                }
+
+                is ZeSlot.Quote -> {
+                    currentSlotEditor.value = ZeEditor(
+                        slot,
+                        slots.value[ZeSlot.Quote]!!
+                    )
+                }
+
+                else -> {
+                    Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+                }
             }
         }
     }
