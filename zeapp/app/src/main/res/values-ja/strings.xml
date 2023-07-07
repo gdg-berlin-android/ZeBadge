@@ -22,8 +22,8 @@
     <string name="url">URL</string>
     <string name="add_barcode_url">バーコードのURLを追加</string>
     <string name="bar_code_title">バーコードのタイトル</string>
-    <string name="qr_vcard">vCard</string>
-    <string name="qr_code_email">Eメール</string>
+    <string name="qr_vcard">vカード</string>
+    <string name="qr_code_email">メール</string>
     <string name="qr_code_phone">電話</string>
 
     <string name="your_name_here">ここに名前を入力</string>
@@ -31,7 +31,7 @@
     <string name="binary_image_needed">バイナリ画像が必要です。画像の下にあるボタンを押してください。</string>
     <string name="add_your_phrase_here">ここにフレーズを追加</string>
     <string name="random_phrase">ランダムなフレーズ</string>
-    <string name="unicorn_at_an_android_conference_in_isometric_view">アイソメトリックビューでのAndroidカンファレンスにいるユニコーン。</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view">アイソメトリックビューでのアンドロイドカンファレンスにいるユニコーン。</string>
     <string name="name">名前</string>
     <string name="contact">連絡先</string>
     <string name="clear">クリア</string>
