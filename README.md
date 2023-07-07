@@ -1,6 +1,11 @@
 # ZeBadge
 Droidcon 2023: The time a new badge saw the light of the day, full with delight and android programming capabilities.
 
+# Install
+
+1. (Coming soon, see [#58](https://github.com/gdg-berlin-android/ZeBadge/issues/58)) [Firebase App Distribution](https://appdistribution.firebase.dev/i/6373ffacb6e72c23)
+2. [GitHub Release Page](https://github.com/gdg-berlin-android/ZeBadge/releases)
+
 This is the badge: 
 ![badgerrpi2040](https://user-images.githubusercontent.com/1162562/236334466-1ccfff65-6744-4304-b4d3-1d200b16ffe8.png)
 

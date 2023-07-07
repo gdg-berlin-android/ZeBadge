@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class ZeContributorsService @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
     fun contributors(): Flow<List<String>> = flow {
         emit(
             context.assets.open("test.txt")
                 .bufferedReader()
-                .readLines()
+                .readLines(),
         )
     }.flowOn(Dispatchers.IO)
 }

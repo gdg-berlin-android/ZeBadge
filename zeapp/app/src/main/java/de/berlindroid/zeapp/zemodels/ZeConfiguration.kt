@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp.zemodels
 
 import android.graphics.Bitmap
-import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 
 /**
  * The configuration of a slot
@@ -28,8 +27,8 @@ sealed class ZeConfiguration(
      * @param bitmap (overriden) final page
      */
     data class Name(
-        val name: String,
-        val contact: String,
+        val name: String?,
+        val contact: String?,
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "Name Tag", bitmap) {
         companion object {
@@ -45,7 +44,11 @@ sealed class ZeConfiguration(
      */
     data class QRCode(
         val title: String,
+        val text: String,
         val url: String,
+        val isVcard: Boolean,
+        val phone: String,
+        val email: String,
         override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "QRCode Tag", bitmap) {
         companion object {
@@ -168,6 +171,16 @@ sealed class ZeConfiguration(
     ) : ZeConfiguration(TYPE, humanTitle = "BarCode Tag", bitmap) {
         companion object {
             const val TYPE: String = "BarCode Tag"
+        }
+    }
+
+    data class CustomPhrase(
+        val phrase: String,
+        override val bitmap: Bitmap,
+    ) : ZeConfiguration(TYPE, humanTitle = "Custom Phrase", bitmap) {
+
+        companion object {
+            const val TYPE: String = "Custom phrase everyone sees!"
         }
     }
 

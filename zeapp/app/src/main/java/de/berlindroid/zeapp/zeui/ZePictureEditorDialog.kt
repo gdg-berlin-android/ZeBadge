@@ -1,8 +1,8 @@
 package de.berlindroid.zeapp.zeui
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,6 +27,8 @@ import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 
+private const val ROTATE_CLOCKWISE = 90f
+
 /**
  * Editor Dialog for adding an image as a badge page.
  *
@@ -36,16 +38,17 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 @Composable
 fun PictureEditorDialog(
     dismissed: () -> Unit = {},
-    accepted: (config: ZeConfiguration.Picture) -> Unit
+    accepted: (config: ZeConfiguration.Picture) -> Unit,
+    snackbarMessage: (String) -> Unit,
 ) {
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     var bitmap by remember {
         mutableStateOf(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT),
         )
     }
 
@@ -63,7 +66,7 @@ fun PictureEditorDialog(
         } else {
             // yes, so read image
             BitmapFactory.decodeStream(
-                context.contentResolver.openInputStream(uri)
+                context.contentResolver.openInputStream(uri),
             )
         }.cropPageFromCenter()
     }
@@ -75,9 +78,9 @@ fun PictureEditorDialog(
                 if (bitmap.isBinary()) {
                     accepted(ZeConfiguration.Picture(bitmap))
                 } else {
-                    Toast.makeText(context, R.string.not_binary_image, Toast.LENGTH_LONG).show()
+                    snackbarMessage(context.getString(R.string.not_binary_image))
                 }
-            }) {
+            },) {
                 Text(stringResource(id = android.R.string.ok))
             }
         },
@@ -95,14 +98,29 @@ fun PictureEditorDialog(
                     onClick = {
                         launcher.launch(
                             PickVisualMediaRequest(
-                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                            )
+                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly,
+                            ),
                         )
-                    }
+                    },
                 ) {
                     Text(text = stringResource(id = android.R.string.search_go))
                 }
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        bitmap = rotateBitmap(bitmap)
+                    },
+                ) {
+                    Text(text = stringResource(id = R.string.rotate))
+                }
             }
-        }
+        },
     )
+}
+
+private fun rotateBitmap(bitmap: Bitmap): Bitmap {
+    val matrix = android.graphics.Matrix()
+    matrix.postRotate(ROTATE_CLOCKWISE)
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
