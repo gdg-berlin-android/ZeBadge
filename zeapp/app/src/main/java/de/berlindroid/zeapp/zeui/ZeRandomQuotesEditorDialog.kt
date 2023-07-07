@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -61,7 +62,7 @@ fun RandomQuotesEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Quote(message, author, image))
                     } else {
-                        snackbarMessage("Binary image needed. Press one of the buttons below the image.")
+                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {
@@ -70,10 +71,10 @@ fun RandomQuotesEditorDialog(
         },
         dismissButton = {
             Button(onClick = dismissed) {
-                Text(text = "Cancel")
+                Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(text = "Click Get to show quote of the day") },
+        title = { Text(text = stringResource(R.string.click_get_to_show_quote_of_the_day)) },
         properties = DialogProperties(),
         text = {
             LazyColumn {
@@ -90,8 +91,8 @@ fun RandomQuotesEditorDialog(
                         message = quoteList[index].q
                         author = quoteList[index].a
                         redrawComposableImage()
-                    },) {
-                        Text(text = "Get")
+                    }) {
+                        Text(text = stringResource(R.string.get))
                     }
                 }
             }

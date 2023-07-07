@@ -15,12 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zeapp.R
 
 /**
  * A composable that represents a badge, to be renderd as a bitmap.
@@ -28,8 +30,8 @@ import de.berlindroid.zeapp.PAGE_WIDTH
 @Composable
 @Preview
 fun NamePage(
-    name: String = "Your Name Here",
-    contact: String = "Contact Me Here",
+    name: String = stringResource(id = R.string.your_name_here),
+    contact: String = stringResource(id = R.string.contact_me_here),
 ) {
     var size by remember { mutableStateOf(10.sp) }
 
@@ -53,7 +55,7 @@ fun NamePage(
             textAlign = TextAlign.Center,
             color = Color.White,
             maxLines = 1,
-            text = "Hello, my name is",
+            text = stringResource(R.string.hello_my_name_is),
         )
         Text(
             modifier = Modifier
