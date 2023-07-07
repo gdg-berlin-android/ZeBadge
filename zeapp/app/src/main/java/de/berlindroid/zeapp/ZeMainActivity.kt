@@ -346,8 +346,7 @@ private fun ZePages(
     ZeSurface(
         modifier = ZeModifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .padding(ZeDimen.Half),
+            .padding(paddingValues),
     ) {
         val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
 
@@ -606,14 +605,13 @@ private fun PagePreview(
 ) {
     ZeCard(
         modifier = modifier
-            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One))
             .padding(ZeDimen.Quarter),
     ) {
         ZeImage(
             modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
+                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One),
             painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = ZeFilterQuality.None,
@@ -628,7 +626,7 @@ private fun PagePreview(
                 modifier = Modifier
                     .align(ZeAlignment.CenterVertically)
                     .padding(start = ZeDimen.One),
-                color = ZeColor.Black,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
                 ZeLazyRow(
