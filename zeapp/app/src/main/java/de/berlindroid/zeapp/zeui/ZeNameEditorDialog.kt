@@ -97,7 +97,6 @@ fun NameEditorDialog(
                 AutoSizeTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = name ?: "",
-                    maxLines = 2,
                     placeholder = { Text(text = stringResource(R.string.name)) },
                     onValueChange = { newValue ->
                         if (newValue.length <= MaxCharacters * 2) {
