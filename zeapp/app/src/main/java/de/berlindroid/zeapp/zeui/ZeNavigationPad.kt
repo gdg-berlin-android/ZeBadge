@@ -36,11 +36,11 @@ fun ZeNavigationPad(
         horizontalAlignment = Alignment.End,
     ) {
         if (!topReached) {
-            ZeVloatingScroller(coroutineScope, lazyListState, -scrollLength, "↑")
+            ZeFloatingScroller(coroutineScope, lazyListState, -scrollLength, "↑")
         }
         Spacer(modifier = Modifier.size(10.dp))
         if (!bottomReached) {
-            ZeVloatingScroller(coroutineScope, lazyListState, scrollLength, "↓")
+            ZeFloatingScroller(coroutineScope, lazyListState, scrollLength, "↓")
         }
     }
 }

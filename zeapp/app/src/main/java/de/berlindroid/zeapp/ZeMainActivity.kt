@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -80,9 +79,7 @@ import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -332,8 +329,7 @@ private fun ZePages(
     ZeSurface(
         modifier = ZeModifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .padding(ZeDimen.Half),
+            .padding(paddingValues),
     ) {
         val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
 
@@ -592,14 +588,13 @@ private fun PagePreview(
 ) {
     ZeCard(
         modifier = modifier
-            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One))
             .padding(ZeDimen.Quarter),
     ) {
         ZeImage(
             modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
+                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One),
             painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = ZeFilterQuality.None,
@@ -614,7 +609,7 @@ private fun PagePreview(
                 modifier = Modifier
                     .align(ZeAlignment.CenterVertically)
                     .padding(start = ZeDimen.One),
-                color = ZeColor.Black,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
                 ZeLazyRow(
