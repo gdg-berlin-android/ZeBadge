@@ -20,4 +20,7 @@
     <string name="url">URL</string>
     <string name="add_barcode_url">Shto linkun per Bar code</string>
     <string name="bar_code_title">Titulli i Bar code</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Tel.</string>
 </resources>
