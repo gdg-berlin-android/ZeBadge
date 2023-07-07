@@ -314,7 +314,7 @@ private fun ZeTopBar(
             ZeIconButton(onClick = onGotoReleaseClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_update),
-                    contentDescription = "Send random page to badge",
+                    contentDescription = "Open the release page in the browser",
                 )
             }
             ZeIconButton(onClick = onSaveAllClick) {
