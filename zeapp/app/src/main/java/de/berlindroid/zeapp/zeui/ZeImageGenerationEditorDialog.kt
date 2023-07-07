@@ -56,7 +56,7 @@ import timber.log.Timber
 @Preview
 @Composable
 fun ImageGenerationEditorDialog(
-    initialPrompt: String = "Unicorn at an android conference in isometric view.",
+    initialPrompt: String = stringResource(id = R.string.unicorn_at_an_android_conference_in_isometric_view),
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.ImageGen) -> Unit = {},
     snackbarMessage: (String) -> Unit = {},
