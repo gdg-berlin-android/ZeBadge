@@ -133,6 +133,8 @@ dependencies {
 
     testImplementation(libs.test.assertk)
     testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
 
     androidTestImplementation(libs.test.compose.junit)
     debugImplementation(libs.test.compose.manifest)
