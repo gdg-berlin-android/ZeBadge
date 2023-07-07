@@ -54,7 +54,7 @@ android {
     }
 
     sourceSets.getByName("main").assets.srcDir(
-        "$projectDir/build/generated/assets",
+        "$buildDir/generated/assets",
     )
 
     compileOptions {
