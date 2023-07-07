@@ -170,36 +170,36 @@ class ZeBadgeUploader @Inject constructor(
 
     private fun UsbManager.connectedProductNames() =
         deviceList.values.map { it.productName ?: "<none>" }
+}
 
-    /**
-     * Compress a given byte array to a smaller byte array.
-     */
-    fun ByteArray.zipit(): ByteArray {
-        val deflater = Deflater(Deflater.BEST_COMPRESSION)
-        deflater.reset()
-        deflater.setInput(this)
-        deflater.finish()
+/**
+ * Compress a given byte array to a smaller byte array.
+ */
+fun ByteArray.zipit(): ByteArray {
+    val deflater = Deflater(Deflater.BEST_COMPRESSION)
+    deflater.reset()
+    deflater.setInput(this)
+    deflater.finish()
 
-        var result = ByteArray(0)
-        val o = ByteArrayOutputStream(1)
-        try {
-            val buf = ByteArray(64)
-            var got = 0
-            while (!deflater.finished()) {
-                got = deflater.deflate(buf)
-                o.write(buf, 0, got)
-            }
-            result = o.toByteArray()
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        } finally {
-            try {
-                o.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            deflater.end()
+    var result = ByteArray(0)
+    val o = ByteArrayOutputStream(1)
+    try {
+        val buf = ByteArray(64)
+        var got = 0
+        while (!deflater.finished()) {
+            got = deflater.deflate(buf)
+            o.write(buf, 0, got)
         }
-        return result
+        result = o.toByteArray()
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    } finally {
+        try {
+            o.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        deflater.end()
     }
+    return result
 }

@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">S/B</string>
+    <string name="reset">Sıfırla</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Konumsal</string>
+    <string name="rotate">Döndür</string>
+    <string name="invert">Ters Çevir</string>
+
+    <string name="generate">Oluştur</string>
+    <string name="not_binary_image">İkili görüntü değil. Her pikselin siyah veya beyaz olduğundan emin olun.</string>
+    <string name="generate_image_page">Resim Sayfası Oluştur</string>
+    <string name="draw_image_page">Resim Sayfası Çiz</string>
+    <string name="enter_prompt">Sorunuzu buraya girin</string>
+    <string name="could_not_generate_image">Bir resim oluşturulamadı</string>
+
+    <string name="image_needed">İkili resim gerekli. Resmin altındaki düğmelerden birine basın.</string>
+    <string name="add_qr_url">\"QR URL\'sini oylayın\"</string>
+    <string name="qr_code_title">QR Kodu başlığı</string>
+    <string name="qr_code_text">Ek metin</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">\"Kod çubuğunun URL\'sini ekleyin\"</string>
+    <string name="bar_code_title">Barkod başlığı</string>
+</resources>

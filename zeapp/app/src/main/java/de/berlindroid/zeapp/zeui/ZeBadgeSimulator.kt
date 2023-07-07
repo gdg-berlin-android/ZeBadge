@@ -36,8 +36,8 @@ import de.berlindroid.zeapp.zemodels.ZeSlot
 @Preview(device = "spec:parent=pixel_3a_xl,orientation=landscape", showSystemUi = true)
 fun BadgeSimulator(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1) page: Bitmap,
+    modifier: Modifier = Modifier,
     onButtonPressed: (buttonForSlot: ZeSlot) -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier

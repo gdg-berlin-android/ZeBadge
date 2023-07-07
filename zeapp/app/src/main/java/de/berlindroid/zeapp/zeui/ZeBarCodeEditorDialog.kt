@@ -20,8 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.R
+import de.berlindroid.zeapp.zebits.barCodeComposableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
-import de.berlindroid.zeapp.zebits.qrComposableToBitmap
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 
 /**
@@ -33,28 +33,25 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
  * @param snackbarMessage callback to display a snackbar message
  */
 @Composable
-fun QRCodeEditorDialog(
-    config: ZeConfiguration.QRCode,
+fun BarCodeEditorDialog(
+    config: ZeConfiguration.BarCode,
     dismissed: () -> Unit = {},
-    accepted: (config: ZeConfiguration.QRCode) -> Unit,
-    snackbarMessage: (String) -> Unit,
+    accepted: (config: ZeConfiguration.BarCode) -> Unit,
+    snackbarMessage: (String) -> Unit = {},
 ) {
     val activity = LocalContext.current as Activity
 
     var title by remember { mutableStateOf(config.title) }
-    var text by remember { mutableStateOf(config.text) }
     var url by remember { mutableStateOf(config.url) }
     var image by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
-        qrComposableToBitmap(
+        barCodeComposableToBitmap(
             activity = activity,
             title = title,
-            text = text,
             url = url,
-        ) {
-            image = it
-        }
+            callback = { image = it },
+        )
     }
 
     AlertDialog(
@@ -63,7 +60,7 @@ fun QRCodeEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(ZeConfiguration.QRCode(title, text, url, image))
+                        accepted(ZeConfiguration.BarCode(title, url, image))
                     } else {
                         snackbarMessage(activity.getString(R.string.image_needed))
                     }
@@ -72,7 +69,7 @@ fun QRCodeEditorDialog(
                 Text(text = stringResource(id = android.R.string.ok))
             }
         },
-        title = { Text(text = stringResource(id = R.string.add_qr_url)) },
+        title = { Text(text = stringResource(id = R.string.add_barcode_url)) },
         properties = DialogProperties(),
         text = {
             LazyColumn {
@@ -88,25 +85,11 @@ fun QRCodeEditorDialog(
                         modifier = Modifier.fillMaxWidth(),
                         value = title,
                         maxLines = 1,
-                        label = { Text(text = stringResource(id = R.string.qr_code_title)) },
+                        label = { Text(text = stringResource(id = R.string.bar_code_title)) },
                         onValueChange = { newValue ->
                             title = newValue
                             redrawComposableImage()
                         },
-                    )
-                }
-
-                item {
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = text,
-                        maxLines = 1,
-                        singleLine = true,
-                        label = { Text(text = stringResource(id = R.string.qr_code_text)) },
-                        onValueChange = { newValue ->
-                            text = newValue
-                            redrawComposableImage()
-                        }
                     )
                 }
 
