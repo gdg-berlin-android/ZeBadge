@@ -29,14 +29,17 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "jp", "mr", "tr", "uk", "ur", "lt", "nl", "sq"))
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "hr-rHR", "ja", "lt", "mr", "nl", "sq", "tr", "uk", "ur"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
         buildConfig = true
+    }
+
+    lint {
+        disable.add("MissingTranslation")
     }
 
     buildTypes {
@@ -133,6 +136,8 @@ dependencies {
 
     testImplementation(libs.test.assertk)
     testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
 
     androidTestImplementation(libs.test.compose.junit)
     debugImplementation(libs.test.compose.manifest)

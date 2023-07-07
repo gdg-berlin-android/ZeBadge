@@ -14,7 +14,7 @@ import de.berlindroid.zeapp.R
 
 @Composable
 fun CustomPhrasePage(
-    phrase: String = stringResource(R.string.your_phrase_here)
+    phrase: String = stringResource(R.string.your_phrase_here),
 ) {
     Box(
         modifier = Modifier
@@ -30,4 +30,3 @@ fun CustomPhrasePage(
         )
     }
 }
-
