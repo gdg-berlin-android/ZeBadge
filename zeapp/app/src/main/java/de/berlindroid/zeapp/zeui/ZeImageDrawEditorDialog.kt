@@ -93,7 +93,7 @@ fun ZeImageDrawEditorDialog(
                             detectDragGestures(
                                 onDragStart = { offset ->
                                     currentPosition = offset
-                                    motionEvent = ZeMotionEvent.Down
+                                    if (offset != Offset.Unspecified) motionEvent = ZeMotionEvent.Down
                                 },
                                 onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
                                     currentPosition =
