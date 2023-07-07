@@ -91,7 +91,7 @@ fun RandomQuotesEditorDialog(
                         message = quoteList[index].q
                         author = quoteList[index].a
                         redrawComposableImage()
-                    }) {
+                    },) {
                         Text(text = stringResource(R.string.get))
                     }
                 }
