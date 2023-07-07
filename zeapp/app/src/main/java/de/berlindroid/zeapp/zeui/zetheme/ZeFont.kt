@@ -11,4 +11,3 @@ val montserrat = FontFamily(
     Font(R.font.montserrat_bold, weight = FontWeight.Bold),
     Font(R.font.montserrat_black, weight = FontWeight.Black),
 )
-

@@ -10,5 +10,5 @@ package de.berlindroid.zeapp.zemodels
  */
 data class ZeEditor(
     val slot: ZeSlot,
-    val config: ZeConfiguration
+    val config: ZeConfiguration,
 )

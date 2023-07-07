@@ -28,7 +28,7 @@ import androidx.core.R
 fun ToolButton(
     painter: Painter = painterResource(id = R.drawable.ic_call_decline),
     text: String = "Decline",
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     TextButton(
         onClick = onClick,
@@ -47,12 +47,11 @@ fun ToolButton(
             Text(
                 text = text,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
 }
-
 
 /**
  * Simple Icon Button used for inside editor dialogs.
@@ -62,7 +61,7 @@ fun ToolButton(
 fun ToolButton(
     imageVector: ImageVector = Icons.Filled.Send,
     text: String = "Send",
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     TextButton(
         onClick = onClick,
@@ -81,7 +80,7 @@ fun ToolButton(
             Text(
                 text = text,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }

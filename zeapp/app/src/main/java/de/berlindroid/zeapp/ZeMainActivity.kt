@@ -207,7 +207,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 }
             },
         )
-    })
+    },)
 }
 
 @Composable
@@ -255,14 +255,17 @@ private fun ZeTopBar(
 ) {
     ZeTopAppBar(
         title = {
-            ZeText(style = MaterialTheme.typography.titleLarge, text = buildAnnotatedString {
-                pushStyle(SpanStyle(fontWeight = FontWeight.Black))
-                append("Ze")
-                pop()
-                pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
-                append("Androft")
-                pop()
-            })
+            ZeText(
+                style = MaterialTheme.typography.titleLarge,
+                text = buildAnnotatedString {
+                    pushStyle(SpanStyle(fontWeight = FontWeight.Black))
+                    append("Ze")
+                    pop()
+                    pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
+                    append("Androft")
+                    pop()
+                },
+            )
         },
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -306,8 +309,7 @@ private fun ZePages(
             .padding(paddingValues)
             .padding(ZeDimen.Half),
     ) {
-
-        val uiState by vm.uiState.collectAsState() //should be replace with 'collectAsStateWithLifecycle'
+        val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
 
         val editor = uiState.currentSlotEditor
         val templateChooser = uiState.currentTemplateChooser
@@ -335,7 +337,7 @@ private fun ZePages(
                     start = ZeDimen.One,
                     end = ZeDimen.One,
                     top = ZeDimen.Half,
-                    bottom = ZeDimen.One
+                    bottom = ZeDimen.One,
                 ),
             ) {
                 items(
