@@ -318,7 +318,7 @@ private fun ZePages(
         val slots = uiState.slots
 
         if (editor != null) {
-            SelectedEditor(editor!!, vm)
+            SelectedEditor(editor, vm)
         }
 
         if (templateChooser != null) {
