@@ -78,8 +78,8 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
 
-    lintOptions {
-        disable 'MissingTranslation'
+    lint {
+        disable.add("MissingTranslation")
     }
 
     packagingOptions {
