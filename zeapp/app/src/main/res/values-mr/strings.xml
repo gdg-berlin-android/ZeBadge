@@ -1,4 +1,7 @@
 <resources>
+    <string name="app_name">Ze Androft</string>
+    <string name="black_and_white">B/W</string>
+    <string name="floyd_steninberg_initials">FS</string>
     <string name="reset">रीसेट करा</string>
     <string name="positional">स्थानबद्ध</string>
     <string name="rotate">फिरवा</string>
