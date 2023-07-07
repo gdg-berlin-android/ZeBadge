@@ -60,6 +60,20 @@ class ZeBadgeViewModelTest {
         coVerify(exactly = 0) { zeBadgeUploader.sendPage("name", bitmap) }
     }
 
+    @Test
+    fun testCopyToClipBoard() {
+        // Given
+        every { contributorsService.contributors() } returns emptyFlow()
+        every { clipboardService.copyToClipboard("") } returns Unit
+        val zeBadgeViewModel = provideViewModel()
+
+        //When
+        zeBadgeViewModel.copyInfoToClipboard()
+
+        // Then
+        verify { clipboardService.copyToClipboard("") }
+    }
+
     private fun provideViewModel() = ZeBadgeViewModel(
         imageProviderService = imageProviderService,
         badgeUploader = zeBadgeUploader,
