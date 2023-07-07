@@ -25,7 +25,6 @@ fun rememberBarcodeBitmapPainter(
     padding: Dp = 0.dp,
     widthSize: Dp = 220.dp,
 ): BitmapPainter {
-
     val density = LocalDensity.current
     val sizePx = with(density) { size.roundToPx() }
     val paddingPx = with(density) { padding.roundToPx() }
@@ -47,8 +46,11 @@ fun rememberBarcodeBitmapPainter(
 
         val bitmapMatrix = try {
             code128Writer.encode(
-                content, BarcodeFormat.CODE_128,
-                widthSizePx, sizePx, encodeHints
+                content,
+                BarcodeFormat.CODE_128,
+                widthSizePx,
+                sizePx,
+                encodeHints,
             )
         } catch (ex: WriterException) {
             null
@@ -77,7 +79,8 @@ fun rememberBarcodeBitmapPainter(
 
     return remember(bitmap) {
         val currentBitmap = bitmap ?: Bitmap.createBitmap(
-            sizePx, sizePx,
+            sizePx,
+            sizePx,
             Bitmap.Config.ARGB_8888,
         ).apply { eraseColor(Color.TRANSPARENT) }
 

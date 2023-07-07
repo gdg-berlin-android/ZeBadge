@@ -60,7 +60,6 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
-
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
 
@@ -105,7 +104,6 @@ class ZeBadgeViewModel @Inject constructor(
     private val openApiKey = OPENAI_API_KEY.ifBlank {
         runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
     }
-
 
     /**
      * Call this method to send a given slot to the badge device.
@@ -163,7 +161,6 @@ class ZeBadgeViewModel @Inject constructor(
             }
 
             is ZeSlot.SecondSponsor -> {
-
                 val slotsCopy = slots.copy(
                     slot to ZeConfiguration.Picture(
                         listOf(
@@ -212,22 +209,22 @@ class ZeBadgeViewModel @Inject constructor(
             if (slot is ZeSlot.Name) {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
-                    slots[ZeSlot.Name]!!
+                    slots[ZeSlot.Name]!!,
                 )
             } else if (slot is ZeSlot.QRCode) {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
-                    slots[ZeSlot.QRCode]!!
+                    slots[ZeSlot.QRCode]!!,
                 )
             } else if (slot is ZeSlot.Weather) {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
-                    slots[ZeSlot.Weather]!!
+                    slots[ZeSlot.Weather]!!,
                 )
             } else if (slot is ZeSlot.BarCode) {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
-                    slots[ZeSlot.BarCode]!!
+                    slots[ZeSlot.BarCode]!!,
                 )
             } else {
                 newCurrentSlotEditor = null
@@ -257,13 +254,12 @@ class ZeBadgeViewModel @Inject constructor(
             if (currentSlotEditor != null) {
                 it.copy(
                     currentTemplateChooser = null,
-                    currentSlotEditor = currentSlotEditor
+                    currentSlotEditor = currentSlotEditor,
                 )
             } else {
                 it.copy(currentTemplateChooser = null)
             }
         }
-
     }
 
     /**
@@ -273,7 +269,6 @@ class ZeBadgeViewModel @Inject constructor(
      * @param configuration the configuration of the slot.
      */
     fun slotConfigured(slot: ZeSlot?, configuration: ZeConfiguration?) {
-
         var newSlots: Map<ZeSlot, ZeConfiguration>? = null
         if (slot != null && configuration != null) {
             val slots = _uiState.value.slots
@@ -324,7 +319,7 @@ class ZeBadgeViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     message = "",
-                    slots = it.slots.copy(slot to initialConfiguration(slot))
+                    slots = it.slots.copy(slot to initialConfiguration(slot)),
                 )
             }
         }
@@ -342,7 +337,7 @@ class ZeBadgeViewModel @Inject constructor(
             is ZeSlot.Name -> ZeConfiguration.Name(
                 null,
                 null,
-                imageProviderService.getInitialNameBitmap()
+                imageProviderService.getInitialNameBitmap(),
             )
 
             is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
@@ -419,7 +414,6 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
-
             val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
@@ -447,7 +441,7 @@ class ZeBadgeViewModel @Inject constructor(
             currentSlotEditor = null,
             currentTemplateChooser = null,
             currentSimulatorSlot = ZeSlot.Name,
-            slots = emptyMap()
+            slots = emptyMap(),
         )
 }
 
@@ -463,10 +457,10 @@ private fun <K, V> Map<K, V>.copy(vararg entries: Pair<K, V>): Map<K, V> {
 }
 
 data class ZeBadgeUiState(
-    val message: String,    // message to be displayed to the user
+    val message: String, // message to be displayed to the user
     val messageProgress: Float,
-    val currentSlotEditor: ZeEditor?,  // if that is not null, we are currently editing a slot
-    val currentTemplateChooser: ZeTemplateChooser?,    // if that is not null, we are currently configuring which editor / template to use
-    val currentSimulatorSlot: ZeSlot,    // which page should be displayed in the simulator?
-    val slots: Map<ZeSlot, ZeConfiguration>
+    val currentSlotEditor: ZeEditor?, // if that is not null, we are currently editing a slot
+    val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
+    val currentSimulatorSlot: ZeSlot, // which page should be displayed in the simulator?
+    val slots: Map<ZeSlot, ZeConfiguration>,
 )

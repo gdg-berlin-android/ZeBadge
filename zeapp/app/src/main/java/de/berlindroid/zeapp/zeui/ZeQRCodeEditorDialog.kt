@@ -89,15 +89,17 @@ fun QRCodeEditorDialog(
             Button(
                 onClick = {
                     if (image.isBinary()) {
-                        accepted(ZeConfiguration.QRCode(
-                            title = title,
-                            text = text,
-                            url = url,
-                            isVcard = isVcard,
-                            phone = phone,
-                            email = email,
-                            bitmap = image
-                        ))
+                        accepted(
+                            ZeConfiguration.QRCode(
+                                title = title,
+                                text = text,
+                                url = url,
+                                isVcard = isVcard,
+                                phone = phone,
+                                email = email,
+                                bitmap = image,
+                            ),
+                        )
                     } else {
                         snackbarMessage(activity.getString(R.string.image_needed))
                     }
@@ -128,7 +130,7 @@ fun QRCodeEditorDialog(
                         Switch(checked = isVcard, onCheckedChange = {
                             isVcard = it
                             redrawComposableImage()
-                        })
+                        },)
                     }
                 }
 
@@ -146,9 +148,9 @@ fun QRCodeEditorDialog(
                     additionalVcardFields(
                         redrawComposableImage = ::redrawComposableImage,
                         email = email,
-                        onEmailChange = {email = it},
+                        onEmailChange = { email = it },
                         phone = phone,
-                        onPhoneChange = {phone = it} ,
+                        onPhoneChange = { phone = it },
                     )
                 }
             }
@@ -157,20 +159,20 @@ fun QRCodeEditorDialog(
 }
 
 fun LazyListScope.basicFields(
-    redrawComposableImage: ()->Unit,
+    redrawComposableImage: () -> Unit,
     title: String,
-    onTitleChange: (String)->Unit,
+    onTitleChange: (String) -> Unit,
     text: String,
-    onTextChange: (String)->Unit,
+    onTextChange: (String) -> Unit,
     url: String,
-    onUrlChange: (String)->Unit,
+    onUrlChange: (String) -> Unit,
 ) {
     item {
         RedrawTextField(
             value = title,
             textId = R.string.qr_code_title,
-            onValueChange =  onTitleChange,
-            redrawComposableImage = redrawComposableImage
+            onValueChange = onTitleChange,
+            redrawComposableImage = redrawComposableImage,
         )
     }
 
@@ -178,8 +180,8 @@ fun LazyListScope.basicFields(
         RedrawTextField(
             value = text,
             textId = R.string.qr_code_text,
-            onValueChange =  onTextChange,
-            redrawComposableImage = redrawComposableImage
+            onValueChange = onTextChange,
+            redrawComposableImage = redrawComposableImage,
         )
     }
 
@@ -188,41 +190,42 @@ fun LazyListScope.basicFields(
             value = url,
             textId = R.string.url,
             onValueChange = onUrlChange,
-            redrawComposableImage = redrawComposableImage
+            redrawComposableImage = redrawComposableImage,
         )
     }
 }
 fun LazyListScope.additionalVcardFields(
-    redrawComposableImage: ()->Unit,
+    redrawComposableImage: () -> Unit,
     email: String,
-    onEmailChange: (String)->Unit,
+    onEmailChange: (String) -> Unit,
     phone: String,
-    onPhoneChange: (String)->Unit,
+    onPhoneChange: (String) -> Unit,
 ) {
     item {
         RedrawTextField(
             value = email,
             textId = R.string.qr_code_email,
-            onValueChange =  onEmailChange,
-            redrawComposableImage = redrawComposableImage
+            onValueChange = onEmailChange,
+            redrawComposableImage = redrawComposableImage,
         )
     }
     item {
         RedrawTextField(
             value = phone,
             textId = R.string.qr_code_phone,
-            onValueChange =  onPhoneChange,
-            redrawComposableImage = redrawComposableImage
+            onValueChange = onPhoneChange,
+            redrawComposableImage = redrawComposableImage,
         )
     }
 }
+
 @Composable
 fun RedrawTextField(
     value: String,
     @StringRes textId: Int,
     onValueChange: (String) -> Unit,
-    redrawComposableImage: ()->Unit,
-    modifier: Modifier = Modifier
+    redrawComposableImage: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     TextField(
         modifier = modifier.fillMaxWidth(),

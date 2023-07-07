@@ -5,7 +5,7 @@ internal data class ZeVcardStringBuilder(
     var title: String? = null,
     var phone: String? = null,
     var email: String? = null,
-    var url: String? =  null,
+    var url: String? = null,
 
 ) {
     fun buildString(): String = listOfNotNull(
@@ -16,6 +16,6 @@ internal data class ZeVcardStringBuilder(
         if (phone.isNullOrEmpty()) null else "TEL:$phone",
         if (email.isNullOrEmpty()) null else "EMAIL:$email",
         if (url.isNullOrEmpty()) null else "URL:$url",
-        "END:VCARD"
+        "END:VCARD",
     ).joinToString("\n")
 }

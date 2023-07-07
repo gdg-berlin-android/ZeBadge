@@ -176,7 +176,7 @@ sealed class ZeConfiguration(
 
     data class CustomPhrase(
         val phrase: String,
-        override val bitmap: Bitmap
+        override val bitmap: Bitmap,
     ) : ZeConfiguration(TYPE, humanTitle = "Custom Phrase", bitmap) {
 
         companion object {

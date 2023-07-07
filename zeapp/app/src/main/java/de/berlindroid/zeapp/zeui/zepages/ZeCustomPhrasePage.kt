@@ -12,18 +12,19 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomPhrasePage(
-    phrase: String = "Your phrase here"
+    phrase: String = "Your phrase here",
 ) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xFF2E6D31))
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF2E6D31)),
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = phrase,
             color = Color.White,
             maxLines = 2,
-            fontSize = 8.sp
+            fontSize = 8.sp,
         )
     }
 }
