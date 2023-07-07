@@ -55,8 +55,8 @@ class ZePreferencesService @Inject constructor(
 
             when (config) {
                 is ZeConfiguration.Name -> {
-                    preferences[slot.preferencesKey("name")] = config.name
-                    preferences[slot.preferencesKey("contact")] = config.contact
+                    preferences[slot.preferencesKey("name")] = config.name.orEmpty()
+                    preferences[slot.preferencesKey("contact")] = config.contact.orEmpty()
                 }
 
                 is ZeConfiguration.ImageGen -> {
