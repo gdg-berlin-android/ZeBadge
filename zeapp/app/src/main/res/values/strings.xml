@@ -26,7 +26,6 @@
     <string name="qr_vcard">vCard</string>
     <string name="qr_code_email">Email</string>
     <string name="qr_code_phone">Phone</string>
-
     <string name="your_name_here" tools:ignore="MissingTranslation">Your Name Here</string>
     <string name="contact_me_here" tools:ignore="MissingTranslation">Contact Me Here</string>
     <string name="binary_image_needed" tools:ignore="MissingTranslation">Binary image needed. Press one of the buttons below the image.</string>
@@ -49,4 +48,5 @@
     <string name="hello_my_name_is" tools:ignore="MissingTranslation">Hello, my name is</string>
     <string name="upcoming_weather" tools:ignore="MissingTranslation">☀️Upcoming weather</string>
     <string name="quote_of_the_day" tools:ignore="MissingTranslation">Quote of The Day</string>
+    <string name="send_icon_text">Send</string>
 </resources>

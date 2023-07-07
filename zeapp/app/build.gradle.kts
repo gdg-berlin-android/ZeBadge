@@ -12,23 +12,24 @@ plugins {
     alias(libs.plugins.google.play.services)
     alias(libs.plugins.firebase.appdistribution)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
     namespace = "de.berlindroid.zeapp"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
         minSdk = 29
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         vectorDrawables {
             useSupportLibrary = true
         }
-        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "mr", "nl", "tr", "uk", "ur", "sq"))
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "jp", "mr", "nl", "tr", "uk", "ur", "lt", "hr-rHR", "sq"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,6 +46,11 @@ android {
                 releaseNotesFile = "./release-notes.txt"
                 groups = "testers"
             }
+        }
+        create("benchmark") {
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
         }
 
         release {
@@ -126,10 +132,13 @@ dependencies {
 
     testImplementation(libs.test.assertk)
     testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
 
     androidTestImplementation(libs.test.compose.junit)
     debugImplementation(libs.test.compose.manifest)
     kapt(libs.dagger.hilt.compiler)
+    baselineProfile(project(":benchmark"))
 }
 
 // Ktlint
