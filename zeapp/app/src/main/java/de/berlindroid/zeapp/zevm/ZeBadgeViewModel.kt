@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,11 +23,9 @@ import de.berlindroid.zeapp.zeservices.ZePreferencesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -48,6 +45,7 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeUploader: ZeBadgeUploader,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
+    private val getTemplateConfigurations: GetTemplateConfigurations,
     contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
@@ -202,50 +200,7 @@ class ZeBadgeViewModel @Inject constructor(
             // yes, so let the user choose
             val newCurrentTemplateChooser = ZeTemplateChooser(
                 slot = slot,
-                configurations = mutableListOf(
-                    ZeConfiguration.Name(
-                        null,
-                        null,
-                        imageProviderService.getInitialNameBitmap(),
-                    ), // TODO: Fetch from shared
-
-                    ZeConfiguration.Picture(R.drawable.soon.toBitmap()),
-
-                    ZeConfiguration.Schedule(
-                        R.drawable.soon.toBitmap(),
-                    ), // TODO: Fetch Schedule here.
-
-                    ZeConfiguration.Weather(
-                        "2023-07-06",
-                        "26C",
-                        R.drawable.soon.toBitmap(),
-                    ),
-
-                    ZeConfiguration.Kodee(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
-                    ),
-                    ZeConfiguration.ImageDraw(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
-                    ),
-                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
-                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
-                    ZeConfiguration.CustomPhrase(
-                        "Custom phrase",
-                        R.drawable.page_phrase.toBitmap().ditherFloydSteinberg()
-                    )
-                ).apply {
-                    // Surprise mechanic: If token is set, show open ai item
-                    if (openApiKey.isNotBlank()) {
-                        add(
-                            2,
-                            ZeConfiguration
-                                .ImageGen(
-                                    prompt = "An Android developer at a conference in Berlin.",
-                                    bitmap = R.drawable.soon.toBitmap(),
-                                ),
-                        )
-                    }
-                },
+                configurations = getTemplateConfigurations(openApiKey),
             )
             _uiState.update {
                 it.copy(currentTemplateChooser = newCurrentTemplateChooser)
