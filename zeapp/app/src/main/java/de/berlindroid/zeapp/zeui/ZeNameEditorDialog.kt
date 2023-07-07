@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -71,7 +72,7 @@ fun NameEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Name(name, contact, image))
                     } else {
-                        snackbarMessage("Binary image needed. Press one of the buttons below the image.")
+                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {
@@ -80,10 +81,10 @@ fun NameEditorDialog(
         },
         dismissButton = {
             Button(onClick = dismissed) {
-                Text(text = "Cancel")
+                Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(text = "Add your contact details") },
+        title = { Text(text = stringResource(R.string.add_your_contact_details)) },
         properties = DialogProperties(decorFitsSystemWindows = false),
         text = {
             Column {
@@ -96,7 +97,7 @@ fun NameEditorDialog(
                     modifier = Modifier.fillMaxWidth(),
                     value = name ?: "",
                     maxLines = 2,
-                    placeholder = { Text(text = "Name") },
+                    placeholder = { Text(text = stringResource(R.string.name)) },
                     onValueChange = { newValue ->
                         if (newValue.length <= MaxCharacters * 2) {
                             name = newValue
@@ -118,7 +119,7 @@ fun NameEditorDialog(
                     value = contact ?: "",
                     maxLines = 1,
                     singleLine = true,
-                    placeholder = { Text(text = "Contact") },
+                    placeholder = { Text(text = stringResource(R.string.contact)) },
                     onValueChange = { newValue ->
                         // Limit Characters so they're displayed correctly in the screen
                         if (newValue.length <= MaxCharacters) {
@@ -145,7 +146,7 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
     if (!isEmpty) {
         Icon(
             Icons.Rounded.Clear,
-            contentDescription = "Clear",
+            contentDescription = stringResource(R.string.clear),
             modifier = modifier.clickable {
                 onClick()
             },

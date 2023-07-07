@@ -85,7 +85,7 @@ fun PictureEditorDialog(
             }
         },
         title = {
-            Text("Set Picture")
+            Text(stringResource(R.string.set_picture))
         },
         text = {
             Column {
