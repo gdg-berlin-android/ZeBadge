@@ -32,7 +32,7 @@ class GetTemplateConfigurations @Inject constructor(
             ),
 
             ZeConfiguration.Kodee(
-                R.drawable.kodee.toBitmap().ditherFloydSteinberg()
+                R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
             ),
             ZeConfiguration.ImageDraw(
                 R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
@@ -41,8 +41,8 @@ class GetTemplateConfigurations @Inject constructor(
             ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
             ZeConfiguration.CustomPhrase(
                 "Custom phrase",
-                R.drawable.page_phrase.toBitmap().ditherFloydSteinberg()
-            )
+                R.drawable.page_phrase.toBitmap().ditherFloydSteinberg(),
+            ),
         ).apply {
             // Surprise mechanic: If token is set, show open ai item
             if (openApiKey.isNotBlank()) {

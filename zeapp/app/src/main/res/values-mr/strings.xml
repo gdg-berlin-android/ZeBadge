@@ -21,4 +21,7 @@
     <string name="url">URL</string>
     <string name="add_barcode_url">तुमचा बारकोड URL जोडा</string>
     <string name="bar_code_title">बार कोड शीर्षक</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Phone</string>
 </resources>

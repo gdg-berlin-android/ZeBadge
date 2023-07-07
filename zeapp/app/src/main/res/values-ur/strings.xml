@@ -21,4 +21,7 @@
     <string name="url">یو آر ایل</string>
     <string name="add_barcode_url">اپنا بارکوڈ یو آر ایل شامل کریں۔</string>
     <string name="bar_code_title">بار کوڈ کا عنوان</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Phone</string>
 </resources>

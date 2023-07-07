@@ -8,7 +8,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 internal suspend fun fetchWeather(date: String): WeatherData {
-
     try {
         val weather = weatherApiService.getWeather()
 
@@ -18,19 +17,19 @@ internal suspend fun fetchWeather(date: String): WeatherData {
         if (tempIndex == -1) {
             return WeatherData(
                 day = null,
-                temperature = -1.0
+                temperature = -1.0,
             )
         }
         val temperature = weather.hourly.temperature[tempIndex]
         val day = weather.hourly.time[tempIndex]
         return WeatherData(
             day = day,
-            temperature = temperature
+            temperature = temperature,
         )
     } catch (e: Exception) {
         return WeatherData(
             day = null,
-            temperature = -42.0
+            temperature = -42.0,
         )
     }
 }
@@ -40,14 +39,13 @@ private val retrofit = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
-
 private val weatherApiService = retrofit.create(WeatherApi::class.java)
 
 private interface WeatherApi {
 
     data class Weather(
         @SerializedName("hourly")
-        val hourly: Hourly
+        val hourly: Hourly,
     )
 
     data class Hourly(
@@ -55,13 +53,12 @@ private interface WeatherApi {
         val time: List<String>,
 
         @SerializedName("temperature_2m")
-        val temperature: List<Double>
+        val temperature: List<Double>,
     )
 
     @GET("v1/forecast?latitude=52.5244&longitude=13.4105&hourly=temperature_2m&forecast_days=16")
     suspend fun getWeather(): Weather
 }
-
 
 data class WeatherData(
     val day: String?,
