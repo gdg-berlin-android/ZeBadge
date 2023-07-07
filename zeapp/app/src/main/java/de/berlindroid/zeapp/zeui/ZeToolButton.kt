@@ -29,7 +29,7 @@ import androidx.core.R
 @Preview
 fun ToolButton(
     painter: Painter = painterResource(id = R.drawable.ic_call_decline),
-    text: String = "Decline",
+    text: String = stringResource(de.berlindroid.zeapp.R.string.decline),
     onClick: () -> Unit = {}
 ) {
     TextButton(
@@ -49,12 +49,11 @@ fun ToolButton(
             Text(
                 text = text,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
 }
-
 
 /**
  * Simple Icon Button used for inside editor dialogs.
@@ -64,6 +63,7 @@ fun ToolButton(
 fun ToolButton(
     imageVector: ImageVector = Icons.Filled.Send,
     text: String = stringResource(id = de.berlindroid.zeapp.R.string.send_icon_text),
+
     onClick: () -> Unit = {}
 ) {
     TextButton(
@@ -83,8 +83,9 @@ fun ToolButton(
             Text(
                 text = text,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
 }
+

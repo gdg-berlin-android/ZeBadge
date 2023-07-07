@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,7 +23,6 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zeui.rememberBarcodeBitmapPainter
-import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 
 /**
  * A composable that represents a badge, to be rendered as a bitmap.
@@ -30,8 +30,8 @@ import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 @Composable
 @Preview
 fun BarCodePage(
-    title: String = "Hello, my github profile is",
-    url: String = "https://github.com/gdg-berlin-android",
+    title: String = stringResource(R.string.hello_my_github_profile_is),
+    url: String = stringResource(R.string.repo_url),
 ) {
     Column(
         modifier = Modifier
@@ -57,8 +57,11 @@ fun BarCodePage(
         )
 
         val painter =
-            if (url.isEmpty()) painterResource(id = R.drawable.page_telekom)
-            else rememberBarcodeBitmapPainter(url)
+            if (url.isEmpty()) {
+                painterResource(id = R.drawable.page_telekom)
+            } else {
+                rememberBarcodeBitmapPainter(url)
+            }
         Image(
             painter = painter,
             contentDescription = "",

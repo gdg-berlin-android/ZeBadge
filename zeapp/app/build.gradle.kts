@@ -23,11 +23,13 @@ android {
         minSdk = 29
         targetSdk = 33
         versionCode = 1
-        versionName =  "1.0"
+        versionName = "1.0"
 
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "jp", "mr", "tr", "uk", "ur", "lt", "nl", "sq"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,8 +43,8 @@ android {
             buildConfigField("String", "OPEN_API_TOKEN", "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"")
 
             firebaseAppDistribution {
-                releaseNotesFile="./release-notes.txt"
-                groups="testers"
+                releaseNotesFile = "./release-notes.txt"
+                groups = "testers"
             }
         }
 
@@ -53,7 +55,7 @@ android {
     }
 
     sourceSets.getByName("main").assets.srcDir(
-        "$projectDir/build/generated/assets"
+        "$projectDir/build/generated/assets",
     )
 
     compileOptions {
@@ -66,8 +68,8 @@ android {
 
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi")
-
+            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi",
+        )
     }
 
     buildFeatures {
@@ -119,6 +121,7 @@ dependencies {
     implementation(platform(libs.firebase))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
@@ -167,11 +170,10 @@ tasks.create("generateContributorsAsset") {
     val result = process.inputStream.bufferedReader().readText()
 
     val contributors = result.lines()
-            .joinToString(separator = System.lineSeparator()) { it.substringAfter("\t") }
+        .joinToString(separator = System.lineSeparator()) { it.substringAfter("\t") }
 
     val assetDir = layout.buildDirectory.dir("generated/assets").get().asFile
     assetDir.createDirectory()
     File(assetDir, "test.txt").writeText(contributors)
-
 }
 tasks.getByName("build").dependsOn("generateContributorsAsset")
