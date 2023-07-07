@@ -10,7 +10,7 @@ This is the badge:
 ![badgerrpi2040](https://user-images.githubusercontent.com/1162562/236334466-1ccfff65-6744-4304-b4d3-1d200b16ffe8.png)
 
 And this is the Android app:
-* [release 50](https://github.com/gdg-berlin-android/ZeBadge/releases/download/50/ze-badge.apk)
+* [latest release](https://github.com/gdg-berlin-android/ZeBadge/releases/)
 
 > __TBD__
 
