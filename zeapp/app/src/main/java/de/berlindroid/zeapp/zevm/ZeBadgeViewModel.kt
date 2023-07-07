@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
@@ -33,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import timber.log.Timber
 import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
@@ -119,7 +119,7 @@ class ZeBadgeViewModel @Inject constructor(
         val slots = _uiState.value.slots
 
         val configuration = slots.getOrElse(slot) {
-            Log.e("VM", "Slot $slot is not one of our slots.")
+            Timber.e("VM", "Slot $slot is not one of our slots.")
             null
         } ?: return
 
@@ -208,29 +208,39 @@ class ZeBadgeViewModel @Inject constructor(
             // no selection needed, check for name slot and ignore non configurable slots
             val newCurrentSlotEditor: ZeEditor?
             val slots = _uiState.value.slots
-            if (slot is ZeSlot.Name) {
+            when (slot) {
+                is ZeSlot.Name -> {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
                     slots[ZeSlot.Name]!!,
                 )
-            } else if (slot is ZeSlot.QRCode) {
+                }
+
+                is ZeSlot.QRCode -> {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
                     slots[ZeSlot.QRCode]!!,
                 )
-            } else if (slot is ZeSlot.Weather) {
+                }
+
+                is ZeSlot.Weather -> {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
                     slots[ZeSlot.Weather]!!,
                 )
-            } else if (slot is ZeSlot.BarCode) {
+                }
+
+                is ZeSlot.BarCode -> {
                 newCurrentSlotEditor = ZeEditor(
                     slot,
                     slots[ZeSlot.BarCode]!!,
                 )
-            } else {
+                }
+
+                else -> {
                 newCurrentSlotEditor = null
-                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+                    Timber.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+                }
             }
             newCurrentSlotEditor?.let { currentSlotEditor ->
                 _uiState.update {
@@ -307,7 +317,7 @@ class ZeBadgeViewModel @Inject constructor(
     fun slotToBitmap(slot: ZeSlot = _uiState.value.currentSimulatorSlot): Bitmap {
         val slots = _uiState.value.slots
         return slots[slot]?.bitmap ?: R.drawable.error.toBitmap().also {
-            Log.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
+            Timber.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
         }
     }
 
