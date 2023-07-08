@@ -39,7 +39,7 @@ jobs:
         run: echo "FILENAME=ze-badge-$(date +'%Y-%m-%d-%H-%M')-${{ github.sha }}" >> $GITHUB_ENV
       - name: Rename APK
         shell: bash
-        run: cp app/build/outputs/apk/release/app-release.apk "${FILENAME}.apk"
+        run: cp zeapp/app/build/outputs/apk/release/app-release.apk "${FILENAME}.apk"
       - name: Upload APK to Github Actions Artifacts
         uses: actions/upload-artifact@v3
         with:
