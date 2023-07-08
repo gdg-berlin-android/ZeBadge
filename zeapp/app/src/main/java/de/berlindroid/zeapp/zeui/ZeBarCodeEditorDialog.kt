@@ -43,6 +43,7 @@ fun BarCodeEditorDialog(
 
     var title by remember { mutableStateOf(config.title) }
     var url by remember { mutableStateOf(config.url) }
+    val original by remember { mutableStateOf(config.bitmap) }
     var image by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
@@ -75,7 +76,7 @@ fun BarCodeEditorDialog(
             LazyColumn {
                 item {
                     BinaryImageEditor(
-                        bitmap = image,
+                        original = original,
                         bitmapUpdated = { image = it },
                     )
                 }

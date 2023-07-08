@@ -32,6 +32,7 @@ fun CustomPhraseEditorDialog(
     val activity = LocalContext.current as Activity
 
     var randomPhrase by remember { mutableStateOf(config.phrase) }
+    var original by remember { mutableStateOf(config.bitmap) }
     var image by remember { mutableStateOf(config.bitmap) }
 
     fun redrawComposableImage() {
@@ -68,7 +69,7 @@ fun CustomPhraseEditorDialog(
         text = {
             Column {
                 BinaryImageEditor(
-                    bitmap = image,
+                    original = original,
                     bitmapUpdated = { image = it },
                 )
             }

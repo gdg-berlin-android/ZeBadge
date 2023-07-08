@@ -62,6 +62,7 @@ fun WeatherEditorDialog(
 
     var date by remember { mutableStateOf(config.date) }
     val temperature by remember { mutableStateOf(config.temperature) }
+    val original by remember { mutableStateOf(config.bitmap) }
     var image by remember { mutableStateOf(config.bitmap) }
 
     var weatherData: WeatherData? by remember {
@@ -109,7 +110,7 @@ fun WeatherEditorDialog(
             LazyColumn {
                 item {
                     BinaryImageEditor(
-                        bitmap = image,
+                        original = original,
                         bitmapUpdated = { image = it },
                     )
                 }
