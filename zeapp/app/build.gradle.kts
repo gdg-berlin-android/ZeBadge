@@ -15,15 +15,21 @@ plugins {
     alias(libs.plugins.baselineprofile)
 }
 
+val isCi = System.getenv("CI") == "true"
+val zeAppPassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+val zeAppDebug = "ZEapp23"
+val enableRelease = isCi && zeAppPassword != ""
+val appVersionCode = System.getenv("GITHUB_RUN_NUMBER")?.toInt() ?: 1
+
 android {
     namespace = "de.berlindroid.zeapp"
-    compileSdk = 34
 
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
-        minSdk = 29
+        compileSdk = 34
         targetSdk = 34
-        versionCode = 1
+        minSdk = 29
+        versionCode = appVersionCode
         versionName = "1.0"
 
         vectorDrawables {
@@ -32,6 +38,23 @@ android {
         resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "hr-rHR", "ja", "lt", "mr", "nl", "sq", "tr", "uk", "ur"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        named("debug") {
+            keyAlias = zeAppDebug
+            keyPassword = zeAppDebug
+            storeFile = file("../zeapp.debug")
+            storePassword = zeAppDebug
+        }
+        if (enableRelease) {
+            create("release") {
+                keyAlias = "zeapp-sample"
+                keyPassword = zeAppPassword
+                storeFile = file("../zeapp")
+                storePassword = zeAppPassword
+            }
+        }
     }
 
     buildFeatures {
@@ -56,9 +79,12 @@ android {
             matchingFallbacks += listOf("release")
             isDebuggable = false
         }
-
         release {
             isMinifyEnabled = false
+            isShrinkResources = false
+            if (enableRelease) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

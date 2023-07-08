@@ -33,21 +33,24 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: "Assemble Release"
         run: ./gradlew :app:assembleRelease --no-daemon
-      - name: "Upload Release APK to GitHub"
+      - name: Set filename environment variable
+        id: set-filename
+        shell: bash
+        run: echo "FILENAME=ze-badge-$(date +'%Y-%m-%d-%H-%M')-${{ github.sha }}" >> $GITHUB_ENV
+      - name: Rename APK
+        shell: bash
+        run: cp app/build/outputs/apk/release/app-release.apk "${FILENAME}.apk"
+      - name: Upload APK to Github Actions Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Release APK
-          path: zeapp/app/release/app-release.apk
-      - name: "Upload binaries to a release"
-        uses: svenstaro/upload-release-action@v2
+          name: ${{ env.FILENAME }}
+          path: ${{ env.FILENAME }}.apk
+      - name: Upload to Github release page
         if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          release_name: ${{ format('Release v{0}', github.run_number) }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: zeapp/app/release/app-release.apk
-          asset_name: ze-badge.apk
-          tag: ${{ github.run_number }}
-          overwrite: true
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.ref_name }} "${FILENAME}.apk"
   lint:
     runs-on: ubuntu-latest
     steps:
