@@ -17,9 +17,9 @@ plugins {
 
 val isCi = System.getenv("CI") == "true"
 val zeAppPassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
-val zeAppDebug = "ZEapp23"
 val enableRelease = isCi && zeAppPassword != ""
 val appVersionCode = System.getenv("GITHUB_RUN_NUMBER")?.toInt() ?: 1
+val zeAppDebug = "ZEapp23"
 
 android {
     namespace = "de.berlindroid.zeapp"
@@ -44,25 +44,17 @@ android {
         named("debug") {
             keyAlias = zeAppDebug
             keyPassword = zeAppDebug
-            storeFile = file("../zeapp.debug")
+            storeFile = file("$rootDir/zeapp_debug")
             storePassword = zeAppDebug
         }
         if (enableRelease) {
             create("release") {
                 keyAlias = "zeapp-sample"
                 keyPassword = zeAppPassword
-                storeFile = file("../zeapp")
+                storeFile = file("$rootDir/zeapp")
                 storePassword = zeAppPassword
             }
         }
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
-
-    lint {
-        disable.add("MissingTranslation")
     }
 
     buildTypes {
@@ -80,13 +72,17 @@ android {
             isDebuggable = false
         }
         release {
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             if (enableRelease) {
                 signingConfig = signingConfigs.getByName("release")
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+    }
+
+    lint {
+        disable.add("MissingTranslation")
     }
 
     sourceSets.getByName("main").assets.srcDir(
@@ -109,13 +105,14 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
