@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Check folders after checkout repo
-        run: tree -L 1
+        run: tree -P '*.apk' --prune
       - name: Setup Java 17
         uses: actions/setup-java@v3
         with:
@@ -36,14 +36,14 @@ jobs:
       - name: Assemble Release
         run: ./gradlew :app:assembleRelease --no-daemon
       - name: Check folders after assembleRelease
-        run: tree -L 1
+        run: tree -P '*.apk' --prune
       - name: Upload Release APK to GitHub Artifact
         uses: actions/upload-artifact@v3
         with:
           name: Release APK
           path: zeapp/app/build/outputs/apk/release/app-release.apk
       - name: Check folders after upload apk
-        run: tree -L 1
+        run: tree -P '*.apk' --prune
       - name: Upload binaries to a release
         uses: svenstaro/upload-release-action@v2
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -55,7 +55,7 @@ jobs:
           tag: ${{ github.run_number }}
           overwrite: true
       - name: Check folders after upload binaries
-        run: tree -L 1
+        run: tree -P '*.apk' --prune
   lint:
     runs-on: ubuntu-latest
     steps:
