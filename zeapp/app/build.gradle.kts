@@ -160,6 +160,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    lintChecks(libs.slack.lint.checks)
+
     testImplementation(libs.test.assertk)
     testImplementation(libs.test.junit)
     testImplementation(libs.test.mockk)
