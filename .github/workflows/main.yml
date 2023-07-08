@@ -45,7 +45,7 @@ jobs:
           release_name: ${{ format('Release v{0}', github.run_number) }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: zeapp/app/build/outputs/apk/release/app-release.apk
-          asset_name: ze-badge-${{ github.run_number }}.apk
+          asset_name: ze-badge-${{ github.sha }}.apk
           tag: ${{ github.run_number }}
           overwrite: true
   lint:
