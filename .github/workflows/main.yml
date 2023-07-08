@@ -23,6 +23,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Check folders after checkout repo
+        run: tree -L 1
       - name: Setup Java 17
         uses: actions/setup-java@v3
         with:
@@ -33,11 +35,15 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Assemble Release
         run: ./gradlew :app:assembleRelease --no-daemon
-      - name: Upload Debug APK to GitHub
+      - name: Check folders after assembleRelease
+        run: tree -L 1
+      - name: Upload Release APK to GitHub Artifact
         uses: actions/upload-artifact@v3
         with:
           name: Release APK
           path: zeapp/app/build/outputs/apk/release/app-release.apk
+      - name: Check folders after upload apk
+        run: tree -L 1
       - name: Upload binaries to a release
         uses: svenstaro/upload-release-action@v2
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -48,6 +54,8 @@ jobs:
           asset_name: ze-badge-${{ github.sha }}.apk
           tag: ${{ github.run_number }}
           overwrite: true
+      - name: Check folders after upload binaries
+        run: tree -L 1
   lint:
     runs-on: ubuntu-latest
     steps:
