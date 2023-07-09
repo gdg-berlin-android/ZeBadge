@@ -1,3 +1,5 @@
+[![Main](https://github.com/gdg-berlin-android/ZeBadge/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/gdg-berlin-android/ZeBadge/actions/workflows/main.yml)
+
 # ZeBadge
 Droidcon 2023: The time a new badge saw the light of the day, full with delight and android programming capabilities.
 
