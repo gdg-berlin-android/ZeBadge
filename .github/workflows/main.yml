@@ -34,7 +34,7 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Assemble Release
-        run: ./gradlew :app:assembleRelease --no-daemon
+        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
       - name: Check folders after assembleRelease
         run: tree -P '*.apk' --prune
       - name: Upload Release APK to GitHub Artifact
