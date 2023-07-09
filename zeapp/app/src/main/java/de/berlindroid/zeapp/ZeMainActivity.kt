@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -80,9 +79,7 @@ import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -177,6 +174,15 @@ class ZeMainActivity : ComponentActivity() {
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     var isShowingAbout by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val gotToReleases: () -> Unit = remember {
+        {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
     ZeBadgeAppTheme(content = {
         ZeScaffold(
             modifier = modifier,
@@ -202,6 +208,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     onRandomClick = vm::sendRandomPageToDevice,
                     onSaveAllClick = vm::saveAll,
                     onAboutClick = { isShowingAbout = !isShowingAbout },
+                    onGotoReleaseClick = gotToReleases,
                     isShowingAbout = isShowingAbout,
                 )
             },
@@ -224,7 +231,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
 private fun ZeAbout(
     paddingValues: PaddingValues,
     vm: ZeBadgeViewModel,
-    context: Context
+    context: Context,
 ) {
     val lines by vm.lines.collectAsState()
 
@@ -261,7 +268,7 @@ private fun ZeAbout(
                                 .size(20.dp, 20.dp)
                                 .clickable {
                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:$email"))
-                                    context. startActivity(intent)
+                                    context.startActivity(intent)
                                 },
                         )
                     }
@@ -277,6 +284,7 @@ private fun ZeTopBar(
     onSaveAllClick: () -> Unit,
     onRandomClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onGotoReleaseClick: () -> Unit,
     isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
@@ -300,6 +308,12 @@ private fun ZeTopBar(
             navigationIconContentColor = MaterialTheme.colorScheme.secondary,
         ),
         actions = {
+            ZeIconButton(onClick = onGotoReleaseClick) {
+                ZeIcon(
+                    painter = painterResource(id = R.drawable.ic_update),
+                    contentDescription = "Open the release page in the browser",
+                )
+            }
             ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),

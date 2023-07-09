@@ -392,8 +392,11 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun sendRandomPageToDevice() {
         val slots = _uiState.value.slots
-        if(slots.isNotEmpty())
+        if (slots.keys.isEmpty()) {
+            badgeFailure("No Slot Keys are available!")
+        } else {
             sendPageToDevice(slots.keys.random())
+        }
     }
 
     private fun Int.toBitmap(): Bitmap {

@@ -14,11 +14,11 @@ import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zebits.toBitmap
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeSlot
-import timber.log.Timber
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import timber.log.Timber
 import javax.inject.Inject
 
 private const val PREFS_NAME = "defaults"
@@ -164,7 +164,7 @@ class ZePreferencesService @Inject constructor(
                 )
 
                 else -> {
-                Timber.e(
+                    Timber.e(
                         "Slot from Prefs",
                         "Cannot find $type slot in preferences.",
                     )

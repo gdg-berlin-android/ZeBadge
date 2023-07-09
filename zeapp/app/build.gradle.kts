@@ -15,27 +15,46 @@ plugins {
     alias(libs.plugins.baselineprofile)
 }
 
+val isCi = System.getenv("CI") == "true"
+val zeAppPassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+val enableRelease = isCi && zeAppPassword != ""
+val appVersionCode = System.getenv("GITHUB_RUN_NUMBER")?.toInt() ?: 1
+val zeAppDebug = "ZEapp23"
+
 android {
     namespace = "de.berlindroid.zeapp"
-    compileSdk = 34
 
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
-        minSdk = 29
+        compileSdk = 34
         targetSdk = 34
-        versionCode = 1
+        minSdk = 29
+        versionCode = appVersionCode
         versionName = "1.0"
 
         vectorDrawables {
             useSupportLibrary = true
         }
-        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "jp", "mr", "nl", "tr", "uk", "ur", "lt", "hr-rHR", "sq", "bs"))
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "hr-rHR", "ja", "lt", "mr", "nl", "sq", "tr", "uk", "ur", "bs"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures {
-        buildConfig = true
+    signingConfigs {
+        named("debug") {
+            keyAlias = zeAppDebug
+            keyPassword = zeAppDebug
+            storeFile = file("$rootDir/zeapp_debug")
+            storePassword = zeAppDebug
+        }
+        if (enableRelease) {
+            create("release") {
+                keyAlias = "zeapp-sample"
+                keyPassword = zeAppPassword
+                storeFile = file("$rootDir/zeapp")
+                storePassword = zeAppPassword
+            }
+        }
     }
 
     buildTypes {
@@ -52,11 +71,18 @@ android {
             matchingFallbacks += listOf("release")
             isDebuggable = false
         }
-
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            if (enableRelease) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+    }
+
+    lint {
+        disable.add("MissingTranslation")
     }
 
     sourceSets.getByName("main").assets.srcDir(
@@ -79,13 +105,14 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
