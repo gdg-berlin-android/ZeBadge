@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.material3.Text as ZeText
 
 @Composable
-fun ZeVloatingScroller(
+fun ZeFloatingScroller(
     coroutineScope: CoroutineScope,
     lazyListState: LazyListState,
     scrollLength: Float,
@@ -29,7 +29,7 @@ fun ZeVloatingScroller(
         ZeText(
             text = text,
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 40.sp,
+            fontSize = 32.sp,
             textAlign = TextAlign.Center,
         )
     }

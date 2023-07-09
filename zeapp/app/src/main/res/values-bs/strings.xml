@@ -1,0 +1,24 @@
+<resources>
+    <string name="black_and_white">C/B</string>
+    <string name="reset">Resetiraj</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Pozicijski</string>
+    <string name="rotate">Rotiraj</string>
+    <string name="invert">Invertiraj</string>
+    <string name="generate">Generiraj</string>
+    <string name="not_binary_image">Slika nije binarna. Provjerite je li svaki piksel crn ili bijel.</string>
+    <string name="generate_image_page">Stranica Za Generiranje Slike</string>
+    <string name="draw_image_page">Stranica Za Crtanje Slike</string>
+    <string name="enter_prompt">Ovdje unesite svoj upit</string>
+    <string name="could_not_generate_image">Nismo uspijeli generirati sliku</string>
+    <string name="image_needed">Binarna slika je potrebna. Pritisnite jedan od dugmadi ispod slike.</string>
+    <string name="add_qr_url">Dodajte svoj QR URL</string>
+    <string name="qr_code_title">QR Kod naslov</string>
+    <string name="qr_code_text">Dodatni tekst</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Dodajte svoj URL barkoda</string>
+    <string name="bar_code_title">Barkod naslov</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Telefon</string>
+</resources>
