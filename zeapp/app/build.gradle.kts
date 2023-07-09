@@ -47,13 +47,12 @@ android {
             storeFile = file("$rootDir/zeapp_debug")
             storePassword = zeAppDebug
         }
-        if (enableRelease) {
-            create("release") {
-                keyAlias = "zeapp-sample"
-                keyPassword = zeAppPassword
-                storeFile = file("$rootDir/zeapp")
-                storePassword = zeAppPassword
-            }
+      
+        named("release") {
+            keyAlias = "zeapp-sample"
+            keyPassword = zeAppPassword
+            storeFile = file("$rootDir/zeapp")
+            storePassword = zeAppPassword
         }
     }
 
