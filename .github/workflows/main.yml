@@ -18,6 +18,7 @@ defaults:
 jobs:
   build-release:
     runs-on: ubuntu-latest
+    environment: default
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
