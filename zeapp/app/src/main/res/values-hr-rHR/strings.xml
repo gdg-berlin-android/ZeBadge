@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">C/B</string>
+    <string name="reset">Resetiraj</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Pozicijski</string>
+    <string name="rotate">Rotiraj</string>
+    <string name="invert">Invertiraj</string>
+
+    <string name="generate">Generiraj</string>
+    <string name="not_binary_image">Nije binarna slika. Provjerite je li svaki piksel crn ili bijel.</string>
+    <string name="generate_image_page">Generiraj stranicu slike</string>
+    <string name="draw_image_page">Nacrtaj stranicu slike</string>
+    <string name="enter_prompt">Unesite svoju poruku ovdje</string>
+    <string name="could_not_generate_image">Nije moguće generirati sliku</string>
+
+    <string name="image_needed">Potrebna binarna slika. Pritisnite jedan od gumba ispod slike.</string>
+    <string name="add_qr_url">Dodajte svoj QR URL</string>
+    <string name="qr_code_title">Naslov QR koda</string>
+    <string name="qr_code_text">Dodatni tekst</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Dodajte svoj URL barkoda</string>
+    <string name="bar_code_title">Naslov barkoda</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Telefon</string>
+</resources>

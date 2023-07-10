@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1040506214697",
+    "project_id": "zebadge-5e919",
+    "storage_bucket": "zebadge-5e919.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040506214697:android:e8b555e4a4785e5b1fff38",
+        "android_client_info": {
+          "package_name": "de.berlindroid.zeapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1040506214697-dpalvub8l30gnvndpst89hu7f5lj7vr4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKmexiyl9QGDJwMGJkss7_ydse34fIrac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1040506214697-dpalvub8l30gnvndpst89hu7f5lj7vr4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

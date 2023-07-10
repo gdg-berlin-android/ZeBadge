@@ -1,0 +1,29 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Ze Androft</string>
+    <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
+
+    <string name="black_and_white">B/W</string>
+    <string name="reset">Reiniciar</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Posicional</string>
+    <string name="rotate">Girar</string>
+    <string name="invert">Invertir</string>
+
+    <string name="generate">Generar</string>
+    <string name="not_binary_image">No es una imagen binaria. Asegúrese de que cada píxel sea blanco o negro.</string>
+    <string name="generate_image_page">Generar Imagen de Página</string>
+    <string name="draw_image_page">Dibuja la Imagen de Página</string>
+    <string name="enter_prompt">Ingrese su aviso aquí</string>
+    <string name="could_not_generate_image">No se pudo generar una imagen</string>
+
+    <string name="image_needed">Se necesita una imagen binaria. Presiona uno de los botones debajo de la imagen.</string>
+    <string name="add_qr_url">Añade la URL de tu QR</string>
+    <string name="qr_code_title">Título del código QR</string>
+    <string name="qr_code_text">Texto adicional</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Añade la URL de tu BarCode</string>
+    <string name="bar_code_title">Bar Code título</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Telefono</string>
+</resources>

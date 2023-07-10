@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">أبيض/أسود</string>
+    <string name="reset">"إعادة ضبط "</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">الموضعي</string>
+    <string name="rotate">"تدوير الصورة "</string>
+    <string name="invert">عكس الصورة.</string>
+
+    <string name="generate">توليد الصورة</string>
+    <string name="not_binary_image">هذه الصورة ليست ثنائية. تأكد من أن الصورة مكونة فقط من الألوان الأبيض والأسود.</string>
+    <string name="generate_image_page">صفحة توليد الصورة.</string>
+    <string name="draw_image_page">صفحة رسم الصورة.</string>
+    <string name="enter_prompt">أدخل الأمر هنا</string>
+    <string name="could_not_generate_image">"فشلت محاولة توليد الصورة. "</string>
+
+    <string name="image_needed">"يجب استخدام صورة ثنائية. اضغط على أحد الأزرار تحت الصورة. "</string>
+    <string name="add_qr_url">"أضف رابط الاستجابة السريعة (QR Code) "</string>
+    <string name="qr_code_title">" عنوان رمز الاستجابة السريعة (QR Code) "</string>
+    <string name="qr_code_text">نص إضافي</string>
+    <string name="url">الرابط</string>
+    <string name="add_barcode_url">أضف رابط الباركود</string>
+    <string name="bar_code_title">عنوان الباركود</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Phone</string>
+</resources>
