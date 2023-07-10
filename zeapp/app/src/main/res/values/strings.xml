@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Ze Androft</string>
+    <string name="app_name" translatable="false">Ze Androft</string>
     <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
 
     <string name="black_and_white">B/W</string>
@@ -8,10 +8,11 @@
     <string name="positional">Positional</string>
     <string name="rotate">Rotate</string>
     <string name="invert">Invert</string>
+    <string name="static_tool">Static</string>
 
     <string name="generate">Generate</string>
     <string name="not_binary_image">Not a binary image. Make sure each pixel is either black or white.</string>
-    <string name="generate_image_page">Generate Image Page</string>
+    <string name="generate_image_page">Generate Image</string>
     <string name="draw_image_page">Draw Image Page</string>
     <string name="enter_prompt">Enter your prompt here</string>
     <string name="could_not_generate_image">Could not generate an image</string>

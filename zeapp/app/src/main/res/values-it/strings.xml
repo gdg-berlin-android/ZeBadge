@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">B/N</string>
+    <string name="reset">Reset</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Posizionale</string>
+    <string name="rotate">Ruota</string>
+    <string name="invert">Inverti</string>
+    <string name="static_tool">Statico</string>
+
+    <string name="generate">Genera</string>
+    <string name="not_binary_image">Errore: non è un\'immagine binaria. Ogni pixel deve essere bianco o nero.</string>
+    <string name="generate_image_page">Genera immagine</string>
+    <string name="draw_image_page">Disegna immagine</string>
+    <string name="enter_prompt">Inserisci il testo qui</string>
+    <string name="could_not_generate_image">Impossibile generare un\'immagine</string>
+
+    <string name="image_needed">Richiesta immagine binaria. Premi uno dei pulsanti sotto l\immagine.</string>
+    <string name="add_qr_url">Inserisci il tuo URL QR</string>
+    <string name="qr_code_title">Titolo QR Code</string>
+    <string name="qr_code_text">Testo aggiuntivo</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Aggiungi il tuo URL codice a barre</string>
+    <string name="bar_code_title">Titolo codice a barre</string>
+</resources>
