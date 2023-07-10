@@ -243,7 +243,7 @@ private fun ZeAbout(
     ) {
         Column {
             ZeText(
-                text = "Contributors",
+                text = "${lines.count()} contributors",
                 modifier = Modifier.padding(8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = 24.sp,
