@@ -1,10 +1,8 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,16 +22,17 @@ import de.berlindroid.zeapp.zeservices.ZePreferencesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
@@ -48,6 +47,7 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeUploader: ZeBadgeUploader,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
+    private val getTemplateConfigurations: GetTemplateConfigurations,
     contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
@@ -61,7 +61,6 @@ class ZeBadgeViewModel @Inject constructor(
             snackbarHostState.showSnackbar(message = message, duration = duration)
         }
     }
-
 
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
@@ -95,7 +94,7 @@ class ZeBadgeViewModel @Inject constructor(
 
         messageProgressJob?.cancel()
         messageProgressJob = viewModelScope.launch {
-            (0 until 10).forEach { progress ->
+            for (progress in 0 until 10) {
                 _uiState.update {
                     it.copy(messageProgress = 1.0f - progress / MESSAGE_DISPLAY_UPDATES.toFloat())
                 }
@@ -108,7 +107,6 @@ class ZeBadgeViewModel @Inject constructor(
         runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
     }
 
-
     /**
      * Call this method to send a given slot to the badge device.
      *
@@ -120,12 +118,12 @@ class ZeBadgeViewModel @Inject constructor(
         }
         val slots = _uiState.value.slots
 
-        if (!slots.contains(slot)) {
-            Log.e("VM", "Slot $slot is not one of our slots.")
-            return
-        }
+        val configuration = slots.getOrElse(slot) {
+            Timber.e("VM", "Slot $slot is not one of our slots.")
+            null
+        } ?: return
 
-        val bitmap = slots[slot]!!.bitmap
+        val bitmap = configuration.bitmap
         if (bitmap.isBinary()) {
             viewModelScope.launch {
                 badgeUploader.sendPage(slot.name, bitmap).fold(
@@ -165,7 +163,6 @@ class ZeBadgeViewModel @Inject constructor(
             }
 
             is ZeSlot.SecondSponsor -> {
-
                 val slotsCopy = slots.copy(
                     slot to ZeConfiguration.Picture(
                         listOf(
@@ -202,81 +199,39 @@ class ZeBadgeViewModel @Inject constructor(
             // yes, so let the user choose
             val newCurrentTemplateChooser = ZeTemplateChooser(
                 slot = slot,
-                configurations = mutableListOf(
-                    ZeConfiguration.Name(
-                        null,
-                        null,
-                        imageProviderService.getInitialNameBitmap(),
-                    ), // TODO: Fetch from shared
-
-                    ZeConfiguration.Picture(R.drawable.soon.toBitmap()),
-
-                    ZeConfiguration.Schedule(
-                        R.drawable.soon.toBitmap(),
-                    ), // TODO: Fetch Schedule here.
-
-                    ZeConfiguration.Weather(
-                        "2023-07-06",
-                        "26C",
-                        R.drawable.soon.toBitmap(),
-                    ),
-
-                    ZeConfiguration.Kodee(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg()
-                    ),
-                    ZeConfiguration.ImageDraw(
-                        R.drawable.kodee.toBitmap().ditherFloydSteinberg(),
-                    ),
-                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
-                    ZeConfiguration.Camera(R.drawable.soon.toBitmap().ditherFloydSteinberg()),
-                    ZeConfiguration.CustomPhrase(
-                        "Custom phrase",
-                        R.drawable.page_phrase.toBitmap().ditherFloydSteinberg()
-                    )
-                ).apply {
-                    // Surprise mechanic: If token is set, show open ai item
-                    if (openApiKey.isNotBlank()) {
-                        add(
-                            2,
-                            ZeConfiguration
-                                .ImageGen(
-                                    prompt = "An Android developer at a conference in Berlin.",
-                                    bitmap = R.drawable.soon.toBitmap(),
-                                ),
-                        )
-                    }
-                },
+                configurations = getTemplateConfigurations(openApiKey),
             )
             _uiState.update {
                 it.copy(currentTemplateChooser = newCurrentTemplateChooser)
             }
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
-            val newCurrentSlotEditor: ZeEditor?
             val slots = _uiState.value.slots
-            if (slot is ZeSlot.Name) {
-                newCurrentSlotEditor = ZeEditor(
+            val newCurrentSlotEditor = when (slot) {
+                is ZeSlot.Name -> ZeEditor(
                     slot,
-                    slots[ZeSlot.Name]!!
+                    slots[ZeSlot.Name]!!,
                 )
-            } else if (slot is ZeSlot.QRCode) {
-                newCurrentSlotEditor = ZeEditor(
+
+                is ZeSlot.QRCode -> ZeEditor(
                     slot,
-                    slots[ZeSlot.QRCode]!!
+                    slots[ZeSlot.QRCode]!!,
                 )
-            } else if (slot is ZeSlot.Weather) {
-                newCurrentSlotEditor = ZeEditor(
+
+                is ZeSlot.Weather -> ZeEditor(
                     slot,
-                    slots[ZeSlot.Weather]!!
+                    slots[ZeSlot.Weather]!!,
                 )
-            } else if (slot is ZeSlot.BarCode) {
-                newCurrentSlotEditor = ZeEditor(
+
+                is ZeSlot.BarCode -> ZeEditor(
                     slot,
-                    slots[ZeSlot.BarCode]!!
+                    slots[ZeSlot.BarCode]!!,
                 )
-            } else {
-                newCurrentSlotEditor = null
-                Log.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+
+                else -> {
+                    Timber.d("Customize Page", "Cannot configure slot '${slot.name}'.")
+                    null
+                }
             }
             newCurrentSlotEditor?.let { currentSlotEditor ->
                 _uiState.update {
@@ -302,13 +257,12 @@ class ZeBadgeViewModel @Inject constructor(
             if (currentSlotEditor != null) {
                 it.copy(
                     currentTemplateChooser = null,
-                    currentSlotEditor = currentSlotEditor
+                    currentSlotEditor = currentSlotEditor,
                 )
             } else {
                 it.copy(currentTemplateChooser = null)
             }
         }
-
     }
 
     /**
@@ -318,7 +272,6 @@ class ZeBadgeViewModel @Inject constructor(
      * @param configuration the configuration of the slot.
      */
     fun slotConfigured(slot: ZeSlot?, configuration: ZeConfiguration?) {
-
         var newSlots: Map<ZeSlot, ZeConfiguration>? = null
         if (slot != null && configuration != null) {
             val slots = _uiState.value.slots
@@ -355,7 +308,7 @@ class ZeBadgeViewModel @Inject constructor(
     fun slotToBitmap(slot: ZeSlot = _uiState.value.currentSimulatorSlot): Bitmap {
         val slots = _uiState.value.slots
         return slots[slot]?.bitmap ?: R.drawable.error.toBitmap().also {
-            Log.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
+            Timber.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
         }
     }
 
@@ -369,7 +322,7 @@ class ZeBadgeViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     message = "",
-                    slots = it.slots.copy(slot to initialConfiguration(slot))
+                    slots = it.slots.copy(slot to initialConfiguration(slot)),
                 )
             }
         }
@@ -387,7 +340,7 @@ class ZeBadgeViewModel @Inject constructor(
             is ZeSlot.Name -> ZeConfiguration.Name(
                 null,
                 null,
-                imageProviderService.getInitialNameBitmap()
+                imageProviderService.getInitialNameBitmap(),
             )
 
             is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
@@ -395,14 +348,17 @@ class ZeBadgeViewModel @Inject constructor(
             is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
-                "Your title",
-                "",
-                "",
-                R.drawable.qrpage_preview.toBitmap(),
+                title = "Your title",
+                text = "",
+                url = "",
+                isVcard = false,
+                phone = "",
+                email = "",
+                bitmap = R.drawable.qrpage_preview.toBitmap(),
             )
 
             ZeSlot.Weather -> ZeConfiguration.Weather(
-                "2023-07-06",
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
                 "22C",
                 R.drawable.soon.toBitmap(),
             )
@@ -436,7 +392,11 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun sendRandomPageToDevice() {
         val slots = _uiState.value.slots
-        sendPageToDevice(slots.keys.random())
+        if (slots.keys.isEmpty()) {
+            badgeFailure("No Slot Keys are available!")
+        } else {
+            sendPageToDevice(slots.keys.random())
+        }
     }
 
     private fun Int.toBitmap(): Bitmap {
@@ -461,7 +421,6 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
-
             val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
@@ -489,26 +448,15 @@ class ZeBadgeViewModel @Inject constructor(
             currentSlotEditor = null,
             currentTemplateChooser = null,
             currentSimulatorSlot = ZeSlot.Name,
-            slots = emptyMap()
+            slots = emptyMap(),
         )
 }
 
-private fun <K, V> Map<K, V>.copy(vararg entries: Pair<K, V>): Map<K, V> {
-    val result = toMutableMap()
-
-    entries.forEach { entry ->
-        val (replaceKey: K, replaceValue: V) = entry
-        result[replaceKey] = replaceValue
-    }
-
-    return result.toMap()
-}
-
 data class ZeBadgeUiState(
-    val message: String,    // message to be displayed to the user
+    val message: String, // message to be displayed to the user
     val messageProgress: Float,
-    val currentSlotEditor: ZeEditor?,  // if that is not null, we are currently editing a slot
-    val currentTemplateChooser: ZeTemplateChooser?,    // if that is not null, we are currently configuring which editor / template to use
-    val currentSimulatorSlot: ZeSlot,    // which page should be displayed in the simulator?
-    val slots: Map<ZeSlot, ZeConfiguration>
+    val currentSlotEditor: ZeEditor?, // if that is not null, we are currently editing a slot
+    val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
+    val currentSimulatorSlot: ZeSlot, // which page should be displayed in the simulator?
+    val slots: Map<ZeSlot, ZeConfiguration>,
 )

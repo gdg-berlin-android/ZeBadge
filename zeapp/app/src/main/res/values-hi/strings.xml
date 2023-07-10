@@ -18,6 +18,9 @@
     <string name="add_qr_url">अपना क्यूआर यू आर एल जोड़ें</string>
     <string name="qr_code_title">क्यूआर कोड शीर्षक</string>
     <string name="qr_code_text">अतिरिक्त पाठ</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Phone</string>
     <string name="url">यूआरएल</string>
     <string name="add_barcode_url">अपना बारकोड यू आर एल जोड़ें</string>
     <string name="bar_code_title">बारकोड शीर्षक</string>
