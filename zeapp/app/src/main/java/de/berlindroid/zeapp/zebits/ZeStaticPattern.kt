@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import java.nio.IntBuffer
 import kotlin.math.abs
-import kotlin.math.pow
 
 /**
  * Dither using a static pattern
@@ -81,10 +80,6 @@ private fun Array<Int>.differenceToBlock(
 }
 
 private const val PATTERN_SIZE = 3
-
-private const val PATTERN_PLACE_COUNT = PATTERN_SIZE * PATTERN_SIZE
-
-private val PATTERN_BITS_NEEDED = 2 pow PATTERN_PLACE_COUNT
 
 /**
  * The patterns to compare our blocks with.
@@ -166,17 +161,3 @@ fun MutableList<Array<Int>>.deriveMorePatterns(): List<Array<Int>> {
 
     return outputList.toList()
 }
-
-fun bruteForce() = (0 until PATTERN_BITS_NEEDED).map { patternAsInt ->
-    var pattern = IntArray(PATTERN_PLACE_COUNT)
-
-    for (bit in 0 until PATTERN_PLACE_COUNT) {
-        if (patternAsInt and (1 shl bit) == (1 shl bit)) {
-            pattern[bit] = 0xFF
-        }
-    }
-
-    pattern.toTypedArray()
-}
-
-private infix fun Int.pow(power: Int): Int = toDouble().pow(power.toDouble()).toInt()
