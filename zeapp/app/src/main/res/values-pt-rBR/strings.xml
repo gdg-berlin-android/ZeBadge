@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Ze Androft</string>
+    <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
+
+    <string name="black_and_white">P/B</string>
+    <string name="reset">Resetar</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Posicional</string>
+    <string name="rotate">Rotacionar</string>
+    <string name="invert">Inverter</string>
+
+    <string name="generate">Gerar</string>
+    <string name="not_binary_image">Não é uma imagem binária. Certifique-se que todos os pixels sejam pretos ou brancos.</string>
+    <string name="generate_image_page">Gerar uma página de imagem</string>
+    <string name="draw_image_page">Desenhar uma página</string>
+    <string name="enter_prompt">Entre com seu texto aqui</string>
+    <string name="could_not_generate_image">Não foi possível gerar a imagem</string>
+
+    <string name="image_needed">Imagem binária requerida. Aperte um dos botões embaixo da imagem.</string>
+    <string name="add_qr_url">Adicione sua URL para o QR</string>
+    <string name="qr_code_title">Titulo do QR Code</string>
+    <string name="qr_code_text">Texto adicional</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Adicione sua URL em código de barras</string>
+    <string name="bar_code_title">Título do código de barras</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">E-Mail</string>
+    <string name="qr_code_phone">Telefone</string>
+
+    <string name="your_name_here">Seu nome aqui</string>
+    <string name="contact_me_here">Entre em contato comigo aqui</string>
+    <string name="binary_image_needed">Imagem binária requerida. Aperte um dos botões embaixo da imagem.</string>
+    <string name="add_your_phrase_here">Adicione sua frase aqui</string>
+    <string name="random_phrase">Frase aleatória</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view">Unicórnio em uma conferência android em vista isométrica.</string>
+    <string name="name">Nome</string>
+    <string name="contact">Contato</string>
+    <string name="clear" >Limpar</string>
+    <string name="add_your_contact_details">Adicione os seus detalhes de contato</string>
+    <string name="set_picture">Adicionar imagem</string>
+    <string name="click_get_to_show_quote_of_the_day">Clique em obter para exibir a mensagem do dia</string>
+    <string name="get">Obter</string>
+    <string name="decline">Recusar</string>
+    <string name="send">Enviar</string>
+    <string name="n_a">N/D</string>
+    <string name="load_weather">Carregar clima</string>
+    <string name="hello_my_github_profile_is">Olá, meu github é</string>
+    <string name="your_phrase_here">Sua frase aqui</string>
+    <string name="hello_my_name_is">Olá, meu nome é</string>
+    <string name="upcoming_weather">☀️Previsão do tempo</string>
+    <string name="quote_of_the_day">Mensagem do dia</string>
+
+</resources>

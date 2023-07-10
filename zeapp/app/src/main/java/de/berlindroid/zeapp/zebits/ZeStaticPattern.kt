@@ -84,7 +84,7 @@ private const val PATTERN_SIZE = 3
 /**
  * The patterns to compare our blocks with.
  */
-//private val PATTERNS = bruteForce() // ignored due to size constraints
+// private val PATTERNS = bruteForce() // ignored due to size constraints
 private val PATTERNS = handPicked()
 
 private fun handPicked() = mutableListOf(

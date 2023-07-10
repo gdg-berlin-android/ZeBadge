@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+    <string name="black_and_white">B/W</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="reset">रीसेट करा</string>
+    <string name="positional">स्थानबद्ध</string>
+    <string name="rotate">फिरवा</string>
+    <string name="invert">उलटा करा</string>
+
+    <string name="generate">बनवा</string>
+    <string name="not_binary_image">बायनरी चित्र नाही. प्रत्येक पिक्सेल काळा अथवा पांढरा असायला हवा.</string>
+    <string name="generate_image_page">चित्र पृष्ठ बनवा</string>
+    <string name="draw_image_page">चित्र पृष्ठ काढा काढा</string>
+    <string name="enter_prompt">तुमची सूचना येथे प्रविष्ट करा</string>
+    <string name="could_not_generate_image">चित्र बनवण्यास असफल</string>
+
+    <string name="image_needed">बायनरी चित्र आवश्यक आहे. खालीलपैकी एक बटण दाबा.</string>
+    <string name="add_qr_url">तुमची QR URL जोडा</string>
+    <string name="qr_code_title">QR कोड शीर्षक</string>
+    <string name="qr_code_text">अतिरिक्त मजकूर</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">तुमचा बारकोड URL जोडा</string>
+    <string name="bar_code_title">बार कोड शीर्षक</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Phone</string>
+</resources>
