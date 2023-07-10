@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.PAGE_HEIGHT
@@ -33,7 +33,7 @@ import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 fun QRCodePage(
     title: String = "Hello, my github profile is",
     text: String = "gdg-berlin-android",
-    url: String = "https://github.com/gdg-berlin-android",
+    qrContent: String = "https://github.com/gdg-berlin-android",
 ) {
     val pageWidth = with(LocalDensity.current) { PAGE_WIDTH.toDp() }
     val pageHeight = with(LocalDensity.current) { PAGE_HEIGHT.toDp() }
@@ -44,13 +44,13 @@ fun QRCodePage(
             )
             .size(
                 width = pageWidth,
-                height = pageHeight
+                height = pageHeight,
             ),
     ) {
         Column(
             modifier = Modifier
                 .width(pageWidth - pageHeight)
-                .fillMaxHeight()
+                .fillMaxHeight(),
         ) {
             Text(
                 modifier = Modifier
@@ -61,6 +61,7 @@ fun QRCodePage(
                 color = Color.White,
                 maxLines = 3,
                 text = title,
+                textAlign = TextAlign.Center,
             )
             Text(
                 modifier = Modifier
@@ -70,12 +71,17 @@ fun QRCodePage(
                 textAlign = TextAlign.Center,
                 color = Color.Black,
                 text = text,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
         }
 
         val painter =
-            if (url.isEmpty()) remember { ColorPainter(Color.White) }
-            else rememberQrBitmapPainter(url)
+            if (qrContent.isEmpty()) {
+                remember { ColorPainter(Color.White) }
+            } else {
+                rememberQrBitmapPainter(qrContent)
+            }
         Image(
             painter = painter,
             contentDescription = "",

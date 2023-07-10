@@ -45,7 +45,7 @@ fun BadgeSimulator(
             .paint(
                 painterResource(id = R.drawable.badgerrpi2040),
                 contentScale = ContentScale.Fit,
-            )
+            ),
     ) {
         Spacer(Modifier.fillMaxHeight(.2f))
         Row(Modifier.fillMaxHeight(.76f)) {
@@ -65,13 +65,13 @@ fun BadgeSimulator(
                 Text(
                     text = "⏺️",
                     fontSize = 43.sp,
-                    modifier = Modifier.clickable { onButtonPressed(ZeSlot.FirstCustom) }
+                    modifier = Modifier.clickable { onButtonPressed(ZeSlot.FirstCustom) },
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
                 Text(
                     text = "⏺️",
                     fontSize = 43.sp,
-                    modifier = Modifier.clickable { onButtonPressed(ZeSlot.SecondCustom) }
+                    modifier = Modifier.clickable { onButtonPressed(ZeSlot.SecondCustom) },
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
             }
@@ -83,17 +83,20 @@ fun BadgeSimulator(
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed(ZeSlot.Name) })
+                modifier = Modifier.clickable { onButtonPressed(ZeSlot.Name) },
+            )
             Spacer(modifier = Modifier.weight(1.0f))
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed(ZeSlot.FirstSponsor) })
+                modifier = Modifier.clickable { onButtonPressed(ZeSlot.FirstSponsor) },
+            )
             Spacer(modifier = Modifier.weight(1.0f))
             Text(
                 text = "⏺️",
                 fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed(ZeSlot.SecondSponsor) })
+                modifier = Modifier.clickable { onButtonPressed(ZeSlot.SecondSponsor) },
+            )
             Spacer(modifier = Modifier.weight(1.0f))
         }
     }

@@ -1,20 +1,24 @@
 package de.berlindroid.zeapp
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
@@ -40,13 +44,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -70,6 +79,7 @@ import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
@@ -110,6 +120,7 @@ class ZeMainActivity : ComponentActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        vm.loadData()
         setContent {
             DrawUi()
         }
@@ -163,6 +174,15 @@ class ZeMainActivity : ComponentActivity() {
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     var isShowingAbout by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val gotToReleases: () -> Unit = remember {
+        {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
     ZeBadgeAppTheme(content = {
         ZeScaffold(
             modifier = modifier,
@@ -188,12 +208,13 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     onRandomClick = vm::sendRandomPageToDevice,
                     onSaveAllClick = vm::saveAll,
                     onAboutClick = { isShowingAbout = !isShowingAbout },
+                    onGotoReleaseClick = gotToReleases,
                     isShowingAbout = isShowingAbout,
                 )
             },
             content = { paddingValues ->
                 if (isShowingAbout) {
-                    ZeAbout(paddingValues, vm)
+                    ZeAbout(paddingValues, vm, LocalContext.current)
                 } else {
                     ZePages(
                         paddingValues = paddingValues,
@@ -203,13 +224,14 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 }
             },
         )
-    })
+    },)
 }
 
 @Composable
 private fun ZeAbout(
     paddingValues: PaddingValues,
     vm: ZeBadgeViewModel,
+    context: Context,
 ) {
     val lines by vm.lines.collectAsState()
 
@@ -221,20 +243,35 @@ private fun ZeAbout(
     ) {
         Column {
             ZeText(
-                text = "Contributors",
+                text = "${lines.count()} contributors",
                 modifier = Modifier.padding(8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = 24.sp,
             )
             ZeLazyColumn {
                 items(lines) { line ->
-                    ZeText(
-                        text = line,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(8.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontSize = 18.sp,
-                    )
+                    ZeRow(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val email = line.substring(line.indexOf('<').plus(1), line.lastIndexOf('>')).trim()
+                        ZeText(
+                            text = line.substring(0, line.indexOf('<')).trim(),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(8.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontSize = 18.sp,
+                        )
+                        ZeIcon(
+                            painter = painterResource(id = R.drawable.email),
+                            contentDescription = "Send random page to badge",
+                            Modifier
+                                .size(20.dp, 20.dp)
+                                .clickable {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:$email"))
+                                    context.startActivity(intent)
+                                },
+                        )
+                    }
                 }
             }
         }
@@ -247,10 +284,23 @@ private fun ZeTopBar(
     onSaveAllClick: () -> Unit,
     onRandomClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onGotoReleaseClick: () -> Unit,
     isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
-        title = { ZeText(style = MaterialTheme.typography.titleLarge, text = stringResource(id = R.string.app_name)) },
+        title = {
+            ZeText(
+                style = MaterialTheme.typography.titleLarge,
+                text = buildAnnotatedString {
+                    pushStyle(SpanStyle(fontWeight = FontWeight.Black))
+                    append("Ze")
+                    pop()
+                    pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
+                    append("Androft")
+                    pop()
+                },
+            )
+        },
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.secondary,
@@ -258,6 +308,12 @@ private fun ZeTopBar(
             navigationIconContentColor = MaterialTheme.colorScheme.secondary,
         ),
         actions = {
+            ZeIconButton(onClick = onGotoReleaseClick) {
+                ZeIcon(
+                    painter = painterResource(id = R.drawable.ic_update),
+                    contentDescription = "Open the release page in the browser",
+                )
+            }
             ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
@@ -290,17 +346,18 @@ private fun ZePages(
     ZeSurface(
         modifier = ZeModifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .padding(ZeDimen.Half),
+            .padding(paddingValues),
     ) {
-        val editor by remember { vm.currentSlotEditor }
-        val templateChooser by remember { vm.currentTemplateChooser }
-        val message by remember { vm.message }
-        val messageProgress by remember { vm.messageProgress }
-        val slots by remember { vm.slots }
+        val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
+
+        val editor = uiState.currentSlotEditor
+        val templateChooser = uiState.currentTemplateChooser
+        val message = uiState.message
+        val messageProgress = uiState.messageProgress
+        val slots = uiState.slots
 
         if (editor != null) {
-            SelectedEditor(editor!!, vm)
+            SelectedEditor(editor, vm)
         }
 
         if (templateChooser != null) {
@@ -319,7 +376,7 @@ private fun ZePages(
                     start = ZeDimen.One,
                     end = ZeDimen.One,
                     top = ZeDimen.Half,
-                    bottom = 140.dp,
+                    bottom = ZeDimen.One,
                 ),
             ) {
                 items(
@@ -336,7 +393,7 @@ private fun ZePages(
                     }
 
                     PagePreview(
-                        modifier = Modifier.alpha(alpha = alpha),
+                        modifier = Modifier.graphicsLayer { this.alpha = alpha },
                         name = slot::class.simpleName ?: "WTF",
                         bitmap = vm.slotToBitmap(slot),
                         customizeThisPage = if (slot.isSponsor) {
@@ -420,7 +477,7 @@ private fun SelectedEditor(
             ZeSlot.BarCode,
         )
     ) {
-        Log.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
+        Timber.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
             is ZeConfiguration.Name -> NameEditorDialog(
@@ -490,6 +547,7 @@ private fun SelectedEditor(
                 config = config,
                 vm = vm,
             )
+
             is ZeConfiguration.CustomPhrase -> CustomPhraseEditorDialog(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
@@ -547,14 +605,13 @@ private fun PagePreview(
 ) {
     ZeCard(
         modifier = modifier
-            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One))
             .padding(ZeDimen.Quarter),
     ) {
         ZeImage(
             modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
+                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One),
             painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = ZeFilterQuality.None,
@@ -566,8 +623,10 @@ private fun PagePreview(
         ZeRow {
             ZeText(
                 text = name,
-                modifier = Modifier.align(ZeAlignment.CenterVertically).padding(start = ZeDimen.One),
-                color = ZeColor.Black,
+                modifier = Modifier
+                    .align(ZeAlignment.CenterVertically)
+                    .padding(start = ZeDimen.One),
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
                 ZeLazyRow(
