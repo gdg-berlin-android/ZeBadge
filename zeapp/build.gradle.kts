@@ -9,5 +9,6 @@ plugins {
     alias(libs.plugins.google.play.services) apply false
     alias(libs.plugins.firebase.appdistribution) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.license.report.gradle) apply false
     id("com.android.test") version "8.0.2" apply false
 }
