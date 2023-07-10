@@ -276,7 +276,6 @@ class ZeBadgeViewModel @Inject constructor(
         if (slot != null && configuration != null) {
             val slots = _uiState.value.slots
             newSlots = slots.copy(slot to configuration)
-            slot.save()
         }
         _uiState.update {
             if (newSlots != null) {
@@ -284,6 +283,9 @@ class ZeBadgeViewModel @Inject constructor(
             } else {
                 it.copy(currentSlotEditor = null)
             }
+        }
+        if (slot != null && configuration != null) {
+            slot.save()
         }
     }
 
@@ -348,7 +350,7 @@ class ZeBadgeViewModel @Inject constructor(
             is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
-                title = "Your title",
+                title = "",
                 text = "",
                 url = "",
                 isVcard = false,
