@@ -13,28 +13,49 @@ plugins {
     alias(libs.plugins.firebase.appdistribution)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.license.report.gradle)
+    alias(libs.plugins.baselineprofile)
 }
+
+val isCi = System.getenv("CI") == "true"
+val zeAppPassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+val enableRelease = isCi && zeAppPassword != ""
+val appVersionCode = System.getenv("GITHUB_RUN_NUMBER")?.toInt() ?: 1
+val zeAppDebug = "ZEapp23"
 
 android {
     namespace = "de.berlindroid.zeapp"
-    compileSdk = 33
 
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
+        compileSdk = 34
+        targetSdk = 34
         minSdk = 29
-        targetSdk = 33
-        versionCode = 1
+        versionCode = appVersionCode
         versionName = "1.0"
 
         vectorDrawables {
             useSupportLibrary = true
         }
+        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "hr-rHR", "ja", "lt", "mr", "nl", "sq", "tr", "uk", "ur", "bs", "pt-rBR"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures {
-        buildConfig = true
+    signingConfigs {
+        named("debug") {
+            keyAlias = zeAppDebug
+            keyPassword = zeAppDebug
+            storeFile = file("$rootDir/zeapp_debug")
+            storePassword = zeAppDebug
+        }
+        if (enableRelease) {
+            create("release") {
+                keyAlias = "zeapp-sample"
+                keyPassword = zeAppPassword
+                storeFile = file("$rootDir/zeapp")
+                storePassword = zeAppPassword
+            }
+        }
     }
 
     buildTypes {
@@ -50,18 +71,32 @@ android {
                 groups = "testers"
             }
         }
-
+        create("benchmark") {
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
         release {
             isMinifyEnabled = false
+            isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            if (enableRelease) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
+    lint {
+        disable.add("MissingTranslation")
+    }
+
     sourceSets.getByName("main").assets.srcDir(
-        "$projectDir/build/generated/assets",
+        "$buildDir/generated/assets",
     )
 
     compileOptions {
@@ -80,6 +115,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -133,15 +169,19 @@ dependencies {
     implementation(platform(libs.firebase))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     testImplementation(libs.test.assertk)
     testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
 
     androidTestImplementation(libs.test.compose.junit)
     debugImplementation(libs.test.compose.manifest)
     kapt(libs.dagger.hilt.compiler)
+    baselineProfile(project(":benchmark"))
 }
 
 // Ktlint

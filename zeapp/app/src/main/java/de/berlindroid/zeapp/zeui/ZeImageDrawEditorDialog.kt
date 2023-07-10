@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 fun ZeImageDrawEditorDialog(
-    initialPrompt: String = "Unicorn at an android conference in isometric view.",
+    initialPrompt: String = stringResource(id = R.string.unicorn_at_an_android_conference_in_isometric_view),
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.ImageDraw) -> Unit = {},
     snackbarMessage: (String) -> Unit = {},

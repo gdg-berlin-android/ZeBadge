@@ -110,7 +110,7 @@ fun BinaryImageEditor(
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_static),
-                    text = "Static",
+                    text = stringResource(id = R.string.static_tool)
                 ) {
                     if (last == null) {
                         last = bitmap.copy()

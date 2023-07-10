@@ -13,6 +13,7 @@ google-play-services = { id = "com.google.gms.google-services", version.ref = "g
 firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-appdistribution" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 license-report-gradle = { id = "com.jaredsburrows.license", version.ref = "license-report-gradle" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark"}
 
 [versions]
 
@@ -23,8 +24,8 @@ androidx-compose-bom = "2023.06.01"
 androidx-datastore = "1.0.0"
 androidx-core = "1.10.1"
 androidx-lifecycle = "2.6.1"
-androidx-activity = "1.7.1"
-##             ⬆ = "1.7.2"
+androidx-activity = "1.7.2"
+benchmark = "1.2.0-alpha16"
 retrofit = "2.9.0"
 mik3y-usb-serial = "3.5.1"
 ktlint-gradle = "11.5.0"
@@ -32,11 +33,12 @@ detekt-gradle = "1.23.0"
 license-report-gradle = "0.9.3"
 zxing ="3.5.1"
 material3-wsc = "1.1.1"
-dagger-hilt = "2.44"
+dagger-hilt = "2.46.1"
 google-play-services = "4.3.15"
 firebase = "32.1.1"
 firebase-appdistribution = "4.0.0"
 firebase-crashlytics = "2.9.6"
+timber = "5.0.1"
 
 [libraries]
 
@@ -63,12 +65,11 @@ dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref
 firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
-
-test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.25"
-##                                                 ⬆ :0.26"
-##                                                 ⬆ :0.26.1"
+test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.26.1"
 test-junit = "junit:junit:4.13.2"
 test-compose-junit = "androidx.compose.ui:ui-test-junit4:1.4.3"
 test-compose-manifest = "androidx.compose.ui:ui-test-manifest:1.4.3"
-
+test-mockk = "io.mockk:mockk:1.13.5"
+test-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2"

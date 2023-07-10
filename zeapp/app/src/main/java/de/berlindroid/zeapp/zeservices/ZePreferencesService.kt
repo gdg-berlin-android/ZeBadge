@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp.zeservices
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.Preferences
@@ -19,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import timber.log.Timber
 import javax.inject.Inject
 
 private const val PREFS_NAME = "defaults"
@@ -164,7 +164,7 @@ class ZePreferencesService @Inject constructor(
                 )
 
                 else -> {
-                    Log.e(
+                    Timber.e(
                         "Slot from Prefs",
                         "Cannot find $type slot in preferences.",
                     )

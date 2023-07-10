@@ -28,6 +28,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "ZeBadgeApp"
-include(
-    ":app"
-)
+include(":app")
+include(":benchmark")

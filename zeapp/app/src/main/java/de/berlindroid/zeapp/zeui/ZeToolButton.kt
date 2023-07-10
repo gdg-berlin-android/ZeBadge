@@ -1,3 +1,4 @@
+
 package de.berlindroid.zeapp.zeui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.R
@@ -27,7 +29,7 @@ import androidx.core.R
 @Preview
 fun ToolButton(
     painter: Painter = painterResource(id = R.drawable.ic_call_decline),
-    text: String = "Decline",
+    text: String = stringResource(de.berlindroid.zeapp.R.string.decline),
     onClick: () -> Unit = {},
 ) {
     TextButton(
@@ -60,7 +62,8 @@ fun ToolButton(
 @Preview
 fun ToolButton(
     imageVector: ImageVector = Icons.Filled.Send,
-    text: String = "Send",
+    text: String = stringResource(id = de.berlindroid.zeapp.R.string.send_icon_text),
+
     onClick: () -> Unit = {},
 ) {
     TextButton(
