@@ -276,6 +276,7 @@ class ZeBadgeViewModel @Inject constructor(
         if (slot != null && configuration != null) {
             val slots = _uiState.value.slots
             newSlots = slots.copy(slot to configuration)
+            saveSlotConfiguration(slot, configuration)
         }
         _uiState.update {
             if (newSlots != null) {
@@ -283,9 +284,6 @@ class ZeBadgeViewModel @Inject constructor(
             } else {
                 it.copy(currentSlotEditor = null)
             }
-        }
-        if (slot != null && configuration != null) {
-            slot.save()
         }
     }
 
@@ -384,8 +382,8 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun saveAll() {
         val slots = _uiState.value.slots
-        for (slot in slots.keys) {
-            slot.save()
+        for ((slot, configuration) in slots) {
+            saveSlotConfiguration(slot, configuration)
         }
     }
 
@@ -405,11 +403,9 @@ class ZeBadgeViewModel @Inject constructor(
         return imageProviderService.provideImageBitmap(this)
     }
 
-    private fun ZeSlot.save() {
-        val slots = _uiState.value.slots
-        val config = slots[this]!!
+    private fun saveSlotConfiguration(slot: ZeSlot, config: ZeConfiguration) {
         viewModelScope.launch(Dispatchers.IO) {
-            preferencesService.saveSlotConfiguration(this@save, config)
+            preferencesService.saveSlotConfiguration(slot, config)
         }
     }
 
