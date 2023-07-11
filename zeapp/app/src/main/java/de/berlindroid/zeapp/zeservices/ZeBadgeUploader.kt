@@ -121,9 +121,8 @@ class ZeBadgeUploader @Inject constructor(
     ): Unit = suspendCancellableCoroutine { continuation ->
         class BoundUsbReceiver : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                if (ACTION_USB_PERMISSION == intent.action) {
+                if (ACTION_USB_PERMISSION == intent.action && continuation.isActive) {
                     val boundDevice: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
-
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (boundDevice != null) {
                             Timber.d("USB Permission", "Permission granted.")
