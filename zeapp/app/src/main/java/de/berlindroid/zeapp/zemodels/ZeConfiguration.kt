@@ -2,6 +2,27 @@ package de.berlindroid.zeapp.zemodels
 
 import android.graphics.Bitmap
 
+enum class ZeBadgeType(val rawValue: String) {
+    NAME("Name Tag"),
+    QR_CODE("QRCode Tag"),
+    CUSTOM_PICTURE("Custom Picture"),
+    IMAGE_GEN("Image Gen"),
+    GEOFENCE_SCHEDULE("Conference Schedule"),
+    UPCOMING_WEATHER("Upcoming Weather"),
+    RANDOM_QUOTE("Random quote"),
+    KODEE("Kodee³"),
+    CAMERA("Camera"),
+    IMAGE_DRAWING("Image Drawing"),
+    BARCODE_TAG("BarCode Tag"),
+    PHRASE("Custom Phrase");
+
+    companion object {
+        fun getOrNull(type: String): ZeBadgeType? {
+            return values().find { it.rawValue == type }
+        }
+    }
+}
+
 /**
  * The configuration of a slot
  *
@@ -15,7 +36,7 @@ import android.graphics.Bitmap
  * @param bitmap the bitmap created, might be empty or an error bitmap at first
  */
 sealed class ZeConfiguration(
-    val type: String,
+    val type: ZeBadgeType,
     open val humanTitle: String,
     open val bitmap: Bitmap,
 ) {
@@ -30,11 +51,7 @@ sealed class ZeConfiguration(
         val name: String?,
         val contact: String?,
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Name Tag", bitmap) {
-        companion object {
-            const val TYPE: String = "Name Tag"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.NAME, humanTitle = ZeBadgeType.NAME.rawValue, bitmap)
 
     /**
      * Store the name and contact of an attendee.
@@ -50,11 +67,7 @@ sealed class ZeConfiguration(
         val phone: String,
         val email: String,
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "QRCode Tag", bitmap) {
-        companion object {
-            const val TYPE: String = "QRCode Tag"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.QR_CODE, humanTitle = ZeBadgeType.QR_CODE.rawValue, bitmap)
 
     /**
      * A picture to be displayed as the page.
@@ -66,11 +79,7 @@ sealed class ZeConfiguration(
      */
     data class Picture(
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Custom Picture", bitmap) {
-        companion object {
-            const val TYPE: String = "Custom Picture"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.CUSTOM_PICTURE, humanTitle = ZeBadgeType.CUSTOM_PICTURE.rawValue, bitmap)
 
     /**
      * Configure this slot for image generation
@@ -84,13 +93,7 @@ sealed class ZeConfiguration(
     data class ImageGen(
         val prompt: String,
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Image Gen", bitmap) {
-        companion object {
-            const val TYPE: String = "Image Gen"
-        }
-    }
-
-    // ADD CUSTOM PAGES HERE
+    ) : ZeConfiguration(ZeBadgeType.IMAGE_GEN, humanTitle = ZeBadgeType.IMAGE_GEN.rawValue, bitmap)
 
     /**
      * TODO: This configuration is a place holder to entice you, the reader to build it
@@ -102,47 +105,27 @@ sealed class ZeConfiguration(
      */
     data class Schedule(
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Conference Schedule", bitmap) {
-        companion object {
-            const val TYPE: String = "Conference Schedule"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.GEOFENCE_SCHEDULE, humanTitle = ZeBadgeType.GEOFENCE_SCHEDULE.rawValue, bitmap)
 
     data class Weather(
         val date: String,
         val temperature: String,
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Upcoming Weather", bitmap) {
-        companion object {
-            const val TYPE: String = "Upcoming Weather"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.UPCOMING_WEATHER, humanTitle = ZeBadgeType.UPCOMING_WEATHER.rawValue, bitmap)
 
     data class Quote(
         val message: String,
         val author: String,
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Random quotes", bitmap) {
-        companion object {
-            const val TYPE: String = "Random quotes"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.RANDOM_QUOTE, humanTitle = ZeBadgeType.RANDOM_QUOTE.rawValue, bitmap)
 
     data class Kodee(
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Kodee³", bitmap) {
-        companion object {
-            const val TYPE: String = "Kodee"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.KODEE, humanTitle = ZeBadgeType.KODEE.rawValue, bitmap)
 
     data class Camera(
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Camera", bitmap) {
-        companion object {
-            const val TYPE: String = "Camera"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.CAMERA, humanTitle = ZeBadgeType.CAMERA.rawValue, bitmap)
 
     /**
      * Configure this slot for image draw by user
@@ -152,11 +135,7 @@ sealed class ZeConfiguration(
      */
     data class ImageDraw(
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Image Draw", bitmap) {
-        companion object {
-            const val TYPE: String = "Image Draw"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.IMAGE_DRAWING, humanTitle = ZeBadgeType.IMAGE_DRAWING.rawValue, bitmap)
 
     /**
      * Store the name and contact of an attendee.
@@ -168,21 +147,12 @@ sealed class ZeConfiguration(
         val title: String,
         val url: String,
         override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "BarCode Tag", bitmap) {
-        companion object {
-            const val TYPE: String = "BarCode Tag"
-        }
-    }
+    ) : ZeConfiguration(ZeBadgeType.BARCODE_TAG, humanTitle = ZeBadgeType.BARCODE_TAG.rawValue, bitmap)
 
     data class CustomPhrase(
         val phrase: String,
-        override val bitmap: Bitmap,
-    ) : ZeConfiguration(TYPE, humanTitle = "Custom Phrase", bitmap) {
-
-        companion object {
-            const val TYPE: String = "Custom phrase everyone sees!"
-        }
-    }
+        override val bitmap: Bitmap
+    ) : ZeConfiguration(ZeBadgeType.PHRASE, humanTitle = ZeBadgeType.PHRASE.rawValue, bitmap)
 
     // TODO: Add your own pages.
 }
