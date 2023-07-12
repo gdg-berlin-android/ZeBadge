@@ -34,6 +34,7 @@ fun NamePage(
     contact: String = stringResource(id = R.string.contact_me_here),
 ) {
     var size by remember { mutableStateOf(10.sp) }
+    var secondarySize by remember { mutableStateOf(8.sp) }
 
     Column(
         modifier = Modifier
@@ -75,11 +76,27 @@ fun NamePage(
                 .fillMaxWidth()
                 .background(Color(0xFF801000)),
             fontFamily = FontFamily.Monospace,
-            fontSize = 8.sp,
+            fontSize = secondarySize,
             color = Color.White,
             textAlign = TextAlign.Center,
-            maxLines = 1,
             text = contact,
+            onTextLayout = { result ->
+                if (result.didOverflowWidth) {
+                    secondarySize /= 3.0f
+                }
+            }
         )
     }
+}
+
+/**
+ * Another preview
+ */
+@Composable
+@Preview
+private fun NamePagePreview2(
+    name: String = "Your Name Here is very long",
+    contact: String = "Contact Me Here is very long long",
+) {
+    NamePage(name, contact)
 }
