@@ -94,6 +94,7 @@ fun NamePage(
  */
 @Composable
 @Preview
+@Suppress("UnusedPrivateMember")
 private fun NamePagePreview2(
     name: String = "Your Name Here is very long",
     contact: String = "Contact Me Here is very long long",
