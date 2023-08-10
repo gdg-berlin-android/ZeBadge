@@ -15,12 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zeapp.R
 
 /**
  * A composable that represents a badge, to be renderd as a bitmap.
@@ -28,10 +30,11 @@ import de.berlindroid.zeapp.PAGE_WIDTH
 @Composable
 @Preview
 fun NamePage(
-    name: String = "Your Name Here",
-    contact: String = "Contact Me Here",
+    name: String = stringResource(id = R.string.your_name_here),
+    contact: String = stringResource(id = R.string.contact_me_here),
 ) {
     var size by remember { mutableStateOf(10.sp) }
+    var secondarySize by remember { mutableStateOf(8.sp) }
 
     Column(
         modifier = Modifier
@@ -53,7 +56,7 @@ fun NamePage(
             textAlign = TextAlign.Center,
             color = Color.White,
             maxLines = 1,
-            text = "Hello, my name is",
+            text = stringResource(R.string.hello_my_name_is),
         )
         Text(
             modifier = Modifier
@@ -73,11 +76,28 @@ fun NamePage(
                 .fillMaxWidth()
                 .background(Color(0xFF801000)),
             fontFamily = FontFamily.Monospace,
-            fontSize = 8.sp,
+            fontSize = secondarySize,
             color = Color.White,
             textAlign = TextAlign.Center,
-            maxLines = 1,
             text = contact,
+            onTextLayout = { result ->
+                if (result.didOverflowWidth) {
+                    secondarySize /= 3.0f
+                }
+            }
         )
     }
+}
+
+/**
+ * Another preview
+ */
+@Composable
+@Preview
+@Suppress("UnusedPrivateMember")
+private fun NamePagePreview2(
+    name: String = "Your Name Here is very long",
+    contact: String = "Contact Me Here is very long long",
+) {
+    NamePage(name, contact)
 }

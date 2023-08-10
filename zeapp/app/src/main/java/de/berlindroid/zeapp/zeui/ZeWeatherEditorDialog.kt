@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -74,8 +75,8 @@ fun WeatherEditorDialog(
             activity = activity,
             content = {
                 WeatherPage(
-                    date = weatherData?.formattedDate() ?: "N/A",
-                    temperature = weatherData?.formattedTemperature ?: "N/A",
+                    date = weatherData?.formattedDate() ?: activity.getString(R.string.n_a),
+                    temperature = weatherData?.formattedTemperature ?: activity.getString(R.string.n_a),
                 )
             },
             callback = { image = it },
@@ -90,7 +91,7 @@ fun WeatherEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Weather(date, temperature, image))
                     } else {
-                        snackbarMessage("Binary image needed. Press one of the buttons below the image.")
+                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {
@@ -102,7 +103,7 @@ fun WeatherEditorDialog(
                 Text(text = stringResource(android.R.string.cancel))
             }
         },
-        title = { Text(text = "Add your contact details") },
+        title = { Text(text = stringResource(id = R.string.add_your_contact_details)) },
         properties = DialogProperties(),
         text = {
             LazyColumn {
@@ -198,7 +199,7 @@ fun WeatherEditorDialog(
                             }
                         },
                     ) {
-                        Text("Load Weather")
+                        Text(stringResource(R.string.load_weather))
                     }
                 }
             }

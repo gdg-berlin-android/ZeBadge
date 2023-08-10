@@ -22,4 +22,7 @@
 <string name="url">URL</string>
 <string name="add_barcode_url">\"Ajouter l\'URL de votre code barre\"</string>
 <string name="bar_code_title">Titre du code à barres</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Phone</string>
 </resources>

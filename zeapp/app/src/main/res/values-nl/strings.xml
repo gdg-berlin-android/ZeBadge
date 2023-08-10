@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+
+    <string name="black_and_white">Z/W</string>
+    <string name="reset">Reset</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Positioneel</string>
+    <string name="rotate">Roteer</string>
+    <string name="invert">Inverteren</string>
+
+    <string name="generate">Genereer</string>
+    <string name="not_binary_image">Geen binaire afbeelding. Zorg dat elke pixel zwart of wit is.</string>
+    <string name="generate_image_page">Genereer afbeelding</string>
+    <string name="draw_image_page">Teken afbeelding</string>
+    <string name="enter_prompt">Typ je prompt hier</string>
+    <string name="could_not_generate_image">Kon geen afbeelding genereren</string>
+
+    <string name="image_needed">Binaire afbeelding nodig. Druk op een van de knoppen onder de afbeelding.</string>
+    <string name="add_qr_url">QR URL toevoegen</string>
+    <string name="qr_code_title">QR-code titel</string>
+    <string name="qr_code_text">Extra tekst</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Barcode URL toevoegen</string>
+    <string name="bar_code_title">Barcode titel</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">E-mail</string>
+    <string name="qr_code_phone">Phone</string>
+</resources>

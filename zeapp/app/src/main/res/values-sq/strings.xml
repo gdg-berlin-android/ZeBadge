@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ze Androft</string>
+    <string name="black_and_white">B/W</string>
+    <string name="reset">Reseto</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Pozicional</string>
+    <string name="rotate">Rrotullo</string>
+    <string name="invert">Permbys</string>
+    <string name="generate">Gjenero</string>
+    <string name="not_binary_image">Nuk eshte imazh binare. Sigurohu qe cdo pixel eshte ose i bardhe ose i zi.</string>
+    <string name="generate_image_page">Genero faqen e imazhit</string>
+    <string name="draw_image_page">Vizato faqen e imazhit</string>
+    <string name="enter_prompt">Futni kerkesen tuaj ketu</string>
+    <string name="could_not_generate_image">Gjenerimi i imazhing deshtoi</string>
+    <string name="image_needed">Kerkohet imazhi binar. Shtyp njerin nga butonat nen imazh</string>
+    <string name="add_qr_url">Shto linkun per QR code</string>
+    <string name="qr_code_title">Titulli i QR code</string>
+    <string name="qr_code_text">Teksi plotesues</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Shto linkun per Bar code</string>
+    <string name="bar_code_title">Titulli i Bar code</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Tel.</string>
+</resources>
