@@ -63,9 +63,9 @@ kotlin {
 }
 
 android {
-    namespace = "de.berlindroid.zekompanion"
+    namespace = "de.berlindroid.zebadge"
     compileSdk = 34
     defaultConfig {
-        minSdk = 30
+        minSdk = 29
     }
 }

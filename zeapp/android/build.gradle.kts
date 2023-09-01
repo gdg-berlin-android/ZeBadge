@@ -36,7 +36,26 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        resourceConfigurations.addAll(listOf("ar-rEG", "de-rDE", "en-rGB", "fr", "hi", "hr-rHR", "ja", "lt", "mr", "nl", "sq", "tr", "uk", "ur", "bs", "pt-rBR"))
+        resourceConfigurations.addAll(
+            listOf(
+                "ar-rEG",
+                "de-rDE",
+                "en-rGB",
+                "fr",
+                "hi",
+                "hr-rHR",
+                "ja",
+                "lt",
+                "mr",
+                "nl",
+                "sq",
+                "tr",
+                "uk",
+                "ur",
+                "bs",
+                "pt-rBR",
+            ),
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -63,7 +82,7 @@ android {
             buildConfigField(
                 "String",
                 "OPEN_API_TOKEN",
-                "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\""
+                "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"",
             )
 
             firebaseAppDistribution {
@@ -82,7 +101,7 @@ android {
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
 
             if (enableRelease) {
@@ -129,7 +148,7 @@ android {
                 "META-INF/LGPL2.1",
                 "META-INF/*.kotlin_module",
                 "META-INF/LICENSE.*",
-                "META-INF/LICENSE-notice.*"
+                "META-INF/LICENSE-notice.*",
             )
         }
     }
@@ -149,6 +168,7 @@ detekt {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(project(":badge"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

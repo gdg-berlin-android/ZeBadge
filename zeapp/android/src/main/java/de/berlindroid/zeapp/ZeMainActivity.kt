@@ -79,6 +79,7 @@ import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zekompanion.getPlatform
 import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
@@ -247,6 +248,9 @@ private fun ZeAbout(
                 modifier = Modifier.padding(8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = 24.sp,
+            )
+            ZeText(
+                text = "Running on '${getPlatform().name}'."
             )
             ZeLazyColumn {
                 items(lines) { line ->
