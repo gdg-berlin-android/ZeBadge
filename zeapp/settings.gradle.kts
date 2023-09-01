@@ -28,5 +28,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "ZeBadgeApp"
-include(":app")
+include(":android")
 include(":benchmark")
