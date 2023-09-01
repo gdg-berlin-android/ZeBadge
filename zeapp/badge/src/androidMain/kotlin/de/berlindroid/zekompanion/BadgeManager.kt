@@ -12,6 +12,7 @@ import com.hoho.android.usbserial.driver.UsbSerialProber
 import de.berlindroid.zekompanion.BadgeManager.Companion.DEVICE_PRODUCT_NAME
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
+import java.lang.RuntimeException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -23,8 +24,6 @@ class AndroidBadgeManager(
         const val ACTION_USB_PERMISSION = "ACTION_USB_PERMISSION"
         const val ACTION_USB_PERMISSION_REQUEST_CODE = 4711
     }
-
-    class BadgeUploadException(message: String) : RuntimeException(message)
 
     private val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
 
@@ -71,7 +70,7 @@ class AndroidBadgeManager(
         }.recoverCatching {
             Timber.e("badge", "Couldn't write to port ${port.portNumber}.", it)
             // Just send a generic exception with a message we want
-            throw BadgeUploadException("Failed to write")
+            throw RuntimeException("Failed to write")
         }.also {
             if (port.isOpen) {
                 port.close()
@@ -87,7 +86,7 @@ class AndroidBadgeManager(
 
         Timber.e("Badge Connection", message)
 
-        return Result.failure(BadgeUploadException(message))
+        return Result.failure(RuntimeException(message))
     }
 
     private suspend fun askPermission(
@@ -102,12 +101,12 @@ class AndroidBadgeManager(
                             Timber.d("USB Permission", "Permission granted.")
                             continuation.resume(Unit)
                         } else {
-                            continuation.resumeWithException(BadgeUploadException("No bound device"))
+                            continuation.resumeWithException(RuntimeException("No bound device"))
                         }
                     } else {
                         Timber.e("USB Permission", "Could not request permission to access to badge.")
                         continuation.resumeWithException(
-                            BadgeUploadException("Could not request permission to access to badge."),
+                            RuntimeException("Could not request permission to access to badge."),
                         )
                     }
                 }
