@@ -37,6 +37,7 @@ firebase-crashlytics = "2.9.6"
 google-play-services = "4.3.15"
 junit = "4.13.2"
 kotlin = "1.9.0"
+kotlinx-coroutines-core = "1.7.3"
 ktlint-gradle = "11.5.0"
 license-report-gradle = "0.9.3"
 material = "1.9.0"
@@ -71,6 +72,7 @@ firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebas
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3-wsc = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-wsc"}
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }

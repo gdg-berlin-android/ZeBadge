@@ -2,7 +2,7 @@ package de.berlindroid.zeapp.hardware
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import de.berlindroid.zeapp.zeservices.zipit
+import de.berlindroid.zeapp.zebits.zipit
 import org.junit.Test
 import java.util.zip.Inflater
 

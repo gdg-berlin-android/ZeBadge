@@ -16,6 +16,12 @@ kotlin {
             kotlinOptions {
                 jvmTarget = "1.8"
             }
+
+            dependencies {
+                implementation(libs.mik3y.usb.serial.android)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.timber)
+            }
         }
     }
 

@@ -1,78 +1,53 @@
-package de.berlindroid.zeapp.zeservices
+package de.berlindroid.zekompanion
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
-import dagger.hilt.android.qualifiers.ApplicationContext
-import de.berlindroid.zeapp.zebits.base64
-import de.berlindroid.zeapp.zebits.toBinary
-import de.berlindroid.zeapp.zemodels.ZeBadgePayload
+import de.berlindroid.zekompanion.BadgeManager.Companion.DEVICE_PRODUCT_NAME
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.lang.RuntimeException
-import java.util.zip.Deflater
-import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class ZeBadgeUploader @Inject constructor(
-    @ApplicationContext private val context: Context,
-) {
+class AndroidBadgeManager(
+    private val context: Context,
+) : BadgeManager {
 
     companion object {
-        private const val ACTION_USB_PERMISSION = "ACTION_USB_PERMISSION"
-        private const val DEVICE_PRODUCT_NAME = "Badger 2040"
-        private const val ACTION_USB_PERMISSION_REQUEST_CODE = 4711
+        const val ACTION_USB_PERMISSION = "ACTION_USB_PERMISSION"
+        const val ACTION_USB_PERMISSION_REQUEST_CODE = 4711
     }
 
     class BadgeUploadException(message: String) : RuntimeException(message)
 
-    /**
-     * Send a bitmap to the badge for the name slot
-     *
-     * @param name the name of the page / slot for the bitmap
-     * @param page the bitmap in black / white to be send to the badge
-     */
-    suspend fun sendPage(name: String, page: Bitmap): Result<Int> {
-        val payload = ZeBadgePayload(
-            type = "preview",
-            meta = "",
-            payload = page.toBinary().zipit().base64(),
-        )
+    private val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
 
-        return sendToUsb(payload)
-    }
-
-    private suspend fun sendToUsb(payload: ZeBadgePayload): Result<Int> {
-        val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+    override suspend fun sendPayload(payload: BadgePayload): Result<Int> {
         val device = manager.findConnectedBadge()
 
         return if (device == null) {
             informNoBadgeFound(manager)
         } else {
             if (!manager.hasPermission(device)) {
-                askPermission(manager, device)
+                askPermission(device)
             }
 
             val actualCommand = payload.toBadgeCommand()
             sendCommandToBadge(
-                manager,
                 actualCommand,
             )
         }
     }
 
+    override fun isConnected(): Boolean = manager.findConnectedBadge() != null
+
     private fun sendCommandToBadge(
-        manager: UsbManager,
         command: String,
     ): Result<Int> {
         val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
@@ -107,7 +82,7 @@ class ZeBadgeUploader @Inject constructor(
 
     private fun informNoBadgeFound(manager: UsbManager): Result<Nothing> {
         val message = "Could not find usb device with product name '$DEVICE_PRODUCT_NAME'.\nFound product(s):\n${
-        manager.connectedProductNames().joinToString("\n •")
+            manager.connectedProductNames().joinToString("\n •")
         }"
 
         Timber.e("Badge Connection", message)
@@ -116,7 +91,6 @@ class ZeBadgeUploader @Inject constructor(
     }
 
     private suspend fun askPermission(
-        manager: UsbManager,
         device: UsbDevice,
     ): Unit = suspendCancellableCoroutine { continuation ->
         class BoundUsbReceiver : BroadcastReceiver() {
@@ -161,6 +135,7 @@ class ZeBadgeUploader @Inject constructor(
         }
     }
 
+
     private fun UsbManager.findConnectedBadge() =
         deviceList.values.firstOrNull {
             it.productName == DEVICE_PRODUCT_NAME
@@ -168,36 +143,13 @@ class ZeBadgeUploader @Inject constructor(
 
     private fun UsbManager.connectedProductNames() =
         deviceList.values.map { it.productName ?: "<none>" }
+
 }
 
-/**
- * Compress a given byte array to a smaller byte array.
- */
-fun ByteArray.zipit(): ByteArray {
-    val deflater = Deflater(Deflater.BEST_COMPRESSION)
-    deflater.reset()
-    deflater.setInput(this)
-    deflater.finish()
+data class AndroidEnvironmentWrapper(val context: Context)
 
-    var result = ByteArray(0)
-    val o = ByteArrayOutputStream(1)
-    try {
-        val buf = ByteArray(64)
-        var got = 0
-        while (!deflater.finished()) {
-            got = deflater.deflate(buf)
-            o.write(buf, 0, got)
-        }
-        result = o.toByteArray()
-    } catch (e: java.lang.Exception) {
-        e.printStackTrace()
-    } finally {
-        try {
-            o.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        deflater.end()
-    }
-    return result
-}
+actual typealias Environment = AndroidEnvironmentWrapper
+
+actual fun buildBadgeManager(
+    environment: Environment,
+): BadgeManager = AndroidBadgeManager(environment.context)

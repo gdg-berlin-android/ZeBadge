@@ -180,7 +180,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.retrofit2.retrofit)
     implementation(libs.retrofit2.converter.gson)
-    implementation(libs.mik3y.usb.serial.android)
     implementation(libs.zxing)
     implementation(libs.material3.wsc)
     implementation(libs.dagger.hilt)

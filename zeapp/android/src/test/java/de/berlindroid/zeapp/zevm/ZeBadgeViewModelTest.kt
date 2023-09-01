@@ -1,6 +1,6 @@
 package de.berlindroid.zeapp.zevm
 
-import de.berlindroid.zeapp.zeservices.ZeBadgeUploader
+import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeContributorsService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
@@ -22,7 +22,7 @@ import org.junit.Test
 class ZeBadgeViewModelTest {
 
     val imageProviderService = mockk<ZeImageProviderService>()
-    val zeBadgeUploader = mockk<ZeBadgeUploader>()
+    val zeBadgeManager = mockk<ZeBadgeManager>()
     val zePreferencesService = mockk<ZePreferencesService>()
     val clipboardService = mockk<ZeClipboardService>()
     val contributorsService = mockk<ZeContributorsService>()
@@ -51,7 +51,7 @@ class ZeBadgeViewModelTest {
 
     private fun provideViewModel() = ZeBadgeViewModel(
         imageProviderService = imageProviderService,
-        badgeUploader = zeBadgeUploader,
+        badgeManager = zeBadgeManager,
         preferencesService = zePreferencesService,
         clipboardService = clipboardService,
         getTemplateConfigurations = templateConfigurations,

@@ -1,4 +1,4 @@
-package de.berlindroid.zeapp.zemodels
+package de.berlindroid.zekompanion
 
 /**
  * What to be send over to the badge?
@@ -7,7 +7,7 @@ package de.berlindroid.zeapp.zemodels
  * @param meta any meta information you want to receive back?
  * @param payload the payload of the command of type 'type'.
  */
-data class ZeBadgePayload(
+data class BadgePayload(
     val debug: Boolean = false,
     val type: String,
     val meta: String,
@@ -18,3 +18,17 @@ data class ZeBadgePayload(
      */
     fun toBadgeCommand(): String = "${if (debug) "debug:" else ""}$type:$meta:$payload"
 }
+
+interface BadgeManager {
+    companion object {
+        const val DEVICE_PRODUCT_NAME = "Badger 2040"
+    }
+
+    suspend fun sendPayload(payload: BadgePayload): Result<Int>
+
+    fun isConnected(): Boolean
+}
+
+expect class Environment
+
+expect fun buildBadgeManager(environment: Environment): BadgeManager

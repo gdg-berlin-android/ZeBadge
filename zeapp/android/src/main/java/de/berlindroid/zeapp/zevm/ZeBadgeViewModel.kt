@@ -14,7 +14,7 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zeservices.ZeBadgeUploader
+import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeContributorsService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
@@ -44,7 +44,7 @@ private const val MESSAGE_DISPLAY_UPDATES = 5
 @HiltViewModel
 class ZeBadgeViewModel @Inject constructor(
     private val imageProviderService: ZeImageProviderService,
-    private val badgeUploader: ZeBadgeUploader,
+    private val badgeManager: ZeBadgeManager,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
     private val getTemplateConfigurations: GetTemplateConfigurations,
@@ -123,10 +123,15 @@ class ZeBadgeViewModel @Inject constructor(
             null
         } ?: return
 
+        if (!badgeManager.isConnected()) {
+            showSnackBar("Please connect a badge.")
+            return
+        }
+
         val bitmap = configuration.bitmap
         if (bitmap.isBinary()) {
             viewModelScope.launch {
-                badgeUploader.sendPage(slot.name, bitmap).fold(
+                badgeManager.sendPage(slot.name, bitmap).fold(
                     onSuccess = { badgeSuccess(it) },
                     onFailure = { badgeFailure(it.message ?: "Unknown error") },
                 )
