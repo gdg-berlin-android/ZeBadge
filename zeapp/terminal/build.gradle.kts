@@ -13,6 +13,8 @@ repositories {
 
 dependencies {
     implementation(project(":badge"))
+
+    implementation(libs.kotlinx.coroutines.core)
 }
 
 application {

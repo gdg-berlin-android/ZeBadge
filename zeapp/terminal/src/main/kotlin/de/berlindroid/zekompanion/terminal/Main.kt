@@ -1,10 +1,16 @@
 package de.berlindroid.zekompanion.terminal
 
+import de.berlindroid.zekompanion.BadgePayload
+import de.berlindroid.zekompanion.base64
+import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zekompanion.getPlatform
 import de.berlindroid.zekompanion.grayscale
 import de.berlindroid.zekompanion.invert
 import de.berlindroid.zekompanion.threshold
+import de.berlindroid.zekompanion.toBinary
+import de.berlindroid.zekompanion.zipit
+import kotlinx.coroutines.runBlocking
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
 import java.io.File
@@ -77,7 +83,40 @@ val commands = listOf(
         long = "--grayscale",
         hasParameter = true,
     ) { Configuration.operations.add("gray" to { _, _ -> grayscale() }) },
+    CommandLineArgument(
+        name = "send image to badge",
+        description = "Sends the hopefully converted image to the connected badge.",
+        short = "-s",
+        long = "--send",
+        hasParameter = true,
+    ) {
+        Configuration.operations.add(
+            "send" to sendBufferToBadge(),
+        )
+    },
 )
+
+private fun sendBufferToBadge(): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
+    val payload = BadgePayload(
+        debug = false,
+        type = "preview",
+        meta = "beta",
+        payload = toBinary().zipit().base64(),
+    )
+
+    runBlocking {
+        with(buildBadgeManager("")) {
+            if (isConnected()) {
+                sendPayload(payload)
+            } else {
+
+                println("${COLOR_RED_BACKGROUND}No Badge connected.${COLOR_END}\nTry attaching a badge and execute the command again.")
+            }
+        }
+    }
+
+    this
+}
 
 fun help() {
     println("Following arguments are supported:")
