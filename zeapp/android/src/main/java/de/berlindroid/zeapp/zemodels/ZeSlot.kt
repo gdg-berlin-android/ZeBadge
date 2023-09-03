@@ -5,13 +5,13 @@ package de.berlindroid.zeapp.zemodels
  *
  */
 sealed class ZeSlot(val name: String) {
-    object Name : ZeSlot("A")
-    object FirstSponsor : ZeSlot("B")
-    object SecondSponsor : ZeSlot("C")
-    object FirstCustom : ZeSlot("Up")
-    object SecondCustom : ZeSlot("Down")
-    object QRCode : ZeSlot("Q")
-    object Weather : ZeSlot("Wa")
-    object Quote : ZeSlot("Quite")
-    object BarCode : ZeSlot("Ba")
+    data object Name : ZeSlot("A")
+    data object FirstSponsor : ZeSlot("B")
+    data object SecondSponsor : ZeSlot("C")
+    data object FirstCustom : ZeSlot("Up")
+    data object SecondCustom : ZeSlot("Down")
+    data object QRCode : ZeSlot("Q")
+    data object Weather : ZeSlot("Wa")
+    data object Quote : ZeSlot("Quite")
+    data object BarCode : ZeSlot("Ba")
 }

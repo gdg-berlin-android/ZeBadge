@@ -105,7 +105,7 @@ data class Quote(
     val a: String,
 )
 
-private val quoteList = listOf<Quote>(
+private val quoteList = listOf(
     Quote("You win more from losing than winning.", "Morgan Wootten"),
     Quote("The Only Thing That Is Constant Is Change", "Heraclitus"),
     Quote("Once you choose hope, anything's possible.", "Christopher Reeve"),

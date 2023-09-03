@@ -21,14 +21,13 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class ZeBadgeViewModelTest {
 
-    val imageProviderService = mockk<ZeImageProviderService>()
-    val zeBadgeManager = mockk<ZeBadgeManager>()
-    val zePreferencesService = mockk<ZePreferencesService>()
-    val clipboardService = mockk<ZeClipboardService>()
-    val contributorsService = mockk<ZeContributorsService>()
-    val templateConfigurations = mockk<GetTemplateConfigurations>()
-
-    val testDispatcher = UnconfinedTestDispatcher()
+    private val imageProviderService = mockk<ZeImageProviderService>()
+    private val zeBadgeManager = mockk<ZeBadgeManager>()
+    private val zePreferencesService = mockk<ZePreferencesService>()
+    private val clipboardService = mockk<ZeClipboardService>()
+    private val contributorsService = mockk<ZeContributorsService>()
+    private val templateConfigurations = mockk<GetTemplateConfigurations>()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setupMainDispatcher() {

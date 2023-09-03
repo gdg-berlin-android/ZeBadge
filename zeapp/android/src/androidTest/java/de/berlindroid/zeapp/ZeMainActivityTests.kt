@@ -1,7 +1,8 @@
+package de.berlindroid.zeapp
+
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import de.berlindroid.zeapp.ZeMainActivity
 import org.junit.Rule
 import org.junit.Test
 

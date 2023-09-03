@@ -1,7 +1,3 @@
-import com.android.utils.jvmArchitecture
-import com.android.utils.osArchitecture
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
-
 plugins {
     kotlin("multiplatform")
     id("com.android.library")

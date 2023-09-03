@@ -20,7 +20,6 @@ import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import kotlin.experimental.and
 import kotlin.experimental.or
-import kotlin.random.Random
 
 /**
  * Linear invert all pixel values in the buffer
@@ -103,23 +102,6 @@ fun rgb(r: Int, g: Int, b: Int): Int =
             ((g and 0xff) shl 8) or
             ((b and 0xff) shl 0)
 
-/**
- * Return a random image
- */
-fun IntBuffer.randomizeColors(): IntBuffer {
-    val output = copy()
-
-    output.map {
-        rgb(
-            Random.nextInt(0, 255),
-            Random.nextInt(0, 255),
-            Random.nextInt(0, 255),
-        )
-    }
-
-    output.rewind()
-    return output
-}
 
 /**
  * Render a composable into a bitmap.
@@ -338,7 +320,7 @@ fun barCodeComposableToBitmap(
  */
 fun IntBuffer.toBinary(): ByteBuffer {
 
-    var output = mutableListOf<Byte>()
+    val output = mutableListOf<Byte>()
 
     var bitIndex = 0
     var currentByte: Byte = 0

@@ -60,7 +60,7 @@ fun BadgeSimulator(
                 contentDescription = null,
                 filterQuality = FilterQuality.None,
             )
-            Column() {
+            Column {
                 Spacer(modifier = Modifier.weight(1.0f))
                 Text(
                     text = "⏺️",

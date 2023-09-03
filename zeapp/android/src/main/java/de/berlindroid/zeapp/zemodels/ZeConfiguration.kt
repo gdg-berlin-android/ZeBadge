@@ -128,9 +128,8 @@ sealed class ZeConfiguration(
     ) : ZeConfiguration(ZeBadgeType.CAMERA, humanTitle = ZeBadgeType.CAMERA.rawValue, bitmap)
 
     /**
-     * Configure this slot for image draw by user
+     * Configure this slot for image drawn by the user
      *
-     * @param prompt describe the contents of the page to be created.
      * @param bitmap the resulting page.
      */
     data class ImageDraw(

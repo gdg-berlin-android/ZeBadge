@@ -35,7 +35,7 @@ fun ByteBuffer.zipit(): ByteBuffer {
     val o = ByteArrayOutputStream(1)
     try {
         val buf = ByteArray(64)
-        var got = 0
+        var got: Int
         while (!deflater.finished()) {
             got = deflater.deflate(buf)
             o.write(buf, 0, got)
@@ -67,7 +67,7 @@ fun ByteBuffer.unzipit(): ByteBuffer {
     val o = ByteArrayOutputStream(1)
     try {
         val buf = ByteArray(64)
-        var got = 0
+        var got: Int
         while (!deflater.finished()) {
             got = deflater.inflate(buf)
             o.write(buf, 0, got)

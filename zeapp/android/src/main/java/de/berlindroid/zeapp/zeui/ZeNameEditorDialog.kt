@@ -32,7 +32,6 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.NamePage
 
 const val MaxCharacters: Int = 20
-private const val Empty = ""
 
 /**
  * Editor dialog for changing the name of the participant badge.
@@ -109,7 +108,7 @@ fun NameEditorDialog(
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = name?.isEmpty() ?: true) {
-                            name = Empty
+                            name = ""
                         }
                     },
                 )
@@ -132,7 +131,7 @@ fun NameEditorDialog(
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = contact?.isEmpty() ?: true) {
-                            contact = Empty
+                            contact = ""
                         }
                     },
                 )
