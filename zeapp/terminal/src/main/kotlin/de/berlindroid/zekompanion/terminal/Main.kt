@@ -58,8 +58,8 @@ val commands = listOf(
     CommandLineArgument(
         name = "dither floyd-steinberg",
         description = "Converts the given input image into a black and white output image, somewhat preserving the luminance using dithering.",
-        short = "-f",
-        long = "--floyd",
+        short = "-fs",
+        long = "--floyd-steinberg",
         hasParameter = true,
     ) { Configuration.operations.add("threshold" to IntBuffer::ditherFloydSteinberg) },
     CommandLineArgument(
