@@ -35,10 +35,10 @@ import de.berlindroid.zeapp.zebits.copy
 import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
 import de.berlindroid.zeapp.zebits.ditherPositional
 import de.berlindroid.zeapp.zebits.ditherStaticPattern
-import de.berlindroid.zeapp.zebits.invert
-import de.berlindroid.zeapp.zebits.map
-import de.berlindroid.zeapp.zebits.rgb
-import de.berlindroid.zeapp.zebits.threshold
+import de.berlindroid.zekompanion.invert
+import de.berlindroid.zekompanion.map
+import de.berlindroid.zekompanion.rgb
+import de.berlindroid.zekompanion.threshold
 import java.nio.IntBuffer
 
 /**

@@ -10,9 +10,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
-import de.berlindroid.zeapp.zebits.base64
-import de.berlindroid.zeapp.zebits.debase64
-import de.berlindroid.zeapp.zebits.toBinary
+import de.berlindroid.zekompanion.base64
+import de.berlindroid.zekompanion.debase64
+import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zeapp.zebits.toBitmap
 import de.berlindroid.zeapp.zemodels.ZeBadgeType
 import de.berlindroid.zeapp.zemodels.ZeConfiguration

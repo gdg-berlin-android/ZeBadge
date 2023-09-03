@@ -15,92 +15,13 @@ import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.zeui.zepages.BarCodePage
 import de.berlindroid.zeapp.zeui.zepages.QRCodePage
+import de.berlindroid.zekompanion.forEach
+import de.berlindroid.zekompanion.forEachIndexed
+import de.berlindroid.zekompanion.isBinary
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import kotlin.experimental.and
-import kotlin.experimental.or
-
-/**
- * Linear invert all pixel values in the buffer
- *
- * This will work best with images in black/white or grayscale.
- */
-fun IntBuffer.invert(): IntBuffer {
-    val output = copy()
-
-    output.map { input ->
-        val (r, g, b) = input.rgb()
-        rgb(255 - r, 255 - g, 255 - b)
-    }
-
-    output.rewind()
-    return output
-}
-
-/**
- * Linear threshold all values above limit to white, and below to black
- *
- * @param limit the value to be considered the threshold, defaults to 128, half of the range
- */
-fun IntBuffer.threshold(limit: Int = 128): IntBuffer {
-    val output = copy()
-
-    output.map { input ->
-        val gray = input.gray().green()
-
-        if (gray > limit) {
-            0xffffff
-        } else {
-            0x000000
-        }
-    }
-
-    output.rewind()
-    return output
-}
-
-/**
- * Create new bitmap containing only the luminance values of all pixels.
- */
-fun IntBuffer.grayscale(): IntBuffer {
-    val output = copy()
-
-    output.map { input ->
-        input.gray()
-    }
-
-    return output
-}
-
-/**
- * Create gray from a color.
- */
-fun Int.gray(): Int {
-    val (r, g, b) = rgb()
-    val gray = (.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
-    return rgb(gray, gray, gray)
-}
-
-/**
- * tupelize a color
- */
-fun Int.rgb(): List<Int> = listOf(red(), green(), blue())
-
-fun Int.red() = (this shr 16) and 0xff
-
-fun Int.green() = (this shr 8) and 0xff
-
-fun Int.blue() = (this shr 0) and 0xff
-
-
-/**
- * tupelize to color
- */
-fun rgb(r: Int, g: Int, b: Int): Int =
-    ((r and 0xff) shl 16) or
-            ((g and 0xff) shl 8) or
-            ((b and 0xff) shl 0)
 
 
 /**
@@ -316,32 +237,6 @@ fun barCodeComposableToBitmap(
 }
 
 /**
- * Converts a given black/white buffer of pixels to a byte buffer of pixels per bit.
- */
-fun IntBuffer.toBinary(): ByteBuffer {
-
-    val output = mutableListOf<Byte>()
-
-    var bitIndex = 0
-    var currentByte: Byte = 0
-    forEach { pixel ->
-        val value = pixel.green()
-        currentByte = currentByte or ((if (value == 255) 1 else 0) shl (7 - bitIndex)).toByte()
-        bitIndex += 1
-
-        if (bitIndex == Byte.SIZE_BITS) {
-            output.add(currentByte)
-            bitIndex = 0
-            currentByte = 0
-        }
-    }
-
-    return output.toBuffer()
-}
-
-private fun List<Byte>.toBuffer(): ByteBuffer = ByteBuffer.wrap(toTypedArray().toByteArray())
-
-/**
  * Converts a given binary byte buffer to a bitmap.
  *
  * Every pixel corresponds to one bit in the byte buffer: 1 means white, 0 means black.
@@ -404,54 +299,6 @@ fun Bitmap.isBinary(): Boolean {
 }
 
 /**
- * Map all values of an IntBuffer
- */
-fun IntBuffer.map(mapper: (it: Int) -> Int) {
-    for (i in 0 until limit()) {
-        put(i, mapper(get(i)))
-    }
-}
-
-/**
- * Iterate over all values of an IntBuffer
- */
-fun IntBuffer.forEach(mapper: (it: Int) -> Unit) {
-    for (i in 0 until limit()) {
-        mapper(get(i))
-    }
-}
-
-/**
- * Iterate over all values of an IntBuffer
- */
-fun ByteBuffer.forEach(mapper: (it: Byte) -> Unit) {
-    for (i in 0 until limit()) {
-        mapper(get(i))
-    }
-}
-
-/**
- * Iterate over all values of an IntBuffer
- */
-fun IntBuffer.forEachIndexed(
-    exitIf: (() -> Boolean)? = null,
-    mapper: (index: Int, it: Int) -> Unit,
-) {
-    if (exitIf != null) {
-        for (i in 0 until limit()) {
-            mapper(i, get(i))
-            if (exitIf()) {
-                break
-            }
-        }
-    } else {
-        for (i in 0 until limit()) {
-            mapper(i, get(i))
-        }
-    }
-}
-
-/**
  * Take this bitmap and crop out a page from it's center.
  *
  * The width will be scaled to PAGE_WIDTH, but the height will be cropped.
@@ -484,12 +331,6 @@ fun Bitmap.scaleIfNeeded(targetWidth: Int, targetHeight: Int): Bitmap =
         copy()
     }
 
-private fun Int.isBinary(): Boolean {
-    val (r, g, b) = rgb()
-
-    return r == g && g == b && (r == 0 || r == 255)
-}
-
 private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: Int): Bitmap {
     val result = Bitmap.createBitmap(targetWidth, targetHeight, config)
     val canvas = Canvas(result)
@@ -497,4 +338,3 @@ private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: 
     return result
 }
 
-private fun IntBuffer.copy(): IntBuffer = IntBuffer.wrap(array())
