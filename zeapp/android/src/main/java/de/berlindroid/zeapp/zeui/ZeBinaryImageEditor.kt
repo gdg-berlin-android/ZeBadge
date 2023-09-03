@@ -32,9 +32,9 @@ import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.zebits.copy
-import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
-import de.berlindroid.zeapp.zebits.ditherPositional
-import de.berlindroid.zeapp.zebits.ditherStaticPattern
+import de.berlindroid.zekompanion.ditherFloydSteinberg
+import de.berlindroid.zekompanion.ditherPositional
+import de.berlindroid.zekompanion.ditherStaticPattern
 import de.berlindroid.zekompanion.invert
 import de.berlindroid.zekompanion.map
 import de.berlindroid.zekompanion.rgb

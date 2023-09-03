@@ -2,7 +2,7 @@ package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeui.pixelManipulation

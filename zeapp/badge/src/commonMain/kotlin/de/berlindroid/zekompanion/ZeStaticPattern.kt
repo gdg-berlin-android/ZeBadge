@@ -1,9 +1,5 @@
-package de.berlindroid.zeapp.zebits
+package de.berlindroid.zekompanion
 
-import de.berlindroid.zekompanion.grayscale
-import de.berlindroid.zekompanion.green
-import de.berlindroid.zekompanion.map
-import de.berlindroid.zekompanion.rgb
 import java.nio.IntBuffer
 import kotlin.math.abs
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
+import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
