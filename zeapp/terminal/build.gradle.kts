@@ -1,4 +1,5 @@
 plugins {
+    application
     kotlin("jvm")
 }
 
@@ -13,3 +14,8 @@ repositories {
 dependencies {
     implementation(project(":badge"))
 }
+
+application {
+    mainClass.set("de.berlindroid.zekompanion.terminal.MainKt")
+}
+
