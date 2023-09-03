@@ -1,6 +1,7 @@
 package de.berlindroid.zeapp.zeui
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,10 @@ import de.berlindroid.zeapp.zebits.ditherFloydSteinberg
 import de.berlindroid.zeapp.zebits.ditherPositional
 import de.berlindroid.zeapp.zebits.ditherStaticPattern
 import de.berlindroid.zeapp.zebits.invert
+import de.berlindroid.zeapp.zebits.map
+import de.berlindroid.zeapp.zebits.rgb
 import de.berlindroid.zeapp.zebits.threshold
+import java.nio.IntBuffer
 
 /**
  * Embeddable editor that let's the user turn a given bitmap into a binary image
@@ -92,7 +96,7 @@ fun BinaryImageEditor(
                     if (last == null) {
                         last = bitmap.copy()
                     }
-                    bitmapUpdated(bitmap.threshold())
+                    bitmapUpdated(bitmap.pixelManipulation { _, _ -> threshold() })
                 }
             }
             item {
@@ -104,19 +108,19 @@ fun BinaryImageEditor(
                         last = bitmap.copy()
                     }
 
-                    bitmapUpdated(bitmap.ditherFloydSteinberg())
+                    bitmapUpdated(bitmap.pixelManipulation { w, h -> ditherFloydSteinberg(w, h) })
                 }
             }
             item {
                 ToolButton(
                     painter = painterResource(id = R.drawable.binary_bitmap_modificator_static),
-                    text = stringResource(id = R.string.static_tool)
+                    text = stringResource(id = R.string.static_tool),
                 ) {
                     if (last == null) {
                         last = bitmap.copy()
                     }
 
-                    bitmapUpdated(bitmap.ditherStaticPattern())
+                    bitmapUpdated(bitmap.pixelManipulation { w, h -> ditherStaticPattern(w, h) })
                 }
             }
             item {
@@ -127,7 +131,7 @@ fun BinaryImageEditor(
                     if (last == null) {
                         last = bitmap.copy()
                     }
-                    bitmapUpdated(bitmap.ditherPositional())
+                    bitmapUpdated(bitmap.pixelManipulation { w, h -> ditherPositional(w, h) })
                 }
             }
             item {
@@ -138,11 +142,37 @@ fun BinaryImageEditor(
                     if (last == null) {
                         last = bitmap.copy()
                     }
-                    bitmapUpdated(bitmap.invert())
+                    bitmapUpdated(bitmap.pixelManipulation { _, _ -> invert() })
                 }
             }
         }
     }
+}
+
+fun Bitmap.pixelManipulation(manipulator: IntBuffer.(width: Int, height: Int) -> IntBuffer): Bitmap {
+    val input = IntBuffer.allocate(width * height)
+    copyPixelsToBuffer(input)
+    input.map { Color.valueOf(it).toArgb() }
+    input.rewind()
+
+    val output = input.manipulator(width, height)
+    output.map {
+        val (r, g, b) = it.rgb()
+        Color.rgb(r, g, b)
+    }
+    output.rewind()
+    copyPixelsFromBuffer(output)
+
+    return this
+}
+
+fun Bitmap.pixelBuffer(): IntBuffer {
+    val buffer = IntBuffer.allocate(width * height)
+    copyPixelsToBuffer(buffer)
+    buffer.map { Color.valueOf(it).toArgb() }
+    buffer.rewind()
+
+    return buffer
 }
 
 class BinaryBitmapPageProvider : PreviewParameterProvider<Bitmap> {

@@ -72,7 +72,7 @@ fun ZeCameraEditor(
                     )
                     vm.slotConfigured(
                         editor.slot,
-                        config.copy(bitmap = bitmap.ditherFloydSteinberg()),
+                        config.copy(bitmap = bitmap.pixelManipulation { w, h -> ditherFloydSteinberg(w, h) }),
                     )
                 }
             } else {

@@ -196,7 +196,7 @@ private suspend fun requestImageGeneration(
     } else {
         Timber.e(
             "ImageGenError",
-            "Could not fetch images: ${maybeImages.errorBody()?.string()}",
+            "Could not fetch images: $maybeImages",
         )
     }
 

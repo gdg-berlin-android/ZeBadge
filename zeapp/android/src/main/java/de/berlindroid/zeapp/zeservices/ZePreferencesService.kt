@@ -8,6 +8,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import de.berlindroid.zeapp.PAGE_HEIGHT
+import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.zebits.base64
 import de.berlindroid.zeapp.zebits.debase64
 import de.berlindroid.zeapp.zebits.toBinary
@@ -15,6 +17,7 @@ import de.berlindroid.zeapp.zebits.toBitmap
 import de.berlindroid.zeapp.zemodels.ZeBadgeType
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zeui.pixelBuffer
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -54,7 +57,7 @@ class ZePreferencesService @Inject constructor(
     suspend fun saveSlotConfiguration(slot: ZeSlot, config: ZeConfiguration) {
         dataStore.edit { preferences ->
             preferences[slot.preferencesKey(TYPE_KEY)] = config.type.rawValue
-            preferences[slot.preferencesKey(IMAGE_KEY)] = config.bitmap.toBinary().base64()
+            preferences[slot.preferencesKey(IMAGE_KEY)] = config.bitmap.pixelBuffer().toBinary().base64()
 
             when (config) {
                 is ZeConfiguration.Name -> {
@@ -117,7 +120,10 @@ class ZePreferencesService @Inject constructor(
         return dataStore.data.mapNotNull { preferences ->
 
             val type = ZeBadgeType.getOrNull(preferences[slot.preferencesKey(TYPE_KEY)].orEmpty())
-            val bitmap = preferences[slot.preferencesKey(IMAGE_KEY)]?.debase64()?.toBitmap() ?: return@mapNotNull null
+            val bitmap = preferences[slot.preferencesKey(IMAGE_KEY)]
+                ?.debase64()
+                ?.toBitmap(PAGE_WIDTH, PAGE_HEIGHT)
+                ?: return@mapNotNull null
 
             when (type) {
                 ZeBadgeType.NAME -> {

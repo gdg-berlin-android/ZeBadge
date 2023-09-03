@@ -5,9 +5,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
@@ -19,30 +16,27 @@ import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.zeui.zepages.BarCodePage
 import de.berlindroid.zeapp.zeui.zepages.QRCodePage
 import timber.log.Timber
+import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import kotlin.experimental.and
 import kotlin.experimental.or
 import kotlin.random.Random
 
 /**
- * Linear invert all pixel values
+ * Linear invert all pixel values in the buffer
  *
  * This will work best with images in black/white or grayscale.
  */
-fun Bitmap.invert(): Bitmap {
-    val outputBitmap = grayscale()
+fun IntBuffer.invert(): IntBuffer {
+    val output = copy()
 
-    val buffer = IntBuffer.allocate(width * height)
-    outputBitmap.copyPixelsToBuffer(buffer)
-    buffer.rewind()
-
-    buffer.map { input ->
-        Color.rgb(255 - Color.red(input), 255 - Color.green(input), 255 - Color.blue(input))
+    output.map { input ->
+        val (r, g, b) = input.rgb()
+        rgb(255 - r, 255 - g, 255 - b)
     }
 
-    buffer.rewind()
-    outputBitmap.copyPixelsFromBuffer(buffer)
-    return outputBitmap
+    output.rewind()
+    return output
 }
 
 /**
@@ -50,72 +44,81 @@ fun Bitmap.invert(): Bitmap {
  *
  * @param limit the value to be considered the threshold, defaults to 128, half of the range
  */
-fun Bitmap.threshold(limit: Int = 128): Bitmap {
-    val outputBitmap = grayscale()
+fun IntBuffer.threshold(limit: Int = 128): IntBuffer {
+    val output = copy()
 
-    val buffer = IntBuffer.allocate(width * height)
-    outputBitmap.copyPixelsToBuffer(buffer)
-    buffer.rewind()
+    output.map { input ->
+        val gray = input.gray().green()
 
-    buffer.map { input ->
-        val gray = Color.green(input)
         if (gray > limit) {
-            Color.WHITE
+            0xffffff
         } else {
-            Color.BLACK
+            0x000000
         }
     }
 
-    buffer.rewind()
-    outputBitmap.copyPixelsFromBuffer(buffer)
-    return outputBitmap
+    output.rewind()
+    return output
 }
 
 /**
  * Create new bitmap containing only the luminance values of all pixels.
  */
-fun Bitmap.grayscale(): Bitmap {
-    val outputBitmap = Bitmap.createBitmap(width, height, config)
-    outputBitmap.density = density
+fun IntBuffer.grayscale(): IntBuffer {
+    val output = copy()
 
-    val canvas = Canvas(outputBitmap)
-    val paint = Paint()
-    val colorMatrix = ColorMatrix(
-        floatArrayOf(
-            0.2126f, 0.7152f, 0.0722f, 0f, 0f,
-            0.2126f, 0.7152f, 0.0722f, 0f, 0f,
-            0.2126f, 0.7152f, 0.0722f, 0f, 0f,
-            0f, 0f, 0f, 1f, 0f,
-        ),
-    )
+    output.map { input ->
+        input.gray()
+    }
 
-    val colorFilter = ColorMatrixColorFilter(colorMatrix)
-    paint.colorFilter = colorFilter
-    canvas.drawBitmap(this, 0f, 0f, paint)
-    return outputBitmap
+    return output
 }
+
+/**
+ * Create gray from a color.
+ */
+fun Int.gray(): Int {
+    val (r, g, b) = rgb()
+    val gray = (.2126 * r + 0.7152 * g + 0.0722 * b).toInt()
+    return rgb(gray, gray, gray)
+}
+
+/**
+ * tupelize a color
+ */
+fun Int.rgb(): List<Int> = listOf(red(), green(), blue())
+
+fun Int.red() = (this shr 16) and 0xff
+
+fun Int.green() = (this shr 8) and 0xff
+
+fun Int.blue() = (this shr 0) and 0xff
+
+
+/**
+ * tupelize to color
+ */
+fun rgb(r: Int, g: Int, b: Int): Int =
+    ((r and 0xff) shl 16) or
+            ((g and 0xff) shl 8) or
+            ((b and 0xff) shl 0)
 
 /**
  * Return a random image
  */
-fun Bitmap.randomizeColors(): Bitmap {
-    val outputBitmap = copy()
+fun IntBuffer.randomizeColors(): IntBuffer {
+    val output = copy()
 
-    val buffer = IntBuffer.allocate(width * height)
-    outputBitmap.copyPixelsToBuffer(buffer)
-    buffer.rewind()
-
-    buffer.map {
-        Color.rgb(
+    output.map {
+        rgb(
             Random.nextInt(0, 255),
             Random.nextInt(0, 255),
             Random.nextInt(0, 255),
         )
     }
 
-    buffer.rewind()
-    outputBitmap.copyPixelsFromBuffer(buffer)
-    return outputBitmap
+    output.rewind()
+    return output
 }
 
 /**
@@ -145,7 +148,8 @@ fun composableToBitmap(
             }
 
             // once it is rendered and laid out, make a bitmap
-            viewTreeObserver.addOnGlobalLayoutListener(object :
+            viewTreeObserver.addOnGlobalLayoutListener(
+                object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         val bitmap = createBitmapFromView(view = view, width = width, height = height)
@@ -214,7 +218,8 @@ fun qrComposableToBitmap(
             }
 
             // once it is rendered and laid out, make a bitmap
-            viewTreeObserver.addOnGlobalLayoutListener(object :
+            viewTreeObserver.addOnGlobalLayoutListener(
+                object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         val bitmap = createBitmapFromView(view = view, width = width, height = height)
@@ -282,7 +287,8 @@ fun barCodeComposableToBitmap(
             }
 
             // once it is rendered and laid out, make a bitmap
-            viewTreeObserver.addOnGlobalLayoutListener(object :
+            viewTreeObserver.addOnGlobalLayoutListener(
+                object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
                         val bitmap = createBitmapFromView(view = view, width = width, height = height)
@@ -328,18 +334,16 @@ fun barCodeComposableToBitmap(
 }
 
 /**
- * Converts a given black/white image to a binary array.
+ * Converts a given black/white buffer of pixels to a byte buffer of pixels per bit.
  */
-fun Bitmap.toBinary(): ByteArray {
-    val buffer = IntBuffer.allocate(width * height)
-    copyPixelsToBuffer(buffer)
-    buffer.rewind()
+fun IntBuffer.toBinary(): ByteBuffer {
 
-    val output = mutableListOf<Byte>()
+    var output = mutableListOf<Byte>()
+
     var bitIndex = 0
     var currentByte: Byte = 0
-    buffer.forEach { pixel ->
-        val value = Color.green(pixel)
+    forEach { pixel ->
+        val value = pixel.green()
         currentByte = currentByte or ((if (value == 255) 1 else 0) shl (7 - bitIndex)).toByte()
         bitIndex += 1
 
@@ -350,17 +354,21 @@ fun Bitmap.toBinary(): ByteArray {
         }
     }
 
-    return output.toByteArray()
+    return output.toBuffer()
 }
 
-/**
- * Converts a given binary array to a black / white image.
- */
-fun ByteArray.toBitmap(): Bitmap {
-    val output = Bitmap.createBitmap(PAGE_WIDTH, PAGE_HEIGHT, Bitmap.Config.ARGB_8888)
-    val buffer = IntBuffer.allocate(PAGE_WIDTH * PAGE_HEIGHT)
+private fun List<Byte>.toBuffer(): ByteBuffer = ByteBuffer.wrap(toTypedArray().toByteArray())
 
-    var pixelIndex = 0
+/**
+ * Converts a given binary byte buffer to a bitmap.
+ *
+ * Every pixel corresponds to one bit in the byte buffer: 1 means white, 0 means black.
+ */
+fun ByteBuffer.toBitmap(width: Int, height: Int): Bitmap {
+    val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+    val buffer = IntBuffer.allocate(width * height)
+
     // loop through all bytes
     forEach { byte ->
         // loop through all bits
@@ -374,9 +382,7 @@ fun ByteArray.toBitmap(): Bitmap {
                 Color.WHITE
             }
 
-            buffer.put(pixelIndex, color)
-
-            pixelIndex++
+            buffer.put(color)
         }
     }
 
@@ -428,6 +434,15 @@ fun IntBuffer.map(mapper: (it: Int) -> Int) {
  * Iterate over all values of an IntBuffer
  */
 fun IntBuffer.forEach(mapper: (it: Int) -> Unit) {
+    for (i in 0 until limit()) {
+        mapper(get(i))
+    }
+}
+
+/**
+ * Iterate over all values of an IntBuffer
+ */
+fun ByteBuffer.forEach(mapper: (it: Byte) -> Unit) {
     for (i in 0 until limit()) {
         mapper(get(i))
     }
@@ -488,9 +503,7 @@ fun Bitmap.scaleIfNeeded(targetWidth: Int, targetHeight: Int): Bitmap =
     }
 
 private fun Int.isBinary(): Boolean {
-    val r = Color.red(this)
-    val g = Color.green(this)
-    val b = Color.blue(this)
+    val (r, g, b) = rgb()
 
     return r == g && g == b && (r == 0 || r == 255)
 }
@@ -501,3 +514,5 @@ private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: 
     canvas.drawBitmap(this, fromX.toFloat(), fromY.toFloat(), null)
     return result
 }
+
+private fun IntBuffer.copy(): IntBuffer = IntBuffer.wrap(array())

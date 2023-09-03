@@ -6,6 +6,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zebits.base64
 import de.berlindroid.zeapp.zebits.toBinary
 import de.berlindroid.zeapp.zebits.zipit
+import de.berlindroid.zeapp.zeui.pixelBuffer
 import de.berlindroid.zekompanion.BadgePayload
 import de.berlindroid.zekompanion.Environment
 import de.berlindroid.zekompanion.buildBadgeManager
@@ -24,10 +25,16 @@ class ZeBadgeManager @Inject constructor(
      * @param page the bitmap in black / white to be send to the badge
      */
     suspend fun sendPage(name: String, page: Bitmap): Result<Int> {
+        val binaryPayload = page
+            .pixelBuffer()
+            .toBinary()
+            .zipit()
+            .base64()
+
         val payload = BadgePayload(
             type = "preview",
             meta = "",
-            payload = page.toBinary().zipit().base64(),
+            payload = binaryPayload,
         )
 
         return badgeManager.sendPayload(payload)

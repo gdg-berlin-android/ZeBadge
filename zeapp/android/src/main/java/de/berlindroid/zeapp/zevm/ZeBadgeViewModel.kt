@@ -19,6 +19,7 @@ import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeContributorsService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import de.berlindroid.zeapp.zeui.pixelManipulation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -159,7 +160,7 @@ class ZeBadgeViewModel @Inject constructor(
                         )
                             .random()
                             .toBitmap()
-                            .ditherFloydSteinberg(),
+                            .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
                     ),
                 )
                 _uiState.update {
@@ -177,7 +178,7 @@ class ZeBadgeViewModel @Inject constructor(
                         )
                             .random()
                             .toBitmap()
-                            .ditherFloydSteinberg(),
+                            .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
                     ),
                 )
                 _uiState.update {

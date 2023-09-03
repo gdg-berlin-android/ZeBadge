@@ -1,35 +1,31 @@
 package de.berlindroid.zeapp.zebits
 
-import android.graphics.Bitmap
-import android.graphics.Color
 import java.nio.IntBuffer
 import kotlin.math.roundToInt
 
 /**
  * Floyd-Steinberg Dithering
  *
- * Use this extension to create a binary bitmap, dithered following the Floyd-Steinberg algorithm.
+ * Use this extension to create a binary pixel buffers, dithered following the Floyd-Steinberg algorithm.
+ * @see @https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
  *
- * @see [Wikpedia](https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering)
+ * @param width the amount of horizontal pixels stored in buffer
+ * @param height the amount of pixels stored vertically
  */
-fun Bitmap.ditherFloydSteinberg(): Bitmap {
-    val outputBitmap = grayscale()
-
-    // create new buffer, storing only one value, it's green,
-    // so the pixel color value can be temporarily bigger then 255
-    val buffer = IntBuffer.allocate(width * height)
-    outputBitmap.copyPixelsToBuffer(buffer)
-    buffer.rewind()
-
-    buffer.map { Color.green(it) }
+fun IntBuffer.ditherFloydSteinberg(width: Int, height: Int): IntBuffer {
+    // grayscale and single value the pixels
+    val output = grayscale()
+    output.map {
+        it.green()
+    }
 
     // loop through all pixels. propagating the thresholding error
     for (y in 0 until height) {
         for (x in 0 until width) {
-            val old = buffer[x + y * width]
+            val old = output[x + y * width]
             val new = if (old < 128) 0 else 255
             val error = old - new
-            buffer.put(x + y * width, new)
+            output.put(x + y * width, new)
 
             // distribute the error to the neighboring pixels
             FLOYD_STEINBERG_NEIGHBOR_WEIGHTS.forEachIndexed { index, weight ->
@@ -40,8 +36,8 @@ fun Bitmap.ditherFloydSteinberg(): Bitmap {
                     if (x + i in 0 until width) {
                         if (y + j in 0 until height) {
                             val subindex = (x + i) + (y + j) * width
-                            val corrected = (buffer[subindex] + error * weight).roundToInt()
-                            buffer.put(subindex, corrected)
+                            val corrected = (output[subindex] + error * weight).roundToInt()
+                            output.put(subindex, corrected)
                         }
                     }
                 }
@@ -49,13 +45,13 @@ fun Bitmap.ditherFloydSteinberg(): Bitmap {
         }
     }
 
-    // convert pixel values back to full color, coercing will be done by Color.rgb
-    buffer.rewind()
-    buffer.map { Color.rgb(it, it, it) }
+    // convert pixel values back to "full color"
+    rewind()
 
-    // and finally store the pixel values back into the image
-    outputBitmap.copyPixelsFromBuffer(buffer)
-    return outputBitmap
+    output.map { rgb(it, it, it) }
+    output.rewind()
+
+    return output
 }
 
 private val FLOYD_STEINBERG_NEIGHBOR_WEIGHTS = arrayOf(

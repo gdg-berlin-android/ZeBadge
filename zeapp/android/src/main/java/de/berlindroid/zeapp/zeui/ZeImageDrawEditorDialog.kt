@@ -115,7 +115,9 @@ fun ZeImageDrawEditorDialog(
                             drawContainer
                                 .drawToBitmap()
                                 .scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
-                                .threshold()
+                                .pixelManipulation { _, _ ->
+                                    threshold()
+                                }
 
                         if (bitmap.isBinary()) {
                             accepted(ZeConfiguration.ImageDraw(bitmap))
