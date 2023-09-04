@@ -7,6 +7,7 @@ import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zekompanion.getPlatform
 import de.berlindroid.zekompanion.grayscale
 import de.berlindroid.zekompanion.invert
+import de.berlindroid.zekompanion.scale
 import de.berlindroid.zekompanion.threshold
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
@@ -36,6 +37,8 @@ typealias Operation = IntBuffer.(width: Int, height: Int) -> IntBuffer
 data object Configuration {
     var input: String? = null
     var output: String? = null
+    var width: Int = 0
+    var height: Int = 0
     var operations: MutableList<Pair<String, Operation>> = mutableListOf()
 }
 
@@ -61,7 +64,7 @@ val commands = listOf(
         short = "-fs",
         long = "--floyd-steinberg",
         hasParameter = true,
-    ) { Configuration.operations.add("threshold" to IntBuffer::ditherFloydSteinberg) },
+    ) { Configuration.operations.add("fs dither" to IntBuffer::ditherFloydSteinberg) },
     CommandLineArgument(
         name = "image threshold",
         description = "Thresholds the given input image. Value above the parameter are considered white, others black",
@@ -84,6 +87,13 @@ val commands = listOf(
         hasParameter = true,
     ) { Configuration.operations.add("gray" to { _, _ -> grayscale() }) },
     CommandLineArgument(
+        name = "scale image",
+        description = "Simple scale of image into 'WIDTHxHEIGHT' image.",
+        short = "-S",
+        long = "--scale",
+        hasParameter = true,
+    ) { Configuration.operations.add("scale" to scaleImageCallback(it)) },
+    CommandLineArgument(
         name = "send image to badge",
         description = "Sends the hopefully converted image to the connected badge.",
         short = "-s",
@@ -95,6 +105,25 @@ val commands = listOf(
         )
     },
 )
+
+private fun scaleImageCallback(size: String?): IntBuffer.(width: Int, height: Int) -> IntBuffer = { w, h ->
+    val (ow, oh) = if (size != null && size.contains("x")) {
+        try {
+            size.split("x", limit = 2).map { it.toInt() }
+        } catch (ill: IllegalArgumentException) {
+            print("non number found")
+            ill.printStackTrace()
+            listOf(100, 100)
+        }
+    } else {
+        listOf(296, 128)
+    }
+
+    scale(w, h, ow, oh).also {
+        Configuration.width = ow
+        Configuration.height = oh
+    }
+}
 
 private fun sendBufferToBadge(): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
     val payload = BadgePayload(
@@ -171,8 +200,10 @@ private fun handleCommands() {
         } else {
             val input = Configuration.input!!
             val inputImage = ImageIO.read(File(input))
-            val width = inputImage.width
-            val height = inputImage.height
+            Configuration.width = inputImage.width
+            Configuration.height = inputImage.height
+            val width = Configuration.width
+            val height = Configuration.height
 
             val array = IntArray(width * height * 3)
             inputImage.getRGB(0, 0, width, height, array, 0, width)
@@ -183,17 +214,20 @@ private fun handleCommands() {
 
             Configuration.operations.forEach { operation ->
                 println("... ${operation.first}")
-                buffer = buffer.(operation.second)(width, height)
+                buffer = buffer.(operation.second)(
+                    Configuration.width,
+                    Configuration.height,
+                )
             }
 
             val output = Configuration.output!!
             val outputImage = BufferedImage(
-                width,
-                height,
+                Configuration.width,
+                Configuration.height,
                 TYPE_INT_RGB,
             )
 
-            outputImage.setRGB(0, 0, width, height, buffer.array(), 0, width)
+            outputImage.setRGB(0, 0, Configuration.width, Configuration.height, buffer.array(), 0, Configuration.width)
             ImageIO.write(outputImage, "png", File(output))
 
             println("Successfully saved image to '$output'.")

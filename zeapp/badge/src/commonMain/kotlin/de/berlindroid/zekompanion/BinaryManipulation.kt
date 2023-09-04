@@ -8,6 +8,7 @@ import java.util.Base64
 import java.util.zip.Deflater
 import java.util.zip.Inflater
 import kotlin.experimental.or
+import kotlin.math.floor
 
 /**
  * Helper to convert a bytearray to base64
@@ -241,6 +242,27 @@ fun IntBuffer.forEachIndexed(
             mapper(i, get(i))
         }
     }
+}
+
+/**
+ * Simple scaling of images, no filtering
+ */
+fun IntBuffer.scale(inputWidth: Int, inputHeight: Int, outputWidth: Int, outputHeight: Int): IntBuffer {
+    val output = IntBuffer.allocate(outputWidth * outputHeight)
+
+    for (y in 0 until outputHeight) {
+        val realtiveY = y / outputHeight.toFloat()
+        val inputY = floor(realtiveY * inputHeight).toInt()
+
+        for (x in 0 until outputWidth) {
+            val realtiveX = x / outputWidth.toFloat()
+            val inputX = floor(realtiveX * inputWidth).toInt()
+
+            output.put(get(inputX + inputY * inputWidth))
+        }
+    }
+
+    return output
 }
 
 fun Int.isBinary(): Boolean {
