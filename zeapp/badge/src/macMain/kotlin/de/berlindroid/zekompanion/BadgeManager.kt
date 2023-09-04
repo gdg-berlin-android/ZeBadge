@@ -61,13 +61,6 @@ class AppleBadgeManager : BadgeManager {
     private fun getBadger2040s() = SerialPort.getCommPorts().filter {
         it.descriptivePortName.contains("Badger")
     }
-
-    private fun getUsbModems() = File("/dev/")
-        .listFiles()
-        .orEmpty()
-        .filter {
-            it.name.startsWith("cu.usbmodem")
-        }
 }
 
 actual typealias Environment = Any
