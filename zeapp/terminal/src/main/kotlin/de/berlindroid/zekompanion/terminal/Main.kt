@@ -100,7 +100,7 @@ private fun sendBufferToBadge(): IntBuffer.(width: Int, height: Int) -> IntBuffe
     val payload = BadgePayload(
         debug = false,
         type = "preview",
-        meta = "beta",
+        meta = "",
         payload = toBinary().zipit().base64(),
     )
 

@@ -35,6 +35,7 @@ firebase = "32.2.3"
 firebase-appdistribution = "4.0.0"
 firebase-crashlytics = "2.9.6"
 google-play-services = "4.3.15"
+jSerialComm = "2.10.3"
 junit = "4.13.2"
 kotlin = "1.9.0"
 kotlinx-coroutines-core = "1.7.3"
@@ -71,6 +72,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }

@@ -57,10 +57,23 @@ kotlin {
             }
         }
 
-        val mac by creating {
-            dependsOn(commonMain)
-        }
+        when {
+            os.startsWith("Mac OS") -> {
+                val macMain by getting {
+                    dependencies {
+                        implementation(libs.jSerialComm)
+                    }
+                }
+            }
 
+            os.startsWith("Linux") -> {
+                val linuxMain by getting {
+                    dependencies {
+                        implementation(libs.jSerialComm)
+                    }
+                }
+            }
+        }
     }
 }
 
