@@ -12,7 +12,10 @@ class AppleBadgeManager : BadgeManager {
         var written = 0
         for (badger in badgers) {
             try {
-                badger.openPort()
+                if (!badger.openPort(300)) {
+                    continue
+                }
+
                 badger.setDTR()
                 badger.baudRate = 115200
                 badger.numDataBits = 8
@@ -21,7 +24,11 @@ class AppleBadgeManager : BadgeManager {
 
                 badger.setComPortTimeouts(TIMEOUT_WRITE_BLOCKING, 2_0000, 2_000)
 
+                badger.openPort()
+
                 written = badger.writeBytes(bytes, bytes.size)
+                badger.flushIOBuffers()
+
                 if (written > 0) {
                     break
                 }
@@ -30,8 +37,6 @@ class AppleBadgeManager : BadgeManager {
                 written = -1
                 break
             } finally {
-                badger.flushIOBuffers()
-
                 if (badger.isOpen) {
                     badger.closePort()
                 }
