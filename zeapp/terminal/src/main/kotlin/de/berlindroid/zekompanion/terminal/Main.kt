@@ -42,8 +42,7 @@ data object Configuration {
     var operations: MutableList<Pair<String, Operation>> = mutableListOf()
 }
 
-val commands = listOf(
-    CommandLineArgument(name = "help", description = "Helps you", short = "-h", long = "--help") { help() },
+fun inputOutputCommands() = mutableListOf(
     CommandLineArgument(
         name = "input image",
         description = "Image to be manipulated",
@@ -59,46 +58,10 @@ val commands = listOf(
         hasParameter = true,
     ) { Configuration.output = it },
     CommandLineArgument(
-        name = "dither floyd-steinberg",
-        description = "Converts the given input image into a black and white output image, somewhat preserving the luminance using dithering.",
-        short = "-fs",
-        long = "--floyd-steinberg",
-        hasParameter = true,
-    ) { Configuration.operations.add("fs dither" to IntBuffer::ditherFloydSteinberg) },
-    CommandLineArgument(
-        name = "image threshold",
-        description = "Thresholds the given input image. Value above the parameter are considered white, others black",
-        short = "-t",
-        long = "--threshold",
-        hasParameter = true,
-    ) { Configuration.operations.add("threshold" to { _, _ -> threshold() }) },
-    CommandLineArgument(
-        name = "image inversion",
-        description = "Turn black into white and opposite.",
-        short = "-i",
-        long = "--invert",
-        hasParameter = true,
-    ) { Configuration.operations.add("invert" to { _, _ -> invert() }) },
-    CommandLineArgument(
-        name = "grayscale an image",
-        description = "Convert image into a smooth transition from black to white color.",
-        short = "-g",
-        long = "--grayscale",
-        hasParameter = true,
-    ) { Configuration.operations.add("gray" to { _, _ -> grayscale() }) },
-    CommandLineArgument(
-        name = "scale image",
-        description = "Simple scale of image into 'WIDTHxHEIGHT' image.",
-        short = "-S",
-        long = "--scale",
-        hasParameter = true,
-    ) { Configuration.operations.add("scale" to scaleImageCallback(it)) },
-    CommandLineArgument(
         name = "send image to badge",
-        description = "Sends the hopefully converted image to the connected badge.",
+        description = "Sends the hopefully converted image to the hopefully connected badge.",
         short = "-s",
         long = "--send",
-        hasParameter = true,
     ) {
         Configuration.operations.add(
             "send" to sendBufferToBadge(),
@@ -106,7 +69,56 @@ val commands = listOf(
     },
 )
 
-private fun scaleImageCallback(size: String?): IntBuffer.(width: Int, height: Int) -> IntBuffer = { w, h ->
+fun imageColorCommands() = listOf(
+    CommandLineArgument(
+        name = "dither floyd-steinberg",
+        description = "Converts the given input image into a black and white output image, somewhat preserving the luminance using dithering.",
+        short = "-fs",
+        long = "--floyd-steinberg",
+    ) { Configuration.operations.add("fs dither" to IntBuffer::ditherFloydSteinberg) },
+    CommandLineArgument(
+        name = "image threshold",
+        description = "Thresholds the given input image. Value above the parameter are considered white, others black",
+        short = "-t",
+        long = "--threshold",
+    ) { Configuration.operations.add("threshold" to { _, _ -> threshold() }) },
+    CommandLineArgument(
+        name = "image inversion",
+        description = "Turn black into white and opposite.",
+        short = "-i",
+        long = "--invert",
+    ) { Configuration.operations.add("invert" to { _, _ -> invert() }) },
+    CommandLineArgument(
+        name = "grayscale an image",
+        description = "Convert image into a smooth transition from black to white color.",
+        short = "-g",
+        long = "--grayscale",
+    ) { Configuration.operations.add("gray" to { _, _ -> grayscale() }) },
+)
+
+fun resizeCommand() = CommandLineArgument(
+    name = "size image",
+    description = "Simple size of image into 'WIDTHxHEIGHT' image.",
+    short = "-S",
+    long = "--size",
+    hasParameter = true,
+) { Configuration.operations.add("size" to sizeImageCallback(it)) }
+
+fun helpCommand() = CommandLineArgument(
+    name = "help",
+    description = "Helps you",
+    short = "-h",
+    long = "--help",
+) { help() }
+
+val commands: List<CommandLineArgument> = listOf(
+    helpCommand(),
+    *inputOutputCommands().toTypedArray(),
+    *imageColorCommands().toTypedArray(),
+    resizeCommand(),
+)
+
+private fun sizeImageCallback(size: String?): IntBuffer.(width: Int, height: Int) -> IntBuffer = { w, h ->
     val (ow, oh) = if (size != null && size.contains("x")) {
         try {
             size.split("x", limit = 2).map { it.toInt() }
@@ -136,9 +148,13 @@ private fun sendBufferToBadge(): IntBuffer.(width: Int, height: Int) -> IntBuffe
     runBlocking {
         with(buildBadgeManager("")) {
             if (isConnected()) {
-                sendPayload(payload)
+                val result = sendPayload(payload)
+                if (result.isSuccess) {
+                    println("${COLOR_GREEN_BACKGROUND}Successfully sent image (${result.getOrNull()}).${COLOR_END}")
+                } else {
+                    println("${COLOR_RED_BACKGROUND}Image not send.${COLOR_END}")
+                }
             } else {
-
                 println("${COLOR_RED_BACKGROUND}No Badge connected.${COLOR_END}\nTry attaching a badge and execute the command again.")
             }
         }
@@ -154,6 +170,7 @@ fun help() {
         println("$name ${command.name}: ${command.description}")
     }
     println()
+    println("Either 'output' or 'send' needs to be present.")
     exitProcess(0)
 }
 
@@ -195,7 +212,7 @@ private fun parseArguments(arguments: MutableList<String>) {
 
 private fun handleCommands() {
     if (!Configuration.input.isNullOrEmpty()) {
-        if (Configuration.output.isNullOrEmpty()) {
+        if (neitherOutputNorSend()) {
             println("${COLOR_RED_BACKGROUND}Output (-o/--output) not set. Image manipulation impossible, exiting.${COLOR_END}")
         } else {
             val input = Configuration.input!!
@@ -220,17 +237,22 @@ private fun handleCommands() {
                 )
             }
 
-            val output = Configuration.output!!
-            val outputImage = BufferedImage(
-                Configuration.width,
-                Configuration.height,
-                TYPE_INT_RGB,
-            )
+            Configuration.output?.let { output ->
+                val outputImage = BufferedImage(
+                    Configuration.width,
+                    Configuration.height,
+                    TYPE_INT_RGB,
+                )
 
-            outputImage.setRGB(0, 0, Configuration.width, Configuration.height, buffer.array(), 0, Configuration.width)
-            ImageIO.write(outputImage, "png", File(output))
+                outputImage.setRGB(0, 0, Configuration.width, Configuration.height, buffer.array(), 0, Configuration.width)
+                ImageIO.write(outputImage, "png", File(output))
 
-            println("Successfully saved image to '$output'.")
+                println("Successfully saved image to '$output'.")
+            }
         }
     }
 }
+
+private fun neitherOutputNorSend() =
+    Configuration.output == null
+            && Configuration.operations.firstOrNull { it.first == "send" } == null
