@@ -1,8 +1,13 @@
+@file:JvmName("ZeBadgeKompanion")
+
 package de.berlindroid.zekompanion.desktop
 
-import androidx.compose.ui.ExperimentalComposeUiApi
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.graphics.toAwtImage
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import de.berlindroid.zekompanion.BadgePayload
@@ -21,36 +26,40 @@ import java.awt.GraphicsEnvironment
 import java.awt.Rectangle
 import java.awt.Robot
 import java.awt.image.BufferedImage
-import java.lang.IllegalStateException
 import java.nio.IntBuffer
 import javax.swing.JFrame
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
+    val painter = painterResource("icon.png")
+
     Window(
+        title = "ZeBadge - Kompanion",
+        icon = painter,
         onCloseRequest = ::exitApplication,
     ) {
-        ZeDesktopApp(
-            sendToBadge = { state ->
-                when (state) {
-                    is State.EditNameBadge -> {
-                        sendImageToBadge(
-                            image = state.toBufferedImage(),
-                            callback = ::sendResult,
-                        )
+        Column {
+            ZeDesktopApp(
+                sendToBadge = { state ->
+                    when (state) {
+                        is State.EditNameBadge -> {
+                            sendImageToBadge(
+                                image = state.toBufferedImage(),
+                                callback = ::sendResult,
+                            )
+                        }
+
+                        is State.EditImage ->
+                            sendImageToBadge(
+                                image = state.image.toAwtImage(),
+                                callback = ::sendResult,
+                            )
+
+                        is State.Undecided -> Unit
                     }
-
-                    is State.EditImage ->
-                        sendImageToBadge(
-                            image = state.image.toAwtImage(),
-                            callback = ::sendResult,
-                        )
-
-                    is State.Undecided -> Unit
-                }
-            },
-        )
+                },
+            )
+        }
     }
 }
 
