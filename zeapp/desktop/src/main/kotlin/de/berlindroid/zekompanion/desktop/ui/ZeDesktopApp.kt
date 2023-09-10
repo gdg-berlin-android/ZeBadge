@@ -168,7 +168,7 @@ fun RowScope.UndecidedEditor(selectFile: () -> Unit, createNameBadge: () -> Unit
 }
 
 @Composable
-private fun ColumnScope.Footer(platform: String) {
+private fun Footer(platform: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -177,7 +177,7 @@ private fun ColumnScope.Footer(platform: String) {
             fontFamily = FontFamily.Monospace,
             textAlign = TextAlign.Center,
             fontSize = 10.sp,
-            text = "~~ Running on platform $platform. ~~",
+            text = "~~ Running on with ❤️ on $platform. ~~",
         )
     }
 }
