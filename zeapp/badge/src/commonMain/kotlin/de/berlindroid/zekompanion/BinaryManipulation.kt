@@ -247,7 +247,7 @@ fun IntBuffer.forEachIndexed(
 /**
  * Simple scaling of images, no filtering
  */
-fun IntBuffer.scale(inputWidth: Int, inputHeight: Int, outputWidth: Int, outputHeight: Int): IntBuffer {
+fun IntBuffer.resize(inputWidth: Int, inputHeight: Int, outputWidth: Int, outputHeight: Int): IntBuffer {
     val output = IntBuffer.allocate(outputWidth * outputHeight)
 
     for (y in 0 until outputHeight) {

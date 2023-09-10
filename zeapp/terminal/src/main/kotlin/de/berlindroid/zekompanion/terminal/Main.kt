@@ -7,7 +7,7 @@ import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zekompanion.getPlatform
 import de.berlindroid.zekompanion.grayscale
 import de.berlindroid.zekompanion.invert
-import de.berlindroid.zekompanion.scale
+import de.berlindroid.zekompanion.resize
 import de.berlindroid.zekompanion.threshold
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
@@ -131,7 +131,7 @@ private fun sizeImageCallback(size: String?): IntBuffer.(width: Int, height: Int
         listOf(296, 128)
     }
 
-    scale(w, h, ow, oh).also {
+    resize(w, h, ow, oh).also {
         Configuration.width = ow
         Configuration.height = oh
     }
