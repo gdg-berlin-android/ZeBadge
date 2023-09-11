@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,18 +38,16 @@ fun ZeDesktopApp(sendToBadge: (State) -> Unit) {
 
     var state: State by remember { mutableStateOf(Undecided) }
 
-    MaterialTheme {
-        Column {
-            Header(state) { state = it }
+    Column {
+        Header(state) { state = it }
 
-            Content(
-                state = state,
-                sendToBadge = { sendToBadge(state) },
-                stateUpdated = { state = it },
-            )
+        Content(
+            state = state,
+            sendToBadge = { sendToBadge(state) },
+            stateUpdated = { state = it },
+        )
 
-            Footer(platform)
-        }
+        Footer(platform)
     }
 }
 

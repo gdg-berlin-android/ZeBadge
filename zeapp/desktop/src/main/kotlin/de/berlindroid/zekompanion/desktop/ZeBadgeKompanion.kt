@@ -3,8 +3,7 @@
 package de.berlindroid.zekompanion.desktop
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.res.painterResource
@@ -19,7 +18,8 @@ import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zekompanion.resize
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
@@ -33,12 +33,12 @@ import javax.swing.JFrame
 fun main() = application {
     val painter = painterResource("icon.png")
 
-    Window(
-        title = "ZeBadge - Kompanion",
-        icon = painter,
-        onCloseRequest = ::exitApplication,
-    ) {
-        Column {
+    MaterialTheme {
+        Window(
+            title = "ZeBadge - Kompanion",
+            icon = painter,
+            onCloseRequest = ::exitApplication,
+        ) {
             ZeDesktopApp(
                 sendToBadge = { state ->
                     when (state) {
@@ -115,7 +115,7 @@ private fun State.EditNameBadge.toBufferedImage(): BufferedImage {
 
 private fun sendImageToBadge(image: BufferedImage, callback: (Result<Int>) -> Unit) {
     try {
-        runBlocking {
+        GlobalScope.launch {
             with(buildBadgeManager("")) {
                 if (isConnected()) {
                     val payload = BadgePayload(
