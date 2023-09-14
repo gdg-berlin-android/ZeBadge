@@ -81,6 +81,10 @@ kotlin {
                     dependencies {
                         implementation(libs.jSerialComm)
                     }
+
+                    sourceSets {
+                        dependsOn (sourceSets.getAt("jvmMain"))
+                    }
                 }
             }
         }
