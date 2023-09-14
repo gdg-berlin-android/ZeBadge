@@ -57,11 +57,21 @@ kotlin {
             }
         }
 
+        val jvmMain by creating {
+            sourceSets {
+                dependsOn (sourceSets.getAt("commonMain"))
+            }
+        }
+
         when {
             os.startsWith("Mac OS") -> {
                 val macMain by getting {
                     dependencies {
                         implementation(libs.jSerialComm)
+                    }
+
+                    sourceSets {
+                        dependsOn (sourceSets.getAt("jvmMain"))
                     }
                 }
             }
