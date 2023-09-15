@@ -145,9 +145,7 @@ class AndroidBadgeManager(
 
 }
 
-data class AndroidEnvironmentWrapper(val context: Context)
-
-actual typealias Environment = AndroidEnvironmentWrapper
+actual data class Environment(val context: Context)
 
 actual fun buildBadgeManager(
     environment: Environment,
