@@ -53,13 +53,14 @@ kotlin {
 
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(libs.test.junit)
+                implementation(libs.test.assertk)
             }
         }
 
         val jvmMain by creating {
             sourceSets {
-                dependsOn (sourceSets.getAt("commonMain"))
+                dependsOn(sourceSets.getAt("commonMain"))
             }
         }
 
@@ -71,7 +72,7 @@ kotlin {
                     }
 
                     sourceSets {
-                        dependsOn (sourceSets.getAt("jvmMain"))
+                        dependsOn(sourceSets.getAt("jvmMain"))
                     }
                 }
             }
@@ -83,7 +84,7 @@ kotlin {
                     }
 
                     sourceSets {
-                        dependsOn (sourceSets.getAt("jvmMain"))
+                        dependsOn(sourceSets.getAt("jvmMain"))
                     }
                 }
             }

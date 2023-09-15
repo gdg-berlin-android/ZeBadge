@@ -1,9 +1,7 @@
-package de.berlindroid.zeapp.hardware
+package de.berlindroid.zekompanion
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import de.berlindroid.zeapp.zebits.unzipit
-import de.berlindroid.zeapp.zebits.zipit
 import org.junit.Test
 import java.nio.ByteBuffer
 
