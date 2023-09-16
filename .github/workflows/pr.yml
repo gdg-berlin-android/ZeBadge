@@ -26,7 +26,7 @@ jobs:
       - name: "Validate Gradle wrapper"
         uses: gradle/wrapper-validation-action@v1
       - name: "Assemble Debug"
-        run: ./gradlew :app:assembleDebug --no-daemon
+        run: ./gradlew :android:assembleDebug --no-daemon
       - name: "Upload Debug APK to GitHub"
         uses: actions/upload-artifact@v3
         with:
@@ -93,5 +93,5 @@ jobs:
       - name: "Validate Gradle wrapper"
         uses: gradle/wrapper-validation-action@v1
       - name: "Test"
-        run: ./gradlew test
+        run: ./gradlew linuxTest
     
