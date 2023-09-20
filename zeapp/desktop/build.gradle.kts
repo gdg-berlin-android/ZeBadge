@@ -25,7 +25,7 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "ZeBadgeKompanion"
+        mainClass = "de.berlindroid.zekompanion.desktop.ZeBadgeKompanion"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
