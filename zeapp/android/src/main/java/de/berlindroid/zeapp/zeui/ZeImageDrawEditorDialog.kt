@@ -39,8 +39,8 @@ import de.berlindroid.zeapp.PAGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
-import de.berlindroid.zekompanion.threshold
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zekompanion.threshold
 import kotlinx.coroutines.launch
 
 /**

@@ -23,7 +23,6 @@ import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import kotlin.experimental.and
 
-
 /**
  * Render a composable into a bitmap.
  *
@@ -337,4 +336,3 @@ private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: 
     canvas.drawBitmap(this, fromX.toFloat(), fromY.toFloat(), null)
     return result
 }
-

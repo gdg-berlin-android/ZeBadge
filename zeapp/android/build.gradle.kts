@@ -9,9 +9,6 @@ plugins {
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.google.play.services)
-    alias(libs.plugins.firebase.appdistribution)
-    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
 }
@@ -84,11 +81,6 @@ android {
                 "OPEN_API_TOKEN",
                 "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"",
             )
-
-            firebaseAppDistribution {
-                releaseNotesFile = "./release-notes.txt"
-                groups = "testers"
-            }
         }
         create("benchmark") {
             signingConfig = signingConfigs.getByName("debug")
@@ -185,9 +177,6 @@ dependencies {
     implementation(libs.dagger.hilt)
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
-    implementation(platform(libs.firebase))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
     implementation(libs.timber)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

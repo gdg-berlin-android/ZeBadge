@@ -250,7 +250,7 @@ private fun ZeAbout(
                 fontSize = 24.sp,
             )
             ZeText(
-                text = "Running on '${getPlatform()}'."
+                text = "Running on '${getPlatform()}'.",
             )
             ZeLazyColumn {
                 items(lines) { line ->

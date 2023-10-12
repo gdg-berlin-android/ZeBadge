@@ -7,9 +7,6 @@ android-library = { id = "com.android.library", version.ref = "android-gradle-pl
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark"}
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }
-firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-appdistribution" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
-google-play-services = { id = "com.google.gms.google-services", version.ref = "google-play-services" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"  }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
@@ -31,10 +28,6 @@ core-ktx = "1.10.1"
 dagger-hilt = "2.46.1"
 detekt-gradle = "1.23.0"
 espresso-core = "3.5.1"
-firebase = "32.2.3"
-firebase-appdistribution = "4.0.0"
-firebase-crashlytics = "2.9.6"
-google-play-services = "4.3.15"
 jSerialComm = "2.10.3"
 junit = "4.13.2"
 kotlin = "1.9.0"
@@ -69,9 +62,6 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
