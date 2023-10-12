@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Release APK
-          path: zeapp/app/build/outputs/apk/release/app-release.apk
+          path: zeapp/android/build/outputs/apk/release/android-release.apk
       - name: Check folders after upload apk
         run: tree -P '*.apk' --prune
       - name: Upload binaries to a release
@@ -51,7 +51,7 @@ jobs:
         with:
           release_name: ${{ format('Release v{0}', github.run_number) }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: zeapp/app/build/outputs/apk/release/app-release.apk
+          file: zeapp/android/build/outputs/apk/release/android-release.apk
           asset_name: ze-badge-${{ github.sha }}.apk
           tag: ${{ github.run_number }}
           overwrite: true
