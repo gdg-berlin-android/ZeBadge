@@ -18,7 +18,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 29
         targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -36,9 +36,9 @@ android {
     }
 
     testOptions.managedDevices.devices {
-        create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel6Api31") {
+        create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel6Api34") {
             device = "Pixel 6"
-            apiLevel = 31
+            apiLevel = 34
             systemImageSource = "aosp"
         }
     }
@@ -48,14 +48,14 @@ android {
 }
 
 dependencies {
-    implementation("androidx.test.ext:junit:1.1.5")
-    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
-    implementation("androidx.benchmark:benchmark-macro-junit4:1.2.0-alpha16")
+    implementation(libs.androidx.test.ext.junit)
+    implementation(libs.androidx.uiautomator)
+    implementation(libs.androidx.benchmark.macro.junit4)
 }
 
 baselineProfile {
 
     // This specifies the managed devices to use that you run the tests on. The
     // default is none.
-    managedDevices += "pixel6Api31"
+    managedDevices += "pixel6Api34"
 }

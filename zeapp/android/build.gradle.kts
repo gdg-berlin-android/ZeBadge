@@ -82,7 +82,7 @@ android {
             buildConfigField(
                 "String",
                 "OPEN_API_TOKEN",
-                "\"${System.getenv("DALE2_TOKEN")}\"" ?: "\"\"",
+                "\"${System.getenv("DALE2_TOKEN")}\"",
             )
 
             firebaseAppDistribution {
@@ -160,9 +160,9 @@ detekt {
     baseline = file("detekt-baseline.xml")
     buildUponDefaultConfig = true
     reports {
-        html { enabled = true }
-        xml { enabled = true }
-        txt { enabled = false }
+        html { required = true }
+        xml { required = true }
+        txt { required = false }
     }
 }
 
