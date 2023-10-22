@@ -181,13 +181,13 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    testImplementation(libs.test.assertk)
-    testImplementation(libs.test.junit)
-    testImplementation(libs.test.mockk)
-    testImplementation(libs.test.coroutines)
+    testImplementation(libs.testAssertk)
+    testImplementation(libs.testJunit4)
+    testImplementation(libs.testMockk)
+    testImplementation(libs.testCoroutines)
 
-    androidTestImplementation(libs.test.compose.junit)
-    debugImplementation(libs.test.compose.manifest)
+    androidTestImplementation(libs.testComposeJunit)
+    debugImplementation(libs.testComposeManifest)
     kapt(libs.dagger.hilt.compiler)
     baselineProfile(project(":benchmark"))
 }
