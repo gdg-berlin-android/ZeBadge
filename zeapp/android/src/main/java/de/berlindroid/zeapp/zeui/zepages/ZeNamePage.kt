@@ -84,7 +84,7 @@ fun NamePage(
                 if (result.didOverflowWidth) {
                     secondarySize /= 3.0f
                 }
-            }
+            },
         )
     }
 }
