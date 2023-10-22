@@ -14,7 +14,8 @@ enum class ZeBadgeType(val rawValue: String) {
     CAMERA("Camera"),
     IMAGE_DRAWING("Image Drawing"),
     BARCODE_TAG("BarCode Tag"),
-    PHRASE("Custom Phrase");
+    PHRASE("Custom Phrase"),
+    ;
 
     companion object {
         fun getOrNull(type: String): ZeBadgeType? {
@@ -150,7 +151,7 @@ sealed class ZeConfiguration(
 
     data class CustomPhrase(
         val phrase: String,
-        override val bitmap: Bitmap
+        override val bitmap: Bitmap,
     ) : ZeConfiguration(ZeBadgeType.PHRASE, humanTitle = ZeBadgeType.PHRASE.rawValue, bitmap)
 
     // TODO: Add your own pages.

@@ -20,10 +20,10 @@ import com.commit451.coiltransformations.CropTransformation
 import de.berlindroid.zeapp.BuildConfig
 import de.berlindroid.zeapp.PAGE_HEIGHT
 import de.berlindroid.zeapp.PAGE_WIDTH
-import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zekompanion.ditherFloydSteinberg
 import kotlinx.coroutines.launch
 import java.io.File
 
