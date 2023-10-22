@@ -7,9 +7,6 @@ android-library = { id = "com.android.library", version.ref = "android-gradle-pl
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark"}
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }
-firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-appdistribution" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
-google-play-services = { id = "com.google.gms.google-services", version.ref = "google-play-services" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"  }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
@@ -17,40 +14,39 @@ license-report-gradle = { id = "com.jaredsburrows.license", version.ref = "licen
 
 [versions]
 
-android-gradle-plugin = "8.1.1"
-androidx-activity = "1.7.2"
-androidx-compose-bom = "2023.08.00"
-androidx-compose-compiler = "1.5.2"
-androidx-core = "1.10.1"
+android-gradle-plugin = "8.1.2"
+androidx-activity = "1.8.0"
+androidx-compose-bom = "2023.10.00"
+androidx-compose-compiler = "1.5.3"
+androidx-core = "1.12.0"
 androidx-datastore = "1.0.0"
-androidx-lifecycle = "2.6.1"
+androidx-lifecycle = "2.6.2"
 androidx-test-ext-junit = "1.1.5"
 appcompat = "1.6.1"
 benchmark = "1.2.0-alpha16"
-core-ktx = "1.10.1"
-dagger-hilt = "2.46.1"
-detekt-gradle = "1.23.0"
+benchmarkMacroJunit4 = "1.2.0-rc02"
+core-ktx = "1.12.0"
+dagger-hilt = "2.48.1"
+detekt-gradle = "1.23.1"
 espresso-core = "3.5.1"
-firebase = "32.2.3"
-firebase-appdistribution = "4.0.0"
-firebase-crashlytics = "2.9.6"
-google-play-services = "4.3.15"
 jSerialComm = "2.10.3"
 junit = "4.13.2"
-kotlin = "1.9.0"
+kotlin = "1.9.10"
 kotlinx-coroutines-core = "1.7.3"
-ktlint-gradle = "11.5.0"
+ktlint-gradle = "11.6.1"
 license-report-gradle = "0.9.3"
-material = "1.9.0"
-material3-wsc = "1.1.1"
-mik3y-usb-serial = "3.5.1"
+material = "1.10.0"
+material3-wsc = "1.1.2"
+mik3y-usb-serial = "3.6.0"
 retrofit = "2.9.0"
 timber = "5.0.1"
-zxing ="3.5.1"
+uiautomator = "2.2.0"
+zxing ="3.5.2"
 
 [libraries]
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
@@ -62,6 +58,7 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 coil-compose = "io.coil-kt:coil-compose:2.4.0"
 coil-transformations = "com.github.Commit451.coil-transformations:transformations:2.0.2"
@@ -69,9 +66,6 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
@@ -83,10 +77,9 @@ retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref =
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 zxing = { module = "com.google.zxing:core", version.ref = "zxing" }
 
-
-test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.26.1"
+test-assertk = "com.willowtreeapps.assertk:assertk-jvm:0.27.0"
 test-junit = "junit:junit:4.13.2"
-test-compose-junit = "androidx.compose.ui:ui-test-junit4:1.5.0"
-test-compose-manifest = "androidx.compose.ui:ui-test-manifest:1.5.0"
-test-mockk = "io.mockk:mockk:1.13.5"
+test-compose-junit = "androidx.compose.ui:ui-test-junit4:1.5.3"
+test-compose-manifest = "androidx.compose.ui:ui-test-manifest:1.5.3"
+test-mockk = "io.mockk:mockk:1.13.7"
 test-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
