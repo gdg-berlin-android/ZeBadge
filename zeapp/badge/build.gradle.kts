@@ -53,8 +53,8 @@ kotlin {
 
         val commonTest by getting {
             dependencies {
-                implementation(libs.test.junit)
-                implementation(libs.test.assertk)
+                implementation(libs.testJunit4)
+                implementation(libs.testAssertk)
             }
         }
 
