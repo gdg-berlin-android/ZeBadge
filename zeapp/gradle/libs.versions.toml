@@ -32,6 +32,7 @@ espresso-core = "3.5.1"
 jSerialComm = "2.10.3"
 kotlin = "1.9.10"
 kotlinx-coroutines-core = "1.7.3"
+kotlinxSerializationJson = "1.6.0"
 ktlint-gradle = "11.6.1"
 license-report-gradle = "0.9.3"
 material = "1.10.0"
@@ -74,6 +75,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm" }
 junit = { group = "junit", name = "junit", version.ref = "junit4" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3-wsc = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-wsc"}
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }

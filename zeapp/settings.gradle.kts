@@ -32,7 +32,8 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "ZeBadgeApp"
+
+rootProject.name = "ZeBadge"
 include(":android")
 include(":benchmark")
 include(":desktop")
