@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.dagger.hilt) apply false
     alias(libs.plugins.license.report.gradle) apply false
     id("com.android.test") version "8.0.2" apply false
-    kotlin("multiplatform").version("1.9.10").apply(false)
+    kotlin("multiplatform") version "1.9.10" apply false
 }
 
 tasks.register("clean", Delete::class) {

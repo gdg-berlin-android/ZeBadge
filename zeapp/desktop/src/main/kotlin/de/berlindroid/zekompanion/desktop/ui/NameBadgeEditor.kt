@@ -43,7 +43,7 @@ fun NameBadgeEditor(
     Column(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
     ) {
-        DrawBadge(state, 5.0f)
+        DrawNameBadge(state, 5.0f)
 
         Spacer(modifier = Modifier.weight(1.0f))
 
@@ -88,7 +88,7 @@ fun NameBadgeEditor(
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-fun DrawBadge(state: State, factor: Float = 1.0f) {
+fun DrawNameBadge(state: State, factor: Float = 1.0f) {
     val measurer = rememberTextMeasurer()
 
     val density = LocalDensity.current
