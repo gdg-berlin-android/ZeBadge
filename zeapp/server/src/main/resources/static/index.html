@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<head>
+    <title>
+        ZeBadge Web
+    </title>
+    <meta charset="UTF-8">
+    <script src="zebadge.js"></script>
+
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' blob: data:;">
+
+</head>
+
+<body>
+<h1>ZeBadge Web - Create your badge online</h1>
+
+<canvas id="canvas" width="296" height="128" style="border:1px solid #000000;"></canvas>
+
+<img src="" id="preview" width="296" height="128" style="border:1px solid #000000;">
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Contact</th>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <input type="text" id="name" name="name" value="Jane Doe" oninput="badge_updated()">
+        </td>
+        <td>
+            <input type="text" id="contact" name="contact" value="find me at droidcon" oninput="badge_updated()">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" id="name_size" name="name_size" value="44" oninput="badge_updated()">
+        </td>
+        <td>
+            <input type="text" id="contact_size" name="contact_size" value="22" oninput="badge_updated()">
+        </td>
+    </tr>
+</table>
+
+<p>
+    <button onclick="on_preview_badge()">Preview Badge</button>
+    <button onclick="on_send_to_badge()">Send to Badge</button>
+</p>
+
+<script>
+    window.onload = function () {
+        badge_updated();
+    };
+
+
+
+</script>
+</body>
