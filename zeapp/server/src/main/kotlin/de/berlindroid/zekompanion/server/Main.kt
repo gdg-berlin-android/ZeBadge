@@ -71,8 +71,15 @@ data class ImageRequest(
     val height: Int = -1,
 )
 
-fun main() {
-    embeddedServer(Netty, port = 8000) {
+fun main(args:Array<String>) {
+    val port = if (args.isNotEmpty()){
+        args.first().toInt()
+    } else {
+        8000
+    }
+    println("🪪Serving on port $port.")
+
+    embeddedServer(Netty, port = port) {
         install(ContentNegotiation) {
             json()
         }
