@@ -30,7 +30,7 @@
             <input type="text" id="name" name="name" value="Jane Doe" oninput="badge_updated()">
         </td>
         <td>
-            <input type="text" id="contact" name="contact" value="find me at droidcon" oninput="badge_updated()">
+            <input type="text" id="contact" name="contact" value="github.com/dt-developers/zebadge" oninput="badge_updated()">
         </td>
     </tr>
     <tr>
@@ -38,22 +38,21 @@
             <input type="text" id="name_size" name="name_size" value="44" oninput="badge_updated()">
         </td>
         <td>
-            <input type="text" id="contact_size" name="contact_size" value="22" oninput="badge_updated()">
+            <input type="text" id="contact_size" name="contact_size" value="18" oninput="badge_updated()">
         </td>
     </tr>
 </table>
 
 <p>
-    <button onclick="on_preview_badge()">Preview Badge</button>
-    <button onclick="on_send_to_badge()">Send to Badge</button>
+    <button onclick="preview_badge()">Preview Badge</button>
+    <button onclick="send_to_badge()">Send to Badge</button>
 </p>
 
 <script>
     window.onload = function () {
-        badge_updated();
-    };
-
-
-
+        if(check_serial()) {
+            badge_updated();
+        }
+    }
 </script>
 </body>

@@ -33,7 +33,7 @@ function sleepFor(sleepDuration){
     }
 }
 
-async function on_preview_badge() {
+async function preview_badge() {
     const canvas = document.getElementById("canvas")
     const image = canvas.toDataURL().split(",")[1]
 
@@ -60,7 +60,7 @@ async function on_preview_badge() {
     document.getElementById("preview").src = `data:image/png;base64,${blob}`
 }
 
-async function on_send_to_badge() {
+async function send_to_badge() {
     if (!navigator.serial) {
         console.log("Serial not supported, enjoy the preview.")
     } else {
@@ -136,5 +136,19 @@ function badge_updated() {
         document.getElementById("contact").value,
         document.getElementById("contact_size").value,
     )
+
+    preview_badge()
 }
 
+function check_serial() {
+    if (!navigator.serial) {
+        const body = document.getElementsByTagName("body")[0]
+        body.innerHTML = "<h1>NO WEB SERIAL</h1>\n" +
+         "<p>This app only works with those browsers:\n" +
+         "<a href='https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API#browser_compatibility'>see web serial compatibility.</a>"
+
+         return false
+    } else {
+         return true
+    }
+}
