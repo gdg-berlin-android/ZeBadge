@@ -39,13 +39,14 @@ material = "1.10.0"
 material3-wsc = "1.1.2"
 mik3y-usb-serial = "3.7.0"
 retrofit = "2.9.0"
+sl4j = "2.0.12"
 timber = "5.0.1"
 uiautomator = "2.2.0"
 zxing = "3.5.2"
 assertk = "0.27.0"
 junit4 = "4.13.2"
 junit4-ui = "1.5.4"
-ktor = "2.3.5"
+ktor = "2.3.9"
 uiTestManifest = "1.5.4"
 mockk = "1.13.8"
 kotlinxCoroutinesTest = "1.7.3"
@@ -77,10 +78,15 @@ jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm"
 junit = { group = "junit", name = "junit", version.ref = "junit4" }
 ktor-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
+ktor-jetty = { group = "io.ktor", name = "ktor-server-jetty", version.ref = "ktor" }
+ktor-tomcat = { group = "io.ktor", name = "ktor-server-tomcat", version.ref = "ktor" }
+ktor-cio = { group = "io.ktor", name = "ktor-server-cio", version.ref = "ktor" }
 ktor-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-content-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-network-tls = { group = "io.ktor", name = "ktor-network-tls-certificates", version.ref = "ktor" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+sl4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "sl4j" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3-wsc = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-wsc" }
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
