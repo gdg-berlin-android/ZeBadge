@@ -17,10 +17,13 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.ktor.core)
-    implementation(libs.ktor.netty)
+    implementation(libs.ktor.tomcat)
+    implementation(libs.ktor.network.tls)
     implementation(libs.ktor.content.negotiation)
     implementation(libs.ktor.content.serialization)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.sl4j.simple)
+
 }
 
 application {
