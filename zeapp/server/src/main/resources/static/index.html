@@ -2,7 +2,7 @@
 
 <head>
     <title>
-        ZeBadge Web
+        ZeBadge Web App
     </title>
     <meta charset="UTF-8">
     <script src="zebadge.js"></script>
@@ -11,43 +11,65 @@
 
 </head>
 
-<body>
-<h1>ZeBadge Web - Create your badge online</h1>
+<body style="padding-left: 25vw; padding-right: 25vw; padding-top: 10vh; background: darkgray; text-align: center;">
 
-<canvas id="canvas" width="296" height="128" style="border:1px solid #000000;"></canvas>
+<div id="main" style="background:white;border-radius: 1em; padding: 1em;">
+    <h1>ZeBadge Web App - Create Your Digital Badge Online</h1>
 
-<img src="" id="preview" width="296" height="128" style="border:1px solid #000000;">
+    <canvas id="canvas" width="296" height="128" style="border:1px solid #000000;"></canvas>
 
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Contact</th>
-    </tr>
-    </thead>
-    <tr>
-        <td>
-            <input type="text" id="name" name="name" value="Jane Doe" oninput="badge_updated()">
-        </td>
-        <td>
-            <input type="text" id="contact" name="contact" value="github.com/dt-developers/zebadge" oninput="badge_updated()">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <input type="text" id="name_size" name="name_size" value="44" oninput="badge_updated()">
-        </td>
-        <td>
-            <input type="text" id="contact_size" name="contact_size" value="18" oninput="badge_updated()">
-        </td>
-    </tr>
-</table>
+    <img src="" id="preview" width="296" height="128" style="border:1px solid #000000;" alt="preview of badge.">
 
-<p>
-    <button onclick="preview_badge()">Preview Badge</button>
-    <button onclick="send_to_badge()">Send to Badge</button>
-</p>
+    <img src="" id="background_image" width="296" height="128" alt="Invisible background image">
 
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Text</th>
+            <th>Size</th>
+            <th>Color</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>Background</td>
+            <td colspan="2">
+                <input type="file" id="background_file" name="background_file" value="" oninput="background_uploaded()" multiple>
+            </td>
+            <td>
+                <input type="checkbox" id="draw_bars" name="draw_bars" checked oninput="badge_updated()">
+            </td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>
+                <input type="text" id="name" name="name" value="Jane Doe" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="name_size" name="name_size" value="44" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="name_color" name="name_color" value="#000" oninput="badge_updated()">
+            </td>
+        </tr>
+        <tr>
+            <td>Contact</td>
+            <td>
+                <input type="text" id="contact" name="contact" value="github.com/dt-developers/zebadge" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="contact_size" name="contact_size" value="18" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="contact_color" name="contact_color" value="#000" oninput="badge_updated()">
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        <button onclick="send_to_badge()">Send to Badge</button>
+    </p>
+</div>
 <script>
     window.onload = function () {
         if(check_serial()) {
