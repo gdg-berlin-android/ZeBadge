@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<head>
+    <title>
+        ZeBadge Web App
+    </title>
+    <meta charset="UTF-8">
+    <script src="zebadge.js"></script>
+
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' blob: data:;">
+
+</head>
+
+<body style="padding-left: 25vw; padding-right: 25vw; padding-top: 10vh; background: darkgray; text-align: center;">
+
+<div id="main" style="background:white;border-radius: 1em; padding: 1em;">
+    <h1>ZeBadge Web App - Create Your Digital Badge Online</h1>
+
+    <canvas id="canvas" width="296" height="128" style="border:1px solid #000000;"></canvas>
+
+    <img src="" id="preview" width="296" height="128" style="border:1px solid #000000;" alt="preview of badge.">
+
+    <img src="" id="background_image" width="296" height="128" alt="Invisible background image">
+
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Text</th>
+            <th>Size</th>
+            <th>Color</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>Background</td>
+            <td colspan="2">
+                <input type="file" id="background_file" name="background_file" value="" oninput="background_uploaded()" multiple>
+            </td>
+            <td>
+                <input type="checkbox" id="draw_bars" name="draw_bars" checked oninput="badge_updated()">
+            </td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>
+                <input type="text" id="name" name="name" value="Jane Doe" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="name_size" name="name_size" value="44" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="name_color" name="name_color" value="#000" oninput="badge_updated()">
+            </td>
+        </tr>
+        <tr>
+            <td>Contact</td>
+            <td>
+                <input type="text" id="contact" name="contact" value="github.com/gdg-berlin-android/zebadge" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="contact_size" name="contact_size" value="18" oninput="badge_updated()">
+            </td>
+            <td>
+                <input type="text" id="contact_color" name="contact_color" value="#000" oninput="badge_updated()">
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        <button onclick="send_to_badge()">Send to Badge</button>
+    </p>
+</div>
+<script>
+    window.onload = function () {
+        if(check_serial()) {
+            badge_updated();
+        }
+    }
+</script>
+</body>

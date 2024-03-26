@@ -44,6 +44,8 @@ fun ZeDesktopApp(sendToBadge: (State) -> Unit) {
         Content(
             state = state,
             sendToBadge = { sendToBadge(state) },
+            loadConfig = { fileName -> File(fileName).readText().fromJSONtoConfig() },
+            saveConfig = { config, fileName -> File(fileName).writeText(config.toJSON()) },
             stateUpdated = { state = it },
         )
 
@@ -73,6 +75,8 @@ private fun Header(state: State, updateState: (State) -> Unit) {
 @Composable
 fun ColumnScope.Content(
     state: State,
+    loadConfig: (fileName: String) -> Config,
+    saveConfig: (config: Config, fileName: String) -> Unit,
     sendToBadge: () -> Unit,
     stateUpdated: (State) -> Unit,
 ) {
@@ -86,7 +90,8 @@ fun ColumnScope.Content(
                     if (fileName.isImageFile()) {
                         stateUpdated(
                             EditImage(
-                                ImageIO.read(
+                                configFileName = "$fileName.json",
+                                image = ImageIO.read(
                                     File(fileName.orEmpty()),
                                 ).toComposeImageBitmap(),
                             ),
@@ -112,7 +117,10 @@ fun ColumnScope.Content(
             )
 
             is EditImage -> ImageEditor(
+                configFileName = state.configFileName,
                 image = state.image,
+                load = loadConfig,
+                save = saveConfig,
                 sendToBadge = sendToBadge,
             )
 

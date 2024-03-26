@@ -14,3 +14,7 @@
 .cxx
 local.properties
 versions.properties!/versions.properties
+*.der
+*.pem
+*.p12
+*.pkcs7

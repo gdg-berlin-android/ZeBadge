@@ -11,6 +11,7 @@ sealed class State {
     ) : State()
 
     data class EditImage(
+        val configFileName: String,
         val image: ImageBitmap,
     ) : State()
 }

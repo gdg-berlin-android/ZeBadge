@@ -72,7 +72,7 @@ abstract class JvmBadgeManager : BadgeManager {
             throw IllegalStateException("Could not set num stop bits on $badger.")
         }
 
-        if (!badger.setParity(0)) {
+        if (!badger.setParity(SerialPort.NO_PARITY)) {
             throw IllegalStateException("Could not set parity bit on $badger.")
         }
     }

@@ -10,7 +10,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "17"
             }
 
             dependencies {
@@ -28,7 +28,7 @@ kotlin {
                 withJavaEnabled
 
                 jvmToolchain {
-                    languageVersion.set(JavaLanguageVersion.of(8))
+                    languageVersion.set(JavaLanguageVersion.of(17))
                 }
             }
 
@@ -37,7 +37,7 @@ kotlin {
                 withJavaEnabled
 
                 jvmToolchain {
-                    languageVersion.set(JavaLanguageVersion.of(8))
+                    languageVersion.set(JavaLanguageVersion.of(17))
                 }
             }
 
