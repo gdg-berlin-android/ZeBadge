@@ -5,11 +5,11 @@ Droidcon 2023: The time a new badge saw the light of the day, full with delight 
 
 # WebApp
 
-Go to [ZeOffizialWebSeite](http://34.135.218.221/) (_don't worry about the missing security we're all friends here_, #freeServerResourcesDonationWelcome). If you have a compatiable browser, great. If not, not so great.
+Go to [ZeOffizialWebSeite](https://zebadge.app) If you have a compatiable browser (chrome, edge), great. If not, not so great.
 
 You will see a website with a badge and several text boxes. Please put words and numbers into the boxes and check what happens. Once you are content with the results, attach ZeBadge, press the "sent to badge"-button and observe the magic of a flashing light. After a few seconds the new image is flashed and you can show it off.
 
-This magic happens through WebSerial, a ktor backend, the dithering algorithm from android and some custom crafted js frontend. Follow my talks for more joi.
+This magic happens through WebSerial, a ktor backend, the dithering algorithm from Kotlin and some custom crafted js frontend. Fjoi.
 
 ## Building WebApp
 
@@ -25,7 +25,7 @@ log into server
 execute jar (jolo)
 > sudo java -jar *jar 80
 
-THe last step started the remote webserver on port 80, with root rights. 🤓
+The last step started the remote webserver on port 80, with root rights. 🤓
 
 Ponder docker, k8n, virtualization and more fancy devops things, and then give up thinking you are a mobile dev ops. Unless you are, then [youre help is needed](https://github.com/gdg-berlin-android/ZeBadge/issues/new).
 
