@@ -11,8 +11,8 @@ import android.widget.LinearLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.graphics.scale
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.zeui.zepages.BarCodePage
 import de.berlindroid.zeapp.zeui.zepages.QRCodePage
 import de.berlindroid.zekompanion.forEach
@@ -36,8 +36,8 @@ fun composableToBitmap(
     // create a custom view like in the good old days
     class ParentView(context: Context) : LinearLayout(context) {
         init {
-            val width = PAGE_WIDTH
-            val height = PAGE_HEIGHT
+            val width = BADGE_WIDTH
+            val height = BADGE_HEIGHT
 
             val view = ComposeView(context)
             view.visibility = View.GONE
@@ -106,8 +106,8 @@ fun qrComposableToBitmap(
     // create a custom view like in the good old days
     class ParentView(context: Context) : LinearLayout(context) {
         init {
-            val width = PAGE_WIDTH
-            val height = PAGE_HEIGHT
+            val width = BADGE_WIDTH
+            val height = BADGE_HEIGHT
 
             val view = ComposeView(context)
             view.visibility = View.GONE
@@ -175,8 +175,8 @@ fun barCodeComposableToBitmap(
     // create a custom view like in the good old days
     class ParentView(context: Context) : LinearLayout(context) {
         init {
-            val width = PAGE_WIDTH
-            val height = PAGE_HEIGHT
+            val width = BADGE_WIDTH
+            val height = BADGE_HEIGHT
 
             val view = ComposeView(context)
             view.visibility = View.GONE
@@ -300,18 +300,18 @@ fun Bitmap.isBinary(): Boolean {
 /**
  * Take this bitmap and crop out a page from it's center.
  *
- * The width will be scaled to PAGE_WIDTH, but the height will be cropped.
+ * The width will be scaled to BADGE_WIDTH, but the height will be cropped.
  */
 fun Bitmap.cropPageFromCenter(): Bitmap {
     val aspectRatio = this.width.toFloat().div(this.height.toFloat())
-    val targetHeight = PAGE_WIDTH.div(aspectRatio).toInt()
+    val targetHeight = BADGE_WIDTH.div(aspectRatio).toInt()
 
-    return scale(PAGE_WIDTH, targetHeight)
+    return scale(BADGE_WIDTH, targetHeight)
         .crop(
             fromX = 0,
-            fromY = PAGE_HEIGHT / 2 - targetHeight / 2,
-            targetWidth = PAGE_WIDTH,
-            targetHeight = PAGE_HEIGHT,
+            fromY = BADGE_HEIGHT / 2 - targetHeight / 2,
+            targetWidth = BADGE_WIDTH,
+            targetHeight = BADGE_HEIGHT,
         )
 }
 

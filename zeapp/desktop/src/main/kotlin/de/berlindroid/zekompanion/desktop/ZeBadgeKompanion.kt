@@ -18,6 +18,8 @@ import de.berlindroid.zekompanion.desktop.ui.fromJSONtoConfig
 import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zekompanion.resize
 import de.berlindroid.zekompanion.toBinary
+import de.berlindroid.zekompanion.BADGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.zipit
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,7 +32,6 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.IntBuffer
 import javax.swing.JFrame
-
 
 fun main() = application {
     val painter = painterResource("icon.png")
@@ -73,11 +74,11 @@ private fun sendResult(result: Result<Int>) {
 }
 
 private fun State.EditImage.toBufferedImage(): BufferedImage {
-    val img = BufferedImage(296, 128, BufferedImage.TYPE_INT_RGB)
+    val img = BufferedImage(BADGE_WIDTH, BADGE_HEIGHT, BufferedImage.TYPE_INT_RGB)
     val g = img.createGraphics()
 
     val badge = ComposePanel()
-    badge.size = Dimension(296 * 2, 128 * 2)
+    badge.size = Dimension(BADGE_WIDTH * 2, BADGE_HEIGHT * 2)
     badge.setContent {
         ImageEditorBadge(
             image,
@@ -88,7 +89,7 @@ private fun State.EditImage.toBufferedImage(): BufferedImage {
     return with(JFrame("badge")) {
         layout = BorderLayout()
         defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-        size = Dimension(296, 128)
+        size = Dimension(BADGE_WIDTH, BADGE_HEIGHT)
         isAlwaysOnTop = true // make sure it is ontop, before we screenshot
         isUndecorated = true // no borders, no things we need to consider
         isVisible = true // also: visible for screenshot is important
@@ -102,10 +103,10 @@ private fun State.EditImage.toBufferedImage(): BufferedImage {
 
         Robot().createScreenCapture(
             Rectangle(
-                center.x - 296 / 2,
-                center.y - 128 / 2,
-                296,
-                128,
+                center.x - BADGE_WIDTH / 2,
+                center.y - BADGE_HEIGHT / 2,
+                BADGE_WIDTH,
+                BADGE_HEIGHT,
             ),
         ).also {
             dispose()
@@ -114,11 +115,11 @@ private fun State.EditImage.toBufferedImage(): BufferedImage {
 }
 
 private fun State.EditNameBadge.toBufferedImage(): BufferedImage {
-    val img = BufferedImage(296, 128, BufferedImage.TYPE_INT_RGB)
+    val img = BufferedImage(BADGE_WIDTH, BADGE_HEIGHT, BufferedImage.TYPE_INT_RGB)
     val g = img.createGraphics()
 
     val badge = ComposePanel()
-    badge.size = Dimension(296 * 2, 128 * 2)
+    badge.size = Dimension(BADGE_WIDTH * 2, BADGE_HEIGHT * 2)
     badge.setContent {
         DrawNameBadge(
             state = this,
@@ -130,7 +131,7 @@ private fun State.EditNameBadge.toBufferedImage(): BufferedImage {
     return with(JFrame("badge")) {
         layout = BorderLayout()
         defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-        size = Dimension(296, 128)
+        size = Dimension(BADGE_WIDTH, BADGE_HEIGHT)
         isAlwaysOnTop = true // make sure it is ontop, before we screenshot
         isUndecorated = true // no borders, no things we need to consider
         isVisible = true // also: visible for screenshot is important
@@ -144,10 +145,10 @@ private fun State.EditNameBadge.toBufferedImage(): BufferedImage {
 
         Robot().createScreenCapture(
             Rectangle(
-                center.x - 296 / 2,
-                center.y - 128 / 2,
-                296,
-                128,
+                center.x - BADGE_WIDTH / 2,
+                center.y - BADGE_HEIGHT / 2,
+                BADGE_WIDTH,
+                BADGE_HEIGHT,
             ),
         ).also {
             dispose()
@@ -188,8 +189,8 @@ private fun BufferedImage.toPayload(): String {
 
     return IntBuffer
         .wrap(array)
-        .resize(width, height, 296, 128)
-        .ditherFloydSteinberg(296, 128)
+        .resize(width, height, BADGE_WIDTH, BADGE_HEIGHT)
+        .ditherFloydSteinberg(BADGE_WIDTH, BADGE_HEIGHT)
         .toBinary()
         .zipit()
         .base64()

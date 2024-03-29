@@ -8,8 +8,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.zebits.toBitmap
 import de.berlindroid.zeapp.zemodels.ZeBadgeType
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
@@ -122,7 +122,7 @@ class ZePreferencesService @Inject constructor(
             val type = ZeBadgeType.getOrNull(preferences[slot.preferencesKey(TYPE_KEY)].orEmpty())
             val bitmap = preferences[slot.preferencesKey(IMAGE_KEY)]
                 ?.debase64()
-                ?.toBitmap(PAGE_WIDTH, PAGE_HEIGHT)
+                ?.toBitmap(BADGE_WIDTH, BADGE_HEIGHT)
                 ?: return@mapNotNull null
 
             when (type) {

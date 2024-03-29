@@ -18,8 +18,8 @@ import coil.size.Precision
 import coil.size.Scale
 import com.commit451.coiltransformations.CropTransformation
 import de.berlindroid.zeapp.BuildConfig
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
@@ -46,7 +46,7 @@ fun ZeCameraEditor(
                 val imageRequest = ImageRequest.Builder(context)
                     .data(uri)
                     .transformations(CropTransformation())
-                    .size(PAGE_WIDTH, PAGE_HEIGHT)
+                    .size(BADGE_WIDTH, BADGE_HEIGHT)
                     .scale(Scale.FIT)
                     .precision(Precision.EXACT)
                     .allowHardware(false)
@@ -58,15 +58,15 @@ fun ZeCameraEditor(
                     val drawable =
                         context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
                     val bitmap = Bitmap.createBitmap(
-                        PAGE_WIDTH,
-                        PAGE_HEIGHT,
+                        BADGE_WIDTH,
+                        BADGE_HEIGHT,
                         Bitmap.Config.ARGB_8888,
                     )
                     val canvas = Canvas(bitmap)
                     canvas.drawColor(Color.WHITE)
                     canvas.drawBitmap(
                         drawable.bitmap,
-                        (PAGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
+                        (BADGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
                         0f,
                         null,
                     )

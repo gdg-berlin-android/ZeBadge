@@ -19,8 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zeui.rememberBarcodeBitmapPainter
 
@@ -39,8 +39,8 @@ fun BarCodePage(
                 color = Color.White,
             )
             .size(
-                width = with(LocalDensity.current) { PAGE_WIDTH.toDp() },
-                height = with(LocalDensity.current) { PAGE_HEIGHT.toDp() },
+                width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
+                height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

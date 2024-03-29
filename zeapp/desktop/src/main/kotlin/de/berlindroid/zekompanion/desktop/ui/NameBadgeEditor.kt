@@ -92,15 +92,15 @@ fun DrawNameBadge(state: State, factor: Float = 1.0f) {
     val measurer = rememberTextMeasurer()
 
     val density = LocalDensity.current
-    val (dpWidth, dpHeight) = with(density) { 296.toDp() * factor to 128.toDp() * factor }
+    val (dpWidth, dpHeight) = with(density) { BADGE_WIDTH.toDp() * factor to BADGE_HEIGHT.toDp() * factor }
 
     Column {
         // TODO: Replace with compose calls
         Canvas(
             modifier = Modifier.size(dpWidth, dpHeight).align(Alignment.CenterHorizontally),
         ) {
-            val width = 296.0f * factor
-            val height = 128.0f * factor
+            val width = BADGE_WIDTH.toFloat() * factor
+            val height = BADGE_HEIGHT.toFloat() * factor
 
             val topBarHeight = 30.0f * factor
             val bottomBarHeight = 30.0f * factor

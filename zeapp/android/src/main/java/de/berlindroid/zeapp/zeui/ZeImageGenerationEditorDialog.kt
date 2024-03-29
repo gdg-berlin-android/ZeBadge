@@ -23,8 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.gson.annotations.SerializedName
 import de.berlindroid.zeapp.OPENAI_API_KEY
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.copy
 import de.berlindroid.zeapp.zebits.cropPageFromCenter
@@ -70,7 +70,7 @@ fun ImageGenerationEditorDialog(
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
-            ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT),
+            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT),
         )
     }
 
@@ -138,7 +138,7 @@ fun ImageGenerationEditorDialog(
                                     bitmap = BitmapFactory.decodeResource(
                                         context.resources,
                                         R.drawable.error,
-                                    ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+                                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                                     lastLoadedBitmap = null
                                 }
                                 progress = null
@@ -185,7 +185,7 @@ private suspend fun requestImageGeneration(
                     BitmapFactory.decodeResource(
                         context.resources,
                         R.drawable.error,
-                    ).scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                 }
             }
 

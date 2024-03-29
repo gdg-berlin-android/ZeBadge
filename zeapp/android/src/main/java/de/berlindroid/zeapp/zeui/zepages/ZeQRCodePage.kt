@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 
 /**
@@ -35,8 +35,8 @@ fun QRCodePage(
     text: String = "gdg-berlin-android",
     qrContent: String = "https://github.com/gdg-berlin-android",
 ) {
-    val pageWidth = with(LocalDensity.current) { PAGE_WIDTH.toDp() }
-    val pageHeight = with(LocalDensity.current) { PAGE_HEIGHT.toDp() }
+    val pageWidth = with(LocalDensity.current) { BADGE_WIDTH.toDp() }
+    val pageHeight = with(LocalDensity.current) { BADGE_HEIGHT.toDp() }
     Row(
         modifier = Modifier
             .background(
