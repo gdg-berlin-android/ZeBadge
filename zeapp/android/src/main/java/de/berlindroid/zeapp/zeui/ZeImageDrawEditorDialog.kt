@@ -34,8 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.drawToBitmap
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
@@ -75,7 +75,7 @@ fun ZeImageDrawEditorDialog(
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(PAGE_WIDTH / PAGE_HEIGHT.toFloat())
+                        .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
                         .clipToBounds()
                         .background(Color.White)
                         .pointerInput(Unit) {
@@ -114,7 +114,7 @@ fun ZeImageDrawEditorDialog(
                         val bitmap =
                             drawContainer
                                 .drawToBitmap()
-                                .scaleIfNeeded(PAGE_WIDTH, PAGE_HEIGHT)
+                                .scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                                 .pixelManipulation { _, _ ->
                                     threshold()
                                 }
@@ -137,7 +137,7 @@ fun ZeImageDrawEditorDialog(
             AndroidView(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(PAGE_WIDTH / PAGE_HEIGHT.toFloat())
+                    .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
                     .clipToBounds()
                     .background(Color.Green),
                 factory = {

@@ -11,6 +11,8 @@ import de.berlindroid.zekompanion.resize
 import de.berlindroid.zekompanion.threshold
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
+import de.berlindroid.zekompanion.BADGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
 import kotlinx.coroutines.runBlocking
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
@@ -128,7 +130,7 @@ private fun sizeImageCallback(size: String?): IntBuffer.(width: Int, height: Int
             listOf(100, 100)
         }
     } else {
-        listOf(296, 128)
+        listOf(BADGE_WIDTH, BADGE_HEIGHT)
     }
 
     resize(w, h, ow, oh).also {

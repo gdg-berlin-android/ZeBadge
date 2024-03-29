@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import de.berlindroid.zeapp.PAGE_HEIGHT
-import de.berlindroid.zeapp.PAGE_WIDTH
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.zebits.copy
@@ -61,7 +61,7 @@ fun BinaryImageEditor(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = false)
-                .height(PAGE_HEIGHT.dp)
+                .height(BADGE_HEIGHT.dp)
                 .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
             painter = BitmapPainter(
                 image = bitmap.asImageBitmap(),
@@ -179,7 +179,7 @@ class BinaryBitmapPageProvider : PreviewParameterProvider<Bitmap> {
     override val values: Sequence<Bitmap>
         get() {
             return sequenceOf(
-                with(Bitmap.createBitmap(PAGE_WIDTH, PAGE_HEIGHT, Bitmap.Config.ARGB_8888)) {
+                with(Bitmap.createBitmap(BADGE_WIDTH, BADGE_HEIGHT, Bitmap.Config.ARGB_8888)) {
                     this
                 },
             )
