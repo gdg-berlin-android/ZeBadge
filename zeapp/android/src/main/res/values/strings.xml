@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">Ze Androft</string>
+    <string name="app_name" translatable="false">ZeApp</string>
     <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
 
     <string name="black_and_white">B/W</string>
