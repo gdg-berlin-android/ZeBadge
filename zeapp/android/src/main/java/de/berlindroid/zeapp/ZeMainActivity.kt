@@ -184,48 +184,50 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
             context.startActivity(intent)
         }
     }
-    ZeBadgeAppTheme(content = {
-        ZeScaffold(
-            modifier = modifier,
-            floatingActionButton = {
-                if (!isShowingAbout) {
-                    ZeNavigationPad(lazyListState)
-                }
-            },
-            snackbarHost = {
-                SnackbarHost(
-                    hostState = vm.snackbarHostState,
-                ) {
-                    vm.snackbarHostState.currentSnackbarData?.let { data ->
-                        Snackbar(
-                            snackbarData = data,
-                            shape = ZeRoundedCornerShape(ZeDimen.One),
+    ZeBadgeAppTheme(
+        content = {
+            ZeScaffold(
+                modifier = modifier,
+                floatingActionButton = {
+                    if (!isShowingAbout) {
+                        ZeNavigationPad(lazyListState)
+                    }
+                },
+                snackbarHost = {
+                    SnackbarHost(
+                        hostState = vm.snackbarHostState,
+                    ) {
+                        vm.snackbarHostState.currentSnackbarData?.let { data ->
+                            Snackbar(
+                                snackbarData = data,
+                                shape = ZeRoundedCornerShape(ZeDimen.One),
+                            )
+                        }
+                    }
+                },
+                topBar = {
+                    ZeTopBar(
+                        onRandomClick = vm::sendRandomPageToDevice,
+                        onSaveAllClick = vm::saveAll,
+                        onAboutClick = { isShowingAbout = !isShowingAbout },
+                        onGotoReleaseClick = gotToReleases,
+                        isShowingAbout = isShowingAbout,
+                    )
+                },
+                content = { paddingValues ->
+                    if (isShowingAbout) {
+                        ZeAbout(paddingValues, vm, LocalContext.current)
+                    } else {
+                        ZePages(
+                            paddingValues = paddingValues,
+                            lazyListState = lazyListState,
+                            vm = vm,
                         )
                     }
-                }
-            },
-            topBar = {
-                ZeTopBar(
-                    onRandomClick = vm::sendRandomPageToDevice,
-                    onSaveAllClick = vm::saveAll,
-                    onAboutClick = { isShowingAbout = !isShowingAbout },
-                    onGotoReleaseClick = gotToReleases,
-                    isShowingAbout = isShowingAbout,
-                )
-            },
-            content = { paddingValues ->
-                if (isShowingAbout) {
-                    ZeAbout(paddingValues, vm, LocalContext.current)
-                } else {
-                    ZePages(
-                        paddingValues = paddingValues,
-                        lazyListState = lazyListState,
-                        vm = vm,
-                    )
-                }
-            },
-        )
-    },)
+                },
+            )
+        },
+    )
 }
 
 @Composable
@@ -297,19 +299,19 @@ private fun ZeTopBar(
                 style = MaterialTheme.typography.titleLarge,
                 text = buildAnnotatedString {
                     pushStyle(SpanStyle(fontWeight = FontWeight.Black))
-                    append("Ze")
+                    append(stringResource(id = R.string.app_name).take(2))
                     pop()
                     pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
-                    append("Androft")
+                    append(stringResource(id = R.string.app_name).drop(2))
                     pop()
                 },
             )
         },
         colors = topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.secondary,
-            actionIconContentColor = MaterialTheme.colorScheme.secondary,
-            navigationIconContentColor = MaterialTheme.colorScheme.secondary,
+            containerColor = MaterialTheme.colorScheme.secondary,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+            actionIconContentColor = MaterialTheme.colorScheme.primary,
+            navigationIconContentColor = MaterialTheme.colorScheme.primary,
         ),
         actions = {
             ZeIconButton(onClick = onGotoReleaseClick) {
