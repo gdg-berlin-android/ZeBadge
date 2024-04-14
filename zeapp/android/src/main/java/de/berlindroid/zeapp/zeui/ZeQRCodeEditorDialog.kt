@@ -41,14 +41,14 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
- * @param snackbarMessage callback to display a snackbar message
+ * @param updateMessage callback to display a message
  */
 @Composable
 fun QRCodeEditorDialog(
     config: ZeConfiguration.QRCode,
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.QRCode) -> Unit,
-    snackbarMessage: (String) -> Unit,
+    updateMessage: (String) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -101,7 +101,7 @@ fun QRCodeEditorDialog(
                             ),
                         )
                     } else {
-                        snackbarMessage(activity.getString(R.string.image_needed))
+                        updateMessage(activity.getString(R.string.image_needed))
                     }
                 },
             ) {

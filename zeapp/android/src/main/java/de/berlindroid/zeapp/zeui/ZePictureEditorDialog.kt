@@ -34,12 +34,13 @@ private const val ROTATE_CLOCKWISE = 90f
  *
  * @param dismissed callback called when dismissed or cancelled
  * @param accepted callback called when user wants to take the selected image.
+ * @param updateMessage callback to show a message upon error or success.
  */
 @Composable
 fun PictureEditorDialog(
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Picture) -> Unit,
-    snackbarMessage: (String) -> Unit,
+    updateMessage: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -78,7 +79,7 @@ fun PictureEditorDialog(
                 if (bitmap.isBinary()) {
                     accepted(ZeConfiguration.Picture(bitmap))
                 } else {
-                    snackbarMessage(context.getString(R.string.not_binary_image))
+                    updateMessage(context.getString(R.string.not_binary_image))
                 }
             },) {
                 Text(stringResource(id = android.R.string.ok))
