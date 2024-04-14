@@ -35,8 +35,6 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -495,13 +493,13 @@ private fun SelectedEditor(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                snackbarMessage = vm::showMessage,
+                updateMessage = vm::showMessage,
             )
 
             is ZeConfiguration.Picture -> PictureEditorDialog(
                 dismissed = { vm.slotConfigured(null, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                snackbarMessage = vm::showMessage,
+                updateMessage = vm::showMessage,
             )
 
             is ZeConfiguration.ImageGen -> ImageGenerationEditorDialog(
@@ -519,20 +517,20 @@ private fun SelectedEditor(
                 config = config,
                 dismissed = { vm.slotConfigured(null, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                snackbarMessage = vm::showMessage,
+                updateMessage = vm::showMessage,
             )
 
             is ZeConfiguration.Quote -> RandomQuotesEditorDialog(
                 accepted = { vm.slotConfigured(editor.slot, it) },
                 dismissed = { vm.slotConfigured(null, null) },
                 config = config,
-                snackbarMessage = vm::showMessage,
+                updateMessage = vm::showMessage,
             )
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
-                snackbarMessage = vm::showMessage,
+                updateMessage = vm::showMessage,
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
             )
 
@@ -559,7 +557,7 @@ private fun SelectedEditor(
             is ZeConfiguration.CustomPhrase -> CustomPhraseEditorDialog(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
-                snackbarMessage = vm::showMessage,
+                udpateMessage = vm::showMessage,
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
             )
         }

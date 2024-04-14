@@ -29,13 +29,14 @@ import kotlin.random.Random
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
+ * @param updateMessage show a new message to the user.
  */
 @Composable
 fun RandomQuotesEditorDialog(
     config: ZeConfiguration.Quote,
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Quote) -> Unit,
-    snackbarMessage: (String) -> Unit,
+    updateMessage: (String) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -62,7 +63,7 @@ fun RandomQuotesEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Quote(message, author, image))
                     } else {
-                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
+                        updateMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {

@@ -27,7 +27,7 @@ fun CustomPhraseEditorDialog(
     config: ZeConfiguration.CustomPhrase,
     dismissed: () -> Unit,
     accepted: (ZeConfiguration.CustomPhrase) -> Unit,
-    snackbarMessage: (String) -> Unit = {},
+    udpateMessage: (String) -> Unit = {},
 ) {
     val activity = LocalContext.current as Activity
 
@@ -51,7 +51,7 @@ fun CustomPhraseEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.CustomPhrase(randomPhrase, image))
                     } else {
-                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
+                        udpateMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {
