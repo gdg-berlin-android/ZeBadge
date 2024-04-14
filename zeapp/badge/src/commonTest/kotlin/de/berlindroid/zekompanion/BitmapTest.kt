@@ -8,6 +8,7 @@ import assertk.fail
 import org.junit.Test
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
+import java.io.File
 import java.io.FileNotFoundException
 import java.nio.IntBuffer
 import javax.imageio.ImageIO
@@ -85,7 +86,7 @@ class BitmapTest {
     }
 }
 
-private fun Assert<BufferedImage>.allPixelEqualTo(other: BufferedImage) = given { actual ->
+fun Assert<BufferedImage>.allPixelEqualTo(other: BufferedImage) = given { actual ->
     val inputPixel = other.pixels
     actual.pixels.forEachIndexed { index, pixel ->
         if (pixel != inputPixel[index]) {
@@ -94,16 +95,18 @@ private fun Assert<BufferedImage>.allPixelEqualTo(other: BufferedImage) = given 
     }
 }
 
-private val BufferedImage.pixels: List<Int>
+val BufferedImage.pixels: List<Int>
     get() {
         val result = IntArray(width * height)
         this.getRGB(0, 0, width, height, result, 0, width)
         return result.toList()
     }
 
-private fun IntBuffer.toBufferedImage(width: Int, height: Int): BufferedImage {
+fun IntBuffer.toBufferedImage(width: Int, height: Int): BufferedImage {
     val image = BufferedImage(width, height, TYPE_INT_RGB)
     image.setRGB(0, 0, width, height, array(), 0, width)
     return image
 }
 
+fun IntBuffer.save(filename: String, width: Int, height: Int) =
+    ImageIO.write(toBufferedImage(width, height), "png", File(filename))
