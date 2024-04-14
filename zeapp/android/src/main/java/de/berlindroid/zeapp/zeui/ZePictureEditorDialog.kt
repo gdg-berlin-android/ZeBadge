@@ -68,7 +68,7 @@ fun PictureEditorDialog(
             // yes, so read image
             BitmapFactory.decodeStream(
                 context.contentResolver.openInputStream(uri),
-            )
+            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
         }.cropPageFromCenter()
     }
 
