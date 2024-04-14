@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -24,12 +25,14 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
@@ -46,6 +49,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
@@ -60,6 +65,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
@@ -78,6 +84,8 @@ import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import de.berlindroid.zekompanion.getPlatform
 import timber.log.Timber
@@ -102,7 +110,6 @@ import androidx.compose.material3.Text as ZeText
 import androidx.compose.material3.TopAppBar as ZeTopAppBar
 import androidx.compose.ui.Alignment as ZeAlignment
 import androidx.compose.ui.Modifier as ZeModifier
-import androidx.compose.ui.graphics.Color as ZeColor
 import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
 import androidx.compose.ui.layout.ContentScale as ZeContentScale
@@ -117,7 +124,7 @@ class ZeMainActivity : ComponentActivity() {
     private val vm: ZeBadgeViewModel by viewModels()
 
     /**
-     * Once created, use the main view composables.
+     * Once created, use the main view composable.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,18 +198,6 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 floatingActionButton = {
                     if (!isShowingAbout) {
                         ZeNavigationPad(lazyListState)
-                    }
-                },
-                snackbarHost = {
-                    SnackbarHost(
-                        hostState = vm.snackbarHostState,
-                    ) {
-                        vm.snackbarHostState.currentSnackbarData?.let { data ->
-                            Snackbar(
-                                snackbarData = data,
-                                shape = ZeRoundedCornerShape(ZeDimen.One),
-                            )
-                        }
                     }
                 },
                 topBar = {
@@ -437,7 +432,12 @@ private fun InfoBar(
     ZeCard(
         modifier = ZeModifier
             .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
-            .background(ZeColor.Black, ZeRoundedCornerShape(ZeDimen.One)),
+            .background(ZeWhite, ZeRoundedCornerShape(ZeDimen.One))
+            .zIndex(10.0f),
+        colors = CardDefaults.cardColors(
+            containerColor = ZeWhite,
+            contentColor = ZeBlack,
+        ),
     ) {
         ZeRow(
             modifier = ZeModifier.padding(horizontal = ZeDimen.Two, vertical = ZeDimen.One),
@@ -447,7 +447,7 @@ private fun InfoBar(
                 modifier = ZeModifier.weight(1.0f),
                 fontSize = 20.sp,
                 fontFamily = FontFamily.Monospace,
-                color = ZeColor.White,
+                color = ZeBlack,
                 text = message,
             )
 
@@ -462,7 +462,12 @@ private fun InfoBar(
         }
 
         ZeLinearProgressIndicator(
-            modifier = ZeModifier.fillMaxWidth(),
+            modifier = ZeModifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 4.dp),
+            strokeCap = StrokeCap.Round,
+            trackColor = ZeWhite,
+            color = ZeBlack,
             progress = progress,
         )
     }
@@ -490,13 +495,13 @@ private fun SelectedEditor(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                snackbarMessage = vm::showSnackBar,
+                snackbarMessage = vm::showMessage,
             )
 
             is ZeConfiguration.Picture -> PictureEditorDialog(
                 dismissed = { vm.slotConfigured(null, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                snackbarMessage = vm::showSnackBar,
+                snackbarMessage = vm::showMessage,
             )
 
             is ZeConfiguration.ImageGen -> ImageGenerationEditorDialog(
@@ -506,7 +511,7 @@ private fun SelectedEditor(
             )
 
             is ZeConfiguration.Schedule -> {
-                vm.showSnackBar(message = "Not added by you yet, please feel free to contribute this editor")
+                vm.showMessage(message = "Not added by you yet, please feel free to contribute this editor")
                 vm.slotConfigured(null, null)
             }
 
@@ -514,7 +519,7 @@ private fun SelectedEditor(
                 config = config,
                 dismissed = { vm.slotConfigured(null, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                snackbarMessage = vm::showSnackBar,
+                snackbarMessage = vm::showMessage,
             )
 
             is ZeConfiguration.Quote -> {
@@ -522,14 +527,14 @@ private fun SelectedEditor(
                     accepted = { vm.slotConfigured(editor.slot, it) },
                     dismissed = { vm.slotConfigured(null, null) },
                     config = config,
-                    snackbarMessage = vm::showSnackBar,
+                    snackbarMessage = vm::showMessage,
                 )
             }
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
-                snackbarMessage = vm::showSnackBar,
+                snackbarMessage = vm::showMessage,
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
             )
 
@@ -557,7 +562,7 @@ private fun SelectedEditor(
             is ZeConfiguration.CustomPhrase -> CustomPhraseEditorDialog(
                 config = config,
                 dismissed = { vm.slotConfigured(editor.slot, null) },
-                snackbarMessage = vm::showSnackBar,
+                snackbarMessage = vm::showMessage,
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
             )
         }
@@ -612,12 +617,18 @@ private fun PagePreview(
     ZeCard(
         modifier = modifier
             .padding(ZeDimen.Quarter),
+        colors = CardDefaults.cardColors(
+            containerColor = ZeBlack,
+            contentColor = ZeWhite,
+        ),
+        border = BorderStroke(1.dp, ZeWhite),
     ) {
         ZeImage(
             modifier = ZeModifier
                 .fillMaxWidth()
                 .wrapContentHeight(unbounded = true)
-                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One),
+                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
+                .clip(RoundedCornerShape(4.dp)),
             painter = ZeBitmapPainter(
                 image = bitmap.asImageBitmap(),
                 filterQuality = ZeFilterQuality.None,
@@ -632,7 +643,6 @@ private fun PagePreview(
                 modifier = Modifier
                     .align(ZeAlignment.CenterVertically)
                     .padding(start = ZeDimen.One),
-                color = MaterialTheme.colorScheme.onSurface,
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
                 ZeLazyRow(
