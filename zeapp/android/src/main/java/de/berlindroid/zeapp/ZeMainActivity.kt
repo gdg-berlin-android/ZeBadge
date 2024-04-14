@@ -522,14 +522,12 @@ private fun SelectedEditor(
                 snackbarMessage = vm::showMessage,
             )
 
-            is ZeConfiguration.Quote -> {
-                RandomQuotesEditorDialog(
-                    accepted = { vm.slotConfigured(editor.slot, it) },
-                    dismissed = { vm.slotConfigured(null, null) },
-                    config = config,
-                    snackbarMessage = vm::showMessage,
-                )
-            }
+            is ZeConfiguration.Quote -> RandomQuotesEditorDialog(
+                accepted = { vm.slotConfigured(editor.slot, it) },
+                dismissed = { vm.slotConfigured(null, null) },
+                config = config,
+                snackbarMessage = vm::showMessage,
+            )
 
             is ZeConfiguration.QRCode -> QRCodeEditorDialog(
                 config = config,
@@ -544,9 +542,8 @@ private fun SelectedEditor(
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
             )
 
-            is ZeConfiguration.Kodee -> {
+            is ZeConfiguration.Kodee ->
                 vm.slotConfigured(editor.slot, config)
-            }
 
             is ZeConfiguration.ImageDraw -> ZeImageDrawEditorDialog(
                 dismissed = { vm.slotConfigured(editor.slot, null) },
