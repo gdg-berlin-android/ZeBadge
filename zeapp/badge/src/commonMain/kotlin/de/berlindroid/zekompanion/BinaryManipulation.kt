@@ -9,6 +9,7 @@ import java.util.zip.Deflater
 import java.util.zip.Inflater
 import kotlin.experimental.or
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 /**
  * Helper to convert a bytearray to base64
@@ -263,6 +264,28 @@ fun IntBuffer.resize(inputWidth: Int, inputHeight: Int, outputWidth: Int, output
     }
 
     return output
+}
+
+/**
+ * Reduce size of image, but content aware.
+ *
+ * First: reduce image size respecting the aspect ratio, and then go carve the rest.
+ *
+ * See {@see [seam carving](https://en.wikipedia.org/wiki/Seam_carving)}
+ */
+fun IntBuffer.resizeAndCarve(inputWidth: Int, inputHeight: Int, outputWidth: Int, outputHeight: Int): IntBuffer {
+
+    val factor = if (inputWidth > inputHeight) {
+        outputWidth / inputWidth.toDouble()
+    } else {
+        outputHeight / inputHeight.toDouble()
+    }
+
+    val scaledWidth = (inputWidth * factor).roundToInt()
+    val scaledHeight = (inputHeight * factor).roundToInt()
+
+    return resize(inputWidth, inputHeight, scaledWidth, scaledHeight)
+        .carve(scaledWidth, scaledHeight, outputWidth, outputHeight)
 }
 
 fun Int.isBinary(): Boolean {
