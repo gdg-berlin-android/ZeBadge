@@ -8,10 +8,8 @@ actual typealias Environment = Any
 actual fun buildBadgeManager(environment: Environment): BadgeManager = object : JvmBadgeManager() {
     override fun getBadger2040s() = SerialPort.getCommPorts()
         .filter {
-            println(it.systemPortName)
-            true
-            // return the first serial comm device, can't find it by descriptive name
-//            it.descriptivePortName.contains("Badger")
+            // Device doesn't show any better descriptive name on Windows, this should be good enough
+            it.portDescription.contains("CircuitPython")
         }
         .toList()
 }
