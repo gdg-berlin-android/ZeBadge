@@ -1,6 +1,7 @@
 import board
 import busio
 import microcontroller
+import time
 from message import Message
 from zeos import ZeBadgeOs
 
@@ -26,6 +27,12 @@ class HttpResponse:
 
 
 class ZeWifi:
+    # A Wifi module connected through UART on GPIO4 and GPIO5.
+    #
+    # Please "deinit" the I2C on the badger if used for the first time.
+    # The module attached needs to speak AT commands, and this class encapsulates those
+    # into nice little methods.
+
     def __init__(self):
         self.uart = busio.UART(
             microcontroller.pin.GPIO4,
@@ -34,11 +41,14 @@ class ZeWifi:
             receiver_buffer_size=2048
         )
 
+    def deinit(self):
+        self.uart.deinit()
+
     def scan(self) -> map[str:list[Network]] | None:
         self.uart.write('AT+CWLAP\r\n')
         response = self.uart.read()
 
-        if len(response) > 0:
+        if response and len(response) > 0:
             response = response.decode()
             result = {}
             for x in list(
@@ -72,7 +82,7 @@ class ZeWifi:
             else:
                 return True
         else:
-            print(f"Network {ssid} was not found. These are available: '{available_networks}'.")
+            print(f"Network '{ssid}' was not found. These are available: '{"' ".join(available_networks.keys())}'.")
             return False
 
     def http_get(self, ip: str, url: str, host: str = "", port: int = 80) -> HttpResponse | None:
@@ -112,31 +122,36 @@ class ZeWifi:
 wifi = None
 
 
-def init(os: ZeBadgeOs):
+def init(os: ZeBadgeOs) -> bool:
     global wifi
     # disconnect the i2c, make it a UART
     # 👀
     board.I2C().deinit()
+    time.sleep(0.4)
 
     wifi = ZeWifi()
 
-    os.subscribe('WIFI_SCAN', lambda _, message: os.messages.append(
-        Message(
-            'WIFI_SCAN_RESULT',
-            wifi.scan()
-        )))
+    if wifi.scan():
+        os.subscribe('WIFI_SCAN', lambda _, message: os.messages.append(
+            Message(
+                'WIFI_SCAN_RESULT',
+                wifi.scan()
+            )))
 
-    os.subscribe('WIFI_CONNECT', lambda _, message: os.messages.append(
-        Message(
-            'WIFI_CONNECT_RESULT',
-            wifi.connect(message.value['ssid'], message.value['pwd'])
-        )))
+        os.subscribe('WIFI_CONNECT', lambda _, message: os.messages.append(
+            Message(
+                'WIFI_CONNECT_RESULT',
+                wifi.connect(message.value['ssid'], message.value['pwd'])
+            )))
 
-    os.subscribe('WIFI_GET', lambda _, message: os.messages.append(
-        Message(
-            'WIFI_GET_RESULT',
-            wifi.http_get(message.value['ip'], message.value['url'], message.value['host'], message.value['port'])
-        )))
+        os.subscribe('WIFI_GET', lambda _, message: os.messages.append(
+            Message(
+                'WIFI_GET_RESULT',
+                wifi.http_get(message.value['ip'], message.value['url'], message.value['host'], message.value['port'])
+            )))
+        return True
+    else:
+        return False
 
 
 def _parse_response(response: str) -> HttpResponse | None:
