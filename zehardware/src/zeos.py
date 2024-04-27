@@ -41,6 +41,7 @@ class ZeBadgeOs:
         self._reset_subscribers()
         self._init_interfaces()
         self._init_applications()
+
         self.system_subscribers = self.subscribers.copy()
 
     def _reset_subscribers(self):
@@ -133,6 +134,9 @@ class ZeBadgeOs:
         fetch = FetchApp(self)
         store_and_show = StoreAndShowApp(self)
 
+        store_and_show.run()
+        self.active_app = store_and_show
+
         def add_key_subscribers():
             self.subscribe('system_button_a_released', check_for_a)
             self.subscribe('system_button_c_released', check_for_c)
@@ -216,7 +220,7 @@ def _update_system_buttons(os):
             else:
                 state = "released"
 
-            os.messages.append(Message(f'system_buttons_{button}_{state}', (button, pressed)))
+            os.messages.append(Message(f'system_button_{button}_{state}', (button, pressed)))
 
 
 def _error_handler(os, message):
