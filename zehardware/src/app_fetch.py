@@ -6,7 +6,6 @@ class FetchApp:
     def __init__(self, os: zeos.ZeBadgeOs):
         self.os = os
         self.started = False
-        pass
 
     def run(self):
         if self.started:
@@ -26,6 +25,7 @@ class FetchApp:
             os.messages.append(Message('info', f"Found '{"', '".join(message.value)}' WiFis\nConnecting to wifi ..."))
             os.messages.append(Message('WIFI_CONNECT', {
                 'ssid': "Bird's Nest",
+                'pwd': '9QeMTqZJKmfcxo32'
             }))
         else:
             os.messages.append(Message('error', 'Could not scan wifi'))

@@ -7,6 +7,7 @@ import ui
 from message import Message
 
 from app_fetch import FetchApp
+from app_store_and_show import StoreAndShowApp
 
 from digitalio import DigitalInOut
 from digitalio import Direction
@@ -26,6 +27,7 @@ class ZeBadgeOs:
         self.tasks = []
         self.subscribers = {}
         self.messages = []
+        self.active_app = None
 
         self.led = DigitalInOut(board.USER_LED)
         self.led.direction = Direction.OUTPUT
@@ -33,19 +35,22 @@ class ZeBadgeOs:
         self.led_on = False
 
         self.buttons = SystemButtons()
-
-        # add default tasks
-        self._init_interfaces()
-
         self.tasks.append(_update_system_buttons)
-        self.tasks.append(serial.read_input)
+
+        # add defaults
+        self._reset_subscribers()
+        self._init_interfaces()
+        self._init_applications()
+        self.system_subscribers = self.subscribers.copy()
+
+    def _reset_subscribers(self):
+        self.subscribers.clear()
 
         # add default subscriptions
         self.subscribe('info', _info_handler)
         self.subscribe('error', _error_handler)
-        self.subscribe('system_buttons_changed', _system_button_handler)
-
-        self.add_applications()
+        self.subscribe('reload', _reload_handler)
+        self.subscribe('exit', _exit_handler)
 
     def subscribe(self, topic: str, subscriber):
         # subscribe a lambda to a topic
@@ -65,13 +70,16 @@ class ZeBadgeOs:
 
     def run(self):
         # start os, never returning unless exception wasn't caught
+        for task in enumerate(self.tasks):
+            print(task)
 
         while True:
             try:
                 for task in self.tasks:
+                    print(f".", end="")
                     task(self)
 
-                print('.', end='')
+                print(':', end='')
 
                 current_messages = self.messages.copy()
                 self.messages.clear()
@@ -95,12 +103,14 @@ class ZeBadgeOs:
             time.sleep(0.2)
 
     def _init_interfaces(self):
+        # init always on tasks
         ui.init(self)
+        serial.init(self)
 
         # check keyboard and things
         i2c = board.I2C()
         while not i2c.try_lock():
-            pass
+            continue
 
         addrs = i2c.scan()
         i2c.unlock()
@@ -114,18 +124,46 @@ class ZeBadgeOs:
                 keyboard.init(self)
         else:
             print("... no i2c found, trying wifi")
-            import wifi
-            wifi.init(self)
 
-    def add_applications(self):
+            import wifi
+            if not wifi.init(self):
+                print("... no wifi found.")
+
+    def _init_applications(self):
         fetch = FetchApp(self)
+        store_and_show = StoreAndShowApp(self)
+
+        def add_key_subscribers():
+            self.subscribe('system_button_a_released', check_for_a)
+            self.subscribe('system_button_c_released', check_for_c)
+            self.subscribe('system_button_up_released', check_for_up)
+            self.subscribe('system_button_down_released', check_for_down)
+
+        def check_for_a(_, message):
+            if self.active_app == store_and_show:
+                print("already running")
+
+            else:
+                self.subscribers = self.system_subscribers.copy()
+                add_key_subscribers()
+                self.active_app = store_and_show
 
         def check_for_c(_, message):
-            button, pressed = message.value
-            if button == 'c' and pressed:
-                fetch.run()
+            if self.active_app == fetch:
+                print("already running")
 
-        self.subscribe('system_buttons_changed', check_for_c)
+            else:
+                self.subscribers = self.system_subscribers.copy()
+                add_key_subscribers()
+                self.active_app = fetch
+
+        def check_for_up(_, message):
+            ui._refresh_display_save()
+
+        def check_for_down(_, message):
+            ui._show_terminal_handler(self, None)
+
+        add_key_subscribers()
 
 
 class SystemButtons:
@@ -149,6 +187,7 @@ class SystemButtons:
     def changes(self):
         result = {}
         current = self.snapshot()
+
         if current['a'] != self.last['a']: result['a'] = current['a']
         if current['b'] != self.last['b']: result['b'] = current['b']
         if current['c'] != self.last['c']: result['c'] = current['c']
@@ -172,22 +211,33 @@ def _update_system_buttons(os):
     if len(changes) > 0:
         for button in changes:
             pressed = changes[button]
-            os.messages.append(Message('system_buttons_changed', (button, pressed)))
+            if pressed:
+                state = "pressed"
+            else:
+                state = "released"
+
+            os.messages.append(Message(f'system_buttons_{button}_{state}', (button, pressed)))
 
 
-def _system_button_handler(os, message):
-    button, pressed = message.value
-    if pressed:
-        state = 'pressed'
-    else:
-        state = 'released'
-
-    print(f"button updated: '{button}' is now '{state}'")
+def _error_handler(os, message):
+    print(f"\033[35mError: {message.value}\033[m")
 
 
-def _error_handler(os, event):
-    print(f"\033[35mError: {event.value}\033[m")
+def _info_handler(os, message):
+    print(f"\033[32mInfo: {message.value}\033[m")
 
 
-def _info_handler(os, event):
-    print(f"\033[32mInfo: {event.value}\033[m")
+def _reload_handler(os, message):
+    import time
+    import supervisor
+
+    time.sleep(0.5)
+    supervisor.reload()
+
+
+def _exit_handler(os, message):
+    import time
+    import sys
+
+    time.sleep(0.5)
+    sys.exit()

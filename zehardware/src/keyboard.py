@@ -38,7 +38,7 @@ def init(os):
 
 def update_keyboard(os):
     while not i2c.try_lock():
-        pass
+        continue
 
     buffer = bytearray(1)
     i2c.readfrom_into(95, buffer)
