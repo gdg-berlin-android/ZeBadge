@@ -4,6 +4,7 @@ import circuitpython_base64 as base64
 import displayio  # TODO REMOVE ME
 import zlib
 import os
+import gc
 import sys
 import traceback
 
@@ -39,8 +40,8 @@ def _updated_file_list():
     return list(filter(lambda x: x.endswith('b64'), os.listdir('/')))
 
 
-def _input_received_handler(os, topic, message):
-    command, meta, payload = message
+def _input_received_handler(os, message):
+    command, meta, payload = message.value
 
     if command in COMMANDS:
         COMMANDS[command](os, meta, payload)
@@ -57,6 +58,19 @@ def _show_command(os, file_name, _):
 def _store_command(os, file_name, payload):
     with open(f"{file_name}.b64", "wb") as file:
         file.write(payload)
+
+
+def _preview_command(os, meta, payload):
+    import gc
+    print(gc.mem_free())
+    gc.collect()
+    print(gc.mem_free())
+
+    bitmap, palette = _decode_payload(payload)
+    del payload
+
+    os.messages.append(Message('info', 'previewing image'))
+    os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
 
 
 WIDTH = 296
@@ -81,16 +95,8 @@ def _decode_payload(payload):
     return bitmap, palette
 
 
-def _preview_command(os, meta, payload):
-    bitmap, palette = _decode_payload(payload)
-    del payload
-
-    os.messages.append(Message('info', 'previewing image'))
-    os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
-
-
 COMMANDS = {
     'show': _show_command,
     'store': _store_command,
-    'preview': _store_command,
+    'preview': _preview_command,
 }
