@@ -44,6 +44,20 @@ class AndroidBadgeManager(
         }
     }
 
+    override suspend fun readResponse(): Result<String> {
+        val device = manager.findConnectedBadge()
+
+        return if (device == null) {
+            informNoBadgeFound(manager)
+        } else {
+            if (!manager.hasPermission(device)) {
+                askPermission(device)
+            }
+
+            readResponse()
+        }
+    }
+
     override fun isConnected(): Boolean = manager.findConnectedBadge() != null
 
     private fun sendCommandToBadge(
@@ -54,6 +68,7 @@ class AndroidBadgeManager(
         val driver = availableDrivers.first()
         val port = driver.ports.last()
         val connection = manager.openDevice(driver.device)
+
         return kotlin.runCatching {
             port.open(connection)
             port.dtr = true
@@ -71,6 +86,42 @@ class AndroidBadgeManager(
             Timber.e("badge", "Couldn't write to port ${port.portNumber}.", it)
             // Just send a generic exception with a message we want
             throw RuntimeException("Failed to write")
+        }.also {
+            if (port.isOpen) {
+                port.close()
+            }
+            connection.close()
+        }
+    }
+
+    private fun receiveResponseFromBadge(): Result<String> {
+        val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
+
+        val driver = availableDrivers.first()
+        val port = driver.ports.last()
+        val connection = manager.openDevice(driver.device)
+
+        return kotlin.runCatching {
+            port.open(connection)
+            port.dtr = true
+            port.setParameters(
+                /* baudRate = */115200,
+                /* dataBits = */UsbSerialPort.DATABITS_8,
+                /* stopBits = */UsbSerialPort.STOPBITS_1,
+                /* parity = */UsbSerialPort.PARITY_NONE,
+            )
+
+            val bytes = ByteArray(1024)
+            val count = port.read(bytes, 3_000)
+
+            Timber.i("badge", "Read '$count' bytes from port ${port.portNumber}.")
+
+            bytes.toString()
+
+        }.recoverCatching {
+            Timber.e("badge", "Couldn't read from port ${port.portNumber}.", it)
+            // Just send a generic exception with a message we want
+            throw RuntimeException("Failed to read")
         }.also {
             if (port.isOpen) {
                 port.close()
