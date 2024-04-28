@@ -131,43 +131,12 @@ class ZeBadgeOs:
                 print("... no wifi found.")
 
     def _init_applications(self):
-        fetch = FetchApp(self)
         store_and_show = StoreAndShowApp(self)
 
         store_and_show.run()
         self.active_app = store_and_show
 
-        def add_key_subscribers():
-            self.subscribe('system_button_a_released', check_for_a)
-            self.subscribe('system_button_c_released', check_for_c)
-            self.subscribe('system_button_up_released', check_for_up)
-            self.subscribe('system_button_down_released', check_for_down)
-
-        def check_for_a(_, message):
-            if self.active_app == store_and_show:
-                print("already running")
-
-            else:
-                self.subscribers = self.system_subscribers.copy()
-                add_key_subscribers()
-                self.active_app = store_and_show
-
-        def check_for_c(_, message):
-            if self.active_app == fetch:
-                print("already running")
-
-            else:
-                self.subscribers = self.system_subscribers.copy()
-                add_key_subscribers()
-                self.active_app = fetch
-
-        def check_for_up(_, message):
-            ui._refresh_display_save()
-
-        def check_for_down(_, message):
-            ui._show_terminal_handler(self, None)
-
-        add_key_subscribers()
+        self.subscribe('system_button_c_released', lambda os, message: ui._show_terminal_handler(os, message))
 
 
 class SystemButtons:
