@@ -26,6 +26,8 @@ interface BadgeManager {
 
     suspend fun sendPayload(payload: BadgePayload): Result<Int>
 
+    suspend fun readResponse(): Result<String>
+
     fun isConnected(): Boolean
 }
 

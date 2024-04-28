@@ -40,5 +40,12 @@ class ZeBadgeManager @Inject constructor(
         return badgeManager.sendPayload(payload)
     }
 
+    /**
+     * Wrapper to return the response from the badge.
+     */
+    suspend fun readResponse(): Result<String> {
+        return badgeManager.readResponse()
+    }
+
     fun isConnected(): Boolean = badgeManager.isConnected()
 }
