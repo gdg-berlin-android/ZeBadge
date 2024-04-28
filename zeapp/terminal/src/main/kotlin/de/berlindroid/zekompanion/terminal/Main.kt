@@ -8,6 +8,7 @@ import de.berlindroid.zekompanion.getPlatform
 import de.berlindroid.zekompanion.grayscale
 import de.berlindroid.zekompanion.invert
 import de.berlindroid.zekompanion.resize
+import de.berlindroid.zekompanion.resizeAndCarve
 import de.berlindroid.zekompanion.threshold
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
@@ -98,13 +99,22 @@ fun imageColorCommands() = listOf(
     ) { Configuration.operations.add("gray" to { _, _ -> grayscale() }) },
 )
 
-fun resizeCommand() = CommandLineArgument(
-    name = "size image",
-    description = "Simple size of image into 'WIDTHxHEIGHT' image.",
-    short = "-S",
-    long = "--size",
-    hasParameter = true,
-) { Configuration.operations.add("size" to sizeImageCallback(it)) }
+fun resizeCommands() = listOf(
+    CommandLineArgument(
+        name = "resize image",
+        description = "Simple resize of image into 'WIDTHxHEIGHT' image.",
+        short = "-r",
+        long = "--resize",
+        hasParameter = true,
+    ) { Configuration.operations.add("resize" to resizeImageCallback(it)) },
+    CommandLineArgument(
+        name = "fulidly resize image",
+        description = "Simple fluidly resize of image into 'WIDTHxHEIGHT' image.",
+        short = "-f",
+        long = "--fluid",
+        hasParameter = true,
+    ) { Configuration.operations.add("fluid" to resizeFluidImageCallback(it)) },
+)
 
 fun helpCommand() = CommandLineArgument(
     name = "help",
@@ -117,10 +127,10 @@ val commands: List<CommandLineArgument> = listOf(
     helpCommand(),
     *inputOutputCommands().toTypedArray(),
     *imageColorCommands().toTypedArray(),
-    resizeCommand(),
+    *resizeCommands().toTypedArray(),
 )
 
-private fun sizeImageCallback(size: String?): IntBuffer.(width: Int, height: Int) -> IntBuffer = { w, h ->
+private fun resizeImageCallback(size: String?): IntBuffer.(width: Int, height: Int) -> IntBuffer = { w, h ->
     val (ow, oh) = if (size != null && size.contains("x")) {
         try {
             size.split("x", limit = 2).map { it.toInt() }
@@ -134,6 +144,25 @@ private fun sizeImageCallback(size: String?): IntBuffer.(width: Int, height: Int
     }
 
     resize(w, h, ow, oh).also {
+        Configuration.width = ow
+        Configuration.height = oh
+    }
+}
+
+private fun resizeFluidImageCallback(size: String?): IntBuffer.(width: Int, height: Int) -> IntBuffer = { w, h ->
+    val (ow, oh) = if (size != null && size.contains("x")) {
+        try {
+            size.split("x", limit = 2).map { it.toInt() }
+        } catch (ill: IllegalArgumentException) {
+            print("non number found")
+            ill.printStackTrace()
+            listOf(100, 100)
+        }
+    } else {
+        listOf(BADGE_WIDTH, BADGE_HEIGHT)
+    }
+
+    resizeAndCarve(w, h, ow, oh).also {
         Configuration.width = ow
         Configuration.height = oh
     }

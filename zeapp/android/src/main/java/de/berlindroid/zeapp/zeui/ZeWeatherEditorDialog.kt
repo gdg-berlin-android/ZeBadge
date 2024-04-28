@@ -49,6 +49,7 @@ import java.time.format.DateTimeFormatter
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
+ * @param updateMessage update the message displayed to the user.
  */
 @Suppress("LongMethod")
 @Composable
@@ -56,7 +57,7 @@ fun WeatherEditorDialog(
     config: ZeConfiguration.Weather,
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Weather) -> Unit,
-    snackbarMessage: (String) -> Unit,
+    updateMessage: (String) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -91,7 +92,7 @@ fun WeatherEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Weather(date, temperature, image))
                     } else {
-                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
+                        updateMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {

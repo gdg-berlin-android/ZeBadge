@@ -170,6 +170,12 @@ class ZePreferencesService @Inject constructor(
                     url = slot.preferencesValue("url"),
                 )
 
+                ZeBadgeType.RANDOM_QUOTE -> ZeConfiguration.Quote(
+                    message = slot.preferencesValue("quote_message"),
+                    author = slot.preferencesValue("quote_author"),
+                    bitmap = bitmap
+                )
+
                 else -> {
                     Timber.e(
                         "Slot from Prefs",

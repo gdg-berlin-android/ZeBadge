@@ -39,14 +39,14 @@ const val MaxCharacters: Int = 20
  * @param config configuration of the slot, containing details to be displayed
  * @param dismissed callback called when dialog is dismissed / cancelled
  * @param accepted callback called with the new configuration configured.
- * @param snackbarMessage callback to display a snackbar message
+ * @param updateMessage callback to display a message
  */
 @Composable
 fun NameEditorDialog(
     config: ZeConfiguration.Name,
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Name) -> Unit,
-    snackbarMessage: (String) -> Unit,
+    updateMessage: (String) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -72,7 +72,7 @@ fun NameEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Name(name, contact, image))
                     } else {
-                        snackbarMessage(activity.resources.getString(R.string.binary_image_needed))
+                        updateMessage(activity.resources.getString(R.string.binary_image_needed))
                     }
                 },
             ) {

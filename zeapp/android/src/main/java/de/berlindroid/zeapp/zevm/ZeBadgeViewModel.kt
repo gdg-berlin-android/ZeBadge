@@ -1,8 +1,6 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,17 +50,6 @@ class ZeBadgeViewModel @Inject constructor(
     contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
-    val snackbarHostState = SnackbarHostState()
-
-    fun showSnackBar(
-        message: String,
-        duration: SnackbarDuration = SnackbarDuration.Long,
-    ) {
-        viewModelScope.launch {
-            snackbarHostState.showSnackbar(message = message, duration = duration)
-        }
-    }
-
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
 
@@ -70,24 +57,23 @@ class ZeBadgeViewModel @Inject constructor(
     private var hideMessageJob: Job? = null
     private var messageProgressJob: Job? = null
 
-    private fun badgeFailure(error: String) {
+    fun showMessage(
+        message: String,
+        duration: Long = MESSAGE_DISPLAY_DURATION,
+    ) {
         _uiState.update {
-            it.copy(message = "❗$error ❗️")
+            it.copy(message = message)
         }
-        scheduleMessageDisappearance()
+
+        scheduleMessageDisappearance(duration)
     }
 
-    private fun badgeSuccess(bytesSent: Int) {
-        _uiState.update {
-            it.copy(message = "$bytesSent bytes were sent.")
-        }
-        scheduleMessageDisappearance()
-    }
-
-    private fun scheduleMessageDisappearance() {
+    private fun scheduleMessageDisappearance(
+        duration: Long = MESSAGE_DISPLAY_DURATION,
+    ) {
         hideMessageJob?.cancel()
         hideMessageJob = viewModelScope.launch {
-            delay(MESSAGE_DISPLAY_DURATION)
+            delay(duration)
             _uiState.update {
                 it.copy(message = "")
             }
@@ -95,11 +81,11 @@ class ZeBadgeViewModel @Inject constructor(
 
         messageProgressJob?.cancel()
         messageProgressJob = viewModelScope.launch {
-            for (progress in 0 until 10) {
+            for (progress in 0 until MESSAGE_DISPLAY_UPDATES) {
                 _uiState.update {
                     it.copy(messageProgress = 1.0f - progress / MESSAGE_DISPLAY_UPDATES.toFloat())
                 }
-                delay(MESSAGE_DISPLAY_DURATION / MESSAGE_DISPLAY_UPDATES)
+                delay(duration / MESSAGE_DISPLAY_UPDATES)
             }
         }
     }
@@ -117,6 +103,7 @@ class ZeBadgeViewModel @Inject constructor(
         _uiState.update {
             it.copy(message = "")
         }
+
         val slots = _uiState.value.slots
 
         val configuration = slots.getOrElse(slot) {
@@ -125,7 +112,7 @@ class ZeBadgeViewModel @Inject constructor(
         } ?: return
 
         if (!badgeManager.isConnected()) {
-            showSnackBar("Please connect a badge.")
+            showMessage("Please connect a badge.")
             return
         }
 
@@ -133,12 +120,12 @@ class ZeBadgeViewModel @Inject constructor(
         if (bitmap.isBinary()) {
             viewModelScope.launch {
                 badgeManager.sendPage(slot.name, bitmap).fold(
-                    onSuccess = { badgeSuccess(it) },
-                    onFailure = { badgeFailure(it.message ?: "Unknown error") },
+                    onSuccess = { showMessage("$it bytes were sent.") },
+                    onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
                 )
             }
         } else {
-            showSnackBar("Please give binary image for page '${slot.name}'.")
+            showMessage("Please give binary image for page '${slot.name}'.")
         }
     }
 
@@ -399,7 +386,7 @@ class ZeBadgeViewModel @Inject constructor(
     fun sendRandomPageToDevice() {
         val slots = _uiState.value.slots
         if (slots.keys.isEmpty()) {
-            badgeFailure("No Slot Keys are available!")
+            showMessage("No Slot Keys are available!")
         } else {
             sendPageToDevice(slots.keys.random())
         }
@@ -417,7 +404,7 @@ class ZeBadgeViewModel @Inject constructor(
 
     fun copyInfoToClipboard() {
         clipboardService.copyToClipboard(_uiState.value.message)
-        showSnackBar("Copied")
+        showMessage("Copied")
     }
 
     /**
