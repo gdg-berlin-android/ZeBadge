@@ -20,3 +20,12 @@ if dev_mode:
     print("Welcome, fellow developer!")
 else:
     print(" ~ UserMode enabled ~ ")
+
+try:
+    if board.DISPLAY.is_zebadge():
+        print(".. running ZePython..")
+    else:
+        print(".. ZePython on non ZeBadge ..")
+except AttributeError:
+    print(".. not on ZePython ..")
+
