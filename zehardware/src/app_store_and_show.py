@@ -17,22 +17,24 @@ class StoreAndShowApp:
 
     def run(self):
         self.os.subscribe('SERIAL_INPUT_RECEIVED', _input_received_handler)
-        self.os.subscribe('up_pressed', self._load_previous)
-        self.os.subscribe('down_pressed', self._load_next)
+        self.os.subscribe('system_button_up_released', lambda os, message: self._load_previous(os, message))
+        self.os.subscribe('system_button_down_released', lambda os, message: self._load_next(os, message))
 
-    def _load_next(self, os, topic, message):
+    def _load_next(self, os, message):
         self.files = _get_stored_files()
         self.index = (self.index + 1) % len(self.files)
 
         file = self.files[self.index]
+        print(f'found file {file}.')
         _show_command(self.os, file, None)
 
-    def _load_previous(self, os, topic, message):
+    def _load_previous(self, os, message):
         self.files = _get_stored_files()
         length = len(self.files)
         self.index = (self.index + length - 1) % length
 
         file = self.files[self.index]
+        print(f'found file {file}.')
         _show_command(self.os, file, None)
 
 
@@ -50,7 +52,10 @@ def _input_received_handler(os, message):
 
 
 def _show_command(os, file_name, _):
-    with open(f"{file_name}.b64", "rb") as file:
+    if not file_name.endswith('.b64'):
+        file_name += '.b64'
+
+    with open(file_name, "rb") as file:
         payload = file.read()
         bitmap, palette = _decode_payload(payload)
         del payload
@@ -60,7 +65,10 @@ def _show_command(os, file_name, _):
 
 
 def _store_command(os, file_name, payload):
-    with open(f"{file_name}.b64", "wb") as file:
+    if not file_name.endswith('.b64'):
+        file_name += '.b64'
+
+    with open(file_name, "wb") as file:
         file.write(payload)
 
 
@@ -73,14 +81,16 @@ def _preview_command(os, meta, payload):
 
 
 def _list_command(os, meta, payload):
-    files = ",".join(_get_stored_files()).replace(".b64", "")
+    files = ",".join(_get_stored_files())
 
     os.messages.append(Message('info', f"Sending file list: '{files}'."))
     os.messages.append(Message("SERIAL_OUTPUT_REQUESTED", files))
 
 
 def _delete_command(zeos, filename, _):
-    filename += ".b64"
+    if not filename.endswith('.b64'):
+        filename += '.b64'
+
     files = _get_stored_files()
     if filename in files:
         zeos.messages.append(Message('info', f"Deleted file: '{filename}'."))

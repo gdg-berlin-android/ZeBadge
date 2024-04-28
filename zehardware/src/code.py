@@ -15,8 +15,9 @@ if safe_mode:
     while True:
         print("SafeMode", end="...")
 else:
+    badgeos = ZeBadgeOs()
     while True:
         try:
-            ZeBadgeOs().run()
+            badgeos.run()
         except Exception as e:
             print(exception_to_readable(e))
