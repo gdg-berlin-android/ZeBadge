@@ -13,6 +13,12 @@ def init(os):
         usb_cdc.data.timeout = 0.1
         os.tasks.append(_read_input)
 
+        os.subscribe('SERIAL_OUTPUT_REQUESTED', _output_requested)
+
+
+def _output_requested(os, message):
+    usb_cdc.data.write(message.value)
+
 
 def _read_input(os):
     if not supervisor.runtime.usb_connected:
@@ -94,7 +100,6 @@ def _terminal_command(os, meta, payload):
 
 def _refresh_command(os, meta, payload):
     os.messages.append(Message("UI_REFRESH", None))
-
 
 
 COMMANDS = {

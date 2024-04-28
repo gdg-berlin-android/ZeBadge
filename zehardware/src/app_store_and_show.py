@@ -13,7 +13,7 @@ class StoreAndShowApp:
     def __init__(self, os: zeos.ZeBadgeOs):
         self.os = os
         self.index = 0
-        self.files = _updated_file_list()
+        self.files = _get_stored_files()
 
     def run(self):
         self.os.subscribe('SERIAL_INPUT_RECEIVED', _input_received_handler)
@@ -21,14 +21,14 @@ class StoreAndShowApp:
         self.os.subscribe('down_pressed', self._load_next)
 
     def _load_next(self, os, topic, message):
-        self.files = _updated_file_list()
+        self.files = _get_stored_files()
         self.index = (self.index + 1) % len(self.files)
 
         file = self.files[self.index]
         _show_command(self.os, file, None)
 
     def _load_previous(self, os, topic, message):
-        self.files = _updated_file_list()
+        self.files = _get_stored_files()
         length = len(self.files)
         self.index = (self.index + length - 1) % length
 
@@ -36,7 +36,7 @@ class StoreAndShowApp:
         _show_command(self.os, file, None)
 
 
-def _updated_file_list():
+def _get_stored_files():
     return list(filter(lambda x: x.endswith('b64'), os.listdir('/')))
 
 
@@ -52,7 +52,11 @@ def _input_received_handler(os, message):
 def _show_command(os, file_name, _):
     with open(f"{file_name}.b64", "rb") as file:
         payload = file.read()
-        _preview_command(os, "", payload)
+        bitmap, palette = _decode_payload(payload)
+        del payload
+
+        os.messages.append(Message('info', f'showing {file_name}.'))
+        os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
 
 
 def _store_command(os, file_name, payload):
@@ -61,16 +65,26 @@ def _store_command(os, file_name, payload):
 
 
 def _preview_command(os, meta, payload):
-    import gc
-    print(gc.mem_free())
-    gc.collect()
-    print(gc.mem_free())
-
     bitmap, palette = _decode_payload(payload)
     del payload
 
     os.messages.append(Message('info', 'previewing image'))
     os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
+
+
+def _list_command(os, meta, payload):
+    files = ",".join(_get_stored_files()).replace(".b64", "")
+
+    os.messages.append(Message('info', f"Sending file list: '{files}'."))
+    os.messages.append(Message("SERIAL_OUTPUT_REQUESTED", files))
+
+
+def _delete_command(zeos, filename, _):
+    filename += ".b64"
+    files = _get_stored_files()
+    if filename in files:
+        zeos.messages.append(Message('info', f"Deleted file: '{filename}'."))
+        os.remove(filename)
 
 
 WIDTH = 296
@@ -99,4 +113,6 @@ COMMANDS = {
     'show': _show_command,
     'store': _store_command,
     'preview': _preview_command,
+    'list': _list_command,
+    'delete': _delete_command,
 }
