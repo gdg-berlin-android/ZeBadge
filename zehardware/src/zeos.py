@@ -1,13 +1,14 @@
 import board
+import gc
 import serial
+import sys
 import time
 import traceback
 import ui
+import usb_cdc
+import uuid
 
-from message import Message
-
-from app_fetch import FetchApp
-from app_store_and_show import StoreAndShowApp
+import os as systemos
 
 from digitalio import DigitalInOut
 from digitalio import Direction
@@ -48,6 +49,8 @@ class ZeBadgeOs:
         self.subscribers.clear()
 
         # add default subscriptions
+        self.subscribe('SERIAL_RECEIVED', _serial_received_handler)
+
         self.subscribe('info', _info_handler)
         self.subscribe('error', _error_handler)
         self.subscribe('reload', _reload_handler)
@@ -214,3 +217,97 @@ def _exit_handler(os, message):
 
     time.sleep(0.5)
     sys.exit()
+
+
+def _serial_received_handler(os, message):
+    (command, meta, payload) = message.value
+    if command in SERIAL_COMMANDS:
+        SERIAL_COMMANDS[command](os, meta, payload)
+
+
+def _reload_command(os, meta, payload):
+    os.messages.append(Message("reload"))
+
+
+def _exit_command(os, meta, payload):
+    os.messages.append(Message("exit"))
+
+
+def _terminal_command(os, meta, payload):
+    os.messages.append(Message("UI_SHOW_TERMINAL"))
+
+
+def _refresh_command(os, meta, payload):
+    os.messages.append(Message("UI_REFRESH"))
+
+
+def _config_save_command(os, meta, payload):
+    os.messages.append(Message("config_save_storage"))
+
+
+def _config_load_command(os, meta, payload):
+    os.messages.append(Message("config_load_storage"))
+
+
+def _config_update_command(os, meta, payload):
+    os.messages.append(Message("config_update", payload))
+
+
+def _config_list_command(os, meta, payload):
+    os.messages.append(Message("config_list"))
+
+
+def _show_command(os, filename, _):
+    os.messages.append(Message("UI_SHOW_FILE", filename))
+
+
+def _store_command(os, filename, payload):
+    if not filename.endswith('.b64'):
+        filename += '.b64'
+
+    with open(filename, "wb") as file:
+        file.write(payload)
+
+
+def _preview_command(os, meta, payload):
+    bitmap, palette = ui.decode_serialized_bitmap(payload)
+    del payload
+
+    os.messages.append(Message('info', 'previewing image'))
+    os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
+
+
+def _list_command(os, meta, payload):
+    files = ",".join(os.get_stored_files())
+
+    os.messages.append(Message('info', f"Sending file list: '{files}'."))
+    os.messages.append(Message("SERIAL_RESPOND", files))
+
+
+def _delete_command(os, filename, _):
+    if not filename.endswith('.b64'):
+        filename += '.b64'
+
+    files = os.get_stored_files()
+    if filename in files:
+        os.messages.append(Message('info', f"Deleted file: '{filename}'."))
+        systemos.remove(filename)
+
+
+SERIAL_COMMANDS = {
+    "reload": _reload_command,
+    "exit": _exit_command,
+    "terminal": _terminal_command,
+    "refresh": _refresh_command,
+
+    "config_save": _config_save_command,
+    "config_load": _config_load_command,
+    "config_update": _config_update_command,
+    "config_list": _config_list_command,
+
+    'show': _show_command,
+    'store': _store_command,
+    'preview': _preview_command,
+    'list': _list_command,
+    'delete': _delete_command,
+}
