@@ -352,7 +352,15 @@ def _delete_command(os, filename, _):
         systemos.remove(filename)
 
 
+def _help_command(os, meta, payload):
+    message = ','.join(SERIAL_COMMANDS.keys())
+    os.messages.append(Message('info', f"Available commands: {message}"))
+    os.messages.append(Message('SERIAL_RESPOND', message))
+
+
 SERIAL_COMMANDS = {
+    "help": _help_command,
+
     "reload": _reload_command,
     "exit": _exit_command,
     "terminal": _terminal_command,
