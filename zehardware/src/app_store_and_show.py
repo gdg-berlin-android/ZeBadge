@@ -42,59 +42,6 @@ def _get_stored_files():
     return list(filter(lambda x: x.endswith('b64'), os.listdir('/')))
 
 
-def _input_received_handler(os, message):
-    command, meta, payload = message.value
-
-    if command in COMMANDS:
-        COMMANDS[command](os, meta, payload)
-    else:
-        os.messages.append(Message('error', 'Nope, not understood.'))
-
-
-def _show_command(os, file_name, _):
-    if not file_name.endswith('.b64'):
-        file_name += '.b64'
-
-    with open(file_name, "rb") as file:
-        payload = file.read()
-        bitmap, palette = _decode_payload(payload)
-        del payload
-
-        os.messages.append(Message('info', f'showing {file_name}.'))
-        os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
-
-
-def _store_command(os, file_name, payload):
-    if not file_name.endswith('.b64'):
-        file_name += '.b64'
-
-    with open(file_name, "wb") as file:
-        file.write(payload)
-
-
-def _preview_command(os, meta, payload):
-    bitmap, palette = _decode_payload(payload)
-    del payload
-
-    os.messages.append(Message('info', 'previewing image'))
-    os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
-
-
-def _list_command(os, meta, payload):
-    files = ",".join(_get_stored_files())
-
-    os.messages.append(Message('info', f"Sending file list: '{files}'."))
-    os.messages.append(Message("SERIAL_OUTPUT_REQUESTED", files))
-
-
-def _delete_command(zeos, filename, _):
-    if not filename.endswith('.b64'):
-        filename += '.b64'
-
-    files = _get_stored_files()
-    if filename in files:
-        zeos.messages.append(Message('info', f"Deleted file: '{filename}'."))
-        os.remove(filename)
 
 
 WIDTH = 296
