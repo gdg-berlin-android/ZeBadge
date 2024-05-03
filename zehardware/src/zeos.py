@@ -121,10 +121,7 @@ class ZeBadgeOs:
                         for subscriber in self.subscribers[message.topic]:
                             subscriber(self, message)
                     else:
-                        self.messages.append(Message(
-                            "error",
-                            f"no subscriber for {message.topic}: {message.value}"
-                        ))
+                        print('M', end='')
 
                 self.led_on = not self.led_on
                 self.led.value = self.led_on
@@ -169,15 +166,29 @@ class ZeBadgeOs:
         self.config.developer_mode = not (usb_cdc.data is None)
 
     def _init_applications(self):
-        store_and_show = StoreAndShowApp(self)
+        app_store_and_show = StoreAndShowApp(self)
+        app_fetch = FetchApp(self)
+        app_third = FetchApp(self)
+
+        def start_app(app):
+            self.active_app.unrun()
+            self.active_app = app
+            self.active_app.run()
+
+        def show_terminal(os, message):
+            changes = message.value
+
+            if 'a' in changes and changes['a'] and 'c' in changes and changes['c']:
+                os.messages.append(Message("UI_SHOW_TERMINAL"))
 
         self.subscribe('system_button_a_released', lambda os, message: start_app(app_store_and_show))
         self.subscribe('system_button_b_released', lambda os, message: start_app(app_fetch))
         self.subscribe('system_button_c_released', lambda os, message: start_app(app_third))
 
-        self.subscribe('system_button_c_released', lambda os, message: ui._show_terminal_handler(os, message))
         # register special terminal showing button combination
         self.subscribe('system_button_changes', show_terminal)
+
+        start_app(app_store_and_show)
 
 
 class SystemButtons:
@@ -223,6 +234,8 @@ def _update_system_buttons(os):
     changes = os.buttons.changes()
 
     if len(changes) > 0:
+        os.messages.append(Message('system_button_changes', changes))
+
         for button in changes:
             pressed = changes[button]
             if pressed:

@@ -1,6 +1,6 @@
 class Message:
     # a message that can be sent over
-    def __init__(self, topic: str, value):
+    def __init__(self, topic: str, value=None):
         self.topic = topic
         self.value = value
 
