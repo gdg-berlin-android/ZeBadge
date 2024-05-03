@@ -36,7 +36,7 @@ class StoreAndShowApp:
         self._show_file(file)
 
     def _show_file(self, filename):
-        self.os.messages += Message("UI_SHOW_FILE", filename)
+        self.os.messages.append(Message("UI_SHOW_FILE", filename))
 
 
 WIDTH = 296
