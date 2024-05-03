@@ -54,7 +54,7 @@ class AndroidBadgeManager(
                 askPermission(device)
             }
 
-            readResponse()
+            receiveResponseFromBadge()
         }
     }
 
@@ -116,7 +116,7 @@ class AndroidBadgeManager(
 
             Timber.i("badge", "Read '$count' bytes from port ${port.portNumber}.")
 
-            bytes.toString()
+            String(bytes)
 
         }.recoverCatching {
             Timber.e("badge", "Couldn't read from port ${port.portNumber}.", it)
