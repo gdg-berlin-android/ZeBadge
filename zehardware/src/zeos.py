@@ -14,6 +14,10 @@ from digitalio import DigitalInOut
 from digitalio import Direction
 from digitalio import Pull
 
+from config import save_config
+from config import load_config
+from config import update_config
+from config import Configuration
 
 class ZeBadgeOs:
     # the os of the badge, coordinating tasks to be run, external hardware
@@ -39,6 +43,9 @@ class ZeBadgeOs:
         self.tasks.append(_update_system_buttons)
 
         # add defaults
+        self.config = Configuration()
+        load_config(self.config)
+
         self._reset_subscribers()
         self._init_interfaces()
         self._init_applications()
@@ -58,6 +65,12 @@ class ZeBadgeOs:
 
     def subscribe(self, topic: str, subscriber):
         # subscribe a lambda to a topic
+        self.subscribe('config_load_storage', lambda os, message: load_config(self.config))
+        self.subscribe('config_save_storage', lambda os, message: save_config(self.config))
+        self.subscribe('config_update', lambda os, message: update_config(self.config, message.value))
+        self.subscribe('config_list',
+                       lambda os, message: self.messages.append(Message('SERIAL_RESPOND', str(self.config)))
+                       )
 
         if topic not in self.subscribers:
             self.subscribers[topic] = []
@@ -126,12 +139,19 @@ class ZeBadgeOs:
             if has_keyboard:
                 import keyboard
                 keyboard.init(self)
+
+            self.config.keyboard_attached = has_keyboard
         else:
             print("... no i2c found, trying wifi")
 
             import wifi
             if not wifi.init(self):
                 print("... no wifi found.")
+                self.config.wifi_attached = False
+            else:
+                self.config.wifi_attached = True
+
+        self.config.developer_mode = not (usb_cdc.data is None)
 
     def _init_applications(self):
         store_and_show = StoreAndShowApp(self)
