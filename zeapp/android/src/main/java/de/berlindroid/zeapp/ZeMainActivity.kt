@@ -319,7 +319,7 @@ private fun ZeTopBar(
                     contentDescription = "Send random page to badge",
                 )
             }
-            ZeIconButton(onClick = onRandomClick) {
+            ZeIconButton(onClick = onSaveAllClick) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.save_all),
                     contentDescription = null,
