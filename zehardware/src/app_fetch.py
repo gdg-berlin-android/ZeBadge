@@ -20,29 +20,29 @@ class FetchApp:
         self.os.messages.append(Message('info', 'scanning wifi'))
         self.os.messages.append(Message('WIFI_SCAN', {}))
 
-    def _scanned(self, os: zeos.ZeBadgeOs, message):
-        if message.value:
-            os.messages.append(Message('info', f"Found '{"', '".join(message.value)}' WiFis\nConnecting to wifi ..."))
-            os.messages.append(Message('WIFI_CONNECT', {
-                'ssid': "Bird's Nest",
-                'pwd': '9QeMTqZJKmfcxo32'
-            }))
-        else:
-            os.messages.append(Message('error', 'Could not scan wifi'))
-            self.started = False
 
-    def _connected(self, os: zeos.ZeBadgeOs, message):
-        if message.value:
-            os.messages.append(Message('info', 'GET sample data ...'))
-            os.messages.append(Message('WIFI_GET', {
-                'ip': '35.208.138.148',
-                'url': '/',
-                'host': 'char.zebadge.app',
-                'port': 13370
-            }))
-        else:
-            os.messages.append(Message('error', 'Could not connect'))
-            self.started = False
+def _scanned(os: zeos.ZeBadgeOs, message):
+    if message.value:
+        os.messages.append(Message('info', f"Found '{"', '".join(message.value)}' WiFis\nConnecting to wifi ..."))
+        os.messages.append(Message('WIFI_CONNECT', {
+            'ssid': os.config.wifi.ssid,
+            'pwd': os.config.wifi.pwd
+        }))
+    else:
+        os.messages.append(Message('error', 'Could not scan wifi'))
+
+
+def _connected(os: zeos.ZeBadgeOs, message):
+    if message.value:
+        os.messages.append(Message('info', 'GET sample data ...'))
+        os.messages.append(Message('WIFI_GET', {
+            'ip': os.config.wifi.ip,
+            'url': os.config.wifi.url,
+            'host': os.config.wifi.host,
+            'port': os.config.wifi.port,
+        }))
+    else:
+        os.messages.append(Message('error', 'Could not connect'))
 
     def _getted(self, os: zeos.ZeBadgeOs, message):
         os.messages.append(Message('info', f'data received: {message.value.body}'))
