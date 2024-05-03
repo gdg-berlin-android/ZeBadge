@@ -57,7 +57,7 @@ abstract class JvmBadgeManager : BadgeManager {
     }
 
     override suspend fun readResponse(): Result<String> = if (isConnected()) {
-        val badger = getBadger2040s().lastOrNull()
+        val badger = getBadger2040s().sortedBy { it.systemPortPath }.lastOrNull()
 
         if (badger == null) {
             Result.failure(NoSuchElementException())
