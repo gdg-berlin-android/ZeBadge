@@ -89,6 +89,16 @@ fun inputOutputCommands() = mutableListOf(
 
 fun storageCommands() = listOf(
     CommandLineArgument(
+        name = "shows help from the badge",
+        description = "Asks the badge for available commands. Needs a badge attached.",
+        short = "-H",
+        long = "--badge-help",
+    ) {
+        Configuration.storageOperations.add(
+            "help" to badgeHelp(),
+        )
+    },
+    CommandLineArgument(
         name = "list images on badge",
         description = "Asks the badge which images are already stored on it. Take priority over other operations, cannot be used with input and " +
                 "output operations.",
@@ -96,7 +106,7 @@ fun storageCommands() = listOf(
         long = "--list",
     ) {
         Configuration.storageOperations.add(
-            "list" to listImagesStoredOnBadge(it),
+            "list" to listImagesStoredOnBadge(),
         )
     },
     CommandLineArgument(
@@ -247,52 +257,52 @@ private fun storeBufferOntoBadge(filename: String): IntBuffer.(width: Int, heigh
     this
 }
 
-private fun listImagesStoredOnBadge(argument: String?): StorageOperation = {
-    val payload = BadgePayload(
-        debug = false,
-        type = "list",
-        meta = "",
-        payload = "",
-    )
+private fun listImagesStoredOnBadge(): StorageOperation = {
+    rawCommand("list")
+}
 
-    runBlocking {
-        with(buildBadgeManager("")) {
-            if (isConnected()) {
-                val result = sendPayload(payload)
-                if (result.isSuccess) {
-                    println("${COLOR_GREEN_BACKGROUND}Successfully asked to list images.${COLOR_END}")
-
-                    val response = readResponse()
-                    if (response.isSuccess) {
-                        println("..${COLOR_BLUE_BACKGROUND}${response.getOrDefault("")}${COLOR_END}")
-                    } else {
-                        println("..${COLOR_RED_BACKGROUND}But no response from badge received.${COLOR_END}")
-                    }
-                    println()
-                } else {
-                    println("${COLOR_RED_BACKGROUND}Could not request list of images.${COLOR_END}")
-                }
-            } else {
-                println("${COLOR_RED_BACKGROUND}No Badge connected.${COLOR_END}\nTry attaching a badge and execute the command again.")
-            }
-        }
-    }
+private fun badgeHelp(): StorageOperation = {
+    rawCommand("help")
 }
 
 private fun showStoredImageOnBadge(filename: String?): StorageOperation = {
-    val payload = BadgePayload(
+    rawCommand("show", filename ?: "")
+}
+
+private fun defaultTransformer(result: Result<String>): String =
+    if (result.isSuccess) {
+        ".. $COLOR_BLUE_BACKGROUND" +
+                result.getOrDefault("").split(",").joinToString(separator = "$COLOR_END\n.. $COLOR_BLUE_BACKGROUND") +
+                COLOR_END
+    } else {
+        "..${COLOR_RED_BACKGROUND}But no response from badge received.${COLOR_END}"
+    } + "\n"
+
+private fun rawCommand(
+    command: String, meta: String = "", payload: String = "",
+    resultTransformer: (result: Result<String>) -> String = ::defaultTransformer,
+) {
+    val badgePayload = BadgePayload(
         debug = false,
-        type = "show",
-        meta = filename ?: "",
-        payload = "",
+        type = command,
+        meta = meta,
+        payload = payload,
     )
 
     runBlocking {
         with(buildBadgeManager("")) {
             if (isConnected()) {
-                val result = sendPayload(payload)
+                val result = sendPayload(badgePayload)
                 if (result.isSuccess) {
-                    println("${COLOR_GREEN_BACKGROUND}Successfully showed image '$filename' (${result.getOrNull()}).${COLOR_END}")
+                    println(
+                        COLOR_GREEN_BACKGROUND +
+                                "Successfully send command '$command' with meta '$meta' and payload (#${payload.length})." +
+                                COLOR_END,
+                    )
+
+                    val readResult = readResponse()
+
+                    println("Response:\n${resultTransformer(readResult)}")
                 } else {
                     println("${COLOR_RED_BACKGROUND}Couldn't show image.${COLOR_END}")
                 }
@@ -301,6 +311,7 @@ private fun showStoredImageOnBadge(filename: String?): StorageOperation = {
             }
         }
     }
+
 }
 
 private fun deleteStoredImageOnBadge(filename: String?): StorageOperation = {
@@ -381,7 +392,17 @@ private fun parseArguments(arguments: MutableList<String>) {
         val argument = arguments.removeFirst()
         val command = commands.firstOrNull { it.short == argument || it.long == argument }
         if (command == null) {
-            println("${COLOR_RED_BACKGROUND}Command for argument '$argument' not found.${COLOR_END}\nTry '--help' for general help.")
+            println(
+                "${COLOR_RED_BACKGROUND}Command for argument '$argument' not found.${COLOR_END}\n" +
+                        "Trying raw serial command, in case you know more than me.",
+            )
+
+            val splits = argument.split(' ')
+            val rawCommand = if (splits.size > 0) splits[0] else ""
+            val meta = if (splits.size > 1) splits[1] else ""
+            val payload = if (splits.size > 2) splits[2] else ""
+
+            rawCommand(rawCommand, meta, payload)
             continue
         }
 
@@ -409,41 +430,46 @@ private fun handleCommands() {
         if (noResultTarget()) {
             println("${COLOR_RED_BACKGROUND}No result operation specified, use output, send, store or show as a result of the operation..${COLOR_END}")
         } else {
-            val input = Configuration.input!!
-            val inputImage = ImageIO.read(File(input))
-            Configuration.width = inputImage.width
-            Configuration.height = inputImage.height
-            val width = Configuration.width
-            val height = Configuration.height
-
-            val array = IntArray(width * height * 3)
-            inputImage.getRGB(0, 0, width, height, array, 0, width)
-
-            var buffer = IntBuffer.wrap(array)
-
-            println("Processing image '$input'.")
-
-            Configuration.imageOperations.forEach { operation ->
-                println("... ${operation.first}")
-                buffer = buffer.(operation.second)(
-                    Configuration.width,
-                    Configuration.height,
-                )
-            }
-
-            Configuration.output?.let { output ->
-                val outputImage = BufferedImage(
-                    Configuration.width,
-                    Configuration.height,
-                    TYPE_INT_RGB,
-                )
-
-                outputImage.setRGB(0, 0, Configuration.width, Configuration.height, buffer.array(), 0, Configuration.width)
-                ImageIO.write(outputImage, "png", File(output))
-
-                println("Successfully saved image to '$output'.")
-            }
+            handleImageOperation()
         }
+    }
+
+}
+
+private fun handleImageOperation() {
+    val input = Configuration.input!!
+    val inputImage = ImageIO.read(File(input))
+    Configuration.width = inputImage.width
+    Configuration.height = inputImage.height
+    val width = Configuration.width
+    val height = Configuration.height
+
+    val array = IntArray(width * height * 3)
+    inputImage.getRGB(0, 0, width, height, array, 0, width)
+
+    var buffer = IntBuffer.wrap(array)
+
+    println("Processing image '$input'.")
+
+    Configuration.imageOperations.forEach { operation ->
+        println("... ${operation.first}")
+        buffer = buffer.(operation.second)(
+            Configuration.width,
+            Configuration.height,
+        )
+    }
+
+    Configuration.output?.let { output ->
+        val outputImage = BufferedImage(
+            Configuration.width,
+            Configuration.height,
+            TYPE_INT_RGB,
+        )
+
+        outputImage.setRGB(0, 0, Configuration.width, Configuration.height, buffer.array(), 0, Configuration.width)
+        ImageIO.write(outputImage, "png", File(output))
+
+        println("Successfully saved image to '$output'.")
     }
 }
 
