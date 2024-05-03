@@ -63,8 +63,6 @@ class ZeBadgeOs:
         self.subscribe('reload', _reload_handler)
         self.subscribe('exit', _exit_handler)
 
-    def subscribe(self, topic: str, subscriber):
-        # subscribe a lambda to a topic
         self.subscribe('config_load_storage', lambda os, message: load_config(self.config))
         self.subscribe('config_save_storage', lambda os, message: save_config(self.config))
         self.subscribe('config_update', lambda os, message: update_config(self.config, message.value))
@@ -72,18 +70,33 @@ class ZeBadgeOs:
                        lambda os, message: self.messages.append(Message('SERIAL_RESPOND', str(self.config)))
                        )
 
+    def subscribe(self, topic: str, subscriber) -> int:
+        # subscribe a callback to a topic. Return an id for deletion.
+
         if topic not in self.subscribers:
-            self.subscribers[topic] = []
+            self.subscribers[topic] = {}
 
-        self.subscribers[topic].append(subscriber)
+        subscription_id = uuid.uuid4().int
+        self.subscribers[topic][subscription_id] = subscriber
+        return subscription_id
 
-    def unsubscribe(self, topic: str):
-        # unsubscribe from a topic
+    def unsubscribe(self, subscription_id):
+        found = None
+
+        for topic in self.subscribers:
+            if id in self.subscribers[topic]:
+                found = self.subscribers[topic][subscription_id]
+                del self.subscribers[topic][subscription_id]
 
         if topic in self.subscribers:
             self.subscribers[topic] = []
         else:
             print(f"'{topic}' does not exist.")
+            if len(self.subscribers[topic]) == 0:
+                del self.subscribers[topic]
+
+        return found is not None
+
 
     def run(self):
         # start os, never returning unless exception wasn't caught
@@ -156,10 +169,13 @@ class ZeBadgeOs:
     def _init_applications(self):
         store_and_show = StoreAndShowApp(self)
 
-        store_and_show.run()
-        self.active_app = store_and_show
+        self.subscribe('system_button_a_released', lambda os, message: start_app(app_store_and_show))
+        self.subscribe('system_button_b_released', lambda os, message: start_app(app_fetch))
+        self.subscribe('system_button_c_released', lambda os, message: start_app(app_third))
 
         self.subscribe('system_button_c_released', lambda os, message: ui._show_terminal_handler(os, message))
+        # register special terminal showing button combination
+        self.subscribe('system_button_changes', show_terminal)
 
 
 class SystemButtons:

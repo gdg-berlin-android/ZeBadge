@@ -15,13 +15,19 @@ class StoreAndShowApp:
         self.index = 0
         self.files = _get_stored_files()
 
+        self._subscription_ids = []
+
     def run(self):
-        self.os.subscribe('SERIAL_INPUT_RECEIVED', _input_received_handler)
-        self.os.subscribe('system_button_up_released', lambda os, message: self._load_previous(os, message))
-        self.os.subscribe('system_button_down_released', lambda os, message: self._load_next(os, message))
+        self._subscription_ids += [
+            self.os.subscribe('system_button_up_released', lambda os, message: self._load_previous(os, message)),
+            self.os.subscribe('system_button_down_released', lambda os, message: self._load_next(os, message)),
+        ]
 
     def _load_next(self, os, message):
         self.files = _get_stored_files()
+    def unrun(self):
+        for subscription_id in self._subscription_ids:
+            self.os.unsubscribe(subscription_id)
         self.index = (self.index + 1) % len(self.files)
 
         file = self.files[self.index]
