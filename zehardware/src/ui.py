@@ -45,7 +45,8 @@ def _show_bitmap(bitmap, palette):
     _refresh_display_save()
 
 
-def _show_file_handler(os, filename):
+def _show_file_handler(os, message):
+    filename = message.value
     if not filename.endswith('.b64'):
         filename += '.b64'
 
