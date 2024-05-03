@@ -14,10 +14,14 @@ from digitalio import DigitalInOut
 from digitalio import Direction
 from digitalio import Pull
 
+from message import Message
 from config import save_config
 from config import load_config
 from config import update_config
 from config import Configuration
+from app_fetch import FetchApp
+from app_store_and_show import StoreAndShowApp
+
 
 class ZeBadgeOs:
     # the os of the badge, coordinating tasks to be run, external hardware
@@ -88,15 +92,13 @@ class ZeBadgeOs:
                 found = self.subscribers[topic][subscription_id]
                 del self.subscribers[topic][subscription_id]
 
-        if topic in self.subscribers:
-            self.subscribers[topic] = []
-        else:
-            print(f"'{topic}' does not exist.")
             if len(self.subscribers[topic]) == 0:
                 del self.subscribers[topic]
 
         return found is not None
 
+    def get_stored_files(self):
+        return list(filter(lambda x: x.endswith('b64'), systemos.listdir('/')))
 
     def run(self):
         # start os, never returning unless exception wasn't caught
