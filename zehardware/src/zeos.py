@@ -6,7 +6,6 @@ import time
 import traceback
 import ui
 import usb_cdc
-import uuid
 
 import os as systemos
 
@@ -28,6 +27,8 @@ class ZeBadgeOs:
     # and events sent between.
     #
     # is it overengineered, yes.
+
+    next_subscription_id = 0
 
     def __init__(self):
         # create the os
@@ -80,7 +81,9 @@ class ZeBadgeOs:
         if topic not in self.subscribers:
             self.subscribers[topic] = {}
 
-        subscription_id = uuid.uuid4().int
+        subscription_id = ZeBadgeOs.next_subscription_id
+        ZeBadgeOs.next_subscription_id += 1
+
         self.subscribers[topic][subscription_id] = subscriber
         return subscription_id
 
@@ -118,7 +121,9 @@ class ZeBadgeOs:
 
                 for message in current_messages:
                     if message.topic in self.subscribers:
-                        for subscriber in self.subscribers[message.topic]:
+                        subscriber_ids = self.subscribers[message.topic]
+                        for subscriber_id in subscriber_ids:
+                            subscriber = subscriber_ids[subscriber_id]
                             subscriber(self, message)
                     else:
                         print('M', end='')
@@ -171,7 +176,9 @@ class ZeBadgeOs:
         app_third = FetchApp(self)
 
         def start_app(app):
-            self.active_app.unrun()
+            if self.active_app:
+                self.active_app.unrun()
+
             self.active_app = app
             self.active_app.run()
 
@@ -356,9 +363,9 @@ SERIAL_COMMANDS = {
     "config_update": _config_update_command,
     "config_list": _config_list_command,
 
-    'show': _show_command,
-    'store': _store_command,
-    'preview': _preview_command,
-    'list': _list_command,
-    'delete': _delete_command,
+    "show": _show_command,
+    "store": _store_command,
+    "preview": _preview_command,
+    "list": _list_command,
+    "delete": _delete_command,
 }

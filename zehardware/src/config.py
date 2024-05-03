@@ -30,7 +30,7 @@ def load_config(config: Configuration, filename: str = '/ze.conf') -> bool:
         if file:
             _execute_assignments_on_obj(config, file.readlines())
         return True
-    except FileNotFoundError:
+    except Exception:
         return False
 
 
