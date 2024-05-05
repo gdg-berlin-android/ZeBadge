@@ -8,6 +8,8 @@ from adafruit_display_text import label
 import zlib
 import circuitpython_base64 as base64
 
+from message import Message
+
 
 def init(os):
     os.subscribe("UI_SHOW_BITMAP", _show_bitmap_handler)
@@ -56,6 +58,8 @@ def _show_file_handler(os, message):
         del payload
 
         _show_bitmap(bitmap, palette)
+
+        os.messages.append(Message("info", f"File '{filename}' shown. "))
 
 
 def _show_terminal_handler(os, message):
