@@ -27,13 +27,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -101,7 +102,6 @@ import androidx.compose.material3.Button as ZeButton
 import androidx.compose.material3.Card as ZeCard
 import androidx.compose.material3.Icon as ZeIcon
 import androidx.compose.material3.IconButton as ZeIconButton
-import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
 import androidx.compose.material3.Scaffold as ZeScaffold
 import androidx.compose.material3.Surface as ZeSurface
 import androidx.compose.material3.Text as ZeText
@@ -200,7 +200,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 },
                 topBar = {
                     ZeTopBar(
-                        onRandomClick = vm::sendRandomPageToDevice,
+                        onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onAboutClick = { isShowingAbout = !isShowingAbout },
                         onGotoReleaseClick = gotToReleases,
@@ -281,7 +281,7 @@ private fun ZeAbout(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ZeTopBar(
     onSaveAllClick: () -> Unit,
-    onRandomClick: () -> Unit,
+    onGetStoredPages: () -> Unit,
     onAboutClick: () -> Unit,
     onGotoReleaseClick: () -> Unit,
     isShowingAbout: Boolean,
@@ -313,7 +313,7 @@ private fun ZeTopBar(
                     contentDescription = "Open the release page in the browser",
                 )
             }
-            ZeIconButton(onClick = onSaveAllClick) {
+            ZeIconButton(onClick = onGetStoredPages) {
                 ZeIcon(
                     painter = painterResource(id = R.drawable.ic_random),
                     contentDescription = "Send random page to badge",
@@ -406,7 +406,7 @@ private fun ZePages(
                             { vm.resetSlot(slot) }
                         },
                         sendToDevice = {
-                            vm.sendPageToDevice(slot)
+                            vm.previewPageOnDevice(slot)
                         },
                     )
 
@@ -459,14 +459,14 @@ private fun InfoBar(
             }
         }
 
-        ZeLinearProgressIndicator(
+        LinearProgressIndicator(
+            progress = { progress },
             modifier = ZeModifier
                 .fillMaxWidth()
                 .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 4.dp),
-            strokeCap = StrokeCap.Round,
-            trackColor = ZeWhite,
             color = ZeBlack,
-            progress = progress,
+            trackColor = ZeWhite,
+            strokeCap = StrokeCap.Round,
         )
     }
 }
@@ -648,7 +648,7 @@ private fun PagePreview(
                     if (sendToDevice != null) {
                         item {
                             ZeToolButton(
-                                imageVector = Icons.Filled.Send,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
                                 text = "Send",
                                 onClick = sendToDevice,
                             )

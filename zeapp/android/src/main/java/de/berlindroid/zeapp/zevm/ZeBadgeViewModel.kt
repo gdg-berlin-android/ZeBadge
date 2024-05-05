@@ -62,7 +62,7 @@ class ZeBadgeViewModel @Inject constructor(
         duration: Long = MESSAGE_DISPLAY_DURATION,
     ) {
         _uiState.update {
-            it.copy(message = message)
+            it.copy(message = it.message + message)
         }
 
         scheduleMessageDisappearance(duration)
@@ -99,7 +99,7 @@ class ZeBadgeViewModel @Inject constructor(
      *
      * @param slot to be send.
      */
-    fun sendPageToDevice(slot: ZeSlot) {
+    fun previewPageOnDevice(slot: ZeSlot) {
         _uiState.update {
             it.copy(message = "")
         }
@@ -119,7 +119,7 @@ class ZeBadgeViewModel @Inject constructor(
         val bitmap = configuration.bitmap
         if (bitmap.isBinary()) {
             viewModelScope.launch {
-                badgeManager.sendPage(slot.name, bitmap).fold(
+                badgeManager.previewPage(bitmap).fold(
                     onSuccess = { showMessage("$it bytes were sent.") },
                     onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
                 )
@@ -371,24 +371,49 @@ class ZeBadgeViewModel @Inject constructor(
     }
 
     /**
-     * Save all slots to shared preferences.
+     * Save all slots to shared preferences and the badge.
      */
     fun saveAll() {
         val slots = _uiState.value.slots
         for ((slot, configuration) in slots) {
             saveSlotConfiguration(slot, configuration)
         }
+        storePages(slots)
+    }
+
+    private fun storePages(slots: Map<ZeSlot, ZeConfiguration>) {
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
+        } else {
+            viewModelScope.launch {
+                for ((slot, config) in slots) {
+                    val stored = badgeManager.storePage(slot.name, config.bitmap)
+                    if (stored.isFailure) {
+                        showMessage("Could not send page.")
+                    } else {
+                        showMessage("Page in slot '${slot.name}' send successfully.\n")
+                    }
+                }
+            }
+        }
     }
 
     /**
-     * Sends a random page to the badge
+     * Talks to the badge to get all stored pages from the badge
      */
-    fun sendRandomPageToDevice() {
-        val slots = _uiState.value.slots
-        if (slots.keys.isEmpty()) {
-            showMessage("No Slot Keys are available!")
+    fun getStoredPages() {
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
         } else {
-            sendPageToDevice(slots.keys.random())
+            viewModelScope.launch {
+                val stored = badgeManager.requestPagesStored()
+                if (stored.isSuccess) {
+                    val message = stored.getOrNull()
+                    if (message != null) {
+                        showMessage(message.replace(",", "\n"))
+                    }
+                }
+            }
         }
     }
 
