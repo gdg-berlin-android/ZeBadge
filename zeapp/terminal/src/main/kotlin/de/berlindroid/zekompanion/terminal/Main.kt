@@ -76,13 +76,13 @@ fun inputOutputCommands() = mutableListOf(
         )
     },
     CommandLineArgument(
-        name = "send image to badge",
+        name = "preview image on badge",
         description = "Sends the hopefully converted image to the hopefully connected badge.",
-        short = "-s",
-        long = "--send",
+        short = "-p",
+        long = "--preview",
     ) {
         Configuration.imageOperations.add(
-            "send" to previewImageOnBadge(),
+            "preview" to previewImageOnBadge(),
         )
     },
 )
@@ -112,7 +112,7 @@ fun storageCommands() = listOf(
     CommandLineArgument(
         name = "show stored image",
         description = "Shows an already stored image on the badge.",
-        short = "-sh",
+        short = "-s",
         long = "--show",
         hasParameter = true,
     ) { filename ->
@@ -128,7 +128,7 @@ fun storageCommands() = listOf(
         hasParameter = true,
     ) { filename ->
         Configuration.storageOperations.add(
-            "show" to deleteStoredImageOnBadge(filename),
+            "delete" to deleteStoredImageOnBadge(filename),
         )
     },
 )
@@ -479,5 +479,6 @@ private fun noResultTarget() =
     Configuration.output == null
             && Configuration.imageOperations.firstOrNull { it.first == "list" } == null
             && Configuration.imageOperations.firstOrNull { it.first == "send" } == null
-            && Configuration.imageOperations.firstOrNull { it.first == "store" } == null
             && Configuration.imageOperations.firstOrNull { it.first == "show" } == null
+            && Configuration.imageOperations.firstOrNull { it.first == "store" } == null
+            && Configuration.imageOperations.firstOrNull { it.first == "preview" } == null
