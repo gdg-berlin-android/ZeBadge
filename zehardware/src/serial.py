@@ -4,8 +4,6 @@ import supervisor
 
 from message import Message
 
-MAX_OUTPUT_LEN = 10
-
 
 def init(os):
     if usb_cdc.data:
@@ -51,8 +49,8 @@ def _parse_input(serial_input):
 
     parts = serial_input.split(":")
     if len(parts) != 3:
-        print(f"Invalid command: '{serial_input}'")
-        print(" - Did you forget to add colons?")
+        readable_parts = " ".join(map(lambda p: trunc(p), parts))
+        print(f"Invalid command: '{readable_parts}'")
         return None
 
     return [
@@ -64,3 +62,19 @@ def _parse_input(serial_input):
 
 def log(os, news):
     os.messages.append(Message('info', news))
+
+
+def trunc(message, max_length=10):
+    # Middle of the word truncating
+    if len(message) <= max_length:
+        return message
+
+    trunc_replacement = "…"
+
+    # L = 2*pad + T
+    # (L - T)/2 = pad
+    pad = int(round((max_length - len(trunc_replacement)) / 2))
+    left = message[:pad]
+    right = message[-pad:]
+
+    return left + trunc_replacement + right

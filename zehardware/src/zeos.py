@@ -182,18 +182,14 @@ class ZeBadgeOs:
             self.active_app = app
             self.active_app.run()
 
-        def show_terminal(os, message):
-            changes = message.value
+        self.subscribe('system_button_a_released', lambda os, _: start_app(app_store_and_show))
+        self.subscribe('system_button_b_released', lambda os, _: start_app(app_fetch))
+        self.subscribe('system_button_c_released', lambda os, _: start_app(app_third))
 
-            if 'a' in changes and changes['a'] and 'c' in changes and changes['c']:
-                os.messages.append(Message("UI_SHOW_TERMINAL"))
-
-        self.subscribe('system_button_a_released', lambda os, message: start_app(app_store_and_show))
-        self.subscribe('system_button_b_released', lambda os, message: start_app(app_fetch))
-        self.subscribe('system_button_c_released', lambda os, message: start_app(app_third))
-
-        # register special terminal showing button combination
-        self.subscribe('system_button_changes', show_terminal)
+        # register special terminal showing button
+        self.subscribe('system_button_developer_released',
+                       lambda os, _: os.messages.append(Message("UI_SHOW_TERMINAL"))
+                       )
 
         start_app(app_store_and_show)
 
@@ -205,6 +201,7 @@ class SystemButtons:
         self.c = _system_button(board.SW_C)
         self.up = _system_button(board.SW_UP)
         self.down = _system_button(board.SW_DOWN)
+        self.developer = _system_button(board.USER_SW)
         self.last = self.snapshot()
 
     def snapshot(self):
@@ -214,6 +211,7 @@ class SystemButtons:
             'c': self.c.value,
             'up': self.up.value,
             'down': self.down.value,
+            'developer': self.developer.value,
         }
 
     def changes(self):
@@ -225,6 +223,7 @@ class SystemButtons:
         if current['c'] != self.last['c']: result['c'] = current['c']
         if current['up'] != self.last['up']: result['up'] = current['up']
         if current['down'] != self.last['down']: result['down'] = current['down']
+        if current['developer'] != self.last['developer']: result['developer'] = current['developer']
 
         self.last = current
         return result
