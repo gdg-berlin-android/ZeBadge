@@ -19,12 +19,11 @@ class ZeBadgeManager @Inject constructor(
     private val badgeManager = buildBadgeManager(Environment(context))
 
     /**
-     * Send a bitmap to the badge for the name slot
+     * Send a bitmap to the badge to be shown instantaneous
      *
-     * @param name the name of the page / slot for the bitmap
      * @param page the bitmap in black / white to be send to the badge
      */
-    suspend fun sendPage(name: String, page: Bitmap): Result<Int> {
+    suspend fun previewPage(page: Bitmap): Result<Int> {
         val binaryPayload = page
             .pixelBuffer()
             .toBinary()
@@ -41,10 +40,42 @@ class ZeBadgeManager @Inject constructor(
     }
 
     /**
-     * Wrapper to return the response from the badge.
+     * Store a bitmap on the badge
+     *
+     * @param name a file name on the badge to be stored
+     * @param page the bitmap in black / white to be send to the badge
      */
-    suspend fun readResponse(): Result<String> {
-        return badgeManager.readResponse()
+    suspend fun storePage(name: String, page: Bitmap): Result<Int> {
+        val binaryPayload = page
+            .pixelBuffer()
+            .toBinary()
+            .zipit()
+            .base64()
+
+        val payload = BadgePayload(
+            type = "store",
+            meta = name,
+            payload = binaryPayload,
+        )
+
+        return badgeManager.sendPayload(payload)
+    }
+
+    /**
+     * Return the name of the pages stored on the badge.
+     */
+    suspend fun requestPagesStored(): Result<String> {
+        val payload = BadgePayload(
+            type = "list",
+            meta = "",
+            payload = "",
+        )
+
+        if (badgeManager.sendPayload(payload).isSuccess) {
+            return badgeManager.readResponse()
+        } else {
+            return Result.failure(NoSuchElementException())
+        }
     }
 
     fun isConnected(): Boolean = badgeManager.isConnected()
