@@ -296,7 +296,8 @@ private fun rawCommand(
                 if (result.isSuccess) {
                     println(
                         COLOR_GREEN_BACKGROUND +
-                                "Successfully send command '$command' with meta '$meta' and payload (#${payload.length})." +
+                                "Successfully send command '$command' with meta '$meta' and payload (#${payload.length}).\n" +
+                                badgePayload.toBadgeCommand() + "\n" +
                                 COLOR_END,
                     )
 
@@ -304,7 +305,7 @@ private fun rawCommand(
 
                     println("Response:\n${resultTransformer(readResult)}")
                 } else {
-                    println("${COLOR_RED_BACKGROUND}Couldn't show image.${COLOR_END}")
+                    println("${COLOR_RED_BACKGROUND}Couldn't execute raw command.${COLOR_END}")
                 }
             } else {
                 println("${COLOR_RED_BACKGROUND}No Badge connected.${COLOR_END}\nTry attaching a badge and execute the command again.")
@@ -352,6 +353,7 @@ private fun previewImageOnBadge(): IntBuffer.(width: Int, height: Int) -> IntBuf
                 val result = sendPayload(payload)
                 if (result.isSuccess) {
                     println("${COLOR_GREEN_BACKGROUND}Successfully sent image (${result.getOrNull()}).${COLOR_END}")
+                    println(payload.toBadgeCommand())
                 } else {
                     println("${COLOR_RED_BACKGROUND}Image not send.${COLOR_END}")
                 }
