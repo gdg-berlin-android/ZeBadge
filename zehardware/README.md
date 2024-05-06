@@ -308,15 +308,18 @@ Rules:
 
 ### Examples
 
-All commands available are [listed](#serial-commands) below. Following is a simple example for illustration.
+All commands available are [listed](#serial-commands) below. Following is a simple example for illustration. Please take
+a look if the example is `writing to` or `reading from` the serial port.
 
 #### Help Command
+
+Write:
 
 ```console
 help::/r/n
 ```
 
-Response
+Read:
 
 ```
 config_listn,show,store,preview,reload,list,delete,exit,help,terminal,config_load,config_update,refresh,config_save
@@ -346,13 +349,13 @@ or similar, they all are taught to be using this protocol.
 ## Serial Commands
 
 ⚠️ &nbsp; Important consideration: each command, button press or screen refresh has some debouncing to preserve a steady
-command stream.
-
-This means that you may experience delays of up to 5 seconds on your commands – this is by design.
+command stream. This means that you may experience delays of up to 5 seconds on your commands – this is by design.
 
 ### General
 
-#### Help 🧐
+What are commands unrelated to other things mentioned here. Totally not a kitchen sink.
+
+#### 🧐 &nbsp; Help
 
 Returns all serial commands registered
 
@@ -364,13 +367,28 @@ Returns all serial commands registered
 
 Please read from the serial console once this command is issued.
 
+<details>
+<summary>
 Example:
+</summary>
+
+Write:
 
 ```console
 help::
 ```
 
+Read:
+
+```console
+help,reload,exit,terminal,refresh,config_save,config_load,config_update,config_list,show,store,preview,list,delete
+```
+
+</details>
+
 ### Debugging
+
+Found a bug? Use these commands for finding out how to exterminate it.
 
 #### 🖥️ &nbsp; Reload
 
@@ -384,11 +402,18 @@ Reloads the latest badge code changes.
 
 Should rarely be used, the changes are applied automatically
 
-Example:
+<details>
+<summary>
+Example
+</summary>
+
+Write:
 
 ```console
 reload::
 ```
+
+</details>
 
 #### 🖥️ &nbsp; Terminal
 
@@ -400,11 +425,16 @@ Shows the Terminal on the E-Ink display.
 | Metadata        | N/A        |
 | Payload         | N/A        |
 
-Example:
+<details>
+<summary>
+Example
+</summary>
 
 ```console
 terminal::
 ```
+
+</details>
 
 #### 🖥️ &nbsp; Exit
 
@@ -416,23 +446,20 @@ Stops the main loop and exits to an interactive Python interpreter (REPL).
 | Metadata        | N/A     |
 | Payload         | N/A     |
 
-Example:
+<details>
+<summary>
+Example
+</summary>
 
 ```console
 exit::
 ```
 
-### Interactions
+</details>
 
-#### 🖥️ &nbsp; Preview image
+### Image Interactions
 
-Previews an image on the E-Ink display. The image is not stored.
-
-| Command section | Content                                                 |
-|-----------------|---------------------------------------------------------|
-| Name            | `preview`                                               |
-| Metadata        | N/A                                                     |
-| Payload         | Base64-encoded, zipped, binary image format (see below) |
+What can be done with "images"? Everything that can be done with a binary format.
 
 The binary format here is critically important, as it applies to all other image-related commands as well.  
 Due to hardware limitations, we have to minimize the amount of data we send to the badge, but also minimize the amount
@@ -453,11 +480,26 @@ The general idea of how we transmit images is this:
 
 To assist you in preparing the images, use our [command line, desktop, or android app](../zeapp) from this repository.
 
-example:
+#### 🖥️ &nbsp; Preview image
+
+Previews an image on the E-Ink display. The image is not stored.
+
+| Command section | Content                                                 |
+|-----------------|---------------------------------------------------------|
+| Name            | `preview`                                               |
+| Metadata        | N/A                                                     |
+| Payload         | Base64-encoded, zipped, binary image format (see below) |
+
+<details>
+<summary>
+Example
+</summary>
 
 ```console
 preview::eJy12F9MG3UcAPDvtef16q5wdTquKbPXQpgPaFq6MCbRnWwhI2Ga+GCM+OcGhGCCpIsJLBmO60IaSbpQ5GUVl+3RF5NFzeBl5gBlI06HPjHZYiNkmsgiaCAlAvXau/vdUXr87sVfSO9+5ZPf99v7+/v+AOy0wRyu7QCBNbmc5JKwsYhMmY2MYpU2UANnA3Hh0t+7TGkDY4EaTBkBI5ZGsrHLAFUaOXftWyDKtE9IFojeFdoC7TowvAXizZ2wHcRaIMHcoS2QbO4wFkgyd8jSiNjVc/zfyKHSHjU1QkGcnN9R+yCa0BM1nUVIG4M3Ic9XdQj5UhJV5qGgMVjLQC3Tx+nI//BTWUfPvCl5/H4/HAjW10Hf0UPVOqrvX0kh1CL5vKOjwASjPIRCXJeO+m9NdOro0Byw7OhhoKuClRDqZS/qaO6LxdM6euoMsN5RL9CRqjJoF1lBR8nFnl90xH4HnNebAjoackCIZ0VWQ+3Nj79EiIJC4lxFVR2E6sM1nIoIR3isVtJRMyiHoAye9eVzqhzg9JHYS2/c4TUEZOnT4pDh1Ot6OOXuK4mczwPxNEJ7m4omuqFawCBqvkbt7YdcGfIOHoGPxyJqcNwGyv0+NY9FCWqqFYcIyZ/AhiOFkabC5bzvSNyt2cL9sR+Cmi7PWgyHiIPDI2ENBYrfN6sqCkMLtaKHI4NkkG5ihwofvPKtdj3VCO7mzgwmXJQFZxR3CI7OQTyNQ0d6eDjFYlBj/cf57PdH9X9/i0fHfn1F7e2HDn5Eqg9YA5F7UMXXO5mikcqIYkRu/Tt5mt+FGFemCDnbBAcr6SiQK4QWi9FblVI8hUFwM7e0JOqIg9Lo8p/vUzJCc1L55ACIgXi2d2mgXNaR+zrjQjn5stLhFQbE41PJ/nM/5t/vKgrFwgEGobRE31VQbIbsiCY4XkfwKjuIjpPfrSAKRHFGCkUTDMqJdMbXEfJxEpcfSTy72hFxlktoJNb1GbpUfFfVcKI40BGhnBmEgPneGCmnIFJBMhOKUiAaKFSFEOeAQriwzLRHnQYSAKoNpLyw75ZB5vhMsiOSqERI0t5d6mnZUtDg7S3lYHZEqXKUk6wFVVG2MDchSfXxgA6B7DChvU397yol4NGmJ4xHDz1JPNp4N4NHf7XF8OjxtXk8uvDBAh59+N4fePTS4g088oxnEbJ6ZgL12jZC7upPWkx/XlrQkOPBOj4c4f8Gj6BlQsIjZt0Gcrwj4BG02EFPhm2gUMoGUhsOVdtBppH0ebxQhAgTIgrpKcWDoN+QJRAaCYXWw/2MUEU4lcm8IC7ffLu54dLt+LA7i9AcQoFsevNG4+bWo53Wi7P35DQzidDKdR1xyXEfGxlOzk6fnz21IKzRYYQ2jNnh5TF3JuImE03np1uvwFlaROgCmmd6h8boWPAAk5junu5eEM4xsoEeyfpIQ+M+LuhOJqZbZxsW5J+uSAi9vJ1C4dJr/0SGtxInmwca7l1Nbxq/7sR9Ho2UEk8G6U6pqYkDp5v+4XNjpLZJ5dO599wRnDHPD+ysQMlCgsgaFUOgv6s0yp8cIqOhE+PKJ2VRJqn3N5TnNiXLMgkeaGhjW7IuuPrVjevajmhdujWqmVNnFiXrIrBOLmycy70L1uVkJV/YOI6NPKf8XAvk0bbx9WXrEld7YShlSp/rvlWx7FQTB0cyTRwByqLK/02bBXXliC3LpYAXjd2YJdq9qGBrecLWQoetJRNbiy+2lnFsLQjZav8BwW4yIQ==
 ```
+
+</details>
 
 #### 🖥️ &nbsp; Refresh
 
@@ -469,15 +511,20 @@ Requests a refresh to happen on the next refresh cycle.
 | Metadata        | N/A       |
 | Payload         | N/A       |
 
-Example:
+<details>
+<summary>
+Example
+</summary>
 
 ```console
 refresh::
 ```
 
+</details>
+
 #### 🖥️ &nbsp; Show
 
-Shows a stored image file.
+Shows a stored image file on ZeBadge epaper display.
 
 | Command section | Content    |
 |-----------------|------------|
@@ -488,15 +535,20 @@ Shows a stored image file.
 This shows only previously stored images. Use [store](#--store) to upload an image. The extension `.b64` is
 automatically added if not found.
 
-Example:
+<details>
+<summary>
+Example
+</summary>
 
 ```console
 show:milos-exposed.b64:
 ```
 
+</details>
+
 #### 🖥️ &nbsp; Store
 
-Shows a stored image file.
+Stored a payload as a file on ZeBadge.
 
 | Command section | Content         |
 |-----------------|-----------------|
@@ -507,35 +559,53 @@ Shows a stored image file.
 This stores an images, given the usual format. Use [list](#--list) for a list of already stored images, overwrites. The
 extension `.b64` is automatically added if not found.
 
-Example:
+<details>
+<summary>
+Example
+</summary>
 
 ```console
 store:milos-exposed.b64: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/r/n
 ```
 
+</details>
+
 #### 🖥️ &nbsp; Fetch
 
 Writes content if file to serial.
 
-| Command section | Content  |
-|-----------------|----------|
-| Name            | `fetch`  |
-| Metadata        | {file}   |
-| Payload         | N/A      |
+| Command section | Content    |
+|-----------------|------------|
+| Name            | `fetch`    |
+| Metadata        | {filename} |
+| Payload         | N/A        |
 
-<center style="background:lightgray">
+<center style="background:orange">
 <tt>TODO: Not currently implemented</tt>
 </center>
 
-Example:
+<details>
+<summary>
+Example
+</summary>
+
+Write:
 
 ```console
 fetch:milos-smirking.b64:
 ```
 
+Read:
+
+```console
+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/r/n
+```
+
+</details>
+
 #### 🖥️ &nbsp; List
 
-Writes all stored image fileslnames to serial.
+Writes all stored image filenames to serial.
 
 | Command section | Content |
 |-----------------|---------|
@@ -543,12 +613,24 @@ Writes all stored image fileslnames to serial.
 | Metadata        | N/A     |
 | Payload         | N/A     |
 
-Example:
+<details>
+<summary>
+Example
+</summary>
+
+Write:
 
 ```console
 list::
 ```
 
+Read:
+
+```console
+milos-smirking.b64,weather.b64,bella,b64,ziggy.b64
+```
+
+</details>
 
 #### 🖥️ &nbsp; Delete
 
@@ -560,21 +642,116 @@ Deletes a given file.
 | Metadata        | {filename} |
 | Payload         | N/A        |
 
-
-Example:
+<details>
+<summary>
+Example
+</summary>
 
 ```console
 delete:milos-exposed.b64:
 ```
+</details>
 
 ### Configuration
 
-#### Update
-#### Save
-#### Load
-#### List
+Configure ZeBadge: Access configuration details on the badge.
 
+Important: Save stores the current configuration on ZeBadge, Update only updates the configuration at runtime, doesn't store it to the file system. Load loads the stored configuration from the filesystem of the badge.
 
+#### 📋 &nbsp; Update
+
+Takes the payload of this command and applied to the runtime of the badge. No saving done here
+
+| Command section | Content           |
+|-----------------|-------------------|
+| Name            | `config-update`   |
+| Metadata        | N/A               |
+| Payload         | {key-value pairs} |
+
+<details>
+<summary>
+Example
+</summary>
+
+```console
+config-update::user.name="Milos",wifi.ssid="Drodicon2030"
+```
+</details>
+
+#### 📋 &nbsp; Save
+
+Takes the runtime configuration of ZeBadge and saves it to the file system of ZeBadge.
+
+| Command section | Content       |
+|-----------------|---------------|
+| Name            | `config-save` |
+| Metadata        | N/A           |
+| Payload         | N/A           |
+
+<details>
+<summary>
+Example
+</summary>
+
+```console
+config-save::
+```
+</details>
+
+#### 📋 &nbsp; Load
+
+Load the filesystem configuration file and overwrite the runtime configuration.
+
+| Command section | Content       |
+|-----------------|---------------|
+| Name            | `config-load` |
+| Metadata        | N/A           |
+| Payload         | N/A           |
+
+<details>
+<summary>
+Example
+</summary>
+
+```console
+config-load::
+```
+</details>
+
+#### 📋 &nbsp; List
+
+List all configuration options of the current runtime configuration.
+
+| Command section | Content       |
+|-----------------|---------------|
+| Name            | `config-list` |
+| Metadata        | N/A           |
+| Payload         | N/A           |
+
+<details>
+<summary>
+Example
+</summary>
+
+Write:
+```console
+config-list::
+```
+
+Read:
+```console
+keyboard_attached = False
+wifi_attached = False
+developer_mode = False
+last_app = ""
+wifi.ssid = None
+wifi.pwd = None
+wifi.ip = "35.208.138.88"
+wifi.url = "/"
+wifi.host = "char.zebadge.app"
+wifi.port = 13370
+```
+</details>
 
 ## Persistent images
 
