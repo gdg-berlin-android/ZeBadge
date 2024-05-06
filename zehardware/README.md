@@ -110,6 +110,11 @@ To celebrate, we are offering free accessories to your PRs:
 1. ZeBadge + ZeBattery
 2. Either ZeWifi or ZeKeyboard
 
+Luckily ZeBadge comes with enough plugs for everything: A battery plug, a stemmaQT expansion plug and finally: Usb-C.
+
+<center style="background:lightgrey;border:4px outset white">                                             <img src="./resources/ports.png" width=100/>
+</center>
+
 ## ZeBadge
 
 <center style="background:lightgrey;border:4px outset white">
