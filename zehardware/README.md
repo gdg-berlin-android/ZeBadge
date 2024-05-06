@@ -513,9 +513,29 @@ Example:
 store:milos-exposed.b64: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/r/n
 ```
 
+#### 🖥️ &nbsp; Fetch
+
+Writes content if file to serial.
+
+| Command section | Content  |
+|-----------------|----------|
+| Name            | `fetch`  |
+| Metadata        | {file}   |
+| Payload         | N/A      |
+
+<center style="background:lightgray">
+<tt>TODO: Not currently implemented</tt>
+</center>
+
+Example:
+
+```console
+fetch:milos-smirking.b64:
+```
+
 #### 🖥️ &nbsp; List
 
-Writes all stored image files to serial.
+Writes all stored image fileslnames to serial.
 
 | Command section | Content |
 |-----------------|---------|
@@ -523,17 +543,16 @@ Writes all stored image files to serial.
 | Metadata        | N/A     |
 | Payload         | N/A     |
 
-This lists all already stored images.
-
 Example:
 
 ```console
 list::
 ```
 
+
 #### 🖥️ &nbsp; Delete
 
-Writes all stored image files to serial.
+Deletes a given file.
 
 | Command section | Content    |
 |-----------------|------------|
@@ -542,13 +561,20 @@ Writes all stored image files to serial.
 | Payload         | N/A        |
 
 
-Deletes a given file.
-
 Example:
 
 ```console
 delete:milos-exposed.b64:
 ```
+
+### Configuration
+
+#### Update
+#### Save
+#### Load
+#### List
+
+
 
 ## Persistent images
 
