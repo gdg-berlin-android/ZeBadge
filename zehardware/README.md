@@ -1,8 +1,8 @@
 # ZeBadge Hardware
 
-<center style="background:lightgrey;border:4px outset white">
+<p align="center" style="background:lightgrey;border:4px outset white">
 <img src="./resources/zebadge.png" width=300/>
-</center>
+</p>
 
 ## What is it?
 
@@ -18,10 +18,10 @@ of [CircuitPython](https://circuitpython.org/), some libraries and some applicat
 
 # User Interface
 
-<center style="background:lightgrey;border:4px outset white">
+<p align="center" style="background:lightgrey;border:4px outset white">
 <img src="./resources/front-buttons.png" width=400"/>
 <img src="./resources/back-buttons.png" width=400/>
-</center>
+</p>
 
 How do I use it? Usually by pressing buttons: ZeBadge comes with 5 front facing buttons: The application
 buttons `a`, `b`, `c` to select
@@ -112,40 +112,40 @@ To celebrate, we are offering free accessories to your PRs:
 
 Luckily ZeBadge comes with enough plugs for everything: A battery plug, a stemmaQT expansion plug and finally: Usb-C.
 
-<center style="background:lightgrey;border:4px outset white">                                             <img src="./resources/ports.png" width=100/>
-</center>
+<p align="center" style="background:lightgrey;border:4px outset white">                                             <img src="./resources/ports.png" width=100/>
+</p>
 
 ## ZeBadge
 
-<center style="background:lightgrey;border:4px outset white">
+<p align="center" style="background:lightgrey;border:4px outset white">
 <img src="./resources/zebadge.png" width=100/>
-</center>
+</p>
 
 This is ZeBadge. See https://github.com/gdg-berlin-android/zebadge for all information and recursion.
 
 ## ZeBattery
 
-<center style="background:lightgrey;border:4px outset white">
+<p align="center" style="background:lightgrey;border:4px outset white">
 <img src="./resources/zebattery.png" width=100/>
-</center>
+</p>
 
 It is a battery pack of two AAA batteries. Power on the device while only battery powered, by holding down the `up`
 button. Keep holding it, till "the rhythm of blinking changes". Mario should really add a video about it here.
 
 ## ZeWifi
 
-<center style="background:lightgrey;border:4px outset white">
+<p align="center" style="background:lightgrey;border:4px outset white">
 <img src="./resources/zewifi.png" width=100/>
-</center>
+</p>
 
 Need Wi-Fi? No worries, this module will add it in some form to the badge. Disclaimer: No DNS, no TLS, only IP. For
 configuration use.
 
 ## ZeKeyboard
 
-<center style="background:lightgrey;border:4px outset white">
+<p align="center" style="background:lightgrey;border:4px outset white">
 <img src="./resources/zekeyboard.png" width=100/>
-</center>
+</p>
 
 Type away with this handy accessory: Capable of lower case AND upper case, this accessory leaves nothing to be desired.
 
@@ -580,9 +580,9 @@ Writes content if file to serial.
 | Metadata        | {filename} |
 | Payload         | N/A        |
 
-<center style="background:orange">
+<p align="center" style="background:orange">
 <tt>TODO: Not currently implemented</tt>
-</center>
+</p>
 
 <details>
 <summary>
