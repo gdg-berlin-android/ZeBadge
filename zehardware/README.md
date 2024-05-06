@@ -1,8 +1,10 @@
 # ZeBadge Hardware
 
-<p align="center" style="background:lightgrey;border:4px outset white">
+<div style="background:lightgrey">
+<p align="center">
 <img src="./resources/zebadge.png" width=300/>
 </p>
+</div>
 
 ## What is it?
 
@@ -112,7 +114,8 @@ To celebrate, we are offering free accessories to your PRs:
 
 Luckily ZeBadge comes with enough plugs for everything: A battery plug, a stemmaQT expansion plug and finally: Usb-C.
 
-<p align="center" style="background:lightgrey;border:4px outset white">                                             <img src="./resources/ports.png" width=100/>
+<p align="center" style="background:lightgrey;border:4px outset white">                                             
+   <img src="./resources/ports.png" width=300/>
 </p>
 
 ## ZeBadge
@@ -752,10 +755,4 @@ wifi.host = "char.zebadge.app"
 wifi.port = 13370
 ```
 </details>
-
-## Persistent images
-
-For store pages for later retrieval, please first store an image using [store](#--store) and load it through
-the [`a` app](#pages-app), or through [show](#--show)
-serial command.
 
