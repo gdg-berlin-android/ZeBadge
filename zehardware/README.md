@@ -1,8 +1,8 @@
 # ZeBadge Hardware
 
-<div style="background:lightgrey">
+<div style="background:lightgrey;border:4px outset white">
 <p align="center">
-<img src="./resources/zebadge.png" width=300/>
+<img src="./resources/zehero.png" width=300/>
 </p>
 </div>
 
@@ -21,8 +21,8 @@ of [CircuitPython](https://circuitpython.org/), some libraries and some applicat
 # User Interface
 
 <p align="center" style="background:lightgrey;border:4px outset white">
-<img src="./resources/front-buttons.png" width=400"/>
-<img src="./resources/back-buttons.png" width=400/>
+<img src="./resources/front-buttons.png" height=100"/> 
+<img src="./resources/back-buttons.png" height=100/>
 </p>
 
 How do I use it? Usually by pressing buttons: ZeBadge comes with 5 front facing buttons: The application
@@ -43,7 +43,7 @@ the same `a` app: A display of pages uploaded to it.
 
 Pressing the `a` button reveals the page app that displays the currently available pages on ZeBadge. Those pages are
 uploaded
-through the [store serial command](store-command). A press of the `up` or `down` front facing buttons reveals the
+through the [store serial command](#--store). A press of the `up` or `down` front facing buttons reveals the
 previous or next page, alphabetically
 sorted by file name. Reaching the last (or the first) page and pressing the next button will wrap around and start over
 again:
@@ -121,7 +121,7 @@ Luckily ZeBadge comes with enough plugs for everything: A battery plug, a stemma
 ## ZeBadge
 
 <p align="center" style="background:lightgrey;border:4px outset white">
-<img src="./resources/zebadge.png" width=100/>
+<img src="./resources/front-only.png" width=300/>
 </p>
 
 This is ZeBadge. See https://github.com/gdg-berlin-android/zebadge for all information and recursion.
