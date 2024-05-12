@@ -23,6 +23,7 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.barCodeComposableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 /**
  * Editor dialog for changing the name of the participant badge.
@@ -55,6 +56,7 @@ fun BarCodeEditorDialog(
     }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(

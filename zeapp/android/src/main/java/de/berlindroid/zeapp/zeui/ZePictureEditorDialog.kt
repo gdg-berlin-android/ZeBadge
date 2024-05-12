@@ -25,6 +25,7 @@ import de.berlindroid.zeapp.zebits.cropPageFromCenter
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import timber.log.Timber
 
 private const val ROTATE_CLOCKWISE = 90f
@@ -73,6 +74,7 @@ fun PictureEditorDialog(
     }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(onClick = {

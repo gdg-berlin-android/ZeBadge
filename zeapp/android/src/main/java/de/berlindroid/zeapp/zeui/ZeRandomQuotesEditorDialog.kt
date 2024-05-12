@@ -21,6 +21,7 @@ import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.RandomQuotePage
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import kotlin.random.Random
 
 /**
@@ -56,6 +57,7 @@ fun RandomQuotesEditorDialog(
     }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(

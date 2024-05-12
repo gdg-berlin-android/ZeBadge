@@ -570,6 +570,7 @@ private fun TemplateChooserDialog(
     templateChooser: ZeTemplateChooser?,
 ) {
     ZeAlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = {
             vm.templateSelected(null, null)
         },

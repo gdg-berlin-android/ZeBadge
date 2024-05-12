@@ -30,6 +30,7 @@ import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.NamePage
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 const val MaxCharacters: Int = 20
 
@@ -66,6 +67,7 @@ fun NameEditorDialog(
     AlertDialog(
         modifier = Modifier.imePadding(),
         onDismissRequest = dismissed,
+        containerColor = ZeWhite,
         confirmButton = {
             Button(
                 onClick = {
