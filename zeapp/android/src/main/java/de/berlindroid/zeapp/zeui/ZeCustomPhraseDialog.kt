@@ -21,6 +21,7 @@ import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.CustomPhrasePage
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 @Composable
 fun CustomPhraseEditorDialog(
@@ -44,6 +45,7 @@ fun CustomPhraseEditorDialog(
     }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(

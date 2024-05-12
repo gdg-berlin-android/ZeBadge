@@ -38,6 +38,7 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeservices.WeatherData
 import de.berlindroid.zeapp.zeservices.fetchWeather
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneOffset
@@ -85,6 +86,7 @@ fun WeatherEditorDialog(
     }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(
