@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import com.ban.autosizetextfield.AutoSizeTextField
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.CustomPhrasePage
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 @Composable
@@ -65,7 +67,10 @@ fun CustomPhraseEditorDialog(
                 Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(text = stringResource(R.string.add_your_phrase_here)) },
+        title = { Text(
+            color = ZeBlack,
+            text = stringResource(R.string.add_your_phrase_here)
+        ) },
         properties = DialogProperties(),
         text = {
             Column {
@@ -74,10 +79,9 @@ fun CustomPhraseEditorDialog(
                     bitmapUpdated = { image = it },
                 )
             }
-            OutlinedTextField(
+            AutoSizeTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = randomPhrase,
-                maxLines = 1,
                 label = { Text(text = stringResource(R.string.random_phrase)) },
                 onValueChange = { newValue ->
                     if (newValue.length <= MaxCharacters * 2) {
@@ -85,6 +89,8 @@ fun CustomPhraseEditorDialog(
                         redrawComposableImage()
                     }
                 },
+                placeholder = {},
+                trailingIcon = {},
                 supportingText = {
                     Text(text = "${randomPhrase.length}/${MaxCharacters * 2}")
                 },

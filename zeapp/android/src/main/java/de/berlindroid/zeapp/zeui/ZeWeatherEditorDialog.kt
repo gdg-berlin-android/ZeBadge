@@ -38,6 +38,7 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeservices.WeatherData
 import de.berlindroid.zeapp.zeservices.fetchWeather
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -106,7 +107,10 @@ fun WeatherEditorDialog(
                 Text(text = stringResource(android.R.string.cancel))
             }
         },
-        title = { Text(text = stringResource(id = R.string.add_your_contact_details)) },
+        title = { Text(
+            color = ZeBlack,
+            text = stringResource(id = R.string.add_your_contact_details)
+        ) },
         properties = DialogProperties(),
         text = {
             LazyColumn {

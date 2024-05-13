@@ -580,7 +580,10 @@ private fun TemplateChooserDialog(
             }
         },
         title = {
-            ZeText(text = "Select Content")
+            ZeText(
+                color = ZeBlack,
+                text = "Select Content",
+            )
         },
         text = {
             ZeLazyColumn {
