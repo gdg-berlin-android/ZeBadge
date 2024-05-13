@@ -115,11 +115,9 @@ fun NameEditorDialog(
                     },
                 )
 
-                OutlinedTextField(
+                AutoSizeTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = contact ?: "",
-                    maxLines = 1,
-                    singleLine = true,
                     placeholder = { Text(text = stringResource(R.string.contact)) },
                     onValueChange = { newValue ->
                         // Limit Characters so they're displayed correctly in the screen

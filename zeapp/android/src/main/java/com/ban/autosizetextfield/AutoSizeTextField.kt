@@ -3,8 +3,10 @@ package com.ban.autosizetextfield
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.ParagraphIntrinsics
@@ -15,6 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 private const val TEXT_SCALE_REDUCTION_INTERVAL = 0.7f
 
@@ -32,6 +36,9 @@ fun AutoSizeTextField(
     label: @Composable () -> Unit = { },
     trailingIcon: @Composable () -> Unit,
     placeholder: @Composable () -> Unit,
+    fontWeight: FontWeight = FontWeight.SemiBold,
+    textAlign: TextAlign = TextAlign.Center,
+    isError: Boolean = false,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         var shrunkFontSize = fontSize
@@ -40,7 +47,7 @@ fun AutoSizeTextField(
                 text = value,
                 style = TextStyle(
                     fontSize = shrunkFontSize,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = fontWeight,
                     lineHeight = lineHeight,
                 ),
                 density = LocalDensity.current,
@@ -66,15 +73,27 @@ fun AutoSizeTextField(
             onValueChange = { onValueChange(it) },
             textStyle = TextStyle(
                 fontSize = shrunkFontSize,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = fontWeight,
                 lineHeight = lineHeight,
-                textAlign = TextAlign.Center,
+                textAlign = textAlign,
             ),
             label = label,
             singleLine = true,
             supportingText = supportingText,
             trailingIcon = trailingIcon,
             placeholder = placeholder,
+            isError = isError,
+            colors = OutlinedTextFieldDefaults.colors().copy(
+                focusedContainerColor = ZeBlack,
+                focusedTextColor = ZeWhite,
+                focusedLabelColor = ZeBlack,
+                unfocusedContainerColor = ZeWhite,
+                unfocusedTextColor = ZeBlack,
+                unfocusedLabelColor = ZeBlack,
+                cursorColor = ZeWhite,
+                errorContainerColor = Color.Red,
+                errorLabelColor = Color.Red,
+            ),
         )
     }
 }
