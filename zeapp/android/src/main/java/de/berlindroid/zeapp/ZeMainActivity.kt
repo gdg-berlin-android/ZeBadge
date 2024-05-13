@@ -18,10 +18,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,10 +34,15 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -60,11 +67,14 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
+import com.ban.autosizetextfield.AutoSizeTextField
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
@@ -86,6 +96,7 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zevm.copy
 import de.berlindroid.zekompanion.getPlatform
 import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
@@ -205,6 +216,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onAboutClick = { isShowingAbout = !isShowingAbout },
                         onGotoReleaseClick = goToReleases,
                         isShowingAbout = isShowingAbout,
+                        onUpdateConfig = vm::listConfiguration,
                     )
                 },
                 content = { paddingValues ->
@@ -284,6 +296,7 @@ private fun ZeTopBar(
     onGetStoredPages: () -> Unit,
     onAboutClick: () -> Unit,
     onGotoReleaseClick: () -> Unit,
+    onUpdateConfig: () -> Unit,
     isShowingAbout: Boolean,
 ) {
     ZeTopAppBar(
@@ -332,6 +345,9 @@ private fun ZeTopBar(
                     ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
                 }
             }
+            ZeIconButton(onClick = onUpdateConfig) {
+                ZeIcon(Icons.Default.ThumbUp, contentDescription = "Update Config")
+            }
         },
     )
 }
@@ -354,6 +370,15 @@ private fun ZePages(
         val message = uiState.message
         val messageProgress = uiState.messageProgress
         val slots = uiState.slots
+        val badgeConfiguration = uiState.currentBadgeConfig
+
+        if (badgeConfiguration != null) {
+            BadgeConfigEditor(
+                config = badgeConfiguration,
+                onDismissRequest = vm::closeConfiguration,
+                onConfirmed = vm::updateConfiguration,
+            )
+        }
 
         if (editor != null) {
             SelectedEditor(editor, vm)
@@ -469,6 +494,78 @@ private fun InfoBar(
             strokeCap = StrokeCap.Round,
         )
     }
+}
+
+@Composable
+@Preview
+private fun BadgeConfigEditor(
+    config: Map<String, String> = mapOf(
+        "sample configuration" to "sample value",
+        "sample int" to "23",
+        "another configuration" to "true",
+    ),
+    onDismissRequest: () -> Unit = {},
+    onConfirmed: (updateConfig: Map<String, String>) -> Unit = {},
+) {
+    var configState by remember { mutableStateOf(config) }
+    var error by remember { mutableStateOf(mapOf<String, String>()) }
+
+    AlertDialog(
+        modifier = Modifier.imePadding(),
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirmed(configState)
+                },
+            ) {
+                Text(text = stringResource(id = android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismissRequest) {
+                Text(text = stringResource(id = android.R.string.cancel))
+            }
+        },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(R.string.badge_config_editor_title),
+            )
+        },
+        properties = DialogProperties(decorFitsSystemWindows = false),
+        shape = AlertDialogDefaults.shape,
+        containerColor = ZeWhite,
+        text = {
+            LazyColumn {
+                items(config.keys.toList()) { key ->
+                    val value = configState[key]
+
+                    AutoSizeTextField(
+                        value = "$value",
+                        fontSize = 18.sp,
+                        isError = !error[key].isNullOrEmpty(),
+                        onValueChange = { updated ->
+                            if (updated != value) {
+                                error = error.copy(key to "")
+                                configState = configState.copy(
+                                    key to updated,
+                                )
+                            }
+                        },
+                        label = { Text(text = key) },
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.Normal,
+                        supportingText = {
+                            Text(text = error.getOrDefault(key, ""))
+                        },
+                        trailingIcon = {},
+                        placeholder = {},
+                    )
+                }
+            }
+        },
+    )
 }
 
 @Composable

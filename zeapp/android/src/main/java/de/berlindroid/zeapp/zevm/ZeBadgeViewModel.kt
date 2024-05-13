@@ -417,6 +417,51 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Talks to the badge to get the current active configuration
+     */
+    fun listConfiguration() {
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
+        } else {
+            viewModelScope.launch {
+                val configResult = badgeManager.listConfiguration()
+                if (configResult.isSuccess) {
+                    val kv = configResult.getOrNull()
+                    if (kv != null) {
+                        showMessage(kv.toString())
+                        _uiState.update {
+                            it.copy(currentBadgeConfig = kv)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateConfiguration(configuration: Map<String, String>) {
+        _uiState.update {
+            it.copy(currentBadgeConfig = null)
+        }
+
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
+        } else {
+            viewModelScope.launch {
+                badgeManager.updateConfiguration(configuration)
+                _uiState.update {
+                    it.copy(currentBadgeConfig = null)
+                }
+            }
+        }
+    }
+
+    fun closeConfiguration() {
+        _uiState.update {
+            it.copy(currentBadgeConfig = null)
+        }
+    }
+
     private fun Int.toBitmap(): Bitmap {
         return imageProviderService.provideImageBitmap(this)
     }
@@ -465,6 +510,7 @@ class ZeBadgeViewModel @Inject constructor(
             currentTemplateChooser = null,
             currentSimulatorSlot = ZeSlot.Name,
             slots = emptyMap(),
+            currentBadgeConfig = null,
         )
 }
 
@@ -475,4 +521,5 @@ data class ZeBadgeUiState(
     val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
     val currentSimulatorSlot: ZeSlot, // which page should be displayed in the simulator?
     val slots: Map<ZeSlot, ZeConfiguration>,
+    val currentBadgeConfig: Map<String, String>?,
 )
