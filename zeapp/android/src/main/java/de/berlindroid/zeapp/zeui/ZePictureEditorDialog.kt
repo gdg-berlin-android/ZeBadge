@@ -25,6 +25,7 @@ import de.berlindroid.zeapp.zebits.cropPageFromCenter
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import timber.log.Timber
 
@@ -88,7 +89,10 @@ fun PictureEditorDialog(
             }
         },
         title = {
-            Text(stringResource(R.string.set_picture))
+            Text(
+                color = ZeBlack,
+                text = stringResource(R.string.set_picture)
+            )
         },
         text = {
             Column {

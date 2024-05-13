@@ -40,6 +40,7 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zekompanion.threshold
 import kotlinx.coroutines.launch
@@ -133,7 +134,10 @@ fun ZeImageDrawEditorDialog(
             }
         },
         title = {
-            Text(stringResource(id = R.string.draw_image_page))
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.draw_image_page)
+            )
         },
         text = {
             AndroidView(
