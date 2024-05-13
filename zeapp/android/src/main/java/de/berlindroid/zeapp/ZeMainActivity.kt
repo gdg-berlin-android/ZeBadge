@@ -3,7 +3,6 @@ package de.berlindroid.zeapp
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -36,7 +35,6 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ThumbUp
@@ -84,7 +82,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -702,7 +699,6 @@ private fun BadgeConfigEditor(
 
                     AutoSizeTextField(
                         value = "$value",
-                        fontSize = 18.sp,
                         isError = !error[key].isNullOrEmpty(),
                         onValueChange = { updated ->
                             if (updated != value) {
@@ -713,8 +709,6 @@ private fun BadgeConfigEditor(
                             }
                         },
                         label = { Text(text = key) },
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Normal,
                         supportingText = {
                             Text(text = error.getOrDefault(key, ""))
                         },

@@ -14,7 +14,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.createFontFamilyResolver
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
@@ -29,26 +28,22 @@ private const val TEXT_SCALE_REDUCTION_INTERVAL = 0.7f
 fun AutoSizeTextField(
     modifier: Modifier = Modifier,
     value: String,
-    fontSize: TextUnit = 24.sp,
-    lineHeight: TextUnit = 36.sp,
     onValueChange: (String) -> Unit,
     supportingText: @Composable () -> Unit,
     label: @Composable () -> Unit = { },
     trailingIcon: @Composable () -> Unit,
     placeholder: @Composable () -> Unit,
-    fontWeight: FontWeight = FontWeight.SemiBold,
-    textAlign: TextAlign = TextAlign.Center,
     isError: Boolean = false,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        var shrunkFontSize = fontSize
+        var shrunkFontSize = 20.sp
         val calculateIntrinsics = @Composable {
             ParagraphIntrinsics(
                 text = value,
                 style = TextStyle(
                     fontSize = shrunkFontSize,
-                    fontWeight = fontWeight,
-                    lineHeight = lineHeight,
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 36.sp,
                 ),
                 density = LocalDensity.current,
                 fontFamilyResolver = createFontFamilyResolver(LocalContext.current),
@@ -73,9 +68,9 @@ fun AutoSizeTextField(
             onValueChange = { onValueChange(it) },
             textStyle = TextStyle(
                 fontSize = shrunkFontSize,
-                fontWeight = fontWeight,
-                lineHeight = lineHeight,
-                textAlign = textAlign,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 36.sp,
+                textAlign = TextAlign.Start,
             ),
             label = label,
             singleLine = true,
