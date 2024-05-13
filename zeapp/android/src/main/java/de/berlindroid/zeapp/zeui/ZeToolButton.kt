@@ -1,10 +1,11 @@
-
 package de.berlindroid.zeapp.zeui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.R
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 /**
  * Simple Icon Button used for inside editor dialogs.
@@ -34,7 +36,7 @@ fun ToolButton(
 ) {
     TextButton(
         onClick = onClick,
-        modifier = Modifier.wrapContentHeight(),
+        modifier = Modifier.wrapContentHeight().background(ZeWhite),
     ) {
         Column(
             modifier = Modifier.wrapContentHeight(),
