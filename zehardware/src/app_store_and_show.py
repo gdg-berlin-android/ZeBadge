@@ -1,5 +1,7 @@
 import zeos
+import ui
 from message import Message
+from zeos import MessageKey as OSKey
 
 
 class StoreAndShowApp:
@@ -12,8 +14,14 @@ class StoreAndShowApp:
 
     def run(self):
         self._subscription_ids += [
-            self.os.subscribe('system_button_up_released', lambda os, message: self._load_previous(os, message)),
-            self.os.subscribe('system_button_down_released', lambda os, message: self._load_next(os, message)),
+            self.os.subscribe(
+                OSKey.BUTTON_UP_RELEASED,
+                lambda os, message: self._load_previous(os, message)
+            ),
+            self.os.subscribe(
+                OSKey.BUTTON_DOWN_RELEASED,
+                lambda os, message: self._load_next(os, message)
+            ),
         ]
 
     def unrun(self):
@@ -36,8 +44,4 @@ class StoreAndShowApp:
         self._show_file(file)
 
     def _show_file(self, filename):
-        self.os.messages.append(Message("UI_SHOW_FILE", filename))
-
-
-WIDTH = 296
-HEIGHT = 128
+        self.os.messages.append(Message(ui.MessageKey.SHOW_BITMAP, filename))

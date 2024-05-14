@@ -1,9 +1,17 @@
 import board
 import usb_hid
-from message import Message
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayout
 from adafruit_hid.keycode import Keycode
+from enum import StrEnum
+
+from message import Message
+from zeos import MessageKey as OSKey
+
+
+class MessageKey(StrEnum):
+    KEY_PRESSED = "key_pressed"
+
 
 SPECIAL_CARD_KEYS = {
     0x08: Keycode.BACKSPACE,
@@ -33,7 +41,7 @@ layout = KeyboardLayout(keyboard)
 
 def init(os):
     os.tasks.append(update_keyboard)
-    os.subscribe('key_pressed', on_key_pressed)
+    os.subscribe(MessageKey.KEY_PRESSED, on_key_pressed)
 
 
 def update_keyboard(os):
@@ -46,7 +54,7 @@ def update_keyboard(os):
 
     if buffer[0]:
         key = buffer[0]
-        os.messages.append(Message('key_pressed', key))
+        os.messages.append(Message(MessageKey.KEY_PRESSED, key))
 
 
 def on_key_pressed(os, message):
@@ -62,4 +70,4 @@ def on_key_pressed(os, message):
             except TypeError:
                 keyboard.send(keys)
         else:
-            os.messages.append(Message("ex", f"Couldn't find {key} key."))
+            os.messages.append(Message(OSKey.ERROR, f"Couldn't find {key} key."))

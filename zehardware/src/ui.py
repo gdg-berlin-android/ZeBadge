@@ -9,13 +9,22 @@ import zlib
 import circuitpython_base64 as base64
 
 from message import Message
+from enum import StrEnum
+from zeos import MessageKey as OSKey
+
+
+class MessageKey(StrEnum):
+    SHOW_BITMAP = "SHOW_BITMAP"
+    SHOW_FILE = "SHOW_FILE"
+    SHOW_TERMINAL = "SHOW_TERMINAL"
+    REFRESH = "REFRESH"
 
 
 def init(os):
-    os.subscribe("UI_SHOW_BITMAP", _show_bitmap_handler)
-    os.subscribe("UI_SHOW_FILE", _show_file_handler)
-    os.subscribe("UI_SHOW_TERMINAL", _show_terminal_handler)
-    os.subscribe("UI_REFRESH", _refresh_handler)
+    os.subscribe(MessageKey.SHOW_BITMAP, _show_bitmap_handler)
+    os.subscribe(MessageKey.SHOW_FILE, _show_file_handler)
+    os.subscribe(MessageKey.SHOW_TERMINAL, _show_terminal_handler)
+    os.subscribe(MessageKey.REFRESH, _refresh_handler)
 
 
 def _refresh_display_save():
@@ -59,7 +68,7 @@ def _show_file_handler(os, message):
 
         _show_bitmap(bitmap, palette)
 
-        os.messages.append(Message("info", f"File '{filename}' shown. "))
+        os.messages.append(Message(OSKey.INFO, f"File '{filename}' shown. "))
 
 
 def _show_terminal_handler(os, message):
