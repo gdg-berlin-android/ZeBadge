@@ -12,6 +12,7 @@ import os as systemos
 from digitalio import DigitalInOut
 from digitalio import Direction
 from digitalio import Pull
+from enum import StrEnum
 
 from message import Message
 from config import save_config
@@ -20,6 +21,30 @@ from config import update_config
 from config import Configuration
 from app_fetch import FetchApp
 from app_store_and_show import StoreAndShowApp
+
+
+class MessageKey(StrEnum):
+    INFO = "info"
+    ERROR = "error"
+    RELOAD = "reload"
+    EXIT = "exit"
+    CONFIG_LOAD = "config_load"
+    CONFIG_SAVE = "config_save"
+    CONFIG_UPDATE = "config_update"
+    CONFIG_LIST = "config_list"
+    BUTTON_A_RELEASED = "BTN_A_RELEASED"
+    BUTTON_A_PRESSED = "BTN_A_PRESSED"
+    BUTTON_B_RELEASED = "BTN_B_RELEASED"
+    BUTTON_B_PRESSED = "BTN_B_PRESSED"
+    BUTTON_C_RELEASED = "BTN_C_RELEASED"
+    BUTTON_C_PRESSED = "BTN_C_PRESSED"
+    BUTTON_UP_RELEASED = "BTN_UP_RELEASED"
+    BUTTON_UP_PRESSED = "BTN_UP_PRESSED"
+    BUTTON_DOWN_RELEASED = "BTN_DOWN_RELEASED"
+    BUTTON_DOWN_PRESSED = "BTN_DOWN_PRESSED"
+    BUTTON_DEVELOPER_RELEASED = "BTN_DEVELOPER_RELEASED"
+    BUTTON_DEVELOPER_PRESSED = "BTN_DEVELOPER_PRESSED"
+    BUTTON_CHANGED = "BTN_CHANGED"
 
 
 class ZeBadgeOs:
@@ -61,18 +86,19 @@ class ZeBadgeOs:
         self.subscribers.clear()
 
         # add default subscriptions
-        self.subscribe('SERIAL_RECEIVED', _serial_received_handler)
+        self.subscribe(serial.MessageKey.RECEIVED, _serial_received_handler)
 
-        self.subscribe('info', _info_handler)
-        self.subscribe('error', _error_handler)
-        self.subscribe('reload', _reload_handler)
-        self.subscribe('exit', _exit_handler)
+        self.subscribe(MessageKey.INFO, _info_handler)
+        self.subscribe(MessageKey.ERROR, _error_handler)
+        self.subscribe(MessageKey.RELOAD, _reload_handler)
+        self.subscribe(MessageKey.EXIT, _exit_handler)
 
-        self.subscribe('config_load_storage', lambda os, message: load_config(self.config))
-        self.subscribe('config_save_storage', lambda os, message: save_config(self.config))
-        self.subscribe('config_update', lambda os, message: update_config(self.config, message.value))
-        self.subscribe('config_list',
-                       lambda os, message: self.messages.append(Message('SERIAL_RESPOND', str(self.config)))
+        self.subscribe(MessageKey.CONFIG_LOAD, lambda os, message: load_config(self.config))
+        self.subscribe(MessageKey.CONFIG_SAVE, lambda os, message: save_config(self.config))
+        self.subscribe(MessageKey.CONFIG_UPDATE, lambda os, message: update_config(self.config, message.value))
+        self.subscribe(MessageKey.CONFIG_LIST,
+                       lambda os, message: self.messages.append(
+                           Message(serial.MessageKey.RESPOND, str(self.config)))
                        )
 
     def subscribe(self, topic: str, subscriber) -> int:
@@ -182,14 +208,15 @@ class ZeBadgeOs:
             self.active_app = app
             self.active_app.run()
 
-        self.subscribe('system_button_a_released', lambda os, _: start_app(app_store_and_show))
-        self.subscribe('system_button_b_released', lambda os, _: start_app(app_fetch))
-        self.subscribe('system_button_c_released', lambda os, _: start_app(app_third))
+        self.subscribe(MessageKey.BUTTON_A_RELEASED, lambda os, _: start_app(app_store_and_show))
+        self.subscribe(MessageKey.BUTTON_B_RELEASED, lambda os, _: start_app(app_fetch))
+        self.subscribe(MessageKey.BUTTON_C_RELEASED, lambda os, _: start_app(app_third))
 
         # register special terminal showing button
-        self.subscribe('system_button_developer_released',
-                       lambda os, _: os.messages.append(Message("UI_SHOW_TERMINAL"))
-                       )
+        self.subscribe(MessageKey.BUTTON_DEVELOPER_RELEASED,
+                       lambda os, _: os.messages.append(
+                           Message(ui.MessageKey.SHOW_TERMINAL)
+                       ))
 
         start_app(app_store_and_show)
 
@@ -240,16 +267,23 @@ def _update_system_buttons(os):
     changes = os.buttons.changes()
 
     if len(changes) > 0:
-        os.messages.append(Message('system_button_changes', changes))
+        os.messages.append(Message(MessageKey.BUTTON_CHANGED, changes))
 
         for button in changes:
             pressed = changes[button]
-            if pressed:
-                state = "pressed"
-            else:
-                state = "released"
+            key = _button_to_message_key(button, pressed)
+            os.messages.append(Message(key, (button, pressed)))
 
-            os.messages.append(Message(f'system_button_{button}_{state}', (button, pressed)))
+
+def _button_to_message_key(button, pressed):
+    if pressed:
+        state = "PRESSED"
+    else:
+        state = "RELEASED"
+    key = f"SYSTEM_BUTTON_{button}_{state}"
+
+    if key in MessageKey.__members__:
+        return MessageKey[key]
 
 
 def _error_handler(os, message):
@@ -283,39 +317,39 @@ def _serial_received_handler(os, message):
 
 
 def _reload_command(os, meta, payload):
-    os.messages.append(Message("reload"))
+    os.messages.append(Message(MessageKey.RELOAD))
 
 
 def _exit_command(os, meta, payload):
-    os.messages.append(Message("exit"))
+    os.messages.append(Message(MessageKey.EXIT))
 
 
 def _terminal_command(os, meta, payload):
-    os.messages.append(Message("UI_SHOW_TERMINAL"))
+    os.messages.append(Message(ui.MessageKey.SHOW_TERMINAL))
 
 
 def _refresh_command(os, meta, payload):
-    os.messages.append(Message("UI_REFRESH"))
+    os.messages.append(Message(ui.MessageKey.REFRESH))
 
 
 def _config_save_command(os, meta, payload):
-    os.messages.append(Message("config_save_storage"))
+    os.messages.append(Message(MessageKey.CONFIG_SAVE))
 
 
 def _config_load_command(os, meta, payload):
-    os.messages.append(Message("config_load_storage"))
+    os.messages.append(Message(MessageKey.CONFIG_LOAD))
 
 
 def _config_update_command(os, meta, payload):
-    os.messages.append(Message("config_update", payload))
+    os.messages.append(Message(MessageKey.CONFIG_UPDATE))
 
 
 def _config_list_command(os, meta, payload):
-    os.messages.append(Message("config_list"))
+    os.messages.append(Message(MessageKey.CONFIG_LIST))
 
 
 def _show_command(os, filename, _):
-    os.messages.append(Message("UI_SHOW_FILE", filename))
+    os.messages.append(Message(ui.MessageKey.SHOW_FILE, filename))
 
 
 def _store_command(os, filename, payload):
@@ -330,15 +364,15 @@ def _preview_command(os, meta, payload):
     bitmap, palette = ui.decode_serialized_bitmap(payload)
     del payload
 
-    os.messages.append(Message('info', 'previewing image'))
-    os.messages.append(Message("UI_SHOW_BITMAP", (bitmap, palette)))
+    os.messages.append(Message(MessageKey.INFO, 'previewing image'))
+    os.messages.append(Message(ui.MessageKey.SHOW_BITMAP, (bitmap, palette)))
 
 
 def _list_command(os, meta, payload):
     files = ",".join(os.get_stored_files())
 
-    os.messages.append(Message('info', f"Sending file list: '{files}'."))
-    os.messages.append(Message("SERIAL_RESPOND", files))
+    os.messages.append(Message(MessageKey.INFO, f"Sending file list: '{files}'."))
+    os.messages.append(Message(serial.MessageKey.RESPOND, files))
 
 
 def _delete_command(os, filename, _):
@@ -347,14 +381,14 @@ def _delete_command(os, filename, _):
 
     files = os.get_stored_files()
     if filename in files:
-        os.messages.append(Message('info', f"Deleted file: '{filename}'."))
+        os.messages.append(Message(MessageKey.INFO, f"Deleted file: '{filename}'."))
         systemos.remove(filename)
 
 
 def _help_command(os, meta, payload):
     message = ','.join(SERIAL_COMMANDS.keys())
-    os.messages.append(Message('info', f"Available commands: {message}"))
-    os.messages.append(Message('SERIAL_RESPOND', message))
+    os.messages.append(Message(MessageKey.INFO, f"Available commands: {message}"))
+    os.messages.append(Message(serial.MessageKey.RESPOND, message))
 
 
 SERIAL_COMMANDS = {

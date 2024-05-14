@@ -4,6 +4,16 @@ import microcontroller
 import time
 from message import Message
 from zeos import ZeBadgeOs
+from enum import StrEnum
+
+
+class MessageKey(StrEnum):
+    SCAN = "SCAN"
+    SCAN_RESULT = "SCAN_RESULT"
+    CONNECT = "CONNECT"
+    CONNECT_RESULT = "CONNECT_RESULT"
+    GET = "GET"
+    GET_RESULT = "GET_RESULT"
 
 
 class Network:
@@ -132,23 +142,18 @@ def init(os: ZeBadgeOs) -> bool:
     wifi = ZeWifi()
 
     if wifi.scan():
-        os.subscribe('WIFI_SCAN', lambda _, message: os.messages.append(
-            Message(
-                'WIFI_SCAN_RESULT',
-                wifi.scan()
-            )))
+        os.subscribe(MessageKey.SCAN, lambda _, message: os.messages.append(
+            Message(MessageKey.SCAN_RESULT, wifi.scan())))
 
-        os.subscribe('WIFI_CONNECT', lambda _, message: os.messages.append(
-            Message(
-                'WIFI_CONNECT_RESULT',
-                wifi.connect(message.value['ssid'], message.value['pwd'])
-            )))
+        os.subscribe(MessageKey.CONNECT, lambda _, message: os.messages.append(
+            Message(MessageKey.CONNECT_RESULT, wifi.connect(message.value['ssid'], message.value['pwd']))))
 
-        os.subscribe('WIFI_GET', lambda _, message: os.messages.append(
-            Message(
-                'WIFI_GET_RESULT',
-                wifi.http_get(message.value['ip'], message.value['url'], message.value['host'], message.value['port'])
-            )))
+        os.subscribe(MessageKey.GET, lambda _, message: os.messages.append(
+            Message(MessageKey.GET_RESULT,
+                    wifi.http_get(message.value['ip'], message.value['url'], message.value['host'],
+                                  message.value['port'])
+                    )
+        ))
         return True
     else:
         return False

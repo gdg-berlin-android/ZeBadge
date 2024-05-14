@@ -3,6 +3,13 @@ import re
 import supervisor
 
 from message import Message
+from enum import StrEnum
+from zeos import MessageKey as OSKey
+
+
+class MessageKey(StrEnum):
+    RESPOND = "SERIAL_RESPOND"
+    RECEIVED = "SERIAL_RECEIVED"
 
 
 def init(os):
@@ -10,7 +17,7 @@ def init(os):
         usb_cdc.data.timeout = 0.1
         os.tasks.append(_read_input)
 
-        os.subscribe('SERIAL_RESPOND', _output_requested)
+        os.subscribe(MessageKey.RESPOND, _output_requested)
 
 
 def _output_requested(os, message):
@@ -39,8 +46,8 @@ def _read_input(os):
 
     command, meta, payload = parsed
     del parsed
-    os.messages.append(Message("info", f"Payload with {len(payload)} bytes received."))
-    os.messages.append(Message("SERIAL_RECEIVED", (command, meta, payload)))
+    os.messages.append(Message(OSKey.INFO, f"Payload with {len(payload)} bytes received."))
+    os.messages.append(Message(MessageKey.RECEIVED, (command, meta, payload)))
 
 
 def _parse_input(serial_input):
@@ -50,7 +57,7 @@ def _parse_input(serial_input):
     parts = serial_input.split(":")
     if len(parts) != 3:
         readable_parts = " ".join(map(lambda p: trunc(p), parts))
-        print(f"Invalid command: '{readable_parts}'")
+        print(f"Invalid command: '{readable_parts}'", end='')
         return None
 
     return [
@@ -61,11 +68,11 @@ def _parse_input(serial_input):
 
 
 def log(os, news):
-    os.messages.append(Message('info', news))
-
+    os.messages.append(Message(OSKey.INFO, news))
 
 def trunc(message, max_length=10):
-    # Middle of the word truncating
+    """Middle of the word truncating"""
+
     if len(message) <= max_length:
         return message
 
