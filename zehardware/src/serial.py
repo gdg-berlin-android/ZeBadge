@@ -55,7 +55,7 @@ def _parse_input(serial_input):
     parts = serial_input.split(":")
     if len(parts) != 3:
         readable_parts = " ".join(map(lambda p: trunc(p), parts))
-        print(f"Invalid command: '{readable_parts}'", end='')
+        print(f"Invalid command: '{readable_parts}'")
         return None
 
     return [

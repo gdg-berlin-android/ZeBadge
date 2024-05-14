@@ -1,5 +1,6 @@
 import board
 import usb_hid
+from message import Message
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayout
 from adafruit_hid.keycode import Keycode
