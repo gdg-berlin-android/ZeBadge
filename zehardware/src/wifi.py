@@ -3,11 +3,9 @@ import busio
 import microcontroller
 import time
 from message import Message
-from zeos import ZeBadgeOs
-from enum import StrEnum
 
 
-class MessageKey(StrEnum):
+class MessageKey:
     SCAN = "SCAN"
     SCAN_RESULT = "SCAN_RESULT"
     CONNECT = "CONNECT"
@@ -132,7 +130,7 @@ class ZeWifi:
 wifi = None
 
 
-def init(os: ZeBadgeOs) -> bool:
+def init(os) -> bool:
     global wifi
     # disconnect the i2c, make it a UART
     # 👀

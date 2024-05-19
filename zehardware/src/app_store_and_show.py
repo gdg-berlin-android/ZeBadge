@@ -1,7 +1,6 @@
 import zeos
 import ui
 from message import Message
-from zeos import MessageKey as OSKey
 
 
 class StoreAndShowApp:
@@ -15,12 +14,8 @@ class StoreAndShowApp:
     def run(self):
         self._subscription_ids += [
             self.os.subscribe(
-                OSKey.BUTTON_UP_RELEASED,
-                lambda os, message: self._load_previous(os, message)
-            ),
-            self.os.subscribe(
-                OSKey.BUTTON_DOWN_RELEASED,
-                lambda os, message: self._load_next(os, message)
+                zeos.MessageKey.BUTTON_CHANGED,
+                lambda os, message: self._buttons_changed(message.value)
             ),
         ]
 
