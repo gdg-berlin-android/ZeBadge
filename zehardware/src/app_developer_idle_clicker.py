@@ -32,7 +32,7 @@ _ITEMS_ = [
     Item("switch one class from java to kotlin", [320], 2, 7),
 ]
 
-_SYMBOL_PIXEL_SIZE = 8
+_SYMBOL_PIXEL_SIZE = 16
 _SCREEN_WIDTH = 296
 _SCREEN_HEIGHT = 128
 _HORIZONTAL_SYMBOL_COUNT = 17
@@ -75,7 +75,6 @@ class DeveloperIdleClickerApp:
         self.lines_of_code = 0
         self.needs_refresh = True
 
-        # TODO: REMOVE ME ONCE VISUALIZATION IS FINE
         self.inventory: list[Item] = [_ITEMS_[0]]
 
         self._subscription_ids = []
@@ -109,12 +108,32 @@ class DeveloperIdleClickerApp:
             self._up_released()
         if 'down' in changed_keys and not changed_keys['down']:
             self._down_released()
+        if 'c' in changed_keys and not changed_keys['c']:
+            self._refresh()
 
     def _up_released(self):
-        self.needs_refresh = True
+        # replace with function or something
+        item = _ITEMS_[0]
+
+        # replace with cost calculation function
+        cost = item.costs[0]
+
+        if self.lines_of_code > cost:
+            self.lines_of_code -= cost
+            self.inventory += [item]
+            self.needs_refresh = True
 
     def _down_released(self):
-        self.needs_refresh = True
+        # replace with function or something
+        item = _ITEMS_[-1]
+
+        # replace with cost calculation function
+        cost = item.costs[0]
+
+        if self.lines_of_code > cost:
+            self.lines_of_code -= cost
+            self.inventory += [item]
+            self.needs_refresh = True
 
     def _refresh(self):
         group = displayio.Group()
@@ -138,17 +157,6 @@ class DeveloperIdleClickerApp:
             )
             group.append(symbol)
 
-            # symbol = item.symbol
-            # symbol = f"{index:03d}"
-            # text_area = label.Label(
-            #     font,
-            #     text=symbol,
-            #     color=0xFFFFFF,
-            # )
-            #
-            #
-            # group.append(text_area)
-
         score_area = label.Label(
             font,
             scale=2,
@@ -160,6 +168,18 @@ class DeveloperIdleClickerApp:
         score_area.x = int(296 / 2)
         score_area.y = 113
         group.append(score_area)
+
+        purchase_labels = label.Label(
+            font,
+            scale=1,
+            text=f"p:\n\n\n\nx:",
+            anchor_point=(0.5, 0.5),
+            background_color=0x000000,
+            color=0xFFFFFF,
+        )
+        purchase_labels.x = 296 - 15
+        purchase_labels.y = int(128 / 4)
+        group.append(purchase_labels)
 
         self.os.messages.append(Message(ui.MessageKey.SHOW_GROUP, group))
         self.needs_refresh = False
