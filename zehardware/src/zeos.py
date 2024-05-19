@@ -117,7 +117,7 @@ class ZeBadgeOs:
         found = None
 
         for topic in self.subscribers:
-            if id in self.subscribers[topic]:
+            if subscription_id in self.subscribers[topic]:
                 found = self.subscribers[topic][subscription_id]
                 del self.subscribers[topic][subscription_id]
 
