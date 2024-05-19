@@ -32,19 +32,7 @@ class MessageKey:
     CONFIG_SAVE = "config_save"
     CONFIG_UPDATE = "config_update"
     CONFIG_LIST = "config_list"
-    BUTTON_A_RELEASED = "BTN_A_RELEASED"
-    BUTTON_A_PRESSED = "BTN_A_PRESSED"
-    BUTTON_B_RELEASED = "BTN_B_RELEASED"
-    BUTTON_B_PRESSED = "BTN_B_PRESSED"
-    BUTTON_C_RELEASED = "BTN_C_RELEASED"
-    BUTTON_C_PRESSED = "BTN_C_PRESSED"
-    BUTTON_UP_RELEASED = "BTN_UP_RELEASED"
-    BUTTON_UP_PRESSED = "BTN_UP_PRESSED"
-    BUTTON_DOWN_RELEASED = "BTN_DOWN_RELEASED"
-    BUTTON_DOWN_PRESSED = "BTN_DOWN_PRESSED"
-    BUTTON_DEVELOPER_RELEASED = "BTN_DEVELOPER_RELEASED"
-    BUTTON_DEVELOPER_PRESSED = "BTN_DEVELOPER_PRESSED"
-    BUTTON_CHANGED = "BTN_CHANGED"
+    BUTTON_CHANGED = "button_changed"
 
 
 class ZeBadgeOs:
@@ -76,9 +64,15 @@ class ZeBadgeOs:
         self.config = Configuration()
         load_config(self.config)
 
+        # applications
+        self._app_a = None
+        self._app_b = None
+        self._app_c = None
+        self._init_apps()
+
         self._reset_subscribers()
         self._init_interfaces()
-        self._init_applications()
+        self._subscribe_to_system_buttons()
 
         self.system_subscribers = self.subscribers.copy()
 
@@ -197,29 +191,43 @@ class ZeBadgeOs:
 
         self.config.developer_mode = not (usb_cdc.data is None)
 
-    def _init_applications(self):
-        app_store_and_show = StoreAndShowApp(self)
-        app_fetch = FetchApp(self)
-        app_third = FetchApp(self)
+    def _init_apps(self):
+        self._app_a = StoreAndShowApp(self)
+        self._app_b = FetchApp(self)
+        self._app_c = DeveloperIdleClickerApp(self)
 
-        def start_app(app):
-            if self.active_app:
-                self.active_app.unrun()
+        self._start_app(self._app_a)
 
-            self.active_app = app
-            self.active_app.run()
+    def _start_app(self, app):
+        if self.active_app == app:
+            return
 
-        self.subscribe(MessageKey.BUTTON_A_RELEASED, lambda os, _: start_app(app_store_and_show))
-        self.subscribe(MessageKey.BUTTON_B_RELEASED, lambda os, _: start_app(app_fetch))
-        self.subscribe(MessageKey.BUTTON_C_RELEASED, lambda os, _: start_app(app_third))
+        if self.active_app:
+            self.messages.append(Message(MessageKey.INFO, f"Stopping app {self.active_app}."))
+            self.active_app.unrun()
 
-        # register special terminal showing button
-        self.subscribe(MessageKey.BUTTON_DEVELOPER_RELEASED,
-                       lambda os, _: os.messages.append(
-                           Message(ui.MessageKey.SHOW_TERMINAL)
-                       ))
+        self.messages.append(Message(MessageKey.INFO, f"Starting app {app}."))
+        self.active_app = app
+        self.active_app.run()
 
-        start_app(app_store_and_show)
+    def _check_system_keys(self, changed):
+        if 'developer' in changed and not changed['developer']:
+            self.messages.append(Message(ui.MessageKey.SHOW_TERMINAL))
+        else:
+            if 'a' in changed and not changed['a']:
+                app = self._app_a
+            elif 'b' in changed and not changed['b']:
+                app = self._app_b
+            elif 'c' in changed and not changed['c']:
+                app = self._app_c
+            else:
+                app = None
+
+            if app:
+                self._start_app(app)
+
+    def _subscribe_to_system_buttons(self):
+        self.subscribe(MessageKey.BUTTON_CHANGED, lambda os, message: self._check_system_keys(message.value))
 
 
 class SystemButtons:
@@ -269,22 +277,6 @@ def _update_system_buttons(os):
 
     if len(changes) > 0:
         os.messages.append(Message(MessageKey.BUTTON_CHANGED, changes))
-
-        for button in changes:
-            pressed = changes[button]
-            key = _button_to_message_key(button, pressed)
-            os.messages.append(Message(key, (button, pressed)))
-
-
-def _button_to_message_key(button, pressed):
-    if pressed:
-        state = "PRESSED"
-    else:
-        state = "RELEASED"
-    key = f"SYSTEM_BUTTON_{button}_{state}"
-
-    if key in MessageKey.__members__:
-        return MessageKey[key]
 
 
 def _error_handler(os, message):
