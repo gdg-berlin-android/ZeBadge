@@ -20,6 +20,7 @@ from config import update_config
 from config import Configuration
 from app_fetch import FetchApp
 from app_store_and_show import StoreAndShowApp
+from app_developer_idle_clicker import DeveloperIdleClickerApp
 
 
 class MessageKey:

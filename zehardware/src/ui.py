@@ -21,6 +21,7 @@ class MessageKey:
 
 
 def init(os):
+    os.subscribe(MessageKey.SHOW_GROUP, _show_group)
     os.subscribe(MessageKey.SHOW_BITMAP, _show_bitmap_handler)
     os.subscribe(MessageKey.SHOW_FILE, _show_file_handler)
     os.subscribe(MessageKey.SHOW_TERMINAL, _show_terminal_handler)
@@ -52,6 +53,12 @@ def _show_bitmap(bitmap, palette):
 
     group = displayio.Group()
     group.append(tile_grid)
+    board.DISPLAY.root_group = group
+    _refresh_display_save()
+
+
+def _show_group(_, message):
+    group = message.value
     board.DISPLAY.root_group = group
     _refresh_display_save()
 
