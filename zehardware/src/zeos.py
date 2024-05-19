@@ -27,6 +27,7 @@ class MessageKey:
     ERROR = "error"
     RELOAD = "reload"
     EXIT = "exit"
+    TICK = "tick"
     CONFIG_LOAD = "config_load"
     CONFIG_SAVE = "config_save"
     CONFIG_UPDATE = "config_update"
@@ -142,6 +143,7 @@ class ZeBadgeOs:
                 print(':', end='')
 
                 current_messages = self.messages.copy()
+                current_messages += [Message(MessageKey.TICK, None)]
                 self.messages.clear()
 
                 for message in current_messages:
