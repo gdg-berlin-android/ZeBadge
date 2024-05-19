@@ -195,46 +195,34 @@ or `Did we connect to WiFi?` or `Was up system button pressed?`).
 The following messages are accepted to be sent on the bus and answered to. The answer is either done by the os or the
 module receving it, or your own apps created.
 
-| Module                        | Key                       | Parameter                                    | Description                                                                                                                                 |
-|-------------------------------|---------------------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| [zeos](./src/zeos.py)         | INFO                      | message:str                                  | Send a message to the terminal.                                                                                                             |
-| [zeos](./src/zeos.py)         | ERROR                     | error:str                                    | Send an error message to the terminal                                                                                                       |
-| [zeos](./src/zeos.py)         | RELOAD                    | None                                         | Reload the os                                                                                                                               |
-| [zeos](./src/zeos.py)         | EXIT                      | None                                         | Exit currently running os, drop to repl.                                                                                                    |
-| [zeos](./src/zeos.py)         | CONFIG_LOAD               | None                                         | Load configuration from ZeBadge filesystem.                                                                                                 |
-| [zeos](./src/zeos.py)         | CONFIG_SAVE               | None                                         | Store (save) configuration to ZeBadge filesystem.                                                                                           |
-| [zeos](./src/zeos.py)         | CONFIG_UPDATE             | "key=value/n"                                | Update runtime configuration with the keys in the payload, needs to be one string, keys separated by newlines.                              |
-| [zeos](./src/zeos.py)         | CONFIG_LIST               | None                                         | Issue a request for listing the currently applied configuration. Expects a serial read for the result to surface.                           |
-| [zeos](./src/zeos.py)         | BUTTON_A_RELEASED         | None                                         | Used to inform when button A was RELEASED.                                                                                                  |
-| [zeos](./src/zeos.py)         | BUTTON_A_PRESSED          | None                                         | Used to inform when button A was PRESSED.                                                                                                   |
-| [zeos](./src/zeos.py)         | BUTTON_B_RELEASED         | None                                         | Used to inform when button B was RELEASED.                                                                                                  |
-| [zeos](./src/zeos.py)         | BUTTON_B_PRESSED          | None                                         | Used to inform when button B was PRESSED.                                                                                                   |
-| [zeos](./src/zeos.py)         | BUTTON_C_RELEASED         | None                                         | Used to inform when button C was RELEASED.                                                                                                  |
-| [zeos](./src/zeos.py)         | BUTTON_C_PRESSED          | None                                         | Used to inform when button C was PRESSED.                                                                                                   |
-| [zeos](./src/zeos.py)         | BUTTON_UP_RELEASED        | None                                         | Used to inform when button UP was RELEASED.                                                                                                 |
-| [zeos](./src/zeos.py)         | BUTTON_UP_PRESSED         | None                                         | Used to inform when button UP was PRESSED.                                                                                                  |
-| [zeos](./src/zeos.py)         | BUTTON_DOWN_RELEASED      | None                                         | Used to inform when button DOWN was RELEASED.                                                                                               |
-| [zeos](./src/zeos.py)         | BUTTON_DOWN_PRESSED       | None                                         | Used to inform when button DOWN was PRESSED.                                                                                                |
-| [zeos](./src/zeos.py)         | BUTTON_DEVELOPER_RELEASED | None                                         | Used to inform when button DEVELOPER was RELEASED.                                                                                          |
-| [zeos](./src/zeos.py)         | BUTTON_DEVELOPER_PRESSED  | None                                         | Used to inform when button DEVELOPER was PRESSED.                                                                                           |
-| [zeos](./src/zeos.py)         | BUTTON_CHANGED            | {'A':True}                                   | Gets a dictionary of currently changed buttons: key is the button (A,B,C,Up,Down,Developer) and wehter it was 'pressed' (True) or released. |
-|                               |                           |                                              |                                                                                                                                             |
-| [ui](./src/ui.py)             | SHOW_BITMAP               | (bitmap, palette)                            | Displays the bitmap and palette on the screen.                                                                                              |
-| [ui](./src/ui.py)             | SHOW_FILE                 | filename:str                                 | Displays the file (.b64) from ZeBadge on the screen.                                                                                        |
-| [ui](./src/ui.py)             | SHOW_TERMINAL             | None                                         | Displays the terminal. (Useful for triggering / forcing debug info)                                                                         |
-| [ui](./src/ui.py)             | REFRESH                   | None                                         | Update the screen / terminal.                                                                                                               |
-|                               |                           |                                              |                                                                                                                                             |
-| [keyboard](./src/keyboard.py) | KEY_PRESSED               | key:byte                                     | Sends the byte code of the key pressed on the attached keyboard.                                                                            |
-|                               |                           |                                              |                                                                                                                                             |
-| [serial](./src/serial.py)     | RESPOND                   | message:str                                  | Put message on the serial connection.                                                                                                       |
-| [serial](./src/serial.py)     | RECEIVED                  | (command:str, meta:str, payload:str)         | The given command was received from the connection.                                                                                         |
-|                               |                           |                                              |                                                                                                                                             |
-| [wifi](./src/wifi.py)         | SCAN                      | None                                         | Start scanning the wifi for ssids.                                                                                                          |
-| [wifi](./src/wifi.py)         | SCAN_RESULT               | map[str:list[Network]]                       | Informs about the result of scanning for wifis                                                                                              |
-| [wifi](./src/wifi.py)         | CONNECT                   | {'ssid':.., 'pwd':..)                        | Connect to a given WiFi, using it's name and it's password                                                                                  |
-| [wifi](./src/wifi.py)         | CONNECT_RESULT            | bool                                         | Informs about the success or failure of connecting to a wifi.                                                                               |
-| [wifi](./src/wifi.py)         | GET                       | {'ip':..., 'url':...,'host':...,'port':...,} | Perform a get request through the wifi                                                                                                      |
-| [wifi](./src/wifi.py)         | GET_RESULT                | HttpResponse                                 | Gets you the response from the get request                                                                                                  | 
+| Module                        | Key            | Parameter                                    | Description                                                                                                                                 |
+|-------------------------------|----------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| [zeos](./src/zeos.py)         | INFO           | message:str                                  | Send a message to the terminal.                                                                                                             |
+| [zeos](./src/zeos.py)         | ERROR          | error:str                                    | Send an error message to the terminal                                                                                                       |
+| [zeos](./src/zeos.py)         | RELOAD         | None                                         | Reload the os                                                                                                                               |
+| [zeos](./src/zeos.py)         | EXIT           | None                                         | Exit currently running os, drop to repl.                                                                                                    |
+| [zeos](./src/zeos.py)         | CONFIG_LOAD    | None                                         | Load configuration from ZeBadge filesystem.                                                                                                 |
+| [zeos](./src/zeos.py)         | CONFIG_SAVE    | None                                         | Store (save) configuration to ZeBadge filesystem.                                                                                           |
+| [zeos](./src/zeos.py)         | CONFIG_UPDATE  | "key=value/n"                                | Update runtime configuration with the keys in the payload, needs to be one string, keys separated by newlines.                              |
+| [zeos](./src/zeos.py)         | BUTTON_CHANGED | {'c':True, 'up':False}                       | Gets a dictionary of currently changed buttons: key is the button (A,B,C,Up,Down,Developer) and wehter it was 'pressed' (True) or released. |
+| [zeos](./src/zeos.py)         | TICK           | None                                         | Sent once one loop is over, schedule uncritical repeating logic here.                                                                       |
+|                               |                |                                              |                                                                                                                                             |
+| [ui](./src/ui.py)             | SHOW_BITMAP    | (bitmap, palette)                            | Displays the bitmap and palette on the screen.                                                                                              |
+| [ui](./src/ui.py)             | SHOW_FILE      | filename:str                                 | Displays the file (.b64) from ZeBadge on the screen.                                                                                        |
+| [ui](./src/ui.py)             | SHOW_TERMINAL  | None                                         | Displays the terminal. (Useful for triggering / forcing debug info)                                                                         |
+| [ui](./src/ui.py)             | REFRESH        | None                                         | Update the screen / terminal.                                                                                                               |
+|                               |                |                                              |                                                                                                                                             |
+| [keyboard](./src/keyboard.py) | KEY_PRESSED    | key:byte                                     | Sends the byte code of the key pressed on the attached keyboard.                                                                            |
+|                               |                |                                              |                                                                                                                                             |
+| [serial](./src/serial.py)     | RESPOND        | message:str                                  | Put message on the serial connection.                                                                                                       |
+| [serial](./src/serial.py)     | RECEIVED       | (command:str, meta:str, payload:str)         | The given command was received from the connection.                                                                                         |
+|                               |                |                                              |                                                                                                                                             |
+| [wifi](./src/wifi.py)         | SCAN           | None                                         | Start scanning the wifi for ssids.                                                                                                          |
+| [wifi](./src/wifi.py)         | SCAN_RESULT    | map[str:list[Network]]                       | Informs about the result of scanning for wifis                                                                                              |
+| [wifi](./src/wifi.py)         | CONNECT        | {'ssid':.., 'pwd':..)                        | Connect to a given WiFi, using it's name and it's password                                                                                  |
+| [wifi](./src/wifi.py)         | CONNECT_RESULT | bool                                         | Informs about the success or failure of connecting to a wifi.                                                                               |
+| [wifi](./src/wifi.py)         | GET            | {'ip':..., 'url':...,'host':...,'port':...,} | Perform a get request through the wifi                                                                                                      |
+| [wifi](./src/wifi.py)         | GET_RESULT     | HttpResponse                                 | Gets you the response from the get request                                                                                                  | 
 
 ### Configuration
 
@@ -700,6 +688,7 @@ Example
 ```console
 delete:milos-exposed.b64:
 ```
+
 </details>
 
 ### Configuration
@@ -727,6 +716,7 @@ Example
 ```console
 config-update::user.name="Milos",wifi.ssid="Drodicon2030"
 ```
+
 </details>
 
 #### 📋 &nbsp; Save
@@ -747,6 +737,7 @@ Example
 ```console
 config-save::
 ```
+
 </details>
 
 #### 📋 &nbsp; Load
@@ -767,6 +758,7 @@ Example
 ```console
 config-load::
 ```
+
 </details>
 
 #### 📋 &nbsp; List
@@ -785,11 +777,13 @@ Example
 </summary>
 
 Write:
+
 ```console
 config-list::
 ```
 
 Read:
+
 ```console
 keyboard_attached = False
 wifi_attached = False
@@ -802,5 +796,6 @@ wifi.url = "/"
 wifi.host = "char.zebadge.app"
 wifi.port = 13370
 ```
+
 </details>
 
