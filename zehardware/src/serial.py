@@ -3,11 +3,9 @@ import re
 import supervisor
 
 from message import Message
-from enum import StrEnum
-from zeos import MessageKey as OSKey
+import zeos
 
-
-class MessageKey(StrEnum):
+class MessageKey:
     RESPOND = "SERIAL_RESPOND"
     RECEIVED = "SERIAL_RECEIVED"
 
@@ -46,7 +44,7 @@ def _read_input(os):
 
     command, meta, payload = parsed
     del parsed
-    os.messages.append(Message(OSKey.INFO, f"Payload with {len(payload)} bytes received."))
+    os.messages.append(Message(zeos.MessageKey.INFO, f"Payload with {len(payload)} bytes received."))
     os.messages.append(Message(MessageKey.RECEIVED, (command, meta, payload)))
 
 
@@ -68,7 +66,8 @@ def _parse_input(serial_input):
 
 
 def log(os, news):
-    os.messages.append(Message(OSKey.INFO, news))
+    os.messages.append(Message(zeos.MessageKey.INFO, news))
+
 
 def trunc(message, max_length=10):
     """Middle of the word truncating"""

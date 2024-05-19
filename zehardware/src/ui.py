@@ -7,13 +7,13 @@ import util
 from adafruit_display_text import label
 import zlib
 import circuitpython_base64 as base64
+import zeos
 
 from message import Message
-from enum import StrEnum
-from zeos import MessageKey as OSKey
 
 
-class MessageKey(StrEnum):
+class MessageKey:
+    SHOW_GROUP = "SHOW_GROUP"
     SHOW_BITMAP = "SHOW_BITMAP"
     SHOW_FILE = "SHOW_FILE"
     SHOW_TERMINAL = "SHOW_TERMINAL"
@@ -68,7 +68,7 @@ def _show_file_handler(os, message):
 
         _show_bitmap(bitmap, palette)
 
-        os.messages.append(Message(OSKey.INFO, f"File '{filename}' shown. "))
+        os.messages.append(Message(zeos.MessageKey.INFO, f"File '{filename}' shown. "))
 
 
 def _show_terminal_handler(os, message):

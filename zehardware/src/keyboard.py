@@ -3,13 +3,12 @@ import usb_hid
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayout
 from adafruit_hid.keycode import Keycode
-from enum import StrEnum
 
 from message import Message
-from zeos import MessageKey as OSKey
+import zeos
 
 
-class MessageKey(StrEnum):
+class MessageKey:
     KEY_PRESSED = "key_pressed"
 
 
@@ -70,4 +69,4 @@ def on_key_pressed(os, message):
             except TypeError:
                 keyboard.send(keys)
         else:
-            os.messages.append(Message(OSKey.ERROR, f"Couldn't find {key} key."))
+            os.messages.append(Message(zeos.MessageKey.ERROR, f"Couldn't find {key} key."))

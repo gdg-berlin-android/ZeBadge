@@ -12,7 +12,6 @@ import os as systemos
 from digitalio import DigitalInOut
 from digitalio import Direction
 from digitalio import Pull
-from enum import StrEnum
 
 from message import Message
 from config import save_config
@@ -23,7 +22,7 @@ from app_fetch import FetchApp
 from app_store_and_show import StoreAndShowApp
 
 
-class MessageKey(StrEnum):
+class MessageKey:
     INFO = "info"
     ERROR = "error"
     RELOAD = "reload"
