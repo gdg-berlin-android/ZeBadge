@@ -148,7 +148,7 @@ class ZeBadgeOs:
                             subscriber = subscriber_ids[subscriber_id]
                             subscriber(self, message)
                     else:
-                        print(f'no {message.topic} topic. ', end='')
+                        print(f'?', end='')
 
                 self.led_on = not self.led_on
                 self.led.value = self.led_on
