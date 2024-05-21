@@ -26,7 +26,7 @@ android {
         applicationId = "de.berlindroid.zeapp"
         compileSdk = 34
         targetSdk = 34
-        minSdk = 29
+        minSdk = 33
         versionCode = appVersionCode
         versionName = "1.0"
 

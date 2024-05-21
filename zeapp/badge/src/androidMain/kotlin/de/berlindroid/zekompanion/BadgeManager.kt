@@ -12,7 +12,6 @@ import com.hoho.android.usbserial.driver.UsbSerialProber
 import de.berlindroid.zekompanion.BadgeManager.Companion.DEVICE_PRODUCT_NAME
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
-import java.lang.RuntimeException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -165,10 +164,10 @@ class AndroidBadgeManager(
         }
 
         val permissionIntent = PendingIntent.getBroadcast(
-            context,
-            ACTION_USB_PERMISSION_REQUEST_CODE,
-            Intent(ACTION_USB_PERMISSION),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+            /* context = */ context,
+            /* requestCode = */ ACTION_USB_PERMISSION_REQUEST_CODE,
+            /* intent = */ Intent(ACTION_USB_PERMISSION),
+            /* flags = */ PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
         val filter = IntentFilter(ACTION_USB_PERMISSION)
@@ -176,6 +175,7 @@ class AndroidBadgeManager(
         context.registerReceiver(
             broadcastReceiver,
             filter,
+            Context.RECEIVER_NOT_EXPORTED,
         )
 
         manager.requestPermission(device, permissionIntent)
