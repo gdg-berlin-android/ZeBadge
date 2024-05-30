@@ -41,6 +41,15 @@ kotlin {
                 }
             }
 
+        os.startsWith("Windows") ->
+            jvm("windows") {
+                withJavaEnabled
+
+                jvmToolchain {
+                    languageVersion.set(JavaLanguageVersion.of(17))
+                }
+            }
+
         else -> throw StopActionException("Your operating system is not supported at this time: '${os}'.")
     }
 
@@ -79,6 +88,18 @@ kotlin {
 
             os.startsWith("Linux") -> {
                 val linuxMain by getting {
+                    dependencies {
+                        implementation(libs.jSerialComm)
+                    }
+
+                    sourceSets {
+                        dependsOn(sourceSets.getAt("jvmMain"))
+                    }
+                }
+            }
+
+            os.startsWith("Windows") -> {
+                val windowsMain by getting {
                     dependencies {
                         implementation(libs.jSerialComm)
                     }

@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.desktop.State
 import kotlin.math.max
 
