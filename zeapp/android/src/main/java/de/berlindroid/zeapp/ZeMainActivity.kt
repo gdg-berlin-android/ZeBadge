@@ -933,4 +933,4 @@ private fun PagePreview(
 }
 
 private val ZeSlot.isSponsor: Boolean
-    get() = this is ZeSlot.FirstSponsor || this is ZeSlot.SecondSponsor
+    get() = this is ZeSlot.FirstSponsor

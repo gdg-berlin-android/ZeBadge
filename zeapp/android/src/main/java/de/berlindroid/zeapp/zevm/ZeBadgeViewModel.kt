@@ -155,24 +155,6 @@ class ZeBadgeViewModel @Inject constructor(
                 }
             }
 
-            is ZeSlot.SecondSponsor -> {
-                val slotsCopy = slots.copy(
-                    slot to ZeConfiguration.Picture(
-                        listOf(
-                            R.drawable.page_telekom_2,
-                            R.drawable.page_telekom_3,
-                            R.drawable.page_telekom,
-                        )
-                            .random()
-                            .toBitmap()
-                            .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
-                    ),
-                )
-                _uiState.update {
-                    it.copy(slots = slotsCopy)
-                }
-            }
-
             else -> {}
         }
     }
@@ -337,7 +319,6 @@ class ZeBadgeViewModel @Inject constructor(
             )
 
             is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
-            is ZeSlot.SecondSponsor -> ZeConfiguration.Picture(R.drawable.page_telekom.toBitmap())
             is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
@@ -485,7 +466,6 @@ class ZeBadgeViewModel @Inject constructor(
             val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
-                ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
                 ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
                 ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
                 ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
