@@ -17,7 +17,7 @@ from message import Message
 from config import save_config
 from config import load_config
 from config import update_config
-from config import Configuration
+from config import fields_to_str
 from app_fetch import FetchApp
 from app_store_and_show import StoreAndShowApp
 from app_developer_idle_clicker import DeveloperIdleClickerApp
@@ -62,8 +62,9 @@ class ZeBadgeOs:
         self.tasks.append(_update_system_buttons)
 
         # add defaults
-        self.config = Configuration()
-        load_config(self.config)
+        self.config = {}
+        # load_config(self.config)
+        self.config['uid'] = 'some-thing-amazing'
 
         # applications
         self._app_a = None
@@ -93,7 +94,7 @@ class ZeBadgeOs:
         self.subscribe(MessageKey.CONFIG_UPDATE, lambda os, message: update_config(self.config, message.value))
         self.subscribe(MessageKey.CONFIG_LIST,
                        lambda os, message: self.messages.append(
-                           Message(serial.MessageKey.RESPOND, str(self.config)))
+                           Message(serial.MessageKey.RESPOND, fields_to_str(self.config)))
                        )
 
     def subscribe(self, topic: str, subscriber) -> int:
@@ -179,18 +180,18 @@ class ZeBadgeOs:
                 import keyboard
                 keyboard.init(self)
 
-            self.config.keyboard_attached = has_keyboard
+            self.config["keyboard_attached"] = has_keyboard
         else:
             print("... no i2c found, trying wifi")
 
             import wifi
             if not wifi.init(self):
                 print("... no wifi found.")
-                self.config.wifi_attached = False
+                self.config["wifi_attached"] = False
             else:
-                self.config.wifi_attached = True
+                self.config["wifi_attached"] = True
 
-        self.config.developer_mode = not (usb_cdc.data is None)
+        self.config["developer_mode"] = not (usb_cdc.data is None)
 
     def _init_apps(self):
         self._app_a = StoreAndShowApp(self)
@@ -335,7 +336,7 @@ def _config_load_command(os, meta, payload):
 
 
 def _config_update_command(os, meta, payload):
-    os.messages.append(Message(MessageKey.CONFIG_UPDATE))
+    os.messages.append(Message(MessageKey.CONFIG_UPDATE, payload))
 
 
 def _config_list_command(os, meta, payload):
