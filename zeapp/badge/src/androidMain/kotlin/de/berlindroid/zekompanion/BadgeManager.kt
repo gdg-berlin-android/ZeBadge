@@ -155,9 +155,6 @@ class AndroidBadgeManager(
                         }
                     } else {
                         Timber.e("USB Permission", "Could not request permission to access to badge.")
-                        continuation.resumeWithException(
-                            RuntimeException("Could not request permission to access to badge."),
-                        )
                     }
                 }
             }

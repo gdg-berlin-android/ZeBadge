@@ -2,6 +2,7 @@ package de.berlindroid.zeapp.zeservices
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zeui.pixelBuffer
 import de.berlindroid.zekompanion.BadgePayload
@@ -11,6 +12,9 @@ import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
 import javax.inject.Inject
+import timber.log.Timber
+
+private val SPACE_REPLACEMENT = "\$SPACE#"
 
 class ZeBadgeManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -81,7 +85,7 @@ class ZeBadgeManager @Inject constructor(
     /**
      * Return the current active configuration.
      */
-    suspend fun listConfiguration(): Result<Map<String, String>> {
+    suspend fun listConfiguration(): Result<Map<String, Any?>> {
         val payload = BadgePayload(
             type = "config_list",
             meta = "",
@@ -89,28 +93,26 @@ class ZeBadgeManager @Inject constructor(
         )
 
         if (badgeManager.sendPayload(payload).isSuccess) {
-            val responses = mutableListOf<Result<String>>()
-            while (true) {
-                val response = badgeManager.readResponse()
-                if (response.isSuccess) {
-                    responses += response
-                } else {
-                    break
-                }
-            }
+            val response = badgeManager.readResponse()
+            if (response.isSuccess) {
+                val config = response.getOrDefault("")
+                Timber.v("Badge sent response: successfully received configuration: '${config.replace("\n", "\\n")}'.")
 
-            val successful = responses.filter { it.isSuccess }.joinToString(separator = "\n") {
-                it.getOrDefault("")
+                val kv = mapOf(
+                    *config.split(" ").mapNotNull {
+                        if ("=" in it) {
+                            val (key, value) = it.split("=")
+                            val typedValue = pythonToKotlin(value)
+                            key to typedValue
+                        } else {
+                            Timber.v("Config '$it' is malformed, ignoring it.")
+                            null
+                        }
+                    }.toTypedArray(),
+                )
+                return Result.success(kv)
             }
-
-            print("message: '$successful'")
-            val kv = mapOf(
-                *successful.split(",").map {
-                    val (k, v) = it.split(" = ")
-                    k to v
-                }.toTypedArray(),
-            )
-            return Result.success(kv)
+            return Result.failure(IllegalStateException())
         } else {
             return Result.failure(NoSuchElementException())
         }
@@ -119,8 +121,14 @@ class ZeBadgeManager @Inject constructor(
     /**
      * Update configuration on badge..
      */
-    suspend fun updateConfiguration(configuration: Map<String, String>): Result<Int> {
-        val config = configuration.entries.joinToString(separator = ",")
+    suspend fun updateConfiguration(configuration: Map<String, Any?>): Result<Any> {
+
+        val detypedConfig: Map<String, String> = configuration.map { e ->
+            val (k, v) = e
+            k to kotlinToPython(v)
+        }.toMap()
+
+        val config = detypedConfig.entries.joinToString(separator = " ")
 
         val payload = BadgePayload(
             type = "config_update",
@@ -128,8 +136,38 @@ class ZeBadgeManager @Inject constructor(
             payload = config,
         )
 
-        return badgeManager.sendPayload(payload)
+        badgeManager.sendPayload(payload)
+
+        return badgeManager.readResponse()
     }
 
     fun isConnected(): Boolean = badgeManager.isConnected()
+}
+
+private fun pythonToKotlin(value: String): Any? = when {
+    value.startsWith("\"") -> {
+        value
+            .replace("\"", "")
+            .replace(SPACE_REPLACEMENT, " ")
+    }
+
+    value.startsWith("\'") -> {
+        value
+            .replace("\'", "")
+            .replace(SPACE_REPLACEMENT, " ")
+    }
+
+    value == "None" -> null
+    value.toIntOrNull() != null -> value.toInt()
+    value.toFloatOrNull() != null -> value.toFloat()
+    value == "True" -> true
+    value == "False" -> false
+    else -> value
+}
+
+private fun kotlinToPython(value: Any?): String = when (value) {
+    null -> "None"
+    is String -> "\"${value.replace(" ", SPACE_REPLACEMENT)}\""
+    is Boolean -> if (value) "True" else "False"
+    else -> "$value"
 }

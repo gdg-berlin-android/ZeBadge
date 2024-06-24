@@ -420,7 +420,7 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
-    fun updateConfiguration(configuration: Map<String, String>) {
+    fun updateConfiguration(configuration: Map<String, Any?>) {
         _uiState.update {
             it.copy(currentBadgeConfig = null)
         }
@@ -501,5 +501,5 @@ data class ZeBadgeUiState(
     val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
     val currentSimulatorSlot: ZeSlot, // which page should be displayed in the simulator?
     val slots: Map<ZeSlot, ZeConfiguration>,
-    val currentBadgeConfig: Map<String, String>?,
+    val currentBadgeConfig: Map<String, Any?>?,
 )

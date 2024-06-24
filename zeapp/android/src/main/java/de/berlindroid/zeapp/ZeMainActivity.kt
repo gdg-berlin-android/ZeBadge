@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
@@ -47,6 +48,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -655,13 +657,13 @@ private fun InfoBar(
 @Composable
 @Preview
 private fun BadgeConfigEditor(
-    config: Map<String, String> = mapOf(
+    config: Map<String, Any?> = mapOf(
         "sample configuration" to "sample value",
-        "sample int" to "23",
-        "another configuration" to "true",
+        "sample int" to 23,
+        "another configuration" to true,
     ),
     onDismissRequest: () -> Unit = {},
-    onConfirmed: (updateConfig: Map<String, String>) -> Unit = {},
+    onConfirmed: (updateConfig: Map<String, Any?>) -> Unit = {},
 ) {
     var configState by remember { mutableStateOf(config) }
     var error by remember { mutableStateOf(mapOf<String, String>()) }
@@ -695,26 +697,42 @@ private fun BadgeConfigEditor(
         text = {
             LazyColumn {
                 items(config.keys.toList()) { key ->
-                    val value = configState[key]
-
-                    AutoSizeTextField(
-                        value = "$value",
-                        isError = !error[key].isNullOrEmpty(),
-                        onValueChange = { updated ->
-                            if (updated != value) {
-                                error = error.copy(key to "")
-                                configState = configState.copy(
-                                    key to updated,
+                    when (val value = configState[key]) {
+                        is Boolean -> AutoSizeTextField(
+                            value = value.toString(),
+                            label = { Text("$key (read only)") },
+                            onValueChange = { },
+                            placeholder = {},
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Rounded.Lock,
+                                    tint = ZeBlack,
+                                    contentDescription = null,
                                 )
-                            }
-                        },
-                        label = { Text(text = key) },
-                        supportingText = {
-                            Text(text = error.getOrDefault(key, ""))
-                        },
-                        trailingIcon = {},
-                        placeholder = {},
-                    )
+                            },
+                            supportingText = { },
+                        )
+
+                        else -> AutoSizeTextField(
+                            value = "$value",
+                            isError = !error[key].isNullOrEmpty(),
+                            onValueChange = { updated ->
+                                if (updated != value) {
+                                    error = error.copy(key to "")
+                                    configState = configState.copy(
+                                        key to updated,
+                                    )
+                                }
+                            },
+                            label = { Text(text = key) },
+                            supportingText = {
+                                Text(text = error.getOrDefault(key, ""))
+                            },
+                            trailingIcon = {},
+                            placeholder = {},
+                        )
+
+                    }
                 }
             }
         },
