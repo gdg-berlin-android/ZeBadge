@@ -136,9 +136,23 @@ class ZeBadgeManager @Inject constructor(
             payload = config,
         )
 
-        badgeManager.sendPayload(payload)
+        if (badgeManager.sendPayload(payload).isSuccess) {
 
-        return badgeManager.readResponse()
+            if (badgeManager.sendPayload(
+                    BadgePayload(
+                        type = "config_save",
+                        meta = "",
+                        payload = "",
+                    ),
+                ).isSuccess
+            ) {
+                return Result.success(true)
+            } else {
+                return Result.failure(IllegalStateException())
+            }
+        } else {
+            return Result.failure(NoSuchElementException())
+        }
     }
 
     fun isConnected(): Boolean = badgeManager.isConnected()
