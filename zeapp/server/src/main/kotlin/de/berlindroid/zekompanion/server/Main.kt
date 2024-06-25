@@ -8,9 +8,12 @@ import de.berlindroid.zekompanion.server.routers.index
 import de.berlindroid.zekompanion.server.routers.adminCreateUser
 import de.berlindroid.zekompanion.server.routers.adminDeleteUser
 import de.berlindroid.zekompanion.server.routers.adminListUsers
+import de.berlindroid.zekompanion.server.routers.getPosts
 import de.berlindroid.zekompanion.server.routers.getUser
+import de.berlindroid.zekompanion.server.routers.postPost
 import de.berlindroid.zekompanion.server.routers.updateUser
 import de.berlindroid.zekompanion.server.user.UserRepository
+import de.berlindroid.zekompanion.server.zepass.ZePassRepository
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -41,6 +44,7 @@ fun main(args: Array<String>) {
     println("Serving on port $serverPort.")
 
     val users = UserRepository.load()
+    val zepass = ZePassRepository.load()
 
     embeddedServer(
         Tomcat,
@@ -71,6 +75,9 @@ fun main(args: Array<String>) {
                     // TODO: Check if callable from ZeBadge (no ssl)
                     updateUser(users)
                     getUser(users)
+
+                    postPost(zepass, users)
+                    getPosts(zepass)
                 }
             }
         },
