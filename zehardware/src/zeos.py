@@ -63,8 +63,7 @@ class ZeBadgeOs:
 
         # add defaults
         self.config = {}
-        # load_config(self.config)
-        self.config['uid'] = 'some-thing-amazing'
+        load_config(self.config)
 
         # applications
         self._app_a = None

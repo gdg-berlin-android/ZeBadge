@@ -1,3 +1,5 @@
+import util
+
 _SPACE_REPLACEMENT_ = "$SPACE#"
 
 
@@ -16,13 +18,14 @@ def update_config(config, content: str):
         print('No content to update.')
 
 
-def load_config(config, filename: str = '/ze.conf') -> bool:
+def load_config(config, filename: str = 'ze.conf') -> bool:
     try:
         file = open(filename, 'r')
         if file:
-            _execute_assignments_on_obj(config, file.readlines())
+            _execute_assignments_on_obj(config, file.read().replace('\n', ' '))
         return True
-    except Exception:
+    except Exception as e:
+        print(util.exception_to_readable(e))
         return False
 
 
