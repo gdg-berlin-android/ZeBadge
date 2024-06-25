@@ -2,7 +2,6 @@ package de.berlindroid.zeapp.zeservices
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zeui.pixelBuffer
 import de.berlindroid.zekompanion.BadgePayload
@@ -11,10 +10,10 @@ import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
-private val SPACE_REPLACEMENT = "\$SPACE#"
+private const val SPACE_REPLACEMENT = "\$SPACE#"
 
 class ZeBadgeManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -112,9 +111,9 @@ class ZeBadgeManager @Inject constructor(
                 )
                 return Result.success(kv)
             }
-            return Result.failure(IllegalStateException())
+            return Result.failure(IllegalStateException("Could not read response."))
         } else {
-            return Result.failure(NoSuchElementException())
+            return Result.failure(NoSuchElementException("Sending command failed."))
         }
     }
 
@@ -148,10 +147,10 @@ class ZeBadgeManager @Inject constructor(
             ) {
                 return Result.success(true)
             } else {
-                return Result.failure(IllegalStateException())
+                return Result.failure(IllegalStateException("Could not save the config to ZeBadge."))
             }
         } else {
-            return Result.failure(NoSuchElementException())
+            return Result.failure(NoSuchElementException("Could not update the runtime configuration on ZeBadge."))
         }
     }
 
@@ -159,17 +158,17 @@ class ZeBadgeManager @Inject constructor(
 }
 
 private fun pythonToKotlin(value: String): Any? = when {
-    value.startsWith("\"") -> {
+    value.startsWith("\"") ->
         value
             .replace("\"", "")
             .replace(SPACE_REPLACEMENT, " ")
-    }
 
-    value.startsWith("\'") -> {
+
+    value.startsWith("\'") ->
         value
             .replace("\'", "")
             .replace(SPACE_REPLACEMENT, " ")
-    }
+
 
     value == "None" -> null
     value.toIntOrNull() != null -> value.toInt()
