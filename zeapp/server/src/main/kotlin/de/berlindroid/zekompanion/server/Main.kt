@@ -5,6 +5,12 @@ package de.berlindroid.zekompanion.server
 import de.berlindroid.zekompanion.server.routers.imageBin
 import de.berlindroid.zekompanion.server.routers.imagePng
 import de.berlindroid.zekompanion.server.routers.index
+import de.berlindroid.zekompanion.server.routers.adminCreateUser
+import de.berlindroid.zekompanion.server.routers.adminDeleteUser
+import de.berlindroid.zekompanion.server.routers.adminListUsers
+import de.berlindroid.zekompanion.server.routers.getUser
+import de.berlindroid.zekompanion.server.routers.updateUser
+import de.berlindroid.zekompanion.server.user.UserRepository
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -20,6 +26,8 @@ private const val LOCAL_TLS_PORT = 8443
 private const val SSL_PASSWORD_ENV = "SSL_CERTIFICATE_PASSWORD"
 private const val KEYSTORE_RESOURCE_FILE = "/tmp/keystore.jks"
 
+private const val USER_DB_FILE = "/tmp/user.db"
+
 
 fun main(args: Array<String>) {
     val keyPassword = try {
@@ -31,6 +39,8 @@ fun main(args: Array<String>) {
     val keyStore: KeyStore? = loadKeyStore(keyPassword)
     val serverPort = extractServerPort(args, keyStore)
     println("Serving on port $serverPort.")
+
+    val users = UserRepository.load()
 
     embeddedServer(
         Tomcat,
@@ -45,10 +55,22 @@ fun main(args: Array<String>) {
                 routing {
                     staticResources("/", "static") {
                         index()
+                        exclude { file ->
+                            file.path.endsWith("db")
+                        }
                     }
 
                     imageBin()
                     imagePng()
+
+                    // Callable from ZeFlasher only?
+                    adminCreateUser(users)
+                    adminListUsers(users)
+                    adminDeleteUser(users)
+
+                    // TODO: Check if callable from ZeBadge (no ssl)
+                    updateUser(users)
+                    getUser(users)
                 }
             }
         },
