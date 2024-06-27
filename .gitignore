@@ -559,6 +559,6 @@ obj/
 # End of https://www.toptal.com/developers/gitignore/api/python,android,androidstudio,intellij+all,windows,linux,macos,sublimetext,java,kotlin,circuitpython
 /zeapp/app/release/output-metadata.json
 /zeapp/app/debug/output-metadata.json
-i/zeapp/versions.properties
+/zeapp/versions.properties
 
 *.db
