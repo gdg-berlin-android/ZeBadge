@@ -14,7 +14,7 @@ license-report-gradle = { id = "com.jaredsburrows.license", version.ref = "licen
 
 [versions]
 
-android-gradle-plugin = "8.3.1"
+android-gradle-plugin = "8.2.0"
 androidx-activity = "1.8.2"
 androidx-compose-bom = "2024.03.00"
 androidx-compose-compiler = "1.5.3"
