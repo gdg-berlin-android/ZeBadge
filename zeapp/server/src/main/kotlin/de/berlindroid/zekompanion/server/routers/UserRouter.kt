@@ -1,5 +1,6 @@
 package de.berlindroid.zekompanion.server.routers
 
+import de.berlindroid.zekompanion.server.ai.AI
 import de.berlindroid.zekompanion.server.user.User
 import de.berlindroid.zekompanion.server.user.UserRepository
 import io.ktor.http.HttpStatusCode
@@ -12,14 +13,26 @@ import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
+import java.util.*
 
 
-fun Route.adminCreateUser(users: UserRepository) =
+fun Route.adminCreateUser(users: UserRepository, ai: AI) =
     post("/api/user") {
         runCatching {
             ifAuthorized {
-                val newUser = call.receiveNullable<User>() ?: throw IllegalArgumentException("No user payload found.")
-                val uuidAdded = users.createUser(newUser)
+                val uuid = UUID.randomUUID().toString()
+                val name = ai.createUserName()
+                val description = ai.createUserDescription(name)
+                val iconb64 = ai.createUserImage(name, description)
+
+                val user = User(
+                    uuid = uuid,
+                    name = name,
+                    description = description,
+                    iconb64 = iconb64,
+                )
+
+                val uuidAdded = users.createUser(user)
 
                 if (uuidAdded != null) {
                     call.respond(status = HttpStatusCode.Created, users.getUser(uuidAdded)!!)
@@ -30,7 +43,7 @@ fun Route.adminCreateUser(users: UserRepository) =
             }
         }.onFailure {
             it.printStackTrace()
-            call.respondText("Error: ${it.message}")
+            call.respondText("Error: ${it.message}.")
         }
     }
 

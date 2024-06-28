@@ -2,6 +2,7 @@
 
 package de.berlindroid.zekompanion.server
 
+import de.berlindroid.zekompanion.server.ai.AI
 import de.berlindroid.zekompanion.server.routers.imageBin
 import de.berlindroid.zekompanion.server.routers.imagePng
 import de.berlindroid.zekompanion.server.routers.index
@@ -41,6 +42,7 @@ fun main(args: Array<String>) {
     println("Serving on port $serverPort.")
 
     val users = UserRepository.load()
+    val ai = AI()
     val zepass = ZePassRepository.load()
 
     embeddedServer(
@@ -65,7 +67,7 @@ fun main(args: Array<String>) {
                     imagePng()
 
                     // Callable from ZeFlasher only?
-                    adminCreateUser(users)
+                    adminCreateUser(users, ai)
                     adminListUsers(users)
                     adminDeleteUser(users)
 

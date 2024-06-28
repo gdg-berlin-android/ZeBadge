@@ -1,6 +1,8 @@
 package de.berlindroid.zekompanion.server.user
 
+import de.berlindroid.zekompanion.server.ai.AI
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -12,18 +14,26 @@ private const val DB_FILENAME = "./user.db"
 @Serializable
 data class User(
     val name: String? = null,
-    val iconUrl: String? = null,
+    val iconb64: String? = null,
+    val description: String? = null,
     val uuid: String? = null,
 )
 
-class UserRepository private constructor(
+class UserRepository(
     private val users: MutableList<User> = mutableListOf(),
 ) {
     companion object {
         fun load(): UserRepository = try {
-            UserRepository(
-                users = Json.decodeFromString(File(DB_FILENAME).readText()),
-            )
+            val users = File(DB_FILENAME).readText()
+
+            try {
+                UserRepository(
+                    users = Json.decodeFromString(users),
+                )
+            } catch (e: SerializationException) {
+                println("Couldn't read users file. Creating a new one.")
+                UserRepository()
+            }
         } catch (notFound: FileNotFoundException) {
             UserRepository()
         }
@@ -35,7 +45,8 @@ class UserRepository private constructor(
 
     fun createUser(user: User): String? {
         val existingUser = users.find { it.uuid == user.uuid }
-        if (existingUser != null || user.uuid != null) {
+        if (existingUser != null) {
+            println("User '${user.uuid}' already exists.")
             return null
         }
 
