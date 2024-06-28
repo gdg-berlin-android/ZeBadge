@@ -15,7 +15,7 @@ import java.nio.IntBuffer
 import javax.imageio.ImageIO
 
 object ImageExt {
-    private fun BufferedImage.toPixels(): IntBuffer {
+    fun BufferedImage.toPixels(): IntBuffer {
         val output = IntBuffer.allocate(width * height)
         getRGB(0, 0, width, height, output.array(), 0, width)
         return output

@@ -5,6 +5,7 @@ import java.lang.IndexOutOfBoundsException
 
 class AI(
     private val gemini: Gemini = Gemini(),
+    private val dale: Dalle = Dalle(),
     private val firstNames: MutableList<String> = mutableListOf(),
     private val lastNames: MutableList<String> = mutableListOf(),
     private val prefixes: List<String> = listOf(
@@ -50,5 +51,8 @@ class AI(
 
     suspend fun createUserDescription(name: String): String = gemini.getDescription(name)
 
-    suspend fun createUserImage(name: String, description: String): String = ""
+    suspend fun createUserImage(name: String, description: String): String = dale.requestImageGeneration(
+        name = name,
+        description = description,
+    ) ?: ""
 }
