@@ -2,9 +2,9 @@ package de.berlindroid.zekompanion.server.ai
 
 import java.lang.IndexOutOfBoundsException
 
-private const val AI_TOKEN_ENV = "AI_AUTH_TOKEN"
 
 class AI(
+    private val gemini: Gemini = Gemini(),
     private val firstNames: MutableList<String> = mutableListOf(),
     private val lastNames: MutableList<String> = mutableListOf(),
     private val prefixes: List<String> = listOf(
@@ -41,14 +41,14 @@ class AI(
         }
     }
 
-    fun createUserName(): String = "${firstNames.random()} ${createMaybeRandomPrefix()}${lastNames.random()}"
+    suspend fun createUserName(): String = "${firstNames.random()} ${createMaybeRandomPrefix()}${lastNames.random()}"
 
     private fun createMaybeRandomPrefix(): String = when (Math.random()) {
         in 0.95..1.0 -> prefixes.random()
         else -> ""
     }
 
-    fun createUserDescription(name: String): String = ""
+    suspend fun createUserDescription(name: String): String = gemini.getDescription(name)
 
-    fun createUserImage(name: String, description: String): String = ""
+    suspend fun createUserImage(name: String, description: String): String = ""
 }

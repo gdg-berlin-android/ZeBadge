@@ -23,6 +23,8 @@ dependencies {
     implementation(libs.ktor.content.serialization)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.sl4j.simple)
+    implementation(libs.retrofit2.retrofit)
+    implementation(libs.retrofit2.converter.serialization)
 
 }
 
