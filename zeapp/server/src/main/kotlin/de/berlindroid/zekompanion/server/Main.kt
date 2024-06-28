@@ -29,9 +29,6 @@ private const val LOCAL_TLS_PORT = 8443
 private const val SSL_PASSWORD_ENV = "SSL_CERTIFICATE_PASSWORD"
 private const val KEYSTORE_RESOURCE_FILE = "/tmp/keystore.jks"
 
-private const val USER_DB_FILE = "/tmp/user.db"
-
-
 fun main(args: Array<String>) {
     val keyPassword = try {
         System.getenv(SSL_PASSWORD_ENV)
