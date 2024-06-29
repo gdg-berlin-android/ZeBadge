@@ -1,24 +1,15 @@
 package de.berlindroid.zekompanion.server.routers
 
-import de.berlindroid.zekompanion.debase64
-import de.berlindroid.zekompanion.fromBinaryToRGB
 import de.berlindroid.zekompanion.server.ai.AI
-import de.berlindroid.zekompanion.server.ai.USER_PROFILE_PICTURE_SIZE
-import de.berlindroid.zekompanion.server.ext.ImageExt.toImage
 import de.berlindroid.zekompanion.server.user.User
 import de.berlindroid.zekompanion.server.user.UserRepository
-import de.berlindroid.zekompanion.unzipit
 import io.ktor.http.*
-import io.ktor.server.application.call
-import io.ktor.server.request.receiveNullable
+import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.put
+import io.ktor.server.routing.*
+import java.io.File
 import java.util.*
-import javax.imageio.ImageIO
 
 
 fun Route.adminCreateUser(users: UserRepository, ai: AI) =
@@ -28,13 +19,14 @@ fun Route.adminCreateUser(users: UserRepository, ai: AI) =
                 val uuid = UUID.randomUUID().toString()
                 val name = ai.createUserName()
                 val description = ai.createUserDescription(name)
-                val iconB64 = ai.createUserImage(name, description)
+
+                val b64 = ai.createUserProfileImages(uuid, name, description)
 
                 val user = User(
                     uuid = uuid,
                     name = name,
                     description = description,
-                    iconB64 = iconB64,
+                    profileB64 = b64,
                 )
 
                 val uuidAdded = users.createUser(user)
@@ -121,12 +113,9 @@ fun Route.getUserProfileImagePng(users: UserRepository) =
             withParameter("UUID") { uuid ->
                 val user = users.getUser(uuid)
                 if (user != null) {
-                    val pixels = user.iconB64.debase64().unzipit().fromBinaryToRGB()
-                    val image = pixels.toImage(USER_PROFILE_PICTURE_SIZE, USER_PROFILE_PICTURE_SIZE)
-
-                    call.respondOutputStream(contentType = ContentType.Image.PNG) {
-                        ImageIO.write(image, "png", this)
-                    }
+                    call.respondFile(
+                        File("./profiles/${uuid}.png"),
+                    )
                 } else {
                     call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
                 }
@@ -144,7 +133,7 @@ fun Route.getUserProfileImageBinary(users: UserRepository) =
             withParameter("UUID") { uuid ->
                 val user = users.getUser(uuid)
                 if (user != null) {
-                    call.respondText { user.iconB64 }
+                    call.respondText { user.profileB64 ?: "" }
                 } else {
                     call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
                 }

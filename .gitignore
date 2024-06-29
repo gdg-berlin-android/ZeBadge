@@ -562,3 +562,4 @@ obj/
 /zeapp/versions.properties
 
 *.db
+zeapp/profiles/*png
