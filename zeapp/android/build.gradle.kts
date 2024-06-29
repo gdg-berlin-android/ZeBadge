@@ -118,10 +118,11 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
 
-        freeCompilerArgs += listOf(
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi",
-        )
+        freeCompilerArgs +=
+            listOf(
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi",
+            )
     }
 
     buildFeatures {
@@ -130,18 +131,21 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
+        kotlinCompilerExtensionVersion =
+            libs.versions.androidx.compose.compiler
+                .get()
     }
 
     packaging {
         resources {
-            excludes += arrayOf(
-                "META-INF/AL2.0",
-                "META-INF/LGPL2.1",
-                "META-INF/*.kotlin_module",
-                "META-INF/LICENSE.*",
-                "META-INF/LICENSE-notice.*",
-            )
+            excludes +=
+                arrayOf(
+                    "META-INF/AL2.0",
+                    "META-INF/LGPL2.1",
+                    "META-INF/*.kotlin_module",
+                    "META-INF/LICENSE.*",
+                    "META-INF/LICENSE-notice.*",
+                )
         }
     }
 }
@@ -219,19 +223,26 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs::class).confi
 
 tasks.create("generateContributorsAsset") {
     val command = "git shortlog -sne --all"
-    val process = ProcessBuilder()
-        .command(command.split(" "))
-        .directory(rootProject.projectDir)
-        .redirectOutput(Redirect.PIPE)
-        .redirectError(Redirect.PIPE)
-        .start()
+    val process =
+        ProcessBuilder()
+            .command(command.split(" "))
+            .directory(rootProject.projectDir)
+            .redirectOutput(Redirect.PIPE)
+            .redirectError(Redirect.PIPE)
+            .start()
     process.waitFor(60, TimeUnit.SECONDS)
     val result = process.inputStream.bufferedReader().readText()
 
-    val contributors = result.lines()
-        .joinToString(separator = System.lineSeparator()) { it.substringAfter("\t") }
+    val contributors =
+        result
+            .lines()
+            .joinToString(separator = System.lineSeparator()) { it.substringAfter("\t") }
 
-    val assetDir = layout.buildDirectory.dir("generated/assets").get().asFile
+    val assetDir =
+        layout.buildDirectory
+            .dir("generated/assets")
+            .get()
+            .asFile
     assetDir.createDirectory()
     File(assetDir, "test.txt").writeText(contributors)
 }
