@@ -1,19 +1,24 @@
 package de.berlindroid.zekompanion.server.routers
 
+import de.berlindroid.zekompanion.debase64
+import de.berlindroid.zekompanion.fromBinaryToRGB
 import de.berlindroid.zekompanion.server.ai.AI
+import de.berlindroid.zekompanion.server.ai.USER_PROFILE_PICTURE_SIZE
+import de.berlindroid.zekompanion.server.ext.ImageExt.toImage
 import de.berlindroid.zekompanion.server.user.User
 import de.berlindroid.zekompanion.server.user.UserRepository
-import io.ktor.http.HttpStatusCode
+import de.berlindroid.zekompanion.unzipit
+import io.ktor.http.*
 import io.ktor.server.application.call
 import io.ktor.server.request.receiveNullable
-import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
+import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import java.util.*
+import javax.imageio.ImageIO
 
 
 fun Route.adminCreateUser(users: UserRepository, ai: AI) =
@@ -23,13 +28,13 @@ fun Route.adminCreateUser(users: UserRepository, ai: AI) =
                 val uuid = UUID.randomUUID().toString()
                 val name = ai.createUserName()
                 val description = ai.createUserDescription(name)
-                val iconb64 = ai.createUserImage(name, description)
+                val iconB64 = ai.createUserImage(name, description)
 
                 val user = User(
                     uuid = uuid,
                     name = name,
                     description = description,
-                    iconb64 = iconb64,
+                    iconB64 = iconB64,
                 )
 
                 val uuidAdded = users.createUser(user)
@@ -99,6 +104,47 @@ fun Route.getUser(users: UserRepository) =
                 val user = users.getUser(uuid)
                 if (user != null) {
                     call.respond(status = HttpStatusCode.OK, user)
+                } else {
+                    call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
+                }
+            }
+            call.respondText(status = HttpStatusCode.UnprocessableEntity, text = "No UUID.")
+        }.onFailure {
+            it.printStackTrace()
+            call.respondText("Error: ${it.message}")
+        }
+    }
+
+fun Route.getUserProfileImagePng(users: UserRepository) =
+    get("/api/user/{UUID}/png") {
+        runCatching {
+            withParameter("UUID") { uuid ->
+                val user = users.getUser(uuid)
+                if (user != null) {
+                    val pixels = user.iconB64.debase64().unzipit().fromBinaryToRGB()
+                    val image = pixels.toImage(USER_PROFILE_PICTURE_SIZE, USER_PROFILE_PICTURE_SIZE)
+
+                    call.respondOutputStream(contentType = ContentType.Image.PNG) {
+                        ImageIO.write(image, "png", this)
+                    }
+                } else {
+                    call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
+                }
+            }
+            call.respondText(status = HttpStatusCode.UnprocessableEntity, text = "No UUID.")
+        }.onFailure {
+            it.printStackTrace()
+            call.respondText("Error: ${it.message}")
+        }
+    }
+
+fun Route.getUserProfileImageBinary(users: UserRepository) =
+    get("/api/user/{UUID}/b64") {
+        runCatching {
+            withParameter("UUID") { uuid ->
+                val user = users.getUser(uuid)
+                if (user != null) {
+                    call.respondText { user.iconB64 }
                 } else {
                     call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
                 }

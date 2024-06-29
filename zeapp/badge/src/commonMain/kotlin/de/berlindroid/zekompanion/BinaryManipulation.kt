@@ -195,7 +195,23 @@ fun IntBuffer.toBinary(): ByteBuffer {
     return output.toBuffer()
 }
 
+/**
+ * Take a binary bytebuffer and convert it into an int buffer.
+ */
+fun ByteBuffer.fromBinaryToRGB(): IntBuffer {
+    val output = mutableListOf<Int>()
+    forEach { byte ->
+        for (index in 0 until 8) {
+            val bit = (byte.toInt() shr (7 - index)) and 1
+            output.add(rgb(bit * 255, bit * 255, bit * 255))
+        }
+    }
+
+    return output.toBuffer()
+}
+
 private fun List<Byte>.toBuffer(): ByteBuffer = ByteBuffer.wrap(toTypedArray().toByteArray())
+private fun List<Int>.toBuffer(): IntBuffer = IntBuffer.wrap(toTypedArray().toIntArray())
 
 /**
  * Map all values of an IntBuffer
