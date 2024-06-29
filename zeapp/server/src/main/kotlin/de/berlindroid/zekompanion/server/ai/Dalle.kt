@@ -1,7 +1,5 @@
 package de.berlindroid.zekompanion.server.ai
 
-import de.berlindroid.zekompanion.*
-import de.berlindroid.zekompanion.server.ext.ImageExt.toPixels
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -12,6 +10,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
+import java.awt.image.BufferedImage
 import java.net.URL
 import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
@@ -49,8 +48,6 @@ interface OpenAIService {
 
 private const val TIMEOUT: Long = 90
 
-const val USER_PROFILE_PICTURE_SIZE = 32
-
 class Dalle(
     private val json: Json = Json { ignoreUnknownKeys = true },
     private val service: OpenAIService = Retrofit.Builder()
@@ -76,7 +73,7 @@ class Dalle(
     suspend fun requestImageGeneration(
         name: String,
         description: String,
-    ): String? {
+    ): BufferedImage? {
         try {
             val maybeImages = service.generateImage(
                 request = ImageRequest(
@@ -91,18 +88,7 @@ class Dalle(
             val location = maybeImages.data.firstOrNull() ?: return null
             println("Avatar of '$name' generated at ${location.url}.")
 
-            val image = ImageIO.read(URL(location.url))
-            val width = image.width
-            val height = image.height
-            val b64 = image
-                .toPixels()
-                .resize(width, height, USER_PROFILE_PICTURE_SIZE, USER_PROFILE_PICTURE_SIZE)
-                .ditherFloydSteinberg(USER_PROFILE_PICTURE_SIZE, USER_PROFILE_PICTURE_SIZE)
-                .toBinary()
-                .zipit()
-                .base64()
-
-            return b64
+            return ImageIO.read(URL(location.url))
         } catch (e: Exception) {
             e.printStackTrace()
             println("Could not generate image!")

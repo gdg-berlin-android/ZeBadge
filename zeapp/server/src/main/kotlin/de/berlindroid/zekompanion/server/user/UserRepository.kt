@@ -12,10 +12,10 @@ private const val DB_FILENAME = "./user.db"
 
 @Serializable
 data class User(
-    val name: String,
-    val iconB64: String,
-    val description: String,
     val uuid: String,
+    val name: String,
+    val description: String,
+    val profileB64: String?,
 )
 
 class UserRepository(
@@ -49,12 +49,11 @@ class UserRepository(
             return null
         }
 
-        val uuid = UUID.randomUUID().toString()
-        users.add(user.copy(uuid = uuid))
+        users.add(user)
 
         save(this)
 
-        return uuid
+        return user.uuid
     }
 
     fun getUser(uuid: String): User? {

@@ -1,7 +1,31 @@
 package de.berlindroid.zekompanion.server.ai
 
-import java.lang.IndexOutOfBoundsException
+import de.berlindroid.zekompanion.base64
+import de.berlindroid.zekompanion.ditherFloydSteinberg
+import de.berlindroid.zekompanion.server.ext.ImageExt.toPixels
+import de.berlindroid.zekompanion.toBinary
+import de.berlindroid.zekompanion.zipit
+import java.awt.Image
+import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.nio.ByteBuffer
+import javax.imageio.ImageIO
 
+const val USER_PROFILE_PICTURE_SIZE = 32
+
+private fun rescaleImage(
+    image: BufferedImage,
+    targetWidth: Int = USER_PROFILE_PICTURE_SIZE,
+    targetHeight: Int = USER_PROFILE_PICTURE_SIZE,
+): BufferedImage {
+    val scaledImage = image.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH)
+    val destinationImage = BufferedImage(targetWidth, targetHeight, image.type)
+    val graphics = destinationImage.createGraphics()
+    graphics.drawImage(scaledImage, 0, 0, null)
+    graphics.dispose()
+    return destinationImage
+}
 
 class AI(
     private val gemini: Gemini = Gemini(),
@@ -51,8 +75,23 @@ class AI(
 
     suspend fun createUserDescription(name: String): String = gemini.getDescription(name)
 
-    suspend fun createUserImage(name: String, description: String): String = dale.requestImageGeneration(
-        name = name,
-        description = description,
-    ) ?: ""
+    suspend fun createUserProfileImages(uuid: String, name: String, description: String): String? {
+        val image = dale.requestImageGeneration(
+            name = name,
+            description = description,
+        )
+
+        return if (image != null) {
+            ImageIO.write(image, "png", File("./profiles/${uuid}.png"))
+
+            rescaleImage(image)
+                .toPixels()
+                .ditherFloydSteinberg(USER_PROFILE_PICTURE_SIZE, USER_PROFILE_PICTURE_SIZE)
+                .toBinary()
+                .zipit()
+                .base64()
+        } else {
+            null
+        }
+    }
 }
