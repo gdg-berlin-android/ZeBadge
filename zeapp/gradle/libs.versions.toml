@@ -48,7 +48,7 @@ junit4 = "4.13.2"
 junit4-ui = "1.6.4"
 ktor = "2.3.9"
 uiTestManifest = "1.6.4"
-mockk = "1.13.8"
+mockk = "1.13.11"
 kotlinxCoroutinesTest = "1.7.3"
 
 [libraries]
