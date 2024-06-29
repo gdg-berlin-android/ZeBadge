@@ -18,6 +18,7 @@ private const val SPACE_REPLACEMENT = "\$SPACE#"
 
 class ZeBadgeManager @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val badgeConfigParser: ZeBadgeConfigParser,
 ) {
 
     private val badgeManager = buildBadgeManager(Environment(context))
@@ -75,10 +76,10 @@ class ZeBadgeManager @Inject constructor(
             payload = "",
         )
 
-        if (badgeManager.sendPayload(payload).isSuccess) {
-            return badgeManager.readResponse()
+        return if (badgeManager.sendPayload(payload).isSuccess) {
+            badgeManager.readResponse()
         } else {
-            return Result.failure(NoSuchElementException())
+            Result.failure(NoSuchElementException())
         }
     }
 
@@ -114,19 +115,10 @@ class ZeBadgeManager @Inject constructor(
                             "'${config.replace("\n", "\\n")}'.",
                 )
 
-                val kv = mapOf(
-                    *config.split(" ").mapNotNull {
-                        if ("=" in it) {
-                            val (key, value) = it.split("=")
-                            val typedValue = pythonToKotlin(value)
-                            key to typedValue
-                        } else {
-                            Timber.v("Config '$it' is malformed, ignoring it.")
-                            null
-                        }
-                    }.toTypedArray(),
-                )
-                return Result.success(kv)
+                val parseResult = badgeConfigParser.parse(config)
+                Timber.v("Badge config parsed: $parseResult")
+
+                return Result.success(parseResult.flatten())
             }
             return Result.failure(IllegalStateException("Could not read response."))
         } else {
@@ -174,16 +166,6 @@ class ZeBadgeManager @Inject constructor(
     }
 
     fun isConnected(): Boolean = badgeManager.isConnected()
-}
-
-private fun pythonToKotlin(value: String): Any? = when {
-    value == "None" -> null
-    value.toIntOrNull() != null -> value.toInt()
-    value.toFloatOrNull() != null -> value.toFloat()
-    value == "True" -> true
-    value == "False" -> false
-    else -> value.replace(SPACE_REPLACEMENT, " ")
-
 }
 
 private fun kotlinToPython(value: Any?): String = when (value) {
