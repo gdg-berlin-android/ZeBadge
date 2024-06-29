@@ -73,7 +73,7 @@ def colorize(text):
     return result
 
 
-def request_new_user_id():
+def request_new_user():
     assert SERVER_TOKEN, f"SERVER_AUTH not set: '{SERVER_TOKEN}'."
 
     users = requests.get(
@@ -86,31 +86,34 @@ def request_new_user_id():
 
     print(f"Found {len(users)} users. Adding another one.")
 
-    new_uuid = requests.post(
+    new_user = requests.post(
         url=f"{BASE_URL}/api/user",
         headers={
             'Content-Type': 'application/json',
             'ZeAuth': SERVER_TOKEN
         },
-        json={
-        }
+        json={}
     )
 
-    if new_uuid.ok:
-        new_uuid = new_uuid.json()['uuid']
-        print(f".. user '{colorize(new_uuid)}' created.")
+    if new_user.ok:
+        user = new_user.json()
+        print(f".. user '{colorize(user['name'])}' created.")
     else:
         print(f".. couldn't create user: '{colorize(new_uuid.text)}'.")
 
-    return new_uuid  # server shenanigans
+    return user  # server shenanigans
 
 
 def find_mount_point(name):
-    mounted = subprocess.run(["mount"], capture_output=True, text=True, check=True).stdout
+    mount = subprocess.run(["mount"], capture_output=True, check=True)
+    if mount.returncode != 0:
+        print(
+            f'"mount" returned error code {mount.errorcode}.\n\nCheck outputs\nstd:{mount.stdout}\nerr:{mount.stderr}\n')
+        return None
 
-    if name in mounted:
-        return list(map(lambda y: y.split()[2], filter(lambda x: name in x, mounted.splitlines())))[0]
-
+    output = mount.stdout.decode() + mount.stderr.decode()
+    if name in output:
+        return list(map(lambda y: y.split()[2], filter(lambda x: name in x, output.splitlines())))[0]
     else:
         return None
 
@@ -138,10 +141,14 @@ def nuke():
 
     path = find_mount_point('RPI')
     if not path:
-        print(f"Please put badge in flash mode.\n{colorize('restart')} ZeBadge and hold {colorize('boot / usr')} button.")
+        print(
+            f"Please put badge in flash mode.\n"
+            f"{colorize('restart')} ZeBadge and "
+            f"hold {colorize('boot / usr')} button."
+        )
 
         while not find_mount_point('RPI'):
-            print('.', end='')
+            print('.', flush=True, end='')
             time.sleep(0.1)
         print()
         path = find_mount_point('RPI')
@@ -153,7 +160,7 @@ def nuke():
     time.sleep(0.3)
 
     while not find_mount_point('RPI'):
-        print('.', end='')
+        print('.', flush=True, end='')
         time.sleep(0.1)
     print()
 
@@ -172,7 +179,7 @@ def flash():
         print(f"Please put badge in flash mode.\n{colorize('restart')} and hold {colorize('boot / usr')} button.")
 
         while not find_mount_point('RPI'):
-            print('.', end='')
+            print('.', flush=True, end='')
             time.sleep(0.1)
         print()
 
@@ -183,7 +190,7 @@ def flash():
     complete = False
 
     def wait_on_exception():
-        print('x', end='')
+        print('x', flush=True, end='')
         time.sleep(1)
 
     while not complete:
@@ -196,7 +203,7 @@ def flash():
             wait_on_exception()
 
     while not find_mount_point('CIRC'):
-        print('.', end='')
+        print('.', flush=True, end='')
         time.sleep(0.1)
 
     print()
@@ -205,7 +212,7 @@ def flash():
 def copy_code():
     circuit = find_mount_point('CIRC')
     while not circuit:
-        print('.', end='')
+        print('.', flush=True, end='')
         time.sleep(0.1)
         circuit = find_mount_point('CIRC')
 
@@ -217,9 +224,9 @@ def copy_code():
     for src in source_files:
         try:
             shutil.copy('../src/' + src, circuit)
-            print('.', end='')
+            print('.', flush=True, end='')
         except IsADirectoryError:
-            print(':', end='')
+            print(':', flush=True, end='')
     print()
 
     print(colorize("copy bitmap resources"))
@@ -228,26 +235,29 @@ def copy_code():
         try:
             if res.endswith('bmp'):
                 shutil.copy('../resources/' + res, circuit)
-                print('.', end='')
+                print('.', flush=True, end='')
             else:
-                print(',', end='')
+                print(',', flush=True, end='')
         except IsADirectoryError:
-            print(':', end='')
+            print(':', flush=True, end='')
 
     print()
 
 
-def inject_user_id(uuid):
+def inject_user(user):
     circuit = find_mount_point('CIRC')
     while not circuit:
-        print('.', end='')
+        print('.', flush=True, end='')
         time.sleep(0.1)
         circuit = find_mount_point('CIRC')
 
-    print(colorize("injecting user id"))
-    open(circuit + "/ze.conf", "w+").writelines([
-        f'uuid={uuid} ',
-    ])
+    user_config = " ".join(list(map(lambda x: f'user.{x}={user[x].replace(' ', "$SPACE#")}', user)))
+
+    print(f"{colorize("injecting user")}: {user_config}")
+
+    open(circuit + "/ze.conf", "w+").write(
+        user_config
+    )
 
 
 if __name__ == '__main__':
@@ -259,9 +269,11 @@ if __name__ == '__main__':
         exit(-1)
 
     nuke()
+
     flash()
+
     copy_code()
 
-    inject_user_id(request_new_user_id())
+    inject_user(request_new_user())
 
     print(colorize("!! DONE !!"))

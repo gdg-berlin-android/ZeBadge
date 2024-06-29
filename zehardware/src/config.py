@@ -46,7 +46,7 @@ def fields_to_str(obj) -> str:
 
 
 def str_to_fields(obj, assignments):
-    l = list(filter(lambda y: len(y) == 2, map(lambda x: x.replace(_SPACE_REPLACEMENT_, ' ').replace('\n', '').split('='), assignments.split(' '))))
+    l = list(filter(lambda y: len(y) == 2, map(lambda x: x.replace(_SPACE_REPLACEMENT_, ' ').replace('\n', '').split('=',1), assignments.split(' '))))
     read = dict(l)
     for key in read:
         value = read[key]
