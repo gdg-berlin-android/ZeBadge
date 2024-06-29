@@ -10,6 +10,7 @@ import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -85,6 +86,17 @@ class ZeBadgeManager @Inject constructor(
      * Return the current active configuration.
      */
     suspend fun listConfiguration(): Result<Map<String, Any?>> {
+        badgeManager.sendPayload(
+            BadgePayload(
+                type = "config_load",
+                meta = "",
+                payload = "",
+            ),
+        )
+
+        badgeManager.readResponse()
+        delay(300)
+
         val payload = BadgePayload(
             type = "config_list",
             meta = "",
@@ -93,9 +105,14 @@ class ZeBadgeManager @Inject constructor(
 
         if (badgeManager.sendPayload(payload).isSuccess) {
             val response = badgeManager.readResponse()
+            delay(300)
+
             if (response.isSuccess) {
-                val config = response.getOrDefault("")
-                Timber.v("Badge sent response: successfully received configuration: '${config.replace("\n", "\\n")}'.")
+                val config = response.getOrDefault("").replace("\r\n", "")
+                Timber.v(
+                    "Badge sent response: successfully received configuration: " +
+                            "'${config.replace("\n", "\\n")}'.",
+                )
 
                 val kv = mapOf(
                     *config.split(" ").mapNotNull {
@@ -136,8 +153,10 @@ class ZeBadgeManager @Inject constructor(
         )
 
         if (badgeManager.sendPayload(payload).isSuccess) {
+            badgeManager.readResponse()
+            delay(300)
 
-            if (badgeManager.sendPayload(
+            return if (badgeManager.sendPayload(
                     BadgePayload(
                         type = "config_save",
                         meta = "",
@@ -145,9 +164,9 @@ class ZeBadgeManager @Inject constructor(
                     ),
                 ).isSuccess
             ) {
-                return Result.success(true)
+                Result.success(true)
             } else {
-                return Result.failure(IllegalStateException("Could not save the config to ZeBadge."))
+                Result.failure(IllegalStateException("Could not save the config to ZeBadge."))
             }
         } else {
             return Result.failure(NoSuchElementException("Could not update the runtime configuration on ZeBadge."))
@@ -158,29 +177,18 @@ class ZeBadgeManager @Inject constructor(
 }
 
 private fun pythonToKotlin(value: String): Any? = when {
-    value.startsWith("\"") ->
-        value
-            .replace("\"", "")
-            .replace(SPACE_REPLACEMENT, " ")
-
-
-    value.startsWith("\'") ->
-        value
-            .replace("\'", "")
-            .replace(SPACE_REPLACEMENT, " ")
-
-
     value == "None" -> null
     value.toIntOrNull() != null -> value.toInt()
     value.toFloatOrNull() != null -> value.toFloat()
     value == "True" -> true
     value == "False" -> false
-    else -> value
+    else -> value.replace(SPACE_REPLACEMENT, " ")
+
 }
 
 private fun kotlinToPython(value: Any?): String = when (value) {
     null -> "None"
-    is String -> "\"${value.replace(" ", SPACE_REPLACEMENT)}\""
+    is String -> value.replace(" ", SPACE_REPLACEMENT)
     is Boolean -> if (value) "True" else "False"
     else -> "$value"
 }
