@@ -2,18 +2,20 @@ import util
 
 _SPACE_REPLACEMENT_ = "$SPACE#"
 
+def _sanatize(config):
+    return config.replace('\r\n', '').replace('\n', ' ')
 
-def save_config(config, filename: str = '/ze.conf'):
+def save_config(config, filename: str = 'ze.conf'):
     file = open(filename, 'w')
     if file:
         file.write(
-            fields_to_str(config)
+            fields_to_str(_sanatize(config))
         )
 
 
 def update_config(config, content: str):
     if content:
-        _execute_assignments_on_obj(config, content)
+        str_to_fields(config, _sanatize(content))
     else:
         print('No content to update.')
 
@@ -22,7 +24,7 @@ def load_config(config, filename: str = 'ze.conf') -> bool:
     try:
         file = open(filename, 'r')
         if file:
-            _execute_assignments_on_obj(config, file.read().replace('\n', ' '))
+            str_to_fields(config, file.read())
         return True
     except Exception as e:
         print(util.exception_to_readable(e))
@@ -33,39 +35,26 @@ def fields_to_str(obj) -> str:
     result = ""
     for field in obj:
         value = obj[field]
-
-        if isinstance(value, str):
-            value = f"{value.replace(' ', _SPACE_REPLACEMENT_)}"
+        try:
+            value = value.replace(' ', _SPACE_REPLACEMENT_)
+        except Exception:
+            ''
 
         result += f'{field}={value} '
 
     return result
 
 
-def _execute_assignments_on_obj(obj, assignments):
-    assignments = assignments.split(' ')
-
-    for assignment in assignments:
-        assignment = assignment.replace(_SPACE_REPLACEMENT_, ' ')
-        if '=' in assignment:
-            key, *values = assignment.split('=')
-            key = key.strip()
-            value = '='.join(values)
-
-            if value:
-                value = _ensure_typed_value(value)
-
-            obj[key] = value
+def str_to_fields(obj, assignments):
+    l = list(filter(lambda y: len(y) == 2, map(lambda x: x.replace(_SPACE_REPLACEMENT_, ' ').replace('\n', '').split('='), assignments.split(' '))))
+    read = dict(l)
+    for key in read:
+        value = read[key]
+        obj[key] = _ensure_typed_value(value)
 
 
 def _ensure_typed_value(value):
-    if '"' in value:
-        # TODO: Replace only start and end quotes.
-        value = str(value.replace('"', ""))
-    elif "'" in value:
-        # TODO: Replace only start and end quotes.
-        value = str(value.replace("'", ""))
-    elif value == "True":
+    if value == "True":
         value = True
     elif value == "False":
         value = False
@@ -73,12 +62,12 @@ def _ensure_typed_value(value):
         try:
             value = float(value)
         except ValueError:
-            value = None
+            value = str(value)
     else:
         try:
             value = int(value)
         except ValueError:
-            value = None
+            value = str(value)
 
     return value
 
@@ -103,16 +92,15 @@ def __test__():
     expected = {
         "last_app": None,
         "developer_mode": True,
-        "wifi.ssid": "Your cat has an ssid",
+        "wifi.ssid": "Your cat has an ssid.",
         "wifi.pwd": "ask pete! !@",
-        "wifi.port": 1233.890
+        "wifi.port": 1233.890,
     }
 
     cfg = fields_to_str(expected)
     print(cfg)
-
     actual = {}
-    _execute_assignments_on_obj(actual, cfg)
+    str_to_fields(actual, cfg)
 
     __test_compare(actual, expected)
 
