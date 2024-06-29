@@ -3,16 +3,7 @@
 package de.berlindroid.zekompanion.server
 
 import de.berlindroid.zekompanion.server.ai.AI
-import de.berlindroid.zekompanion.server.routers.imageBin
-import de.berlindroid.zekompanion.server.routers.imagePng
-import de.berlindroid.zekompanion.server.routers.index
-import de.berlindroid.zekompanion.server.routers.adminCreateUser
-import de.berlindroid.zekompanion.server.routers.adminDeleteUser
-import de.berlindroid.zekompanion.server.routers.adminListUsers
-import de.berlindroid.zekompanion.server.routers.getPosts
-import de.berlindroid.zekompanion.server.routers.getUser
-import de.berlindroid.zekompanion.server.routers.postPost
-import de.berlindroid.zekompanion.server.routers.updateUser
+import de.berlindroid.zekompanion.server.routers.*
 import de.berlindroid.zekompanion.server.user.UserRepository
 import de.berlindroid.zekompanion.server.zepass.ZePassRepository
 import io.ktor.serialization.kotlinx.json.*
@@ -74,6 +65,8 @@ fun main(args: Array<String>) {
                     // TODO: Check if callable from ZeBadge (no ssl)
                     updateUser(users)
                     getUser(users)
+                    getUserProfileImageBinary(users)
+                    getUserProfileImagePng(users)
 
                     postPost(zepass, users)
                     getPosts(zepass)

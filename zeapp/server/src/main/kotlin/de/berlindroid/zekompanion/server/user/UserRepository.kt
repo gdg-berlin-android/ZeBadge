@@ -1,6 +1,5 @@
 package de.berlindroid.zekompanion.server.user
 
-import de.berlindroid.zekompanion.server.ai.AI
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
@@ -13,10 +12,10 @@ private const val DB_FILENAME = "./user.db"
 
 @Serializable
 data class User(
-    val name: String? = null,
-    val iconb64: String? = null,
-    val description: String? = null,
-    val uuid: String? = null,
+    val name: String,
+    val iconB64: String,
+    val description: String,
+    val uuid: String,
 )
 
 class UserRepository(
@@ -72,11 +71,7 @@ class UserRepository(
             return false
         }
 
-        if (newUser.uuid == null) {
-            return false
-        } else {
-            users[index] = newUser
-        }
+        users[index] = newUser
 
         save(this)
 
