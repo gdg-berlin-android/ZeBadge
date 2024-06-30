@@ -13,6 +13,7 @@ private const val AI_TOKEN_ENV = "AI_AUTH_TOKEN"
 
 @Serializable
 data class PromptBody(
+    val systemInstruction: Content,
     val contents: List<Content>,
 ) {
     @Serializable
@@ -73,30 +74,55 @@ class Gemini(
 ) {
 
     suspend fun getDescription(name: String): String {
-        val prompt = PromptBody(
-            contents = listOf(
-                PromptBody.Content(
-                    parts = listOf(
-                        PromptBody.Content.Part(
-                            text = "You are a dungeons and dragons dungeon master, building a dnd session at the Droidcon in Berlin in 2024. You'll answer with a 100 words description of characters backgrounds.",
-                        ),
-                        PromptBody.Content.Part(
-                            text = "A new player joins: \"${name}\". Please give me a background description of this character playing at the Droidcon in Berlin 2024.",
-                        ),
-                    ),
-                ),
+        return geminiIt(
+            systemInstruction = "You are a dungeons and dragons dungeon master, assembling a new dnd campaign " +
+                    "at the Droidcon in Berlin conference in 2024. You'll answer following questions with a " +
+                    "description of a character's background story. Their all Android developers, either " +
+                    "excited new comers or old hands with years of experience. Please keep it brief, " +
+                    "interesting and quirky.",
+            prompts = listOf(
+                "Please give \"${name}\" a background story of their character.",
             ),
         )
+    }
 
+    suspend fun getChatPhrase(name: String, description: String): String {
+        return geminiIt(
+            systemInstruction = "You are a one word wonder. Answer the following prompts with one word.",
+            prompts = listOf(
+                "Hey, can you create a one word catchphrase for $name who is described as $description.",
+            ),
+        )
+    }
+
+    private suspend fun geminiIt(prompts: List<String>, systemInstruction: String = ""): String {
         try {
             val response = service.prompt(
                 token,
-                prompt,
+                PromptBody(
+                    systemInstruction =
+                    PromptBody.Content(
+                        parts = listOf(
+                            PromptBody.Content.Part(
+                                text = systemInstruction,
+                            ),
+                        ),
+                    ),
+                    contents = listOf(
+                        PromptBody.Content(
+                            parts = prompts.map {
+                                PromptBody.Content.Part(
+                                    text = it,
+                                )
+                            },
+                        ),
+                    ),
+                ),
             )
 
             return response.candidates.joinToString(separator = ",") { candidate ->
                 candidate.content.parts.joinToString { part ->
-                    part.text
+                    part.text.replace(Regex("[_*#\n]"), "").trim()
                 }
             }
         } catch (e: Exception) {
@@ -104,6 +130,5 @@ class Gemini(
             print("Couldn't gemini!")
             return ""
         }
-
     }
 }
