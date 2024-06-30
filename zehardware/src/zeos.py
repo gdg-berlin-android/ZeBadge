@@ -129,10 +129,9 @@ class ZeBadgeOs:
         while True:
             try:
                 for task in self.tasks:
-                    print(f".", end="")
                     task(self)
 
-                print(':', end='')
+                print('.', end='')
 
                 current_messages = self.messages.copy()
                 current_messages += [Message(MessageKey.TICK, None)]
@@ -144,8 +143,6 @@ class ZeBadgeOs:
                         for subscriber_id in subscriber_ids:
                             subscriber = subscriber_ids[subscriber_id]
                             subscriber(self, message)
-                    else:
-                        print(f'?({message.topic})', end='')
 
                 self.led_on = not self.led_on
                 self.led.value = self.led_on
