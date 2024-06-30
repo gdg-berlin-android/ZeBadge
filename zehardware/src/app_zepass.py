@@ -4,6 +4,7 @@ import displayio
 import terminalio
 from adafruit_display_text import label
 
+import ui
 import wifi
 import zeos
 from message import Message
@@ -63,7 +64,7 @@ class ZePassApp:
             }
 
             if self.method == "GET":
-                os.messages.append(Message(zeos.MessageKey.INFO, f'Connected, GETing passes {config}.'))
+                os.messages.append(Message(zeos.MessageKey.INFO, f'Connected, GETing posts {config}.'))
                 os.messages.append(Message(wifi.MessageKey.GET, config))
             elif self.method == "POST":
                 config['body'] = os.config['user.uuid']
@@ -109,20 +110,39 @@ class ZePassApp:
     def _update_all_posts(self, raw_posts):
         group = displayio.Group()
         font = terminalio.FONT
-        posts = json.loads(raw_posts)
+
+        try:
+            posts = json.loads(raw_posts)
+        except ValueError:
+            if "+IPD" in raw_posts:
+                posts = json.loads(raw_posts.split(':', 1)[1])
+            else:
+                print(f'Could not parse response: {raw_posts}')
+                return
 
         for index, post in enumerate(posts):
             # TODO: ADD FANCY USER LOGO HERE
             post_area = label.Label(
                 font,
+                scale=2,
                 text=post['message'],
                 background_color=0x000000,
                 color=0xFFFFFF,
             )
-            post_area.x = 5 + 0
-            post_area.y = 5 + index * 10
+            x_offset =(index % 2) * 16
+            post_area.x = x_offset + 40
+            post_area.y = 16 + index * 32
+
             group.append(post_area)
-            print(f"posting {post['message']}")
+            if 'profileB64' in post and post['profileB64']:
+                profile = post['profileB64']
+                bitmap, palette = ui.decode_serialized_bitmap(profile, 32, 32)
+                profile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
+                profile_grid.x = x_offset
+                profile_grid.y = index * 32
+                group.append(profile_grid)
+            else:
+                print(f'no profile for message {index}.')
 
         self.os.messages.append(
             Message(
