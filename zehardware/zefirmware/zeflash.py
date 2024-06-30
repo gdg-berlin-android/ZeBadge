@@ -98,17 +98,18 @@ def request_new_user():
     if new_user.ok:
         user = new_user.json()
         print(f".. user '{colorize(user['name'])}' created.")
+        return user
     else:
-        print(f".. couldn't create user: '{colorize(new_uuid.text)}'.")
+        print(f".. couldn't create user: '{colorize(new_user.json())}'.")
 
-    return user  # server shenanigans
+        return None
 
 
 def find_mount_point(name):
     mount = subprocess.run(["mount"], capture_output=True, check=True)
     if mount.returncode != 0:
         print(
-            f'"mount" returned error code {mount.errorcode}.\n\nCheck outputs\nstd:{mount.stdout}\nerr:{mount.stderr}\n')
+            f'"mount" returned error code {mount.returncode}.\n\nCheck outputs\nstd:{mount.stdout}\nerr:{mount.stderr}\n')
         return None
 
     output = mount.stdout.decode() + mount.stderr.decode()
