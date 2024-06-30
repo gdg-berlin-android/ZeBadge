@@ -41,9 +41,8 @@ class ZePassRepository private constructor(
     }
 
     fun newPost(post: Post): String {
-        val repo = load()
         posts.add(post)
-        save(repo)
+        save(this)
 
         return post.uuid
     }
