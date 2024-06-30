@@ -1,6 +1,8 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
+import android.util.Base64
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +13,8 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zeservices.ParseResult
+import de.berlindroid.zeapp.zeservices.UserInfo
 import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeContributorsService
@@ -32,6 +36,7 @@ import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
@@ -420,6 +425,8 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
+    fun getConfiguration(): Map<String, Any?> = uiState.value.currentBadgeConfig.orEmpty()
+
     fun updateConfiguration(configuration: Map<String, Any?>) {
         _uiState.update {
             it.copy(currentBadgeConfig = null)
@@ -482,16 +489,30 @@ class ZeBadgeViewModel @Inject constructor(
     val lines: StateFlow<List<String>> = contributorsService.contributors()
         .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
 
-    private fun getInitialUIState(): ZeBadgeUiState =
-        ZeBadgeUiState(
+    private fun getInitialUIState(): ZeBadgeUiState {
+        // TODO / MM / FIXME: stop mocking!!!!!!!!!11111
+        val mockUserInfo = UserInfo(
+            id = UUID.fromString("73fc0c88-529a-4571-b8b8-3f4bdd17fa7e"),
+            name = "ZeMario",
+            description = "ZeMario is 100% digital",
+            profilePhoto = Base64.decode("eNoBgAB//////++tqqq5//1f7rdvYr//sBr1usuiXv+qqTe2VlSd+q02qra6mw/taR2lub69Rer7V5KpuJ6j6vpdhVGrB1Li5qVCqReiktDL0QNqJaSp0RfRBWjRilLkJcgFdQakprhb9QrVLZQrfkBKTdUWoKp/gAJequiVa722VbSmq1Vb5/lI5A==", Base64.DEFAULT),
+            chatPhrase = "ZeAnn0uncer",
+        )
+        val mockBadgeConfig = ParseResult(
+            isWiFiAttached = false,
+            isDeveloperMode = true,
+            userInfo = mockUserInfo,
+        )
+        return ZeBadgeUiState(
             message = "",
             messageProgress = 0.0f,
             currentSlotEditor = null,
             currentTemplateChooser = null,
             currentSimulatorSlot = ZeSlot.Name,
             slots = emptyMap(),
-            currentBadgeConfig = null,
+            currentBadgeConfig = mockBadgeConfig.flatten(),
         )
+    }
 }
 
 data class ZeBadgeUiState(

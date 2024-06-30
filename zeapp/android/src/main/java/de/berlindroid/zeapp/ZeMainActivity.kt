@@ -71,6 +71,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -86,6 +87,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -229,6 +231,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 drawerContent = {
                     ZeDrawerContent(
                         drawerState,
+                        params = ZeDrawerContentPreviewParams(drawerState, vm.getConfiguration()),
                         onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
@@ -277,10 +280,29 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
         )
 }
 
+class ZeDrawerContentPreviewProvider : PreviewParameterProvider<ZeDrawerContentPreviewParams> {
+    override val values = sequenceOf(
+        ZeDrawerContentPreviewParams(
+            drawerState = DrawerState(DrawerValue.Open),
+            badgeConfig = mapOf(
+                "user.name" to "Preview User",
+                "isWiFiAttached" to true,
+                "isDeveloperMode" to false,
+            ),
+        ),
+    )
+}
+
+data class ZeDrawerContentPreviewParams(
+    val drawerState: DrawerState,
+    val badgeConfig: Map<String, Any?>?,
+)
+
 @Composable
 @Preview
 private fun ZeDrawerContent(
     drawerState: DrawerState = DrawerState(DrawerValue.Open),
+    @PreviewParameter(ZeDrawerContentPreviewProvider::class) params: ZeDrawerContentPreviewParams,
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
@@ -334,6 +356,46 @@ private fun ZeDrawerContent(
 
     }
 
+
+    @Composable
+    fun BadgeConfigHeader(badgeConfig: Map<String, Any?>?) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .background(Color.DarkGray, shape = RoundedCornerShape(8.dp))
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Badge Configuration",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White
+            )
+            ZeSpacer(modifier = Modifier.height(8.dp))
+            badgeConfig?.let {
+                Text(
+                    text = "User: ${it["user.name"] ?: "Unknown"}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
+                )
+                Text(
+                    text = "WiFi: ${if (it["isWiFiAttached"] as? Boolean == true) "Connected" else "Disconnected"}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
+                )
+                Text(
+                    text = "Dev Mode: ${if (it["isDeveloperMode"] as? Boolean == true) "On" else "Off"}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
+                )
+            } ?: Text(
+                text = "Configuration not available",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White
+            )
+        }
+    }
+
     ModalDrawerSheet(
         drawerContainerColor = ZeBlack,
         drawerShape = DrawerDefaults.shape,
@@ -347,6 +409,8 @@ private fun ZeDrawerContent(
         ZeTitle(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 64.dp),
         )
+
+        BadgeConfigHeader(params.badgeConfig)
 
         LazyColumn {
             item {
