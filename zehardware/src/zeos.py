@@ -1,26 +1,23 @@
-import board
-import gc
-import serial
-import sys
+import os as systemos
 import time
 import traceback
-import ui
+
+import board
 import usb_cdc
-
-import os as systemos
-
 from digitalio import DigitalInOut
 from digitalio import Direction
 from digitalio import Pull
 
-from message import Message
-from config import save_config
-from config import load_config
-from config import update_config
-from config import fields_to_str
+import serial
+import ui
+from app_developer_idle_clicker import DeveloperIdleClickerApp
 from app_fetch import FetchApp
 from app_store_and_show import StoreAndShowApp
-from app_developer_idle_clicker import DeveloperIdleClickerApp
+from config import fields_to_str
+from config import load_config
+from config import save_config
+from config import update_config
+from message import Message
 
 
 class MessageKey:
@@ -60,20 +57,20 @@ class ZeBadgeOs:
 
         self.buttons = SystemButtons()
         self.tasks.append(_update_system_buttons)
+        self._reset_subscribers()
+        self._subscribe_to_system_buttons()
 
         # add defaults
         self.config = {}
         load_config(self.config)
+
+        self._init_interfaces()
 
         # applications
         self._app_a = None
         self._app_b = None
         self._app_c = None
         self._init_apps()
-
-        self._reset_subscribers()
-        self._init_interfaces()
-        self._subscribe_to_system_buttons()
 
         self.system_subscribers = self.subscribers.copy()
 
@@ -148,7 +145,7 @@ class ZeBadgeOs:
                             subscriber = subscriber_ids[subscriber_id]
                             subscriber(self, message)
                     else:
-                        print(f'?', end='')
+                        print(f'?({message.topic})', end='')
 
                 self.led_on = not self.led_on
                 self.led.value = self.led_on
@@ -179,23 +176,34 @@ class ZeBadgeOs:
                 import keyboard
                 keyboard.init(self)
 
-            self.config["keyboard_attached"] = has_keyboard
+            self.config["keyboard.attached"] = has_keyboard
         else:
+            self.config["keyboard.attached"] = False
+
             print("... no i2c found, trying wifi")
 
             import wifi
             if not wifi.init(self):
                 print("... no wifi found.")
-                self.config["wifi_attached"] = False
+                self.config["wifi.attached"] = False
             else:
-                self.config["wifi_attached"] = True
+                print("... wifi !!!")
+                self.config["wifi.attached"] = True
 
-        self.config["developer_mode"] = not (usb_cdc.data is None)
+        self.config["developer.mode"] = not (usb_cdc.data is None)
 
     def _init_apps(self):
         self._app_a = StoreAndShowApp(self)
-        self._app_b = FetchApp(self)
-        self._app_c = DeveloperIdleClickerApp(self)
+
+        if self.config["wifi.attached"]:
+            self._app_b = None
+            self._app_c = FetchApp(self)
+        elif self.config['keyboard.attached']:
+            self._app_b = None
+            self._app_c = DeveloperIdleClickerApp(self)
+        else:
+            self._app_b = None
+            self._app_c = DeveloperIdleClickerApp(self)
 
         self._start_app(self._app_a)
 
