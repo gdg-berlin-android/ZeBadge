@@ -11,7 +11,7 @@ private const val POSTS_FILENAME = "./zepass.db"
 
 @Serializable
 data class Post(
-    val uuid: String? = null,
+    val uuid: String,
     val posterUUID: String,
     val message: String,
 )
@@ -25,6 +25,7 @@ class ZePassRepository private constructor(
                 posts = Json.decodeFromString(File(POSTS_FILENAME).readText()),
             )
         } catch (notFound: FileNotFoundException) {
+            println("Couldn't find '$POSTS_FILENAME'.")
             ZePassRepository()
         }
 
@@ -34,14 +35,11 @@ class ZePassRepository private constructor(
     }
 
     fun newPost(post: Post): String {
-        val uuid = UUID.randomUUID().toString()
-        posts.add(
-            post.copy(uuid = uuid),
-        )
+        val repo = load()
+        posts.add(post)
+        save(repo)
 
-        save(this)
-
-        return uuid
+        return post.uuid
     }
 
     fun getPosts(): List<Post> {
