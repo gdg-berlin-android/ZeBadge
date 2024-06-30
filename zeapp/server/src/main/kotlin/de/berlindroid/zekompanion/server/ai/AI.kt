@@ -74,6 +74,7 @@ class AI(
     }
 
     suspend fun createUserDescription(name: String): String = gemini.getDescription(name)
+    suspend fun createUserChatPhrase(name: String, description: String): String = gemini.getChatPhrase(name, description)
 
     suspend fun createUserProfileImages(uuid: String, name: String, description: String): String? {
         val image = dale.requestImageGeneration(

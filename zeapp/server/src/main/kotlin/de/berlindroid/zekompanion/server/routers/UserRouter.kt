@@ -19,6 +19,7 @@ fun Route.adminCreateUser(users: UserRepository, ai: AI) =
                 val uuid = UUID.randomUUID().toString()
                 val name = ai.createUserName()
                 val description = ai.createUserDescription(name)
+                val chatPhrase = ai.createUserChatPhrase(name, description)
 
                 val b64 = ai.createUserProfileImages(uuid, name, description)
 
@@ -27,6 +28,7 @@ fun Route.adminCreateUser(users: UserRepository, ai: AI) =
                     name = name,
                     description = description,
                     profileB64 = b64,
+                    chatPhrase = chatPhrase,
                 )
 
                 val uuidAdded = users.createUser(user)

@@ -6,7 +6,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileNotFoundException
-import java.util.UUID
 
 private const val DB_FILENAME = "./user.db"
 
@@ -16,6 +15,7 @@ data class User(
     val name: String,
     val description: String,
     val profileB64: String?,
+    val chatPhrase: String?,
 )
 
 class UserRepository(

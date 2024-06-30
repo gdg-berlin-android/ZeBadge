@@ -78,9 +78,10 @@ class Dalle(
             val maybeImages = service.generateImage(
                 request = ImageRequest(
                     model = "dall-e-3",
-                    prompt = "Please create a digital picture of \"${name}\", a player character of a black and white pixelated game. " +
-                            "The picture should show them in action doing their favorite thing, it should be isometric. " +
-                            "$name can be described as follows: '${description}'.",
+                    prompt = "Please create a profile picture for a fantastical school book showing \"${name}\". " +
+                            "The picture should be a decorated wooden frame hanging on a blank wall " +
+                            "and show $name in a representative pose, doing their favorite thing. " +
+                            "$description.",
                 ),
                 authorization = "Bearer $token",
             )
