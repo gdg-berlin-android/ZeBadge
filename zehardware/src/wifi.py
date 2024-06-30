@@ -1,7 +1,9 @@
+import time
+
 import board
 import busio
 import microcontroller
-import time
+
 from message import Message
 
 
@@ -78,6 +80,9 @@ class ZeWifi:
 
     def connect(self, ssid: str, pwd: str) -> bool:
         available_networks = self.scan()
+        if not available_networks:
+            available_networks = self.scan()
+
         if available_networks and ssid in available_networks:
             found = sorted(available_networks[ssid], key=lambda x: x.strength)[-1]
 
@@ -139,18 +144,34 @@ def init(os) -> bool:
 
     wifi = ZeWifi()
 
-    if wifi.scan():
+    scan = wifi.scan()
+    if not scan:
+        scan = wifi.scan()
+
+    if scan:
         os.subscribe(MessageKey.SCAN, lambda _, message: os.messages.append(
             Message(MessageKey.SCAN_RESULT, wifi.scan())))
 
         os.subscribe(MessageKey.CONNECT, lambda _, message: os.messages.append(
-            Message(MessageKey.CONNECT_RESULT, wifi.connect(message.value['ssid'], message.value['pwd']))))
+            Message(
+                MessageKey.CONNECT_RESULT,
+                wifi.connect(
+                    message.value['ssid'],
+                    message.value['pwd']
+                )
+            )
+        ))
 
         os.subscribe(MessageKey.GET, lambda _, message: os.messages.append(
-            Message(MessageKey.GET_RESULT,
-                    wifi.http_get(message.value['ip'], message.value['url'], message.value['host'],
-                                  message.value['port'])
-                    )
+            Message(
+                MessageKey.GET_RESULT,
+                wifi.http_get(
+                    message.value['ip'],
+                    message.value['url'],
+                    message.value['host'],
+                    message.value['port']
+                )
+            )
         ))
         return True
     else:

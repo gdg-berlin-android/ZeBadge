@@ -253,6 +253,13 @@ def inject_user(user):
         circuit = find_mount_point('CIRC')
 
     user_config = " ".join(list(map(lambda x: f'user.{x}={user[x].replace(' ', "$SPACE#")}', user)))
+    user_config += \
+        f"wifi.ssid=droidcon24 " \
+        f"wifi.pwd=helloDrdoicon24 " \
+        f"wifi.ip=35.208.138.148 " \
+        f"wifi.port=1337 " \
+        f"wifi.url=/api/zepass " \
+        f"wifi.host=zebadge.app "
 
     print(f"{colorize("injecting user")}: {user_config}")
 
