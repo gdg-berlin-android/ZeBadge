@@ -14,6 +14,8 @@ class MessageKey:
     CONNECT_RESULT = "CONNECT_RESULT"
     GET = "GET"
     GET_RESULT = "GET_RESULT"
+    POST = "POST"
+    POST_RESULT = "POST_RESULT"
 
 
 class Network:
@@ -33,7 +35,7 @@ class HttpResponse:
         self.body = body
 
     def __str__(self):
-        return f"{self.status}:{self.headers}= {self.body}"
+        return f"{self.status} {self.headers}\n{self.body}"
 
 
 class ZeWifi:
@@ -98,7 +100,8 @@ class ZeWifi:
             print(f"Network '{ssid}' was not found. These are available: '{"' ".join(available_networks.keys())}'.")
             return False
 
-    def http_get(self, ip: str, url: str, host: str = "", port: int = 80) -> HttpResponse | None:
+    def _http_method(self, method: str, ip: str, url: str, host: str = "", port: int = 80,
+                     body: str = "") -> HttpResponse | None:
         response = ""
         while len(response) == 0 or "STATUS:3" not in response.decode():
             # connect to ip
@@ -113,7 +116,17 @@ class ZeWifi:
             response = self.uart.read()
 
         # create http payload
-        payload = f"GET {url} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: ZeWeb/0.1337.0\r\nAccept: */*\r\n\r\n"
+        payload = (f"{method} {url} HTTP/1.1\r\n" +
+                   f"Host: {ip}:{port}\r\n" +
+                   f"User-Agent: ZeBadge/0.1337.0\r\n" +
+                   f"Accept: */*\r\n")
+
+        if len(body) > 0:
+            payload += (f"Content-type: application/json\r\n" +
+                        f"Content-Length: {len(body)}\r\n")
+
+        payload += f"\r\n{body}"
+
         self.uart.write(f'AT+CIPSEND={len(payload)}\r\n')
         self.uart.read()
 
@@ -130,6 +143,12 @@ class ZeWifi:
         self.uart.read()
 
         return response
+
+    def http_get(self, ip: str, url: str, host: str = "", port: int = 80) -> HttpResponse | None:
+        return self._http_method("GET", ip, url, host, port)
+
+    def http_post(self, ip: str, url: str, host: str = "", port: int = 80, body: str = "") -> HttpResponse | None:
+        return self._http_method("POST", ip, url, host, port, body)
 
 
 wifi = None
@@ -173,13 +192,26 @@ def init(os) -> bool:
                 )
             )
         ))
+
+        os.subscribe(MessageKey.POST, lambda _, message: os.messages.append(
+            Message(
+                MessageKey.POST_RESULT,
+                wifi.http_post(
+                    message.value['ip'],
+                    message.value['url'],
+                    message.value['host'],
+                    message.value['port'],
+                    message.value['body'],
+                )
+            )
+        ))
         return True
     else:
         return False
 
 
 def _parse_response(response: str) -> HttpResponse | None:
-    parts = response.replace('\r\n', '\n').splitlines()[5:-1]
+    parts = response.replace('\r\n', '\n').splitlines()[5:]
 
     status_code = parts.pop(0)
     if status_code.startswith('+IPD'):
@@ -190,27 +222,18 @@ def _parse_response(response: str) -> HttpResponse | None:
         status_code = 444
 
     headers = {}
-    body = ""
     for index, header in enumerate(parts):
-        key, *values = header.split(":")
-        if len(key) == 0:
-            continue
-
-        if len(values) > 1:
-            value = ":".join(values)
-        elif len(values) == 1:
-            value = values[0]
-        else:
-            value = ""
-
-        # found the end?
-        if key.startswith('+IPD'):
-            # yes
-            body = value
+        try:
+            key, value = header.split(":", 1)
+        except ValueError:
             break
-        else:
-            # nope, keep iterating through headers
-            headers[key] = value.strip()
 
+        key = key.strip()
+        value = value.strip()
+
+        # nope, keep iterating through headers
+        headers[key] = value.strip()
+
+    body = parts[-1]
     response = HttpResponse(status_code, headers, body)
     return response
