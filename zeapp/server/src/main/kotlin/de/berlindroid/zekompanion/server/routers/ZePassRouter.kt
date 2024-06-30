@@ -3,24 +3,28 @@ package de.berlindroid.zekompanion.server.routers
 import de.berlindroid.zekompanion.server.user.UserRepository
 import de.berlindroid.zekompanion.server.zepass.Post
 import de.berlindroid.zekompanion.server.zepass.ZePassRepository
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.call
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import java.util.*
 
 
 fun Route.postPost(zepass: ZePassRepository, users: UserRepository) =
     post("/api/zepass") {
         runCatching {
-            val post = call.receive<Post>()
-
-            val user = users.getUser(post.posterUUID)
+            val uuid = call.receive<String>()
+            val user = users.getUser(uuid)
             if (user != null) {
-                val postUUID = zepass.newPost(post)
+                val postUUID = UUID.randomUUID().toString()
+                zepass.newPost(
+                    Post(
+                        uuid = postUUID,
+                        posterUUID = uuid,
+                        message = user.chatPhrase ?: "",
+                    ),
+                )
 
                 call.respond(status = HttpStatusCode.OK, postUUID)
             } else {
