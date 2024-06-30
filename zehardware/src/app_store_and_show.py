@@ -24,7 +24,6 @@ class StoreAndShowApp:
             self.os.unsubscribe(subscription_id)
 
     def _buttons_changed(self, changed):
-        self.os.messages.append(Message(zeos.MessageKey.INFO, f"{changed}"))
         if 'up' in changed and not changed['up']:
             self._load_previous()
         if 'down' in changed and not changed['down']:
