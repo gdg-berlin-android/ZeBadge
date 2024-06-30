@@ -1,11 +1,11 @@
 package de.berlindroid.zekompanion.server.zepass
 
+import de.berlindroid.zekompanion.server.user.UserRepository
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileNotFoundException
-import java.util.UUID
 
 private const val POSTS_FILENAME = "./zepass.db"
 
@@ -14,6 +14,12 @@ data class Post(
     val uuid: String,
     val posterUUID: String,
     val message: String,
+)
+
+@Serializable
+data class OptimizedPosts(
+    val message: String,
+    val profileB64: String?,
 )
 
 class ZePassRepository private constructor(
@@ -44,5 +50,14 @@ class ZePassRepository private constructor(
 
     fun getPosts(): List<Post> {
         return posts.toList()
+    }
+
+    fun getOptimizedPosts(users: UserRepository): List<OptimizedPosts> {
+        return posts.map {
+            OptimizedPosts(
+                message = it.message,
+                profileB64 = users.getUser(it.posterUUID)?.profileB64,
+            )
+        }
     }
 }

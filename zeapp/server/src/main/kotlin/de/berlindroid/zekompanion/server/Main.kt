@@ -53,10 +53,7 @@ private fun embeddedBadgeServer(
                     }
 
                     postPost(zepass, users)
-                    getPosts(zepass)
-
-                    getUser(users)
-                    getUserProfileImageBinary(users)
+                    getOptimizedPosts(zepass, users)
                 }
             }
         },

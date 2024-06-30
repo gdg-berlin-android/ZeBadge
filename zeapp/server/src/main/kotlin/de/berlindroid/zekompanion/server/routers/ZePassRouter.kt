@@ -45,3 +45,13 @@ fun Route.getPosts(zepass: ZePassRepository) =
             call.respondText("Error: ${it.message}")
         }
     }
+
+fun Route.getOptimizedPosts(zepass: ZePassRepository, users: UserRepository) =
+    get("/api/zepass") {
+        runCatching {
+            call.respond(zepass.getOptimizedPosts(users))
+        }.onFailure {
+            it.printStackTrace()
+            call.respondText("Error: ${it.message}")
+        }
+    }
