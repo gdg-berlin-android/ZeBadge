@@ -23,18 +23,20 @@ class ZeBadgeConfigParserTest {
     fun `parse valid config string`() {
         val configString =
             "wifi_attached=False user.uuid=4d3f6ca7-d256-4f84-a6c6-099a26055d4c " +
-                "user.description=Edward\$SPACE#Bernard,\$SPACE#a\$SPACE#veteran " +
-                "user.name=Edward\$SPACE#Bernard developer_mode=True " +
-                "user.iconB64=eNpjYGBgUJnkqaIg6MDAAmTX/+U+WGd//399OwNjYfv/gk1AQ=="
+            "user.description=Edward\$SPACE#Bernard,\$SPACE#a\$SPACE#veteran " +
+            "user.name=Edward\$SPACE#Bernard developer_mode=True " +
+            "user.profileB64=eNpjYGBgUJnkqaIg6MDAAmTX/+U+WGd//399OwNjYfv/gk1AQ== " +
+            "user.chatPhrase=CodeMonster2024"
 
         val result = parser.parse(configString)
 
+        assertFalse(result.isWiFiAttached)
+        assertTrue(result.isDeveloperMode)
         assertNotNull(result.userInfo)
         assertEquals(UUID.fromString("4d3f6ca7-d256-4f84-a6c6-099a26055d4c"), result.userInfo?.id)
         assertEquals("Edward Bernard", result.userInfo?.name)
         assertEquals("Edward Bernard, a veteran", result.userInfo?.description)
-        assertFalse(result.isWiFiAttached)
-        assertTrue(result.isDeveloperMode)
+        assertEquals("CodeMonster2024", result.userInfo?.chatPhrase)
         assertNotNull(result.userInfo?.profilePhoto)
         assertArrayEquals(byteArrayOf(1, 2, 3, 4), result.userInfo?.profilePhoto)
     }
@@ -67,7 +69,7 @@ class ZeBadgeConfigParserTest {
     fun `parse config string with invalid UUID`() {
         val configString =
             "user.uuid=invalid-uuid user.name=John\$SPACE#Doe " +
-                "user.description=Test user.iconB64=eNpjYGBg"
+                "user.description=Test user.profileB64=eNpjYGBg"
 
         assertFailure { parser.parse(configString) }
             .messageContains("invalid-uuid")

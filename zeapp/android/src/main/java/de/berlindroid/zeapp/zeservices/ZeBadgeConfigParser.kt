@@ -31,14 +31,22 @@ class ZeBadgeConfigParser
             val userName = parseUserName(configMap)
             val userDescription = parseUserDescription(configMap)
             val userProfilePhoto = parseUserProfilePhoto(configMap)
+            val userChatPhrase = parseUserChatPhrase(configMap)
             val userInfo =
                 if (
-                    userId != null && userName != null && userDescription != null && userProfilePhoto != null
+                    userId != null &&
+                    userName != null &&
+                    userDescription != null &&
+                    userProfilePhoto != null &&
+                    userChatPhrase != null
                 ) {
-                    UserInfo(userId, userName, userDescription, userProfilePhoto)
-                } else {
-                    null
-                }
+                    UserInfo(
+                      userId,
+                      userName,
+                      userDescription,
+                      userProfilePhoto,
+                      userChatPhrase)
+                } else null
 
             return ParseResult(
                 userInfo = userInfo,
@@ -54,11 +62,13 @@ class ZeBadgeConfigParser
         private fun parseUserId(configMap: Map<String, String>): UUID? = configMap["user.uuid"]?.let { UUID.fromString(it) }
 
         private fun parseUserProfilePhoto(configMap: Map<String, String>): ByteArray? =
-            configMap["user.iconB64"]?.let { Base64.decode(it, Base64.DEFAULT) }
+            configMap["user.profileB64"]?.let { Base64.decode(it, Base64.DEFAULT) }
 
         private fun parseUserName(configMap: Map<String, String>): String? = configMap["user.name"]?.unescape()
 
         private fun parseUserDescription(configMap: Map<String, String>): String? = configMap["user.description"]?.unescape()
+
+        private fun parseUserChatPhrase(configMap: Map<String, String>): String? = configMap["user.chatPhrase"]?.unescape()
 
         private fun String.unescape() = replace(SPACE_ESCAPED, " ")
     }
@@ -84,6 +94,7 @@ data class UserInfo(
     val name: String,
     val description: String,
     val profilePhoto: ByteArray,
+    val chatPhrase: String,
 ) {
     fun flatten() =
         mapOf<String, Any?>(
@@ -91,6 +102,7 @@ data class UserInfo(
             "name" to name,
             "description" to description,
             "profilePhoto" to Base64.encode(profilePhoto, Base64.DEFAULT),
+            "chatPhrase" to chatPhrase,
         )
 
     override fun equals(other: Any?): Boolean {
@@ -103,6 +115,7 @@ data class UserInfo(
         if (name != other.name) return false
         if (description != other.description) return false
         if (!profilePhoto.contentEquals(other.profilePhoto)) return false
+        if (chatPhrase != other.chatPhrase) return false
 
         return true
     }
@@ -112,6 +125,7 @@ data class UserInfo(
         result = 31 * result + name.hashCode()
         result = 31 * result + description.hashCode()
         result = 31 * result + profilePhoto.contentHashCode()
+        result = 31 * result + chatPhrase.hashCode()
         return result
     }
 }
