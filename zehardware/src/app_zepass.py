@@ -29,6 +29,8 @@ class ZePassApp:
             ),
         ]
 
+        self._fetch_all_posts()
+
     def unrun(self):
         for subscription in self.subscription_ids:
             self.os.unsubscribe(subscription)

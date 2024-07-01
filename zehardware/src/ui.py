@@ -1,14 +1,11 @@
-import board
-import displayio
-import terminalio
 import time
-import vectorio
-import util
-from adafruit_display_text import label
 import zlib
-import circuitpython_base64 as base64
-import zeos
 
+import board
+import circuitpython_base64 as base64
+import displayio
+
+import zeos
 from message import Message
 
 

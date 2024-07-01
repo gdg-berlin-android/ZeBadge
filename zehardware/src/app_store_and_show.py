@@ -1,6 +1,9 @@
+import displayio
+
 import ui
 import zeos
 from message import Message
+from ui import MessageKey as UIKeys
 
 
 class StoreAndShowApp:
@@ -19,6 +22,8 @@ class StoreAndShowApp:
             ),
         ]
 
+        self._load_last_shown()
+
     def unrun(self):
         for subscription_id in self._subscription_ids:
             self.os.unsubscribe(subscription_id)
@@ -28,6 +33,28 @@ class StoreAndShowApp:
             self._load_previous()
         if 'down' in changed and not changed['down']:
             self._load_next()
+
+    def _load_last_shown(self):
+        try:
+            last_badge_stored = open('.last_badge').read()
+            if 'b64' in last_badge_stored:
+                self._show_file(last_badge_stored)
+            elif 'bmp' in last_badge_stored:
+                odb = displayio.OnDiskBitmap(last_badge_stored)
+                self.os.messages.append(
+                    Message(
+                        UIKeys.SHOW_BITMAP,
+                        (odb, odb.pixel_shader)
+                    )
+                )
+        except Exception:
+            odb = displayio.OnDiskBitmap("first.bmp")
+            self.os.messages.append(
+                Message(
+                    UIKeys.SHOW_BITMAP,
+                    (odb, odb.pixel_shader)
+                )
+            )
 
     def _load_next(self):
         self.files = self.os.get_stored_files()
@@ -45,4 +72,8 @@ class StoreAndShowApp:
         self._show_file(file)
 
     def _show_file(self, filename):
+        try:
+            open('.last_badge', 'w').write(filename)
+        except OSError:
+            print("OS Error (developer mode?)")
         self.os.messages.append(Message(ui.MessageKey.SHOW_FILE, filename))

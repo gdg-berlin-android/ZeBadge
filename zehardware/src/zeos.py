@@ -11,9 +11,9 @@ from digitalio import Pull
 import serial
 import ui
 from app_developer_idle_clicker import DeveloperIdleClickerApp
-from app_zepass import ZePassApp
-from app_zealterego import ZeAlterEgoApp
 from app_store_and_show import StoreAndShowApp
+from app_zealterego import ZeAlterEgoApp
+from app_zepass import ZePassApp
 from config import fields_to_str
 from config import load_config
 from config import save_config
@@ -347,6 +347,7 @@ def _config_list_command(os, meta, payload):
 
 
 def _show_command(os, filename, _):
+    _save_last_page(filename)
     os.messages.append(Message(ui.MessageKey.SHOW_FILE, filename))
 
 
@@ -354,8 +355,17 @@ def _store_command(os, filename, payload):
     if not filename.endswith('.b64'):
         filename += '.b64'
 
+    _save_last_page(filename)
+
     with open(filename, "wb") as file:
         file.write(payload)
+
+
+def _save_last_page(filename):
+    try:
+        open('.last_badge', 'w').write(filename)
+    except OSError:
+        print("OS Error (developer mode?)")
 
 
 def _preview_command(os, meta, payload):
