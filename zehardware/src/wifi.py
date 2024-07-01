@@ -1,3 +1,4 @@
+import re
 import time
 
 import board
@@ -45,7 +46,8 @@ class ZeWifi:
     # The module attached needs to speak AT commands, and this class encapsulates those
     # into nice little methods.
 
-    def __init__(self):
+    def __init__(self, verbose=False):
+        self.verbose = verbose
         self.uart = busio.UART(
             microcontroller.pin.GPIO4,
             microcontroller.pin.GPIO5,
@@ -55,6 +57,10 @@ class ZeWifi:
 
     def deinit(self):
         self.uart.deinit()
+
+    def log(self, message):
+        if self.verbose:
+            print(message)
 
     def scan(self) -> map[str:list[Network]] | None:
         self.uart.write('AT+CWLAP\r\n')
@@ -134,7 +140,7 @@ class ZeWifi:
         response = self.uart.read()
 
         if len(response) >= 0:
-            response = _parse_response(response.decode())
+            response = self._parse_response(response.decode())
         else:
             response = None
 
@@ -142,6 +148,43 @@ class ZeWifi:
         self.uart.write("AT+CIPCLOSE\r\n")
         self.uart.read()
 
+        return response
+
+    def _parse_response(self, response: str) -> HttpResponse | None:
+        # replace / ignore length statements
+        response = re.sub(r'\+IPD,[0-9]+:', '', response)
+
+        parts = response.replace('\r\n', '\n').splitlines()
+        self.log(f'parts: ')
+        for i, p in enumerate(parts):
+            self.log(f'  {i:02d}: {p}')
+
+        meta_parts = parts[:5]
+        self.log(f'meta: {meta_parts}')
+
+        http_parts = parts[5:]
+        http_code, status_code = http_parts.pop(0).strip().split()
+
+        status_code = int(status_code)
+        self.log(f'code {status_code}')
+
+        headers = {}
+        header_separator_index = -1
+        for index, header in enumerate(http_parts):
+            if header == '':
+                header_separator_index = index
+                break
+
+            key, value = header.split(":", 1)
+            key = key.strip()
+            value = value.strip()
+
+            # nope, keep iterating through headers
+            headers[key] = value.strip()
+
+        body = "".join(http_parts[header_separator_index:])
+        response = HttpResponse(status_code, headers, body)
+        self.log(response)
         return response
 
     def http_get(self, ip: str, url: str, host: str = "", port: int = 80) -> HttpResponse | None:
@@ -208,32 +251,3 @@ def init(os) -> bool:
         return True
     else:
         return False
-
-
-def _parse_response(response: str) -> HttpResponse | None:
-    parts = response.replace('\r\n', '\n').splitlines()[5:]
-
-    status_code = parts.pop(0)
-    if status_code.startswith('+IPD'):
-        _, code = status_code.split(':')
-        _, status_code, _ = code.split(' ')
-        status_code = int(status_code)
-    else:
-        status_code = 444
-
-    headers = {}
-    for index, header in enumerate(parts):
-        try:
-            key, value = header.split(":", 1)
-        except ValueError:
-            break
-
-        key = key.strip()
-        value = value.strip()
-
-        # nope, keep iterating through headers
-        headers[key] = value.strip()
-
-    body = parts[-1]
-    response = HttpResponse(status_code, headers, body)
-    return response

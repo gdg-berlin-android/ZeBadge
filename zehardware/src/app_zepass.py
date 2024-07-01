@@ -113,7 +113,8 @@ class ZePassApp:
 
         try:
             posts = json.loads(raw_posts)
-        except ValueError:
+        except ValueError as e:
+            print(f'ValueError: {e} for {raw_posts}.')
             if "+IPD" in raw_posts:
                 posts = json.loads(raw_posts.split(':', 1)[1])
             else:
