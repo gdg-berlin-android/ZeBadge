@@ -52,7 +52,7 @@ class ZePassRepository private constructor(
     }
 
     fun getOptimizedPosts(users: UserRepository): List<OptimizedPosts> {
-        return posts.map {
+        return posts.takeLast(8).map {
             OptimizedPosts(
                 message = it.message,
                 profileB64 = users.getUser(it.posterUUID)?.profileB64,
