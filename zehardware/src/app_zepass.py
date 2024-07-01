@@ -114,33 +114,35 @@ class ZePassApp:
         try:
             posts = json.loads(raw_posts)
         except ValueError as e:
-            print(f'ValueError: {e} for {raw_posts}.')
-            if "+IPD" in raw_posts:
-                posts = json.loads(raw_posts.split(':', 1)[1])
-            else:
-                print(f'Could not parse response: {raw_posts}')
-                return
+            print(f'Could not parse response: {raw_posts}')
+            return
 
         for index, post in enumerate(posts):
             # TODO: ADD FANCY USER LOGO HERE
             post_area = label.Label(
                 font,
-                scale=2,
                 text=post['message'],
                 background_color=0x000000,
                 color=0xFFFFFF,
             )
-            x_offset =(index % 2) * 16
-            post_area.x = x_offset + 40
-            post_area.y = 16 + index * 32
+            if index % 2 == 0:
+                post_area.x = 40
+            else:
+                post_area.x = int(296 / 2)
+
+            post_area.y = 16 + index * 16
 
             group.append(post_area)
             if 'profileB64' in post and post['profileB64']:
                 profile = post['profileB64']
                 bitmap, palette = ui.decode_serialized_bitmap(profile, 32, 32)
                 profile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
-                profile_grid.x = x_offset
-                profile_grid.y = index * 32
+                if index % 2 == 0:
+                    profile_grid.x = 0
+                else:
+                    profile_grid.x = 296 - 32
+
+                profile_grid.y = index * 16
                 group.append(profile_grid)
             else:
                 print(f'no profile for message {index}.')
