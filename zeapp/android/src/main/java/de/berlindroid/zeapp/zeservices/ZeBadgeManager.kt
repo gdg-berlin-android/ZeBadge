@@ -4,12 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zeui.pixelBuffer
-import de.berlindroid.zekompanion.BadgePayload
-import de.berlindroid.zekompanion.Environment
-import de.berlindroid.zekompanion.base64
-import de.berlindroid.zekompanion.buildBadgeManager
-import de.berlindroid.zekompanion.toBinary
-import de.berlindroid.zekompanion.zipit
+import de.berlindroid.zekompanion.*
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import javax.inject.Inject
@@ -48,7 +43,7 @@ class ZeBadgeManager @Inject constructor(
      * Store a bitmap on the badge
      *
      * @param name a file name on the badge to be stored
-     * @param page the bitmap in black / white to be send to the badge
+     * @param page the bitmap in black / white to be sent to the badge
      */
     suspend fun storePage(name: String, page: Bitmap): Result<Int> {
         val binaryPayload = page
@@ -61,6 +56,21 @@ class ZeBadgeManager @Inject constructor(
             type = "store",
             meta = name,
             payload = binaryPayload,
+        )
+
+        return badgeManager.sendPayload(payload)
+    }
+
+    /**
+     * Show a stored b64 on the badge
+     *
+     * @param name a file name on the badge to be shown
+     */
+    suspend fun showPage(name: String): Result<Int> {
+        val payload = BadgePayload(
+            type = "show",
+            meta = name,
+            payload = "",
         )
 
         return badgeManager.sendPayload(payload)

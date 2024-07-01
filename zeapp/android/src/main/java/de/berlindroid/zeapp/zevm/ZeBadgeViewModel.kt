@@ -11,24 +11,11 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zeservices.ZeBadgeManager
-import de.berlindroid.zeapp.zeservices.ZeClipboardService
-import de.berlindroid.zeapp.zeservices.ZeContributorsService
-import de.berlindroid.zeapp.zeservices.ZeImageProviderService
-import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import de.berlindroid.zeapp.zeservices.*
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zekompanion.ditherFloydSteinberg
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -97,9 +84,9 @@ class ZeBadgeViewModel @Inject constructor(
     /**
      * Call this method to send a given slot to the badge device.
      *
-     * @param slot to be send.
+     * @param slot to be sent.
      */
-    fun previewPageOnDevice(slot: ZeSlot) {
+    fun sendPageToBadgeAndDisplay(slot: ZeSlot) {
         _uiState.update {
             it.copy(message = "")
         }
@@ -119,13 +106,24 @@ class ZeBadgeViewModel @Inject constructor(
         val bitmap = configuration.bitmap
         if (bitmap.isBinary()) {
             viewModelScope.launch {
-                badgeManager.previewPage(bitmap).fold(
-                    onSuccess = { showMessage("$it bytes were sent.") },
+                badgeManager.storePage(configuration.type.name, bitmap).fold(
+                    onSuccess = {storeResult ->
+                        delay(300) // serial stuff
+                        badgeManager.showPage(configuration.type.name).fold(
+                            onSuccess = { showResult ->
+                                showMessage(
+                                    // Hadouken¹
+                                    "${showResult + storeResult} bytes were sent.",
+                                )
+                            },
+                            onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
+                        )
+                    },
                     onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
                 )
             }
         } else {
-            showMessage("Please give binary image for page '${slot.name}'.")
+            showMessage("Please create a binary image for page '${slot.name}'.")
         }
     }
 
@@ -503,3 +501,5 @@ data class ZeBadgeUiState(
     val slots: Map<ZeSlot, ZeConfiguration>,
     val currentBadgeConfig: Map<String, Any?>?,
 )
+
+// ¹ https://www.reddit.com/r/ProgrammerHumor/comments/27yykv/indent_hadouken/

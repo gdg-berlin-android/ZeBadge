@@ -589,7 +589,7 @@ private fun ZePages(
                             { vm.resetSlot(slot) }
                         },
                         sendToDevice = {
-                            vm.previewPageOnDevice(slot)
+                            vm.sendPageToBadgeAndDisplay(slot)
                         },
                     )
 
