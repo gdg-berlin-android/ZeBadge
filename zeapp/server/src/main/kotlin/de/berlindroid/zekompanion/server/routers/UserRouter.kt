@@ -8,8 +8,10 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
+import javax.imageio.ImageIO
 
 
 fun Route.adminCreateUser(users: UserRepository, ai: AI) =
@@ -39,6 +41,41 @@ fun Route.adminCreateUser(users: UserRepository, ai: AI) =
                     call.respondText("invalid", status = HttpStatusCode.Forbidden)
                 }
 
+            }
+        }.onFailure {
+            it.printStackTrace()
+            call.respondText("Error: ${it.message}.")
+        }
+    }
+
+fun Route.adminCreateUserBadge(users: UserRepository) =
+    get("/api/user/{uuid}/badge") {
+        runCatching {
+            ifAuthorized {
+                withParameter("uuid") { uuid ->
+                    val user = users.getUser(uuid)
+                    if (user != null) {
+                        val baseBadgeResource = javaClass.classLoader.getResource("zeAlternativeBadge.bmp")
+                        val baseBadge = ImageIO.read(baseBadgeResource)
+                        val resultBadge = BufferedImage(baseBadge.width, baseBadge.height, BufferedImage.TYPE_INT_RGB)
+
+                        val profileImageFile = File("./profiles/${uuid}.png")
+                        val profile = ImageIO.read(profileImageFile)
+
+                        val g = resultBadge.graphics
+                        g.drawImage(baseBadge, 0, 0, 296, 128, null)
+                        g.drawImage(profile, 16, 16, 128 - 32, 128 - 32, null)
+
+                        g.font = g.font.deriveFont(34f)
+                        user.name.split(' ').forEachIndexed { index, part ->
+                            g.drawString(part, 124, 54 + index * 40)
+                        }
+
+                        call.respondOutputStream {
+                            ImageIO.write(resultBadge, "bmp", this)
+                        }
+                    }
+                }
             }
         }.onFailure {
             it.printStackTrace()
