@@ -94,12 +94,11 @@ private fun embeddedWebServer(
                     imageBin()
                     imagePng()
 
-                    // Callable from ZeFlasher only?
                     adminCreateUser(users, ai)
                     adminListUsers(users)
                     adminDeleteUser(users)
+                    adminCreateUserBadge(users)
 
-                    // TODO: Check if callable from ZeBadge (no ssl)
                     updateUser(users)
                     getUser(users)
                     getUserProfileImageBinary(users)

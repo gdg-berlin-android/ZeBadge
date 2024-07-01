@@ -2,12 +2,12 @@
 #
 # FLASH ME IF YOU CAN!!
 #
-import datetime
 import os
-import requests
-import subprocess
 import shutil
+import subprocess
 import time
+
+import requests
 
 OPEN_AI_TOKEN = os.getenv("OPEN_AI_TOKEN")
 SERVER_TOKEN = os.getenv("ZESERVER_AUTH_TOKEN")
@@ -265,6 +265,16 @@ def inject_user(user):
 
     open(circuit + "/ze.conf", "w+").write(
         user_config
+    )
+
+    open(circuit + "/zeAlternative.bmp", "w").write(
+        requests.get(
+            url=f"{BASE_URL}/api/user/{user['uuid']}/badge",
+            headers={
+                'Content-Type': 'application/json',
+                'ZeAuth': SERVER_TOKEN
+            },
+        ).content.decode()
     )
 
 
