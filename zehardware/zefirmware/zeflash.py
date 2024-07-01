@@ -75,14 +75,20 @@ def colorize(text):
 
 def request_new_user():
     assert SERVER_TOKEN, f"SERVER_AUTH not set: '{SERVER_TOKEN}'."
+    print(f"{colorize("creating new user")}")
 
-    users = requests.get(
+    users_response = requests.get(
         url=f"{BASE_URL}/api/user",
         headers={
             'Content-Type': 'application/json',
             'ZeAuth': SERVER_TOKEN
         },
-    ).json()
+    )
+
+    if not users_response.ok:
+        print(users_response)
+        return
+    users = users_response.json()
 
     print(f"Found {len(users)} users. Adding another one.")
 
@@ -253,9 +259,9 @@ def inject_user(user):
         circuit = find_mount_point('CIRC')
 
     user_config = " ".join(list(map(lambda x: f'user.{x}={user[x].replace(' ', "$SPACE#")}', user)))
-    user_config += \
-        f"wifi.ssid=droidcon24 " \
-        f"wifi.pwd=helloDrdoicon24 " \
+    user_config += f" "\
+        f"wifi.ssid=#berlin24 " \
+        f"wifi.pwd=#berlin24 " \
         f"wifi.ip=35.208.138.148 " \
         f"wifi.port=1337 " \
         f"wifi.url=/api/zepass " \
@@ -267,14 +273,14 @@ def inject_user(user):
         user_config
     )
 
-    open(circuit + "/zeAlternative.bmp", "w").write(
+    open(circuit + "/zeAlternative.bmp", "wb").write(
         requests.get(
             url=f"{BASE_URL}/api/user/{user['uuid']}/badge",
             headers={
                 'Content-Type': 'application/json',
                 'ZeAuth': SERVER_TOKEN
             },
-        ).content.decode()
+        ).content
     )
 
 
