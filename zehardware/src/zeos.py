@@ -12,6 +12,7 @@ import serial
 import ui
 from app_developer_idle_clicker import DeveloperIdleClickerApp
 from app_zepass import ZePassApp
+from app_zealterego import ZeAlterEgoApp
 from app_store_and_show import StoreAndShowApp
 from config import fields_to_str
 from config import load_config
@@ -191,15 +192,13 @@ class ZeBadgeOs:
 
     def _init_apps(self):
         self._app_a = StoreAndShowApp(self)
+        self._app_b = ZeAlterEgoApp(self)
 
         if self.config["wifi.attached"]:
-            self._app_b = None
             self._app_c = ZePassApp(self)
         elif self.config['keyboard.attached']:
-            self._app_b = None
             self._app_c = DeveloperIdleClickerApp(self)
         else:
-            self._app_b = None
             self._app_c = DeveloperIdleClickerApp(self)
 
         self._start_app(self._app_a)
