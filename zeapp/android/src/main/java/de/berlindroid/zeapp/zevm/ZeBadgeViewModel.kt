@@ -346,6 +346,11 @@ class ZeBadgeViewModel @Inject constructor(
                 "",
                 R.drawable.soon.toBitmap(),
             )
+            ZeSlot.Add -> ZeConfiguration.Name(
+                null,
+                null,
+                imageProviderService.provideImageBitmap(R.drawable.add),
+            )
         }
     }
 
@@ -464,12 +469,7 @@ class ZeBadgeViewModel @Inject constructor(
             val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
-                ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
-                ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
-                ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
-                ZeSlot.QRCode to initialConfiguration(ZeSlot.QRCode),
-                ZeSlot.Weather to initialConfiguration(ZeSlot.Weather),
-                ZeSlot.Quote to initialConfiguration(ZeSlot.Quote),
+                ZeSlot.Add to initialConfiguration(ZeSlot.Add),
             )
             _uiState.update {
                 it.copy(slots = slots)
