@@ -34,6 +34,8 @@ import de.berlindroid.zeapp.zebits.ZeVcardStringBuilder
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.qrComposableToBitmap
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 /**
  * Editor dialog for changing the name of the participant badge.
@@ -84,6 +86,7 @@ fun QRCodeEditorDialog(
     }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(
@@ -108,7 +111,10 @@ fun QRCodeEditorDialog(
                 Text(text = stringResource(id = android.R.string.ok))
             }
         },
-        title = { Text(text = stringResource(id = R.string.add_qr_url)) },
+        title = { Text(
+            color = ZeBlack,
+            text = stringResource(id = R.string.add_qr_url)
+        ) },
         properties = DialogProperties(),
         text = {
             LazyColumn {

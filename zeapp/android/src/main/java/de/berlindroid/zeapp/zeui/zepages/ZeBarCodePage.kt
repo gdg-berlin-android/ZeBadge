@@ -58,7 +58,7 @@ fun BarCodePage(
 
         val painter =
             if (url.isEmpty()) {
-                painterResource(id = R.drawable.page_telekom)
+                painterResource(id = R.drawable.page_google)
             } else {
                 rememberBarcodeBitmapPainter(url)
             }

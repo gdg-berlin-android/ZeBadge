@@ -92,12 +92,6 @@ fun BadgeSimulator(
                 modifier = Modifier.clickable { onButtonPressed(ZeSlot.FirstSponsor) },
             )
             Spacer(modifier = Modifier.weight(1.0f))
-            Text(
-                text = "⏺️",
-                fontSize = 43.sp,
-                modifier = Modifier.clickable { onButtonPressed(ZeSlot.SecondSponsor) },
-            )
-            Spacer(modifier = Modifier.weight(1.0f))
         }
     }
 }

@@ -16,7 +16,7 @@ data class BadgePayload(
     /**
      * Convert the payload to a format the badge understands
      */
-    fun toBadgeCommand(): String = "${if (debug) "debug:" else ""}$type:$meta:$payload"
+    fun toBadgeCommand(): String = "${if (debug) "debug:" else ""}$type:$meta:${payload}"
 }
 
 interface BadgeManager {
@@ -25,6 +25,8 @@ interface BadgeManager {
     }
 
     suspend fun sendPayload(payload: BadgePayload): Result<Int>
+
+    suspend fun readResponse(): Result<String>
 
     fun isConnected(): Boolean
 }

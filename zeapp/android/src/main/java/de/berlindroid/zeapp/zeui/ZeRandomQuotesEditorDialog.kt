@@ -21,6 +21,8 @@ import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.RandomQuotePage
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import kotlin.random.Random
 
 /**
@@ -56,6 +58,7 @@ fun RandomQuotesEditorDialog(
     }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(
@@ -75,7 +78,10 @@ fun RandomQuotesEditorDialog(
                 Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(text = stringResource(R.string.click_get_to_show_quote_of_the_day)) },
+        title = { Text(
+            color = ZeBlack,
+            text = stringResource(R.string.click_get_to_show_quote_of_the_day)
+        ) },
         properties = DialogProperties(),
         text = {
             LazyColumn {

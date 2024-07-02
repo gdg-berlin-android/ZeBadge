@@ -12,30 +12,52 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerDefaults
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -44,6 +66,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +74,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -63,7 +88,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
+import com.ban.autosizetextfield.AutoSizeTextField
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
@@ -85,7 +112,9 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import de.berlindroid.zeapp.zevm.copy
 import de.berlindroid.zekompanion.getPlatform
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
@@ -101,7 +130,6 @@ import androidx.compose.material3.Button as ZeButton
 import androidx.compose.material3.Card as ZeCard
 import androidx.compose.material3.Icon as ZeIcon
 import androidx.compose.material3.IconButton as ZeIconButton
-import androidx.compose.material3.LinearProgressIndicator as ZeLinearProgressIndicator
 import androidx.compose.material3.Scaffold as ZeScaffold
 import androidx.compose.material3.Surface as ZeSurface
 import androidx.compose.material3.Text as ZeText
@@ -181,7 +209,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     var isShowingAbout by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val gotToReleases: () -> Unit = remember {
+    val goToReleases: () -> Unit = remember {
         {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases")).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -189,38 +217,182 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
             context.startActivity(intent)
         }
     }
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+
     ZeBadgeAppTheme(
         content = {
-            ZeScaffold(
-                modifier = modifier,
-                floatingActionButton = {
-                    if (!isShowingAbout) {
-                        ZeNavigationPad(lazyListState)
-                    }
-                },
-                topBar = {
-                    ZeTopBar(
-                        onRandomClick = vm::sendRandomPageToDevice,
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    ZeDrawerContent(
+                        drawerState,
+                        onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
-                        onAboutClick = { isShowingAbout = !isShowingAbout },
-                        onGotoReleaseClick = gotToReleases,
-                        isShowingAbout = isShowingAbout,
+                        onGotoReleaseClick = goToReleases,
+                        onUpdateConfig = vm::listConfiguration,
+                        onCloseDrawer = {
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        },
                     )
                 },
-                content = { paddingValues ->
-                    if (isShowingAbout) {
-                        ZeAbout(paddingValues, vm, LocalContext.current)
-                    } else {
-                        ZePages(
-                            paddingValues = paddingValues,
-                            lazyListState = lazyListState,
-                            vm = vm,
+            ) {
+                ZeScaffold(
+                    modifier = modifier,
+                    floatingActionButton = {
+                        if (!isShowingAbout) {
+                            ZeNavigationPad(
+                                lazyListState,
+                            )
+                        }
+                    },
+                    topBar = {
+                        ZeTopBar(
+                            isShowingAbout = isShowingAbout,
+                            onAboutClick = { isShowingAbout = !isShowingAbout },
+                            isNavDrawerOpen = drawerState.isOpen,
+                            onOpenMenuClicked = { scope.launch { drawerState.open() } },
+                            onCloseMenuClicked = { scope.launch { drawerState.close() } },
                         )
-                    }
-                },
-            )
+                    },
+                    content = { paddingValues ->
+                        if (isShowingAbout) {
+                            ZeAbout(paddingValues, vm, LocalContext.current)
+                        } else {
+                            ZePages(
+                                paddingValues = paddingValues,
+                                lazyListState = lazyListState,
+                                vm = vm,
+                            )
+                        }
+                    },
+                )
+            }
         },
-    )
+
+        )
+}
+
+@Composable
+@Preview
+private fun ZeDrawerContent(
+    drawerState: DrawerState = DrawerState(DrawerValue.Open),
+    onSaveAllClick: () -> Unit = {},
+    onGetStoredPages: () -> Unit = {},
+    onGotoReleaseClick: () -> Unit = {},
+    onUpdateConfig: () -> Unit = {},
+    onCloseDrawer: () -> Unit = {},
+) {
+
+    @Composable
+    fun NavDrawerItem(
+        text: String,
+        vector: ImageVector? = null,
+        painter: Painter? = null,
+        onClick: () -> Unit,
+    ) {
+        NavigationDrawerItem(
+            modifier = Modifier
+                .padding(
+                    start = 0.dp,
+                    end = 32.dp,
+                    top = 4.dp,
+                    bottom = 4.dp,
+                )
+                .border(
+                    width = 1.dp,
+                    color = ZeWhite,
+                    shape = RoundedCornerShape(
+                        topStart = 0.dp,
+                        bottomStart = 0.dp,
+                        topEnd = 30.dp,
+                        bottomEnd = 30.dp,
+                    ),
+                ),
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedTextColor = ZeWhite,
+                unselectedContainerColor = ZeBlack,
+            ),
+            icon = {
+                if (vector != null) {
+                    ZeIcon(imageVector = vector, contentDescription = text, tint = ZeWhite)
+                } else if (painter != null) {
+                    ZeIcon(painter = painter, contentDescription = text, tint = ZeWhite)
+                }
+            },
+            label = { Text(text = text) },
+            selected = false,
+            onClick = {
+                onClick()
+                onCloseDrawer()
+            },
+        )
+
+    }
+
+    ModalDrawerSheet(
+        drawerContainerColor = ZeBlack,
+        drawerShape = DrawerDefaults.shape,
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = ZeWhite,
+                shape = DrawerDefaults.shape,
+            ),
+    ) {
+        ZeTitle(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 64.dp),
+        )
+
+        LazyColumn {
+            item {
+                NavDrawerItem(
+                    onClick = onSaveAllClick,
+                    painter = painterResource(id = R.drawable.save_all),
+                    text = "Save all pages to badge",
+                )
+            }
+
+            item {
+                NavDrawerItem(
+                    text = "Update config on badge",
+                    vector = Icons.Default.ThumbUp,
+                    onClick = onUpdateConfig,
+                )
+            }
+
+            item {
+                NavDrawerItem(
+                    painter = painterResource(id = R.drawable.ic_random),
+                    text = "Send random page to badge",
+                    onClick = onGetStoredPages,
+                )
+            }
+
+            item {
+                HorizontalDivider(
+                    thickness = 0.dp,
+                    color = ZeBlack,
+                    modifier = Modifier.padding(
+                        start = 0.dp,
+                        end = 40.dp, top = 16.dp, bottom = 16.dp,
+                    ),
+                )
+            }
+
+            item {
+                NavDrawerItem(
+                    text = "Open release page",
+                    painter = painterResource(id = R.drawable.ic_update),
+                    onClick = onGotoReleaseClick,
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -280,25 +452,27 @@ private fun ZeAbout(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ZeTopBar(
-    onSaveAllClick: () -> Unit,
-    onRandomClick: () -> Unit,
-    onAboutClick: () -> Unit,
-    onGotoReleaseClick: () -> Unit,
     isShowingAbout: Boolean,
+    onAboutClick: () -> Unit,
+    isNavDrawerOpen: Boolean,
+    onOpenMenuClicked: () -> Unit,
+    onCloseMenuClicked: () -> Unit,
 ) {
     ZeTopAppBar(
+        navigationIcon = {
+            ZeIconButton(onClick = if (isNavDrawerOpen) onCloseMenuClicked else onOpenMenuClicked) {
+                ZeIcon(
+                    imageVector = if (isNavDrawerOpen) {
+                        Icons.AutoMirrored.Filled.ArrowBack
+                    } else {
+                        Icons.Filled.Menu
+                    },
+                    contentDescription = "Menu button",
+                )
+            }
+        },
         title = {
-            ZeText(
-                style = MaterialTheme.typography.titleLarge,
-                text = buildAnnotatedString {
-                    pushStyle(SpanStyle(fontWeight = FontWeight.Black))
-                    append(stringResource(id = R.string.app_name).take(2))
-                    pop()
-                    pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
-                    append(stringResource(id = R.string.app_name).drop(2))
-                    pop()
-                },
-            )
+            ZeTitle()
         },
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondary,
@@ -307,24 +481,6 @@ private fun ZeTopBar(
             navigationIconContentColor = MaterialTheme.colorScheme.primary,
         ),
         actions = {
-            ZeIconButton(onClick = onGotoReleaseClick) {
-                ZeIcon(
-                    painter = painterResource(id = R.drawable.ic_update),
-                    contentDescription = "Open the release page in the browser",
-                )
-            }
-            ZeIconButton(onClick = onSaveAllClick) {
-                ZeIcon(
-                    painter = painterResource(id = R.drawable.ic_random),
-                    contentDescription = "Send random page to badge",
-                )
-            }
-            ZeIconButton(onClick = onRandomClick) {
-                ZeIcon(
-                    painter = painterResource(id = R.drawable.save_all),
-                    contentDescription = null,
-                )
-            }
             ZeIconButton(onClick = onAboutClick) {
                 if (isShowingAbout) {
                     ZeIcon(Icons.Default.Close, contentDescription = "About")
@@ -332,6 +488,24 @@ private fun ZeTopBar(
                     ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
                 }
             }
+        },
+    )
+}
+
+@Composable
+private fun ZeTitle(
+    modifier: Modifier = Modifier,
+) {
+    ZeText(
+        modifier = modifier,
+        style = MaterialTheme.typography.titleLarge,
+        text = buildAnnotatedString {
+            pushStyle(SpanStyle(fontWeight = FontWeight.Black))
+            append(stringResource(id = R.string.app_name).take(2))
+            pop()
+            pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
+            append(stringResource(id = R.string.app_name).drop(2))
+            pop()
         },
     )
 }
@@ -354,6 +528,15 @@ private fun ZePages(
         val message = uiState.message
         val messageProgress = uiState.messageProgress
         val slots = uiState.slots
+        val badgeConfiguration = uiState.currentBadgeConfig
+
+        if (badgeConfiguration != null) {
+            BadgeConfigEditor(
+                config = badgeConfiguration,
+                onDismissRequest = vm::closeConfiguration,
+                onConfirmed = vm::updateConfiguration,
+            )
+        }
 
         if (editor != null) {
             SelectedEditor(editor, vm)
@@ -406,7 +589,7 @@ private fun ZePages(
                             { vm.resetSlot(slot) }
                         },
                         sendToDevice = {
-                            vm.sendPageToDevice(slot)
+                            vm.sendPageToBadgeAndDisplay(slot)
                         },
                     )
 
@@ -459,16 +642,101 @@ private fun InfoBar(
             }
         }
 
-        ZeLinearProgressIndicator(
+        LinearProgressIndicator(
+            progress = { progress },
             modifier = ZeModifier
                 .fillMaxWidth()
                 .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 4.dp),
-            strokeCap = StrokeCap.Round,
-            trackColor = ZeWhite,
             color = ZeBlack,
-            progress = progress,
+            trackColor = ZeWhite,
+            strokeCap = StrokeCap.Round,
         )
     }
+}
+
+@Composable
+@Preview
+private fun BadgeConfigEditor(
+    config: Map<String, Any?> = mapOf(
+        "sample configuration" to "sample value",
+        "sample int" to 23,
+        "another configuration" to true,
+    ),
+    onDismissRequest: () -> Unit = {},
+    onConfirmed: (updateConfig: Map<String, Any?>) -> Unit = {},
+) {
+    var configState by remember { mutableStateOf(config) }
+    var error by remember { mutableStateOf(mapOf<String, String>()) }
+
+    AlertDialog(
+        modifier = Modifier.imePadding(),
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirmed(configState)
+                },
+            ) {
+                Text(text = stringResource(id = android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismissRequest) {
+                Text(text = stringResource(id = android.R.string.cancel))
+            }
+        },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(R.string.badge_config_editor_title),
+            )
+        },
+        properties = DialogProperties(decorFitsSystemWindows = false),
+        shape = AlertDialogDefaults.shape,
+        containerColor = ZeWhite,
+        text = {
+            LazyColumn {
+                items(config.keys.toList()) { key ->
+                    when (val value = configState[key]) {
+                        is Boolean -> AutoSizeTextField(
+                            value = value.toString(),
+                            label = { Text("$key (read only)") },
+                            onValueChange = { },
+                            placeholder = {},
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Rounded.Lock,
+                                    tint = ZeBlack,
+                                    contentDescription = null,
+                                )
+                            },
+                            supportingText = { },
+                        )
+
+                        else -> AutoSizeTextField(
+                            value = "$value",
+                            isError = !error[key].isNullOrEmpty(),
+                            onValueChange = { updated ->
+                                if (updated != value) {
+                                    error = error.copy(key to "")
+                                    configState = configState.copy(
+                                        key to updated,
+                                    )
+                                }
+                            },
+                            label = { Text(text = key) },
+                            supportingText = {
+                                Text(text = error.getOrDefault(key, ""))
+                            },
+                            trailingIcon = {},
+                            placeholder = {},
+                        )
+
+                    }
+                }
+            }
+        },
+    )
 }
 
 @Composable
@@ -570,6 +838,7 @@ private fun TemplateChooserDialog(
     templateChooser: ZeTemplateChooser?,
 ) {
     ZeAlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = {
             vm.templateSelected(null, null)
         },
@@ -579,7 +848,10 @@ private fun TemplateChooserDialog(
             }
         },
         title = {
-            ZeText(text = "Select Content")
+            ZeText(
+                color = ZeBlack,
+                text = "Select Content",
+            )
         },
         text = {
             ZeLazyColumn {
@@ -648,7 +920,7 @@ private fun PagePreview(
                     if (sendToDevice != null) {
                         item {
                             ZeToolButton(
-                                imageVector = Icons.Filled.Send,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
                                 text = "Send",
                                 onClick = sendToDevice,
                             )
@@ -679,4 +951,4 @@ private fun PagePreview(
 }
 
 private val ZeSlot.isSponsor: Boolean
-    get() = this is ZeSlot.FirstSponsor || this is ZeSlot.SecondSponsor
+    get() = this is ZeSlot.FirstSponsor

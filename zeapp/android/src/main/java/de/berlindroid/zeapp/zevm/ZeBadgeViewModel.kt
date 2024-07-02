@@ -11,24 +11,11 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zeservices.ZeBadgeManager
-import de.berlindroid.zeapp.zeservices.ZeClipboardService
-import de.berlindroid.zeapp.zeservices.ZeContributorsService
-import de.berlindroid.zeapp.zeservices.ZeImageProviderService
-import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import de.berlindroid.zeapp.zeservices.*
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zekompanion.ditherFloydSteinberg
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -62,7 +49,7 @@ class ZeBadgeViewModel @Inject constructor(
         duration: Long = MESSAGE_DISPLAY_DURATION,
     ) {
         _uiState.update {
-            it.copy(message = message)
+            it.copy(message = it.message + message)
         }
 
         scheduleMessageDisappearance(duration)
@@ -97,9 +84,9 @@ class ZeBadgeViewModel @Inject constructor(
     /**
      * Call this method to send a given slot to the badge device.
      *
-     * @param slot to be send.
+     * @param slot to be sent.
      */
-    fun sendPageToDevice(slot: ZeSlot) {
+    fun sendPageToBadgeAndDisplay(slot: ZeSlot) {
         _uiState.update {
             it.copy(message = "")
         }
@@ -119,13 +106,24 @@ class ZeBadgeViewModel @Inject constructor(
         val bitmap = configuration.bitmap
         if (bitmap.isBinary()) {
             viewModelScope.launch {
-                badgeManager.sendPage(slot.name, bitmap).fold(
-                    onSuccess = { showMessage("$it bytes were sent.") },
+                badgeManager.storePage(configuration.type.name, bitmap).fold(
+                    onSuccess = {storeResult ->
+                        delay(300) // serial stuff
+                        badgeManager.showPage(configuration.type.name).fold(
+                            onSuccess = { showResult ->
+                                showMessage(
+                                    // Hadouken¹
+                                    "${showResult + storeResult} bytes were sent.",
+                                )
+                            },
+                            onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
+                        )
+                    },
                     onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
                 )
             }
         } else {
-            showMessage("Please give binary image for page '${slot.name}'.")
+            showMessage("Please create a binary image for page '${slot.name}'.")
         }
     }
 
@@ -144,24 +142,6 @@ class ZeBadgeViewModel @Inject constructor(
                             R.drawable.page_google,
                             R.drawable.page_google_2,
                             R.drawable.page_google_3,
-                        )
-                            .random()
-                            .toBitmap()
-                            .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
-                    ),
-                )
-                _uiState.update {
-                    it.copy(slots = slotsCopy)
-                }
-            }
-
-            is ZeSlot.SecondSponsor -> {
-                val slotsCopy = slots.copy(
-                    slot to ZeConfiguration.Picture(
-                        listOf(
-                            R.drawable.page_telekom_2,
-                            R.drawable.page_telekom_3,
-                            R.drawable.page_telekom,
                         )
                             .random()
                             .toBitmap()
@@ -337,7 +317,6 @@ class ZeBadgeViewModel @Inject constructor(
             )
 
             is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
-            is ZeSlot.SecondSponsor -> ZeConfiguration.Picture(R.drawable.page_telekom.toBitmap())
             is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
             ZeSlot.QRCode -> ZeConfiguration.QRCode(
@@ -371,24 +350,94 @@ class ZeBadgeViewModel @Inject constructor(
     }
 
     /**
-     * Save all slots to shared preferences.
+     * Save all slots to shared preferences and the badge.
      */
     fun saveAll() {
         val slots = _uiState.value.slots
         for ((slot, configuration) in slots) {
             saveSlotConfiguration(slot, configuration)
         }
+        storePages(slots)
+    }
+
+    private fun storePages(slots: Map<ZeSlot, ZeConfiguration>) {
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
+        } else {
+            viewModelScope.launch {
+                for ((slot, config) in slots) {
+                    val stored = badgeManager.storePage(slot.name, config.bitmap)
+                    if (stored.isFailure) {
+                        showMessage("Could not send page.")
+                    } else {
+                        showMessage("Page in slot '${slot.name}' send successfully.\n")
+                    }
+                }
+            }
+        }
     }
 
     /**
-     * Sends a random page to the badge
+     * Talks to the badge to get all stored pages from the badge
      */
-    fun sendRandomPageToDevice() {
-        val slots = _uiState.value.slots
-        if (slots.keys.isEmpty()) {
-            showMessage("No Slot Keys are available!")
+    fun getStoredPages() {
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
         } else {
-            sendPageToDevice(slots.keys.random())
+            viewModelScope.launch {
+                val stored = badgeManager.requestPagesStored()
+                if (stored.isSuccess) {
+                    val message = stored.getOrNull()
+                    if (message != null) {
+                        showMessage(message.replace(",", "\n"))
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Talks to the badge to get the current active configuration
+     */
+    fun listConfiguration() {
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
+        } else {
+            viewModelScope.launch {
+                val configResult = badgeManager.listConfiguration()
+                if (configResult.isSuccess) {
+                    val kv = configResult.getOrNull()
+                    if (kv != null) {
+                        showMessage(kv.toString())
+                        _uiState.update {
+                            it.copy(currentBadgeConfig = kv)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateConfiguration(configuration: Map<String, Any?>) {
+        _uiState.update {
+            it.copy(currentBadgeConfig = null)
+        }
+
+        if (!badgeManager.isConnected()) {
+            showMessage("Please connect a badge.")
+        } else {
+            viewModelScope.launch {
+                badgeManager.updateConfiguration(configuration)
+                _uiState.update {
+                    it.copy(currentBadgeConfig = null)
+                }
+            }
+        }
+    }
+
+    fun closeConfiguration() {
+        _uiState.update {
+            it.copy(currentBadgeConfig = null)
         }
     }
 
@@ -415,7 +464,6 @@ class ZeBadgeViewModel @Inject constructor(
             val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
-                ZeSlot.SecondSponsor to initialConfiguration(ZeSlot.SecondSponsor),
                 ZeSlot.FirstCustom to initialConfiguration(ZeSlot.FirstCustom),
                 ZeSlot.SecondCustom to initialConfiguration(ZeSlot.SecondCustom),
                 ZeSlot.BarCode to initialConfiguration(ZeSlot.BarCode),
@@ -440,6 +488,7 @@ class ZeBadgeViewModel @Inject constructor(
             currentTemplateChooser = null,
             currentSimulatorSlot = ZeSlot.Name,
             slots = emptyMap(),
+            currentBadgeConfig = null,
         )
 }
 
@@ -450,4 +499,7 @@ data class ZeBadgeUiState(
     val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
     val currentSimulatorSlot: ZeSlot, // which page should be displayed in the simulator?
     val slots: Map<ZeSlot, ZeConfiguration>,
+    val currentBadgeConfig: Map<String, Any?>?,
 )
+
+// ¹ https://www.reddit.com/r/ProgrammerHumor/comments/27yykv/indent_hadouken/

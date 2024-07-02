@@ -5,6 +5,7 @@ import java.lang.Thread.sleep
 import kotlin.IllegalStateException
 
 abstract class JvmBadgeManager : BadgeManager {
+
     override suspend fun sendPayload(payload: BadgePayload): Result<Int> = if (isConnected()) {
         val badgers = getBadger2040s()
         val command = payload.toBadgeCommand()
@@ -55,6 +56,42 @@ abstract class JvmBadgeManager : BadgeManager {
         Result.failure(RuntimeException("No badge connected."))
     }
 
+    override suspend fun readResponse(): Result<String> = if (isConnected()) {
+        val badger = getBadger2040s().sortedBy { it.systemPortPath }.lastOrNull()
+
+        if (badger == null) {
+            Result.failure(NoSuchElementException())
+        } else {
+            try {
+                if (!badger.openPort(300)) {
+                    // couldn't open, try next one
+                    throw NoSuchElementException()
+                }
+                setupPort(badger)
+
+                val buffer = ByteArray(badger.bytesAvailable())
+                val read = badger.readBytes(buffer, badger.bytesAvailable())
+
+                if (read > 0) {
+                    Result.success(String(buffer))
+                } else {
+                    Result.failure(RuntimeException("Couldn't read from badge."))
+                }
+
+            } catch (e: RuntimeException) {
+                Result.failure(e)
+            } finally {
+                badger.flushIOBuffers()
+                if (badger.isOpen) {
+                    badger.closePort()
+                }
+                badger.clearDTR()
+            }
+        }
+    } else {
+        Result.failure(RuntimeException("No badge connected."))
+    }
+
     private fun setupPort(badger: SerialPort) {
         if (!badger.setDTR()) {
             throw IllegalStateException("Could not set dtr on $badger.")
@@ -81,5 +118,5 @@ abstract class JvmBadgeManager : BadgeManager {
         return getBadger2040s().isNotEmpty()
     }
 
-    abstract fun getBadger2040s() : List<SerialPort>
+    abstract fun getBadger2040s(): List<SerialPort>
 }

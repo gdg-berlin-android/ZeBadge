@@ -31,7 +31,7 @@ from digitalio import DigitalInOut, Direction, Pull
 
 DEBUG = False
 MAX_OUTPUT_LEN = 10
-READ_TIMEOUT = 0.1  # seconds
+READ_TIMEOUT = 0.01  # seconds
 LOOP_CYCLE = 0.1  # seconds
 KEEP_ALIVE = 5  # seconds
 REFRESH_RATE = 3  # seconds
@@ -241,8 +241,6 @@ def parse_command(base64_string):
 # Handle commands in format Base64<command:metadata:payload>
 def handle_commands():
     command_raw = read_command_cdc()
-    if command_raw is None:
-        print("Command is empty, ignore")
     command_name, metadata, payload = parse_command(command_raw)
     if command_name is None:
         return
@@ -343,7 +341,7 @@ def handle_show_command(name):
         meta_b64 = read_file_as_b64(file_name_meta)
         payload_b64 = read_file_as_b64(file_name_payload)
         bitmap, palette = decode_payload(payload_b64)
-        show_bitmap(bitmap, palette)
+        show_bitmap(bitmp, palette)
     except Exception as e:
         log(f"Showing failed for: '{trunc(meta_b64)}':'{trunc(payload_b64)}'.\n{format_e(e)}.")
 
@@ -355,6 +353,7 @@ def show_bitmap(bitmap, palette):
     group = displayio.Group()
     group.append(tile_grid)
     display.root_group = group
+    print('about to refresh')
     refresh_if_needed()
 
 
@@ -398,6 +397,73 @@ def decode_payload(payload):
     return bitmap, palette
 
 
+
+import board
+
+i2c = board.I2C()
+while not i2c.try_lock():
+    print('.',end='')
+
+addrs = i2c.scan()
+i2c.unlock()
+
+keyboard = 95 in addrs
+if keyboard:
+    from adafruit_hid.keyboard import Keyboard
+    from adafruit_hid.keyboard_layout_us import KeyboardLayout
+    from adafruit_hid.keycode import Keycode
+    import usb_hid
+    
+    SPECIAL_CARD_KEYS = {
+        0x08: Keycode.BACKSPACE,
+        0x09: Keycode.TAB,
+        0x0D: Keycode.ENTER,
+        0x1B: Keycode.ESCAPE,
+        0xB4: Keycode.LEFT_ARROW,
+        0xB5: Keycode.UP_ARROW,
+        0xB6: Keycode.DOWN_ARROW,
+        0xB7: Keycode.RIGHT_ARROW,
+        0x81: Keycode.F1,
+        0x82: Keycode.F2,
+        0x83: Keycode.F3,
+        0x84: Keycode.F4,
+        0x85: Keycode.F5,
+        0x86: Keycode.F6,
+        0x87: Keycode.F7,
+        0x88: Keycode.F8,
+        0x89: Keycode.F9,
+        0x8A: Keycode.F10,
+    }
+
+    print("known i2c keyboard found")
+    keyboard = Keyboard(usb_hid.devices)
+    layout = KeyboardLayout(keyboard)
+
+def handle_keyboard():
+    while not i2c.try_lock():
+        print(':', end='')
+
+    buffer = bytearray(1)
+    i2c.readfrom_into(95, buffer) 
+    if buffer[0]:
+        key = buffer[0]
+        print(f"pressed key: {key}")
+        try:
+            layout.write(chr(key))
+        except (ValueError, IndexError):
+            if key in SPECIAL_CARD_KEYS:
+                keys = SPECIAL_CARD_KEYS[key]
+                try:
+                    layout.write(keys)
+                except TypeError:
+                    keyboard.send(keys)
+            else:
+                print(f"Couldn't find {key} key.")
+
+    i2c.unlock()
+
+
+
 ### The Main Loop ###
 
 while True:
@@ -405,5 +471,7 @@ while True:
     update_blinking()
     handle_commands()
     handle_buttons()
+    if keyboard:
+        handle_keyboard()
     iteration += 1
     time.sleep(LOOP_CYCLE)

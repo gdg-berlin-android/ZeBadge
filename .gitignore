@@ -560,3 +560,6 @@ obj/
 /zeapp/app/release/output-metadata.json
 /zeapp/app/debug/output-metadata.json
 /zeapp/versions.properties
+
+*.db
+zeapp/profiles/*png

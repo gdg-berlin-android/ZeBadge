@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
 import java.io.File
 import java.io.FileNotFoundException
+import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import javax.imageio.ImageIO
 
@@ -83,6 +84,55 @@ class BitmapTest {
             .base64()
 
         assertThat(output).isEqualTo("eNpjYHBYIMHHcHCBV/19ABJOBBA=")
+    }
+
+    @Test
+    fun binaryBitMaskToRGBImageSmall() {
+        val w = rgb(255, 255, 255)
+        val b = rgb(0, 0, 0)
+
+        val width = 4
+        val height = 2
+
+        val input = IntBuffer.wrap(
+            intArrayOf(
+                w, b, w, b,
+                b, w, b, w,
+            ),
+        )
+
+        val bits = input.toBinary()
+
+        val output = bits.fromBinaryToRGB()
+
+        assertThat(input.toBufferedImage(width, height)).allPixelEqualTo(output.toBufferedImage(width, height))
+
+    }
+
+    @Test
+    fun binaryBitMaskToRGBImageHuge() {
+        val w = rgb(255, 255, 255)
+        val b = rgb(0, 0, 0)
+
+        val width = 8
+        val height = 5
+
+        val input = IntBuffer.wrap(
+            intArrayOf(
+                b, b, b, b, b, b, b, b, b,
+                b, b, w, b, b, b, w, b, b,
+                b, b, w, w, b, w, w, b, b,
+                b, b, w, b, w, b, w, b, b,
+                b, b, w, b, b, b, w, b, b,
+            ),
+        )
+
+        val bits = input.toBinary()
+
+        val output = bits.fromBinaryToRGB()
+
+        assertThat(input.toBufferedImage(width, height)).allPixelEqualTo(output.toBufferedImage(width, height))
+
     }
 }
 

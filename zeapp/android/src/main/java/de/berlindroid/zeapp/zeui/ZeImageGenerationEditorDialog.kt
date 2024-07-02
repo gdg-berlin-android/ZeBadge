@@ -31,6 +31,8 @@ import de.berlindroid.zeapp.zebits.cropPageFromCenter
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,6 +79,7 @@ fun ImageGenerationEditorDialog(
     var lastLoadedBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     AlertDialog(
+        containerColor = ZeWhite,
         onDismissRequest = dismissed,
         confirmButton = {
             Button(
@@ -93,7 +96,10 @@ fun ImageGenerationEditorDialog(
             }
         },
         title = {
-            Text(stringResource(id = R.string.generate_image_page))
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.generate_image_page)
+            )
         },
         text = {
             Column {
@@ -105,8 +111,8 @@ fun ImageGenerationEditorDialog(
 
                 if (progress != null) {
                     LinearProgressIndicator(
+                        progress = { progress!! },
                         modifier = Modifier.fillMaxWidth(),
-                        progress = progress!!,
                     )
                 }
 

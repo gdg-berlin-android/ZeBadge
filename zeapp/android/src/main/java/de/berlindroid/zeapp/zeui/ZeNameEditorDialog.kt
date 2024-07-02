@@ -30,6 +30,8 @@ import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.NamePage
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 const val MaxCharacters: Int = 20
 
@@ -66,6 +68,7 @@ fun NameEditorDialog(
     AlertDialog(
         modifier = Modifier.imePadding(),
         onDismissRequest = dismissed,
+        containerColor = ZeWhite,
         confirmButton = {
             Button(
                 onClick = {
@@ -84,7 +87,10 @@ fun NameEditorDialog(
                 Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(text = stringResource(R.string.add_your_contact_details)) },
+        title = { Text(
+            color = ZeBlack,
+            text = stringResource(R.string.add_your_contact_details)
+        ) },
         properties = DialogProperties(decorFitsSystemWindows = false),
         text = {
             Column {
@@ -96,7 +102,6 @@ fun NameEditorDialog(
                 AutoSizeTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = name ?: "",
-                    placeholder = { Text(text = stringResource(R.string.name)) },
                     onValueChange = { newValue ->
                         if (newValue.length <= MaxCharacters * 2) {
                             name = newValue
@@ -111,13 +116,12 @@ fun NameEditorDialog(
                             name = ""
                         }
                     },
+                    placeholder = { Text(text = stringResource(R.string.name)) },
                 )
 
-                OutlinedTextField(
+                AutoSizeTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = contact ?: "",
-                    maxLines = 1,
-                    singleLine = true,
                     placeholder = { Text(text = stringResource(R.string.contact)) },
                     onValueChange = { newValue ->
                         // Limit Characters so they're displayed correctly in the screen
