@@ -16,6 +16,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +33,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
@@ -528,9 +528,7 @@ private fun ZePages(
     lazyListState: LazyListState,
 ) {
     ZeSurface(
-        modifier = ZeModifier
-            .fillMaxSize()
-            .padding(paddingValues),
+        modifier = ZeModifier.fillMaxSize(),
     ) {
         val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
         val isKeyboardVisible by isKeyboardVisibleState()
@@ -552,15 +550,18 @@ private fun ZePages(
                 config = badgeConfiguration,
                 onDismissRequest = vm::closeConfiguration,
                 onConfirmed = vm::updateConfiguration,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
         if (editor != null) {
-            SelectedEditor(editor, vm)
+            Box(Modifier.padding(paddingValues)) {
+                SelectedEditor(editor, vm)
+            }
         }
 
         if (templateChooser != null) {
-            TemplateChooserDialog(vm, templateChooser)
+            TemplateChooserDialog(vm, templateChooser, modifier = Modifier.padding(paddingValues))
         }
 
         // column surrounding a lazycolumn: so the message stays ontop.
@@ -571,12 +572,7 @@ private fun ZePages(
 
             ZeLazyColumn(
                 state = lazyListState,
-                contentPadding = PaddingValues(
-                    start = ZeDimen.One,
-                    end = ZeDimen.One,
-                    top = ZeDimen.Half,
-                    bottom = ZeDimen.One,
-                ),
+                contentPadding = paddingValues,
             ) {
                 items(
                     slots.keys.toList(),
@@ -674,6 +670,7 @@ private fun InfoBar(
 @Composable
 @Preview
 private fun BadgeConfigEditor(
+    modifier: Modifier = Modifier,
     config: Map<String, Any?> = mapOf(
         stringResource(id = R.string.ze_sample_configuration_key) to stringResource(id = R.string.ze_sample_configuration_value),
         stringResource(id = R.string.ze_sample_int_key) to 23,
@@ -686,7 +683,7 @@ private fun BadgeConfigEditor(
     var error by remember { mutableStateOf(mapOf<String, String>()) }
 
     AlertDialog(
-        modifier = Modifier.imePadding(),
+        modifier = modifier.imePadding(),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             Button(
@@ -855,8 +852,10 @@ private fun SelectedEditor(
 private fun TemplateChooserDialog(
     vm: ZeBadgeViewModel,
     templateChooser: ZeTemplateChooser?,
+    modifier: Modifier = Modifier,
 ) {
     ZeAlertDialog(
+        modifier = modifier,
         containerColor = ZeWhite,
         onDismissRequest = {
             vm.templateSelected(null, null)
