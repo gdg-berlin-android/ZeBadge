@@ -14,19 +14,20 @@ license-report-gradle = { id = "com.jaredsburrows.license", version.ref = "licen
 
 [versions]
 
-android-gradle-plugin = "8.2.0"
-androidx-activity = "1.8.2"
-androidx-compose-bom = "2024.03.00"
+android-gradle-plugin = "8.2.2"
+androidx-activity = "1.9.0"
+androidx-compose-bom = "2024.06.00"
 androidx-compose-compiler = "1.5.3"
-androidx-core = "1.12.0"
-androidx-datastore = "1.0.0"
-androidx-lifecycle = "2.7.0"
+androidx-core = "1.13.1"
+androidx-datastore = "1.1.1"
+androidx-lifecycle = "2.8.3"
 androidx-test-ext-junit = "1.1.5"
-appcompat = "1.6.1"
-benchmark = "1.2.3"
+appcompat = "1.7.0"
+benchmark = "1.2.4"
 benchmarkMacroJunit4 = "1.2.3"
-core-ktx = "1.12.0"
-dagger-hilt = "2.48.1"
+core-ktx = "1.13.1"
+coil = "2.6.0"
+dagger-hilt = "2.50"
 detekt-gradle = "1.23.1"
 espresso-core = "3.5.1"
 jSerialComm = "2.10.3"
@@ -35,7 +36,7 @@ kotlinx-coroutines-core = "1.7.3"
 kotlinxSerializationJson = "1.6.0"
 ktlint-gradle = "11.6.1"
 license-report-gradle = "0.9.3"
-material = "1.11.0"
+material = "1.12.0"
 material3-wsc = "1.2.1"
 mik3y-usb-serial = "3.7.0"
 retrofit = "2.11.0"
@@ -68,14 +69,12 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-coil-compose = "io.coil-kt:coil-compose:2.4.0"
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil"}
 coil-transformations = "com.github.Commit451.coil-transformations:transformations:2.0.2"
-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm" }
-junit = { group = "junit", name = "junit", version.ref = "junit4" }
 ktor-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
 ktor-jetty = { group = "io.ktor", name = "ktor-server-jetty", version.ref = "ktor" }
@@ -87,7 +86,6 @@ ktor-network-tls = { group = "io.ktor", name = "ktor-network-tls-certificates", 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 sl4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "sl4j" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3-wsc = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-wsc" }
 mik3y-usb-serial-android = { module = "com.github.mik3y:usb-serial-for-android", version.ref = "mik3y-usb-serial" }
 retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
