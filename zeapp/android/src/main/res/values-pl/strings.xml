@@ -1,0 +1,57 @@
+<resources>
+    <string name="black_and_white">Czarno-białe</string>
+    <string name="reset">Anuluj</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Pozycyjny</string>
+    <string name="rotate">Obrócić</string>
+    <string name="invert">Inwersja</string>
+    <string name="static_tool">Statyczny</string>
+
+    <string name="generate">Generować</string>
+    <string name="not_binary_image">Nie jest to obraz binarny. Upewnij się, że każdy piksel jest czarny lub biały.</string>
+    <string name="generate_image_page">Generuj stronę z obrazem</string>
+    <string name="draw_image_page">Narysuj stronę z obrazem</string>
+    <string name="enter_prompt">Wprowadź swóją podpowiedź</string>
+    <string name="could_not_generate_image">Nie można wygenerować obrazu</string>
+
+    <string name="image_needed">Wymagany jest obraz binarny. Kliknij dowolny przycisk pod obrazem.</string>
+    <string name="add_qr_url">Dodaj swój link QR</string>
+    <string name="qr_code_title">Tytuł kodu QR</string>
+    <string name="qr_code_text">Dodatkowy tekst</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Dodaj swój URL kodu kreskowego</string>
+    <string name="bar_code_title">Tytuł kodu kreskowego</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Telefon</string>
+
+    <string name="your_name_here">Twoje imię tutaj</string>
+    <string name="contact_me_here">Skontaktuj się ze mną tutaj</string>
+    <string name="binary_image_needed">Wymagany obraz binarny. Naciśnij jeden z przycisków poniżej obrazu.</string>
+    <string name="add_your_phrase_here">Dodaj swoją frazę tutaj</string>
+    <string name="random_phrase">Losowa fraza</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view">Jednorożec na konferencji android w widoku izometrycznym.</string>
+    <string name="name">Imię</string>
+    <string name="contact">Kontakt</string>
+    <string name="clear">Wyczyść</string>
+    <string name="add_your_contact_details">Dodaj swoje dane kontaktowe</string>
+    <string name="set_picture">Ustaw zdjęcie</string>
+    <string name="click_get_to_show_quote_of_the_day">Kliknij "Pobierz", aby wyświetlić cytat dnia</string>
+    <string name="get">Pobierz</string>
+    <string name="decline">Odrzuć</string>
+    <string name="send">Wyślij</string>
+    <string name="n_a">N/D</string>
+    <string name="load_weather">Załaduj pogodę</string>
+    <string name="hello_my_github_profile_is">Witaj, mój profil github to</string>
+    <string name="your_phrase_here">Twoja fraza tutaj</string>
+    <string name="hello_my_name_is">Witaj, nazywam się</string>
+    <string name="upcoming_weather">☀️Nadchodząca pogoda</string>
+    <string name="quote_of_the_day">Cytat dnia</string>
+    <string name="send_icon_text">Wyślij</string>
+    <string name="badge_config_editor_title">Edytuj konfigurację plakietki</string>
+
+    <string name="ze_navdrawer_save_all_pages">Zapisz wszystkie strony na plakietce</string>
+    <string name="ze_navdrawer_update_config">Zaktualizuj konfigurację na plakietce</string>
+    <string name="ze_navdrawer_send_random_page">Wyślij losową stronę na plakietkę</string>
+    <string name="ze_navdrawer_open_release_page">Otwórz stronę publikacji</string>
+</resources>
