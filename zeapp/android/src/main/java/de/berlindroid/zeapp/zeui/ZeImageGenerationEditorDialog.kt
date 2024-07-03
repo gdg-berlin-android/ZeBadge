@@ -98,7 +98,7 @@ fun ImageGenerationEditorDialog(
         title = {
             Text(
                 color = ZeBlack,
-                text = stringResource(id = R.string.generate_image_page)
+                text = stringResource(id = R.string.generate_image_page),
             )
         },
         text = {
@@ -197,13 +197,10 @@ private suspend fun requestImageGeneration(
 
             return bitmaps.first().cropPageFromCenter()
         } else {
-            Timber.e("ImageGenError", "No image returned.")
+            Timber.e("ImageGenError: No image returned.")
         }
     } else {
-        Timber.e(
-            "ImageGenError",
-            "Could not fetch images: $maybeImages",
-        )
+        Timber.e("ImageGenError: Could not fetch images: $maybeImages")
     }
 
     return null

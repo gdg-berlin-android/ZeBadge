@@ -78,11 +78,11 @@ class AndroidBadgeManager(
                 /* parity = */UsbSerialPort.PARITY_NONE,
             )
             port.write(command.toByteArray(), 3_000)
-            Timber.i("badge", "Wrote '$command' to port ${port.portNumber}.")
+            Timber.i("badge: Wrote '$command' to port ${port.portNumber}.")
 
             command.length
         }.recoverCatching {
-            Timber.e("badge", "Couldn't write to port ${port.portNumber}.", it)
+            Timber.e(it, "badge: Couldn't write to port ${port.portNumber}.")
             // Just send a generic exception with a message we want
             throw RuntimeException("Failed to write")
         }.also {
@@ -113,12 +113,12 @@ class AndroidBadgeManager(
             val bytes = ByteArray(1024)
             val count = port.read(bytes, 3_000)
 
-            Timber.i("badge", "Read '$count' bytes from port ${port.portNumber}.")
+            Timber.i("badge: Read '$count' bytes from port ${port.portNumber}.")
 
             String(bytes)
 
         }.recoverCatching {
-            Timber.e("badge", "Couldn't read from port ${port.portNumber}.", it)
+            Timber.e(it, "badge: Couldn't read from port ${port.portNumber}.")
             // Just send a generic exception with a message we want
             throw RuntimeException("Failed to read")
         }.also {
@@ -148,13 +148,13 @@ class AndroidBadgeManager(
                     val boundDevice: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (boundDevice != null) {
-                            Timber.d("USB Permission", "Permission granted.")
+                            Timber.d("USB Permission: Permission granted.")
                             continuation.resume(Unit)
                         } else {
                             continuation.resumeWithException(RuntimeException("No bound device"))
                         }
                     } else {
-                        Timber.e("USB Permission", "Could not request permission to access to badge.")
+                        Timber.e("USB Permission: Could not request permission to access to badge.")
                     }
                 }
             }

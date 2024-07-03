@@ -61,7 +61,7 @@ fun PictureEditorDialog(
         // success?
         bitmap = if (uri == null) {
             // nope, so show error bitmap
-            Timber.d("Picture", "Not found")
+            Timber.d("Picture: Not found")
             BitmapFactory.decodeResource(
                 context.resources,
                 R.drawable.error,
