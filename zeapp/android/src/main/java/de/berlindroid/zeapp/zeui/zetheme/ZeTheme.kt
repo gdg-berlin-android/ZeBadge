@@ -28,9 +28,11 @@ private val LightColorScheme = lightColorScheme(
     secondary = ZePurple,
     onPrimary = ZeWhite,
     onSecondary = ZeBlack,
+    surface = ZeGrey,
+    onSurface = ZeBlack,
+    background = ZeWhite,
     error = ZeCarmine,
     onError = ZeWhite,
-    background = ZeWhite,
     onBackground = ZeBlack,
 )
 

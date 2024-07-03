@@ -58,6 +58,8 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -149,8 +151,8 @@ import androidx.compose.ui.Modifier as ZeModifier
 import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
 import androidx.compose.ui.layout.ContentScale as ZeContentScale
-import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
 import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
+import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 
 /**
  * Main View entrance for the app
@@ -165,14 +167,6 @@ class ZeMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        vm.loadData()
-        setContent {
-            DrawUi()
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
-        super.onConfigurationChanged(newConfig)
         setContent {
             DrawUi()
         }
@@ -182,7 +176,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun DrawUi() {
         val wsc = calculateWindowSizeClass(activity = this)
 
-        if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+        if (!wsc.isTabletSize && wsc.isSmartphoneSize) {
             CompactUi()
         } else {
             LargeScreenUi(vm)
@@ -193,7 +187,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun CompactUi() {
         if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
             ZeSimulator(
-                page = vm.slotToBitmap(),
+                page = vm.slotToBitmap(vm.currentSimulatorSlot),
                 onButtonPressed = vm::simulatorButtonPressed,
             )
         } else {
@@ -207,7 +201,7 @@ class ZeMainActivity : ComponentActivity() {
             ZeScreen(vm, modifier = Modifier.weight(.3f))
             ZeSpacer(modifier = ZeModifier.width(ZeDimen.Two))
             ZeSimulator(
-                page = vm.slotToBitmap(),
+                page = vm.slotToBitmap(vm.currentSimulatorSlot),
                 onButtonPressed = vm::simulatorButtonPressed,
                 modifier = Modifier.weight(.3f),
             )
@@ -448,8 +442,9 @@ private fun ZeOpenSource(
             Modifier.fillMaxSize(),
             contentPadding = paddingValues,
             colors = libraryColors(
-                backgroundColor = ZeBlack,
-                badgeBackgroundColor = ZeWhite,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                badgeBackgroundColor = MaterialTheme.colorScheme.primary,
+                dialogConfirmButtonColor = MaterialTheme.colorScheme.primary,
             ),
         )
     }
@@ -774,7 +769,7 @@ private fun SelectedEditor(
             ZeSlot.Camera,
         )
     ) {
-        Timber.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
+        Timber.e("Slot: This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
             is ZeConfiguration.Name -> NameEditorDialog(
@@ -905,7 +900,7 @@ private fun PagePreview(
         modifier = modifier
             .padding(ZeDimen.Quarter),
         colors = CardDefaults.cardColors(
-            containerColor = ZeBlack,
+            containerColor = MaterialTheme.colorScheme.surface,
             contentColor = ZeWhite,
         ),
         border = BorderStroke(1.dp, ZeWhite),
@@ -972,6 +967,16 @@ private fun PagePreview(
 
 private val ZeSlot.isSponsor: Boolean
     get() = this is ZeSlot.FirstSponsor
+
+// Device size extensions
+private val WindowSizeClass.isTabletSize: Boolean
+    get() = this.widthSizeClass == WindowWidthSizeClass.Expanded &&
+            (this.heightSizeClass == WindowHeightSizeClass.Expanded ||
+                    this.heightSizeClass == WindowHeightSizeClass.Medium)
+
+private val WindowSizeClass.isSmartphoneSize: Boolean
+    get() = this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
+            (this.heightSizeClass == WindowHeightSizeClass.Compact)
 
 @Composable
 private fun isKeyboardVisibleState(): State<Boolean> {
