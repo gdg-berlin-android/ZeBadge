@@ -1,10 +1,12 @@
 package de.berlindroid.zeapp
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
@@ -13,12 +15,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,6 +69,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
@@ -87,6 +92,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import com.ban.autosizetextfield.AutoSizeTextField
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults.libraryColors
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
@@ -104,12 +111,12 @@ import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
-import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import de.berlindroid.zeapp.zevm.copy
+import de.berlindroid.zekompanion.getPlatform
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
@@ -204,6 +211,7 @@ class ZeMainActivity : ComponentActivity() {
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     var isShowingAbout by remember { mutableStateOf(false) }
+    var isShowingOpenSource by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val goToReleases: () -> Unit = remember {
         {
@@ -225,6 +233,10 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    BackHandler(isShowingOpenSource || isShowingAbout) {
+        isShowingOpenSource = false
+        isShowingAbout = false
+    }
 
     ZeBadgeAppTheme(
         content = {
@@ -236,6 +248,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
+                        onGotoOpenSourceClick = { isShowingOpenSource = !isShowingOpenSource },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -270,7 +283,9 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     },
                     content = { paddingValues ->
                         if (isShowingAbout) {
-                            ZeAbout(paddingValues)
+                            ZeAbout(paddingValues, vm, LocalContext.current)
+                        } else if (isShowingOpenSource) {
+                            ZeOpenSource(paddingValues)
                         } else {
                             ZePages(
                                 paddingValues = paddingValues,
@@ -293,6 +308,7 @@ private fun ZeDrawerContent(
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
+    onGotoOpenSourceClick: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
@@ -403,7 +419,85 @@ private fun ZeDrawerContent(
                     onClick = onGotoReleaseClick,
                 )
             }
+
+            item {
+                NavDrawerItem(
+                    text = stringResource(id = R.string.ze_navdrawer_open_source),
+                    painter = painterResource(id = R.drawable.ic_open_source_initiative),
+                    onClick = onGotoOpenSourceClick,
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun ZeAbout(
+    paddingValues: PaddingValues,
+    vm: ZeBadgeViewModel,
+    context: Context,
+) {
+    val lines by vm.lines.collectAsState()
+
+    ZeSurface(
+        modifier = ZeModifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(ZeDimen.Half),
+    ) {
+        Column {
+            ZeText(
+                text = "${lines.count()} contributors",
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 24.sp,
+            )
+            ZeText(
+                text = "Running on '${getPlatform()}'.",
+            )
+            ZeLazyColumn {
+                items(lines) { line ->
+                    ZeRow(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val email = line.substring(line.indexOf('<').plus(1), line.lastIndexOf('>')).trim()
+                        ZeText(
+                            text = line.substring(0, line.indexOf('<')).trim(),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(8.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontSize = 18.sp,
+                        )
+                        ZeIcon(
+                            painter = painterResource(id = R.drawable.email),
+                            contentDescription = "Send random page to badge",
+                            Modifier
+                                .size(20.dp, 20.dp)
+                                .clickable {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:$email"))
+                                    context.startActivity(intent)
+                                },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ZeOpenSource(
+    paddingValues: PaddingValues,
+) {
+    ZeSurface {
+        LibrariesContainer(
+            Modifier.fillMaxSize(),
+            contentPadding = paddingValues,
+            colors = libraryColors(
+                backgroundColor = ZeBlack,
+                badgeBackgroundColor = ZeWhite,
+            ),
+        )
     }
 }
 
