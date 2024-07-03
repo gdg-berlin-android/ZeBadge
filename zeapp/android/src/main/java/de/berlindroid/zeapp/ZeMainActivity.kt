@@ -883,7 +883,7 @@ private fun PagePreview(
         modifier = modifier
             .padding(ZeDimen.Quarter),
         colors = CardDefaults.cardColors(
-            containerColor = ZeBlack,
+            containerColor = MaterialTheme.colorScheme.surface,
             contentColor = ZeWhite,
         ),
         border = BorderStroke(1.dp, ZeWhite),

@@ -88,6 +88,8 @@ fun AutoSizeTextField(
                 cursorColor = ZeWhite,
                 errorContainerColor = Color.Red,
                 errorLabelColor = Color.Red,
+                focusedSupportingTextColor = ZeBlack,
+                unfocusedSupportingTextColor = ZeBlack
             ),
         )
     }
