@@ -13,11 +13,15 @@ import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -94,6 +98,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -134,7 +139,6 @@ import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
-import androidx.compose.foundation.layout.Column as ZeColumn
 import androidx.compose.foundation.layout.Row as ZeRow
 import androidx.compose.foundation.layout.Spacer as ZeSpacer
 import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
@@ -521,6 +525,7 @@ private fun ZeTitle(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ZePages(
     paddingValues: PaddingValues,
@@ -564,50 +569,54 @@ private fun ZePages(
             TemplateChooserDialog(vm, templateChooser, modifier = Modifier.padding(paddingValues))
         }
 
-        // column surrounding a lazycolumn: so the message stays ontop.
-        ZeColumn {
+        ZeLazyColumn(
+            state = lazyListState,
+            modifier = Modifier
+                .padding(top = paddingValues.calculateTopPadding()),
+            contentPadding = PaddingValues(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
+        ) {
             if (message.isNotEmpty()) {
-                InfoBar(message, messageProgress, vm::copyInfoToClipboard)
-            }
-
-            ZeLazyColumn(
-                state = lazyListState,
-                contentPadding = paddingValues,
-            ) {
-                items(
-                    slots.keys.toList(),
-                ) { slot ->
-                    var isVisible by remember { mutableStateOf(false) }
-                    val alpha: Float by animateFloatAsState(
-                        targetValue = if (isVisible) 1f else 0f,
-                        label = "alpha",
-                        animationSpec = tween(durationMillis = 750),
-                    )
-                    LaunchedEffect(slot) {
-                        isVisible = true
-                    }
-
-                    PagePreview(
-                        modifier = Modifier.graphicsLayer { this.alpha = alpha },
-                        name = slot::class.simpleName ?: "WTF",
-                        bitmap = vm.slotToBitmap(slot),
-                        customizeThisPage = if (slot.isSponsor) {
-                            { vm.customizeSponsorSlot(slot) }
-                        } else {
-                            { vm.customizeSlot(slot) }
-                        },
-                        resetThisPage = if (slot.isSponsor) {
-                            null
-                        } else {
-                            { vm.resetSlot(slot) }
-                        },
-                        sendToDevice = {
-                            vm.sendPageToBadgeAndDisplay(slot)
-                        },
-                    )
-
-                    ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
+                stickyHeader {
+                    InfoBar(message, messageProgress, vm::copyInfoToClipboard)
                 }
+            }
+            items(
+                slots.keys.toList(),
+            ) { slot ->
+                var isVisible by remember { mutableStateOf(false) }
+                val alpha: Float by animateFloatAsState(
+                    targetValue = if (isVisible) 1f else 0f,
+                    label = "alpha",
+                    animationSpec = tween(durationMillis = 750),
+                )
+                LaunchedEffect(slot) {
+                    isVisible = true
+                }
+
+                PagePreview(
+                    modifier = Modifier.graphicsLayer { this.alpha = alpha },
+                    name = slot::class.simpleName ?: "WTF",
+                    bitmap = vm.slotToBitmap(slot),
+                    customizeThisPage = if (slot.isSponsor) {
+                        { vm.customizeSponsorSlot(slot) }
+                    } else {
+                        { vm.customizeSlot(slot) }
+                    },
+                    resetThisPage = if (slot.isSponsor) {
+                        null
+                    } else {
+                        { vm.resetSlot(slot) }
+                    },
+                    sendToDevice = {
+                        vm.sendPageToBadgeAndDisplay(slot)
+                    },
+                )
+
+                ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
             }
         }
     }
