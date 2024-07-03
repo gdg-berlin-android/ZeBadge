@@ -335,6 +335,12 @@ private fun ZeDrawerContent(
         painter: Painter? = null,
         onClick: () -> Unit,
     ) {
+        val shape = RoundedCornerShape(
+            topStart = 0.dp,
+            bottomStart = 0.dp,
+            topEnd = 30.dp,
+            bottomEnd = 30.dp,
+        )
         NavigationDrawerItem(
             modifier = Modifier
                 .padding(
@@ -346,17 +352,13 @@ private fun ZeDrawerContent(
                 .border(
                     width = 1.dp,
                     color = ZeWhite,
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        bottomStart = 0.dp,
-                        topEnd = 30.dp,
-                        bottomEnd = 30.dp,
-                    ),
+                    shape = shape,
                 ),
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedTextColor = ZeWhite,
                 unselectedContainerColor = ZeBlack,
             ),
+            shape = shape,
             icon = {
                 if (vector != null) {
                     ZeIcon(imageVector = vector, contentDescription = text, tint = ZeWhite)
@@ -418,10 +420,9 @@ private fun ZeDrawerContent(
             item {
                 HorizontalDivider(
                     thickness = 0.dp,
-                    color = ZeBlack,
+                    color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 40.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
                     ),
                 )
             }
@@ -445,10 +446,9 @@ private fun ZeDrawerContent(
             item {
                 HorizontalDivider(
                     thickness = 0.dp,
-                    color = ZeBlack,
+                    color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 40.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
                     ),
                 )
             }
