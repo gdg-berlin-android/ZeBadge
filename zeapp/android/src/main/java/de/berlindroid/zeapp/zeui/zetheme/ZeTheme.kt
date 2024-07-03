@@ -24,14 +24,14 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF6200EE),
-    secondary = Color(0xFF03DAC6),
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    error = Color(0xFFB00020),
-    onError = Color.White,
-    background = Color.White,
-    onBackground = Color.Black,
+    primary = ZeTeal,
+    secondary = ZePurple,
+    onPrimary = ZeWhite,
+    onSecondary = ZeBlack,
+    error = ZeCarmine,
+    onError = ZeWhite,
+    background = ZeWhite,
+    onBackground = ZeBlack,
 )
 
 @Composable
