@@ -34,7 +34,6 @@ class ZeBadgeViewModel @Inject constructor(
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
     private val getTemplateConfigurations: GetTemplateConfigurations,
-    contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
@@ -492,8 +491,7 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
-    val lines: StateFlow<List<String>> = contributorsService.contributors()
-        .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
+
 
     private fun getInitialUIState(): ZeBadgeUiState =
         ZeBadgeUiState(
