@@ -12,7 +12,6 @@ import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zeservices.*
-import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zekompanion.ditherFloydSteinberg
 import kotlinx.coroutines.*
@@ -35,7 +34,6 @@ class ZeBadgeViewModel @Inject constructor(
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
     private val getTemplateConfigurations: GetTemplateConfigurations,
-    contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
@@ -76,10 +74,6 @@ class ZeBadgeViewModel @Inject constructor(
                 delay(duration / MESSAGE_DISPLAY_UPDATES)
             }
         }
-    }
-
-    private val openApiKey = OPENAI_API_KEY.ifBlank {
-        runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
     }
 
     /**
@@ -171,12 +165,15 @@ class ZeBadgeViewModel @Inject constructor(
         // Do we need a template chooser first? Aka are we selecting a custom slot?
         if (slot in listOf(ZeSlot.FirstCustom, ZeSlot.SecondCustom)) {
             // yes, so let the user choose
-            val newCurrentTemplateChooser = ZeTemplateChooser(
-                slot = slot,
-                configurations = getTemplateConfigurations(openApiKey),
-            )
-            _uiState.update {
-                it.copy(currentTemplateChooser = newCurrentTemplateChooser)
+            viewModelScope.launch {
+                val apiKey = OPENAI_API_KEY.ifBlank { preferencesService.getOpenApiKey() }
+                val newCurrentTemplateChooser = ZeTemplateChooser(
+                    slot = slot,
+                    configurations = getTemplateConfigurations(apiKey),
+                )
+                _uiState.update {
+                    it.copy(currentTemplateChooser = newCurrentTemplateChooser)
+                }
             }
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
@@ -494,8 +491,7 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
-    val lines: StateFlow<List<String>> = contributorsService.contributors()
-        .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
+
 
     private fun getInitialUIState(): ZeBadgeUiState =
         ZeBadgeUiState(
