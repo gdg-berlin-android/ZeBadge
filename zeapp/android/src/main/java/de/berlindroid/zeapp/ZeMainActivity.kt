@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -154,6 +155,7 @@ class ZeMainActivity : ComponentActivity() {
      * Once created, use the main view composable.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
             DrawUi()
@@ -351,7 +353,7 @@ private fun ZeDrawerContent(
     }
 
     ModalDrawerSheet(
-        drawerContainerColor = ZeBlack,
+        drawerContainerColor = MaterialTheme.colorScheme.secondary,
         drawerShape = DrawerDefaults.shape,
         modifier = Modifier
             .border(
