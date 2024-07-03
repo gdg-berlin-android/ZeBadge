@@ -76,6 +76,10 @@ class ZeBadgeViewModel @Inject constructor(
     var currentSimulatorSlot by mutableStateOf(initialSlots.first())
         private set
 
+    init {
+        loadData()
+    }
+
     fun showMessage(
         message: String,
         duration: Long = MESSAGE_DISPLAY_DURATION,
@@ -542,7 +546,7 @@ class ZeBadgeViewModel @Inject constructor(
     /**
      * Loads data from Datastore
      */
-    fun loadData() {
+    private fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
             val slots = initialSlots.associateWith {
                 initialConfiguration(it)
