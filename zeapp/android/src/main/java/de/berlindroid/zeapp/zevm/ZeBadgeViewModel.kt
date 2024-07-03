@@ -329,11 +329,15 @@ class ZeBadgeViewModel @Inject constructor(
             }
 
             ZeSimulatorButtonAction.UP -> {
-                TODO()
+                Timber.d("Simulator Button Pressed", "Action not implemented yet.")
+                // Returning the default one
+                slotList[currentSlotIndex]
             }
 
             ZeSimulatorButtonAction.DOWN -> {
-                TODO()
+                Timber.d("Simulator Button Pressed", "Action not implemented yet.")
+                // Returning the default one
+                slotList[currentSlotIndex]
             }
         }
 
