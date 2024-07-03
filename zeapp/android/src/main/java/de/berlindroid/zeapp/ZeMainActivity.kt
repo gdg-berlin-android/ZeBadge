@@ -432,8 +432,9 @@ private fun ZeOpenSource(
             Modifier.fillMaxSize(),
             contentPadding = paddingValues,
             colors = libraryColors(
-                backgroundColor = ZeBlack,
-                badgeBackgroundColor = ZeWhite,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                badgeBackgroundColor = MaterialTheme.colorScheme.primary,
+                dialogConfirmButtonColor = MaterialTheme.colorScheme.primary,
             ),
         )
     }
