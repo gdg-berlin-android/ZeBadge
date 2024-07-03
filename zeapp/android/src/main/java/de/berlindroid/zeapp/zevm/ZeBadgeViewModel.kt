@@ -12,6 +12,7 @@ import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
 import de.berlindroid.zeapp.zeservices.*
+import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zekompanion.ditherFloydSteinberg
 import kotlinx.coroutines.*
@@ -107,7 +108,7 @@ class ZeBadgeViewModel @Inject constructor(
         if (bitmap.isBinary()) {
             viewModelScope.launch {
                 badgeManager.storePage(configuration.type.name, bitmap).fold(
-                    onSuccess = {storeResult ->
+                    onSuccess = { storeResult ->
                         delay(300) // serial stuff
                         badgeManager.showPage(configuration.type.name).fold(
                             onSuccess = { showResult ->
@@ -199,6 +200,16 @@ class ZeBadgeViewModel @Inject constructor(
                 is ZeSlot.BarCode -> ZeEditor(
                     slot,
                     slots[ZeSlot.BarCode]!!,
+                )
+
+                is ZeSlot.Add -> ZeEditor(
+                    slot,
+                    slots[ZeSlot.Add]!!,
+                )
+
+                is ZeSlot.Camera -> ZeEditor(
+                    slot,
+                    slots[ZeSlot.Camera]!!,
                 )
 
                 else -> {
@@ -346,10 +357,15 @@ class ZeBadgeViewModel @Inject constructor(
                 "",
                 R.drawable.soon.toBitmap(),
             )
+
             ZeSlot.Add -> ZeConfiguration.Name(
                 null,
                 null,
                 imageProviderService.provideImageBitmap(R.drawable.add),
+            )
+
+            ZeSlot.Camera -> ZeConfiguration.Camera(
+                imageProviderService.provideImageBitmap(R.drawable.soon),
             )
         }
     }
@@ -469,6 +485,7 @@ class ZeBadgeViewModel @Inject constructor(
             val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
+                ZeSlot.Camera to initialConfiguration(ZeSlot.Camera),
                 ZeSlot.Add to initialConfiguration(ZeSlot.Add),
             )
             _uiState.update {
