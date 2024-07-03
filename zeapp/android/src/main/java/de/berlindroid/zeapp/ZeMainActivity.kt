@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -63,12 +64,15 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,6 +83,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -91,6 +99,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.ban.autosizetextfield.AutoSizeTextField
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
@@ -541,6 +551,8 @@ private fun ZePages(
             .padding(paddingValues),
     ) {
         val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
+        val isKeyboardVisible by isKeyboardVisibleState()
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         val editor = uiState.currentSlotEditor
         val templateChooser = uiState.currentTemplateChooser
@@ -548,6 +560,10 @@ private fun ZePages(
         val messageProgress = uiState.messageProgress
         val slots = uiState.slots
         val badgeConfiguration = uiState.currentBadgeConfig
+
+        if (isKeyboardVisible && editor == null && templateChooser == null) {
+            keyboardController?.hide()
+        }
 
         if (badgeConfiguration != null) {
             BadgeConfigEditor(
@@ -983,3 +999,22 @@ private val WindowSizeClass.isTabletSize: Boolean
 private val WindowSizeClass.isSmartphoneSize: Boolean
     get() = this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
             (this.heightSizeClass == WindowHeightSizeClass.Compact)
+
+@Composable
+private fun isKeyboardVisibleState(): State<Boolean> {
+    val view = LocalView.current
+    var isImeVisible by remember { mutableStateOf(false) }
+
+    DisposableEffect(LocalWindowInfo.current) {
+        val listener = ViewTreeObserver.OnPreDrawListener {
+            isImeVisible = ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+            true
+        }
+        view.viewTreeObserver.addOnPreDrawListener(listener)
+        onDispose {
+            view.viewTreeObserver.removeOnPreDrawListener(listener)
+        }
+    }
+    return rememberUpdatedState(isImeVisible)
+}
