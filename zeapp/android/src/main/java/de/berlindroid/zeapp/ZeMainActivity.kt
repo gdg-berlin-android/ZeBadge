@@ -142,7 +142,7 @@ import androidx.compose.ui.Modifier as ZeModifier
 import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
 import androidx.compose.ui.layout.ContentScale as ZeContentScale
-import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
+import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
 
 /**
@@ -185,7 +185,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun CompactUi() {
         if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
             ZeSimulator(
-                page = vm.slotToBitmap(),
+                page = vm.slotToBitmap(vm.currentSimulatorSlot),
                 onButtonPressed = vm::simulatorButtonPressed,
             )
         } else {
@@ -199,7 +199,7 @@ class ZeMainActivity : ComponentActivity() {
             ZeScreen(vm, modifier = Modifier.weight(.3f))
             ZeSpacer(modifier = ZeModifier.width(ZeDimen.Two))
             ZeSimulator(
-                page = vm.slotToBitmap(),
+                page = vm.slotToBitmap(vm.currentSimulatorSlot),
                 onButtonPressed = vm::simulatorButtonPressed,
                 modifier = Modifier.weight(.3f),
             )

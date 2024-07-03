@@ -1,6 +1,9 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,12 +14,25 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
-import de.berlindroid.zeapp.zeservices.*
-import de.berlindroid.zeapp.zeui.ZeCameraEditor
+import de.berlindroid.zeapp.zeservices.ZeBadgeManager
+import de.berlindroid.zeapp.zeservices.ZeClipboardService
+import de.berlindroid.zeapp.zeservices.ZeContributorsService
+import de.berlindroid.zeapp.zeservices.ZeImageProviderService
+import de.berlindroid.zeapp.zeservices.ZePreferencesService
 import de.berlindroid.zeapp.zeui.pixelManipulation
+import de.berlindroid.zeapp.zeui.simulator.ZeSimulatorButtonAction
 import de.berlindroid.zekompanion.ditherFloydSteinberg
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -38,12 +54,27 @@ class ZeBadgeViewModel @Inject constructor(
     contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
+
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
 
     // See if disappearing message is ongoing
     private var hideMessageJob: Job? = null
     private var messageProgressJob: Job? = null
+    private val initialSlots = listOf(
+        ZeSlot.Name,
+        ZeSlot.FirstSponsor,
+        ZeSlot.Camera,
+        ZeSlot.Add,
+    )
+
+    // This needed to be created to avoid refactoring all the comoposables
+    // We should avoid passing down the VM and pass only the state
+    /**
+     * Represents the current slot showing on the simulator
+     */
+    var currentSimulatorSlot by mutableStateOf(initialSlots.first())
+        private set
 
     fun showMessage(
         message: String,
@@ -276,10 +307,37 @@ class ZeBadgeViewModel @Inject constructor(
      *
      * @param slot the slot to be displayed.
      */
-    fun simulatorButtonPressed(slot: ZeSlot) {
-        _uiState.update {
-            it.copy(currentSimulatorSlot = slot)
+    fun simulatorButtonPressed(direction: ZeSimulatorButtonAction) {
+        val slotList = _uiState.value.slots.keys.toList()
+        val currentSlotIndex = slotList.indexOf(currentSimulatorSlot)
+
+        val slotToBePresented = when (direction) {
+            ZeSimulatorButtonAction.FORWARD -> {
+                val nextIndex = (currentSlotIndex + 1)
+                    .takeIf { it <= slotList.size - 1 }
+                    ?: currentSlotIndex
+
+                slotList[nextIndex]
+            }
+
+            ZeSimulatorButtonAction.BACKWARD -> {
+                val previousIndex = (currentSlotIndex - 1)
+                    .takeIf { it >= 0 }
+                    ?: currentSlotIndex
+
+                slotList[previousIndex]
+            }
+
+            ZeSimulatorButtonAction.UP -> {
+                TODO()
+            }
+
+            ZeSimulatorButtonAction.DOWN -> {
+                TODO()
+            }
         }
+
+        currentSimulatorSlot = slotToBePresented
     }
 
     /**
@@ -289,7 +347,7 @@ class ZeBadgeViewModel @Inject constructor(
      *
      * @param slot the slot to be converted
      */
-    fun slotToBitmap(slot: ZeSlot = _uiState.value.currentSimulatorSlot): Bitmap {
+    fun slotToBitmap(slot: ZeSlot?): Bitmap {
         val slots = _uiState.value.slots
         return slots[slot]?.bitmap ?: R.drawable.error.toBitmap().also {
             Timber.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
@@ -482,12 +540,10 @@ class ZeBadgeViewModel @Inject constructor(
      */
     fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val slots = mapOf(
-                ZeSlot.Name to initialConfiguration(ZeSlot.Name),
-                ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
-                ZeSlot.Camera to initialConfiguration(ZeSlot.Camera),
-                ZeSlot.Add to initialConfiguration(ZeSlot.Add),
-            )
+            val slots = initialSlots.associateWith {
+                initialConfiguration(it)
+            }
+
             _uiState.update {
                 it.copy(slots = slots)
             }
@@ -503,7 +559,6 @@ class ZeBadgeViewModel @Inject constructor(
             messageProgress = 0.0f,
             currentSlotEditor = null,
             currentTemplateChooser = null,
-            currentSimulatorSlot = ZeSlot.Name,
             slots = emptyMap(),
             currentBadgeConfig = null,
         )
@@ -514,7 +569,6 @@ data class ZeBadgeUiState(
     val messageProgress: Float,
     val currentSlotEditor: ZeEditor?, // if that is not null, we are currently editing a slot
     val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
-    val currentSimulatorSlot: ZeSlot, // which page should be displayed in the simulator?
     val slots: Map<ZeSlot, ZeConfiguration>,
     val currentBadgeConfig: Map<String, Any?>?,
 )
