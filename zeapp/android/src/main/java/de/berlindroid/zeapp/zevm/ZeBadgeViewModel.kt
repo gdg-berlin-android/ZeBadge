@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -107,10 +106,6 @@ class ZeBadgeViewModel @Inject constructor(
                 delay(duration / MESSAGE_DISPLAY_UPDATES)
             }
         }
-    }
-
-    private val openApiKey = OPENAI_API_KEY.ifBlank {
-        runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
     }
 
     /**
@@ -202,12 +197,15 @@ class ZeBadgeViewModel @Inject constructor(
         // Do we need a template chooser first? Aka are we selecting a custom slot?
         if (slot in listOf(ZeSlot.FirstCustom, ZeSlot.SecondCustom)) {
             // yes, so let the user choose
-            val newCurrentTemplateChooser = ZeTemplateChooser(
-                slot = slot,
-                configurations = getTemplateConfigurations(openApiKey),
-            )
-            _uiState.update {
-                it.copy(currentTemplateChooser = newCurrentTemplateChooser)
+            viewModelScope.launch {
+                val apiKey = OPENAI_API_KEY.ifBlank { preferencesService.getOpenApiKey() }
+                val newCurrentTemplateChooser = ZeTemplateChooser(
+                    slot = slot,
+                    configurations = getTemplateConfigurations(apiKey),
+                )
+                _uiState.update {
+                    it.copy(currentTemplateChooser = newCurrentTemplateChooser)
+                }
             }
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
@@ -553,7 +551,6 @@ class ZeBadgeViewModel @Inject constructor(
             }
         }
     }
-
 
 
     private fun getInitialUIState(): ZeBadgeUiState =
