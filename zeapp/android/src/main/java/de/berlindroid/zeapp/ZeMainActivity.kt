@@ -217,6 +217,14 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
             context.startActivity(intent)
         }
     }
+    val goToGithubPage: () -> Unit = remember {
+        {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gdg-berlin-android/ZeBadge")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -238,6 +246,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 drawerState.close()
                             }
                         },
+                        onTitleClick = goToGithubPage
                     )
                 },
             ) {
@@ -257,6 +266,10 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             isNavDrawerOpen = drawerState.isOpen,
                             onOpenMenuClicked = { scope.launch { drawerState.open() } },
                             onCloseMenuClicked = { scope.launch { drawerState.close() } },
+                            onTitleClick = {
+                                scope.launch { drawerState.close() }
+                                goToGithubPage()
+                            }
                         )
                     },
                     content = { paddingValues ->
@@ -286,6 +299,7 @@ private fun ZeDrawerContent(
     onGotoReleaseClick: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
+    onTitleClick: () -> Unit = {}
 ) {
 
     @Composable
@@ -346,7 +360,9 @@ private fun ZeDrawerContent(
     ) {
         ZeTitle(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 64.dp),
-        )
+        ){
+            onTitleClick()
+        }
 
         LazyColumn {
             item {
@@ -457,6 +473,7 @@ private fun ZeTopBar(
     isNavDrawerOpen: Boolean,
     onOpenMenuClicked: () -> Unit,
     onCloseMenuClicked: () -> Unit,
+    onTitleClick: () -> Unit,
 ) {
     ZeTopAppBar(
         navigationIcon = {
@@ -472,7 +489,9 @@ private fun ZeTopBar(
             }
         },
         title = {
-            ZeTitle()
+            ZeTitle{
+                onTitleClick()
+            }
         },
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondary,
@@ -495,9 +514,12 @@ private fun ZeTopBar(
 @Composable
 private fun ZeTitle(
     modifier: Modifier = Modifier,
+    titleClick: () -> Unit
 ) {
     ZeText(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            titleClick()
+        },
         style = MaterialTheme.typography.titleLarge,
         text = buildAnnotatedString {
             pushStyle(SpanStyle(fontWeight = FontWeight.Black))
