@@ -168,26 +168,28 @@ class ZeBadgeOs:
 
         print(f"init: i2c interfaces: {addrs}")
 
+        keyboard_attached = False
+        wifi_attached = False
         if addrs:
             has_keyboard = 95 in addrs
             if has_keyboard:
                 import keyboard
                 keyboard.init(self)
 
-            self.config["keyboard.attached"] = has_keyboard
+            keyboard_attached = has_keyboard
         else:
-            self.config["keyboard.attached"] = False
-
             print("... no i2c found, trying wifi")
 
             import wifi
             if not wifi.init(self):
                 print("... no wifi found.")
-                self.config["wifi.attached"] = False
+                wifi_attached = False
             else:
                 print("... wifi !!!")
-                self.config["wifi.attached"] = True
+                wifi_attached = True
 
+        self.config["keyboard.attached"] = keyboard_attached
+        self.config["wifi.attached"] = wifi_attached
         self.config["developer.mode"] = not (usb_cdc.data is None)
 
     def _init_apps(self):
