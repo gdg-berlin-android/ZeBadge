@@ -51,4 +51,10 @@
     <string name="send_icon_text">Enviar</string>
     <string name="badge_config_editor_title">Editar configuração do crachá</string>
 
+
+    <string name="ze_navdrawer_save_all_pages">Salvar todas as páginas no crachá</string>
+    <string name="ze_navdrawer_update_config">Atualizar configuração no crachá</string>
+    <string name="ze_navdrawer_send_random_page">Enviar página aleatória para o crachá</string>
+    <string name="ze_navdrawer_open_release_page">Abrir página de lançamentos</string>
+
 </resources>

@@ -369,13 +369,13 @@ private fun ZeDrawerContent(
                 NavDrawerItem(
                     onClick = onSaveAllClick,
                     painter = painterResource(id = R.drawable.save_all),
-                    text = "Save all pages to badge",
+                    text = stringResource(id = R.string.ze_navdrawer_save_all_pages),
                 )
             }
 
             item {
                 NavDrawerItem(
-                    text = "Update config on badge",
+                    text = stringResource(id = R.string.ze_navdrawer_update_config),
                     vector = Icons.Default.ThumbUp,
                     onClick = onUpdateConfig,
                 )
@@ -384,7 +384,7 @@ private fun ZeDrawerContent(
             item {
                 NavDrawerItem(
                     painter = painterResource(id = R.drawable.ic_random),
-                    text = "Send random page to badge",
+                    text = stringResource(id = R.string.ze_navdrawer_send_random_page),
                     onClick = onGetStoredPages,
                 )
             }
@@ -402,7 +402,7 @@ private fun ZeDrawerContent(
 
             item {
                 NavDrawerItem(
-                    text = "Open release page",
+                    text = stringResource(id = R.string.ze_navdrawer_open_release_page),
                     painter = painterResource(id = R.drawable.ic_update),
                     onClick = onGotoReleaseClick,
                 )
