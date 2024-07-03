@@ -75,7 +75,7 @@ def colorize(text):
 
 def request_new_user():
     assert SERVER_TOKEN, f"SERVER_AUTH not set: '{SERVER_TOKEN}'."
-    print(f"{colorize("creating new user")}")
+    print(f"{colorize('creating new user')}")
 
     users_response = requests.get(
         url=f"{BASE_URL}/api/user",
@@ -258,7 +258,7 @@ def inject_user(user):
         time.sleep(0.1)
         circuit = find_mount_point('CIRC')
 
-    user_config = " ".join(list(map(lambda x: f'user.{x}={user[x].replace(' ', "$SPACE#")}', user)))
+    user_config = " ".join(list(map(lambda x: f'user.{x}={user[x].replace(" ", "$SPACE#")}', user)))
     user_config += f" "\
         f"wifi.ssid=#berlin24 " \
         f"wifi.pwd=#berlin24 " \
@@ -267,7 +267,7 @@ def inject_user(user):
         f"wifi.url=/api/zepass " \
         f"wifi.host=zebadge.app "
 
-    print(f"{colorize("injecting user")}: {user_config}")
+    print(f"{colorize('injecting user')}: {user_config}")
 
     open(circuit + "/ze.conf", "w+").write(
         user_config
