@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
@@ -91,6 +92,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import com.ban.autosizetextfield.AutoSizeTextField
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults.libraryColors
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
@@ -208,6 +211,7 @@ class ZeMainActivity : ComponentActivity() {
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     var isShowingAbout by remember { mutableStateOf(false) }
+    var isShowingOpenSource by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val goToReleases: () -> Unit = remember {
         {
@@ -229,6 +233,10 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    BackHandler(isShowingOpenSource || isShowingAbout) {
+        isShowingOpenSource = false
+        isShowingAbout = false
+    }
 
     ZeBadgeAppTheme(
         content = {
@@ -240,6 +248,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
+                        onGotoOpenSourceClick = { isShowingOpenSource = !isShowingOpenSource },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -275,6 +284,8 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     content = { paddingValues ->
                         if (isShowingAbout) {
                             ZeAbout(paddingValues, vm, LocalContext.current)
+                        } else if (isShowingOpenSource) {
+                            ZeOpenSource(paddingValues)
                         } else {
                             ZePages(
                                 paddingValues = paddingValues,
@@ -297,6 +308,7 @@ private fun ZeDrawerContent(
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
+    onGotoOpenSourceClick: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
@@ -407,6 +419,14 @@ private fun ZeDrawerContent(
                     onClick = onGotoReleaseClick,
                 )
             }
+
+            item {
+                NavDrawerItem(
+                    text = stringResource(id = R.string.ze_navdrawer_open_source),
+                    painter = painterResource(id = R.drawable.ic_open_source_initiative),
+                    onClick = onGotoOpenSourceClick,
+                )
+            }
         }
     }
 }
@@ -462,6 +482,22 @@ private fun ZeAbout(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ZeOpenSource(
+    paddingValues: PaddingValues,
+) {
+    ZeSurface {
+        LibrariesContainer(
+            Modifier.fillMaxSize(),
+            contentPadding = paddingValues,
+            colors = libraryColors(
+                backgroundColor = ZeBlack,
+                badgeBackgroundColor = ZeWhite,
+            ),
+        )
     }
 }
 

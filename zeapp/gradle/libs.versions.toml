@@ -11,6 +11,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
 license-report-gradle = { id = "com.jaredsburrows.license", version.ref = "license-report-gradle" }
+aboutlibraries-gradle = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 
 [versions]
 
@@ -50,9 +51,11 @@ ktor = "2.3.9"
 uiTestManifest = "1.6.4"
 mockk = "1.13.11"
 kotlinxCoroutinesTest = "1.7.3"
+aboutlibraries = "11.2.2"
 
 [libraries]
 
+aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
