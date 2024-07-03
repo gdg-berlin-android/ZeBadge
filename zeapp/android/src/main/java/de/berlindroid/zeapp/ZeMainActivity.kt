@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -94,6 +95,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import com.ban.autosizetextfield.AutoSizeTextField
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults.libraryColors
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
@@ -111,6 +114,7 @@ import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
+import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
@@ -212,6 +216,7 @@ class ZeMainActivity : ComponentActivity() {
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     var isShowingAbout by remember { mutableStateOf(false) }
+    var isShowingOpenSource by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val goToReleases: () -> Unit = remember {
         {
@@ -233,6 +238,10 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    BackHandler(isShowingOpenSource || isShowingAbout) {
+        isShowingOpenSource = false
+        isShowingAbout = false
+    }
 
     ZeBadgeAppTheme(
         content = {
@@ -244,6 +253,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
+                        onGotoOpenSourceClick = { isShowingOpenSource = !isShowingOpenSource },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -278,7 +288,9 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     },
                     content = { paddingValues ->
                         if (isShowingAbout) {
-                            ZeAbout(paddingValues, vm, LocalContext.current)
+                            ZeAbout(paddingValues)
+                        } else if (isShowingOpenSource) {
+                            ZeOpenSource(paddingValues)
                         } else {
                             ZePages(
                                 paddingValues = paddingValues,
@@ -301,6 +313,7 @@ private fun ZeDrawerContent(
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
+    onGotoOpenSourceClick: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
@@ -411,61 +424,31 @@ private fun ZeDrawerContent(
                     onClick = onGotoReleaseClick,
                 )
             }
+
+            item {
+                NavDrawerItem(
+                    text = stringResource(id = R.string.ze_navdrawer_open_source),
+                    painter = painterResource(id = R.drawable.ic_open_source_initiative),
+                    onClick = onGotoOpenSourceClick,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ZeAbout(
+private fun ZeOpenSource(
     paddingValues: PaddingValues,
-    vm: ZeBadgeViewModel,
-    context: Context,
 ) {
-    val lines by vm.lines.collectAsState()
-
-    ZeSurface(
-        modifier = ZeModifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(ZeDimen.Half),
-    ) {
-        Column {
-            ZeText(
-                text = "${lines.count()} contributors",
-                modifier = Modifier.padding(8.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 24.sp,
-            )
-            ZeText(
-                text = "Running on '${getPlatform()}'.",
-            )
-            ZeLazyColumn {
-                items(lines) { line ->
-                    ZeRow(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val email = line.substring(line.indexOf('<').plus(1), line.lastIndexOf('>')).trim()
-                        ZeText(
-                            text = line.substring(0, line.indexOf('<')).trim(),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(8.dp),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontSize = 18.sp,
-                        )
-                        ZeIcon(
-                            painter = painterResource(id = R.drawable.email),
-                            contentDescription = "Send random page to badge",
-                            Modifier
-                                .size(20.dp, 20.dp)
-                                .clickable {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:$email"))
-                                    context.startActivity(intent)
-                                },
-                        )
-                    }
-                }
-            }
-        }
+    ZeSurface {
+        LibrariesContainer(
+            Modifier.fillMaxSize(),
+            contentPadding = paddingValues,
+            colors = libraryColors(
+                backgroundColor = ZeBlack,
+                badgeBackgroundColor = ZeWhite,
+            ),
+        )
     }
 }
 
@@ -632,7 +615,7 @@ private fun ZePages(
 @Composable
 @Preview
 private fun InfoBar(
-    message: String = "Very Important",
+    message: String = stringResource(id = R.string.ze_very_important),
     progress: Float = 0.5f,
     copyMoreToClipboard: (() -> Unit) = {},
 ) {
@@ -684,9 +667,9 @@ private fun InfoBar(
 @Preview
 private fun BadgeConfigEditor(
     config: Map<String, Any?> = mapOf(
-        "sample configuration" to "sample value",
-        "sample int" to 23,
-        "another configuration" to true,
+        stringResource(id = R.string.ze_sample_configuration_key) to stringResource(id = R.string.ze_sample_configuration_value),
+        stringResource(id = R.string.ze_sample_int_key) to 23,
+        stringResource(id = R.string.ze_sample_another_configuration_key) to true,
     ),
     onDismissRequest: () -> Unit = {},
     onConfirmed: (updateConfig: Map<String, Any?>) -> Unit = {},
@@ -805,7 +788,7 @@ private fun SelectedEditor(
             )
 
             is ZeConfiguration.Schedule -> {
-                vm.showMessage(message = "Not added by you yet, please feel free to contribute this editor")
+                vm.showMessage(message = stringResource(id = R.string.ze_not_added_yet_message))
                 vm.slotConfigured(null, null)
             }
 
@@ -878,7 +861,7 @@ private fun TemplateChooserDialog(
         title = {
             ZeText(
                 color = ZeBlack,
-                text = "Select Content",
+                text = stringResource(id = R.string.ze_select_content),
             )
         },
         text = {
@@ -949,7 +932,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.AutoMirrored.Filled.Send,
-                                text = "Send",
+                                text = stringResource(id = R.string.send),
                                 onClick = sendToDevice,
                             )
                         }
@@ -958,7 +941,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.Filled.Refresh,
-                                text = "Reset",
+                                text = stringResource(id = R.string.reset),
                                 onClick = resetThisPage,
                             )
                         }
@@ -967,7 +950,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.Filled.Edit,
-                                text = "Edit",
+                                text = stringResource(id = R.string.ze_edit),
                                 onClick = customizeThisPage,
                             )
                         }

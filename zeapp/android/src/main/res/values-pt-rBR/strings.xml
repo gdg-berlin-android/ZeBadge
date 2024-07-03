@@ -2,10 +2,12 @@
 <resources>
     <string name="black_and_white">P/B</string>
     <string name="reset">Resetar</string>
+    <string name="ze_edit">Editar</string>
     <string name="floyd_steninberg_initials">FS</string>
     <string name="positional">Posicional</string>
     <string name="rotate">Rotacionar</string>
     <string name="invert">Inverter</string>
+    <string name="ze_very_important">Muito importante</string>
 
     <string name="static_tool">Estático</string>
     <string name="generate">Gerar</string>
@@ -56,5 +58,12 @@
     <string name="ze_navdrawer_update_config">Atualizar configuração no crachá</string>
     <string name="ze_navdrawer_send_random_page">Enviar página aleatória para o crachá</string>
     <string name="ze_navdrawer_open_release_page">Abrir página de lançamentos</string>
+    <string name="ze_select_content">Selecione o conteúdo</string>
+    <string name="ze_not_added_yet_message">Ainda não foi adicionado por você, sinta-se livre para contribuir com esse editor</string>
+
+    <string name="ze_sample_configuration_key">Exemplo de configuração</string>
+    <string name="ze_sample_configuration_value">Exemplo de valor</string>
+    <string name="ze_sample_int_key">Exemplo de int</string>
+    <string name="ze_sample_another_configuration_key">Outra configuração</string>
 
 </resources>

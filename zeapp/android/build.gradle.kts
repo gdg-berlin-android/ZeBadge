@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.aboutlibraries.gradle)
 }
 
 val isCi = System.getenv("CI") == "true"
@@ -183,6 +184,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
     implementation(libs.timber)
+    implementation(libs.aboutlibraries.compose)
+    implementation(libs.androidx.compose.hilt.navigation)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
