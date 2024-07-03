@@ -3,6 +3,7 @@ package de.berlindroid.zeapp
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -90,10 +91,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.lifecycleScope
 import com.ban.autosizetextfield.AutoSizeTextField
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults.libraryColors
 import dagger.hilt.android.AndroidEntryPoint
+import de.berlindroid.zeapp.zebits.toDitheredImage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
@@ -157,9 +160,28 @@ class ZeMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        if (intent.type?.startsWith("image/") == true) {
+            handleSendImage(intent)
+        }
         setContent {
             DrawUi()
         }
+    }
+
+    private fun handleSendImage(intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)?.let(::updateSelectedImage)
+        } else {
+            (intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri)?.let(::updateSelectedImage)
+        }
+    }
+
+    private fun updateSelectedImage(imageUri: Uri) = lifecycleScope.launch {
+        val bitmap = imageUri.toDitheredImage(this@ZeMainActivity)
+        vm.slotConfigured(
+            ZeSlot.Camera,
+            ZeConfiguration.Camera(bitmap),
+        )
     }
 
     @Composable
