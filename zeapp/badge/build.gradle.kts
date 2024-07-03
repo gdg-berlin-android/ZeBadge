@@ -117,6 +117,6 @@ android {
     namespace = "de.berlindroid.zebadge"
     compileSdk = 34
     defaultConfig {
-        minSdk = 33
+        minSdk = 29
     }
 }

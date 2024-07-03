@@ -246,7 +246,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 drawerState.close()
                             }
                         },
-                        onTitleClick = goToGithubPage
+                        onTitleClick = goToGithubPage,
                     )
                 },
             ) {
@@ -269,7 +269,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             onTitleClick = {
                                 scope.launch { drawerState.close() }
                                 goToGithubPage()
-                            }
+                            },
                         )
                     },
                     content = { paddingValues ->
@@ -299,7 +299,7 @@ private fun ZeDrawerContent(
     onGotoReleaseClick: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
-    onTitleClick: () -> Unit = {}
+    onTitleClick: () -> Unit = {},
 ) {
 
     @Composable
@@ -360,7 +360,7 @@ private fun ZeDrawerContent(
     ) {
         ZeTitle(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 64.dp),
-        ){
+        ) {
             onTitleClick()
         }
 
@@ -489,7 +489,7 @@ private fun ZeTopBar(
             }
         },
         title = {
-            ZeTitle{
+            ZeTitle {
                 onTitleClick()
             }
         },
@@ -514,7 +514,7 @@ private fun ZeTopBar(
 @Composable
 private fun ZeTitle(
     modifier: Modifier = Modifier,
-    titleClick: () -> Unit
+    titleClick: () -> Unit,
 ) {
     ZeText(
         modifier = modifier.clickable {
@@ -774,6 +774,8 @@ private fun SelectedEditor(
             ZeSlot.Weather,
             ZeSlot.Quote,
             ZeSlot.BarCode,
+            ZeSlot.Add,
+            ZeSlot.Camera,
         )
     ) {
         Timber.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
