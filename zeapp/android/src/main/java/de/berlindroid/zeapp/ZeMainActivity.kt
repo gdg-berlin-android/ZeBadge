@@ -111,6 +111,7 @@ import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
+import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
@@ -283,7 +284,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     },
                     content = { paddingValues ->
                         if (isShowingAbout) {
-                            ZeAbout(paddingValues, vm, LocalContext.current)
+                            ZeAbout(paddingValues)
                         } else if (isShowingOpenSource) {
                             ZeOpenSource(paddingValues)
                         } else {
@@ -426,60 +427,6 @@ private fun ZeDrawerContent(
                     painter = painterResource(id = R.drawable.ic_open_source_initiative),
                     onClick = onGotoOpenSourceClick,
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ZeAbout(
-    paddingValues: PaddingValues,
-    vm: ZeBadgeViewModel,
-    context: Context,
-) {
-    val lines by vm.lines.collectAsState()
-
-    ZeSurface(
-        modifier = ZeModifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(ZeDimen.Half),
-    ) {
-        Column {
-            ZeText(
-                text = "${lines.count()} contributors",
-                modifier = Modifier.padding(8.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 24.sp,
-            )
-            ZeText(
-                text = "Running on '${getPlatform()}'.",
-            )
-            ZeLazyColumn {
-                items(lines) { line ->
-                    ZeRow(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val email = line.substring(line.indexOf('<').plus(1), line.lastIndexOf('>')).trim()
-                        ZeText(
-                            text = line.substring(0, line.indexOf('<')).trim(),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(8.dp),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontSize = 18.sp,
-                        )
-                        ZeIcon(
-                            painter = painterResource(id = R.drawable.email),
-                            contentDescription = "Send random page to badge",
-                            Modifier
-                                .size(20.dp, 20.dp)
-                                .clickable {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:$email"))
-                                    context.startActivity(intent)
-                                },
-                        )
-                    }
-                }
             }
         }
     }
