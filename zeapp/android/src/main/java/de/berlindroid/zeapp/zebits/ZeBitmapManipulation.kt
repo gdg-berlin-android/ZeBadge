@@ -288,7 +288,7 @@ fun Bitmap.isBinary(): Boolean {
             val x = index % width
             val y = index / height
 
-            Timber.d("Binary Editor", "Pixel nr $index at $x, $y is not binary!")
+            Timber.d("Binary Editor: Pixel nr $index at $x, $y is not binary!")
         }
 
         allBinaryPixel = allBinaryPixel && binary

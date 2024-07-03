@@ -179,10 +179,7 @@ class ZePreferencesService @Inject constructor(
                 ZeBadgeType.CAMERA -> ZeConfiguration.Camera(bitmap)
 
                 else -> {
-                    Timber.e(
-                        "Slot from Prefs",
-                        "Cannot find $type slot in preferences.",
-                    )
+                    Timber.e("Slot from Prefs: Cannot find $type slot in preferences.")
                     null
                 }
             }
