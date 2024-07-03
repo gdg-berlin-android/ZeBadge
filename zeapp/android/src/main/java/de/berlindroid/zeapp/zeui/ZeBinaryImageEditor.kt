@@ -3,6 +3,7 @@ package de.berlindroid.zeapp.zeui
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,11 +29,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.zebits.copy
+import de.berlindroid.zeapp.zeui.zetheme.ZeGrey
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.ditherFloydSteinberg
 import de.berlindroid.zekompanion.ditherPositional
 import de.berlindroid.zekompanion.ditherStaticPattern
@@ -72,7 +75,15 @@ fun BinaryImageEditor(
         )
 
         LazyRow(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = ZeGrey,
+                    shape = RoundedCornerShape(
+                        4.dp,
+                    ),
+                ),
             contentPadding = PaddingValues(horizontal = ZeDimen.Quarter),
             horizontalArrangement = Arrangement.End,
         ) {
