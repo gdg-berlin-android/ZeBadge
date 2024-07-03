@@ -173,8 +173,10 @@ class ZePreferencesService @Inject constructor(
                 ZeBadgeType.RANDOM_QUOTE -> ZeConfiguration.Quote(
                     message = slot.preferencesValue("quote_message"),
                     author = slot.preferencesValue("quote_author"),
-                    bitmap = bitmap
+                    bitmap = bitmap,
                 )
+
+                ZeBadgeType.CAMERA -> ZeConfiguration.Camera(bitmap)
 
                 else -> {
                     Timber.e(

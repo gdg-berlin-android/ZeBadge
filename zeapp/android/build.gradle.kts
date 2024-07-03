@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.aboutlibraries.gradle)
 }
 
 val isCi = System.getenv("CI") == "true"
@@ -26,7 +27,7 @@ android {
         applicationId = "de.berlindroid.zeapp"
         compileSdk = 34
         targetSdk = 34
-        minSdk = 33
+        minSdk = 29
         versionCode = appVersionCode
         versionName = "1.0"
 
@@ -51,6 +52,7 @@ android {
                 "ur",
                 "bs",
                 "pt-rBR",
+                "pl",
             ),
         )
 
@@ -182,6 +184,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
     implementation(libs.timber)
+    implementation(libs.aboutlibraries.compose)
+    implementation(libs.androidx.compose.hilt.navigation)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

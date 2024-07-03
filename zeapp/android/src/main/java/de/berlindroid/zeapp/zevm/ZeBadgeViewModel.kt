@@ -34,7 +34,6 @@ class ZeBadgeViewModel @Inject constructor(
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
     private val getTemplateConfigurations: GetTemplateConfigurations,
-    contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
@@ -77,10 +76,6 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
-    private val openApiKey = OPENAI_API_KEY.ifBlank {
-        runBlocking(viewModelScope.coroutineContext) { preferencesService.getOpenApiKey() }
-    }
-
     /**
      * Call this method to send a given slot to the badge device.
      *
@@ -107,7 +102,7 @@ class ZeBadgeViewModel @Inject constructor(
         if (bitmap.isBinary()) {
             viewModelScope.launch {
                 badgeManager.storePage(configuration.type.name, bitmap).fold(
-                    onSuccess = {storeResult ->
+                    onSuccess = { storeResult ->
                         delay(300) // serial stuff
                         badgeManager.showPage(configuration.type.name).fold(
                             onSuccess = { showResult ->
@@ -170,12 +165,15 @@ class ZeBadgeViewModel @Inject constructor(
         // Do we need a template chooser first? Aka are we selecting a custom slot?
         if (slot in listOf(ZeSlot.FirstCustom, ZeSlot.SecondCustom)) {
             // yes, so let the user choose
-            val newCurrentTemplateChooser = ZeTemplateChooser(
-                slot = slot,
-                configurations = getTemplateConfigurations(openApiKey),
-            )
-            _uiState.update {
-                it.copy(currentTemplateChooser = newCurrentTemplateChooser)
+            viewModelScope.launch {
+                val apiKey = OPENAI_API_KEY.ifBlank { preferencesService.getOpenApiKey() }
+                val newCurrentTemplateChooser = ZeTemplateChooser(
+                    slot = slot,
+                    configurations = getTemplateConfigurations(apiKey),
+                )
+                _uiState.update {
+                    it.copy(currentTemplateChooser = newCurrentTemplateChooser)
+                }
             }
         } else {
             // no selection needed, check for name slot and ignore non configurable slots
@@ -199,6 +197,16 @@ class ZeBadgeViewModel @Inject constructor(
                 is ZeSlot.BarCode -> ZeEditor(
                     slot,
                     slots[ZeSlot.BarCode]!!,
+                )
+
+                is ZeSlot.Add -> ZeEditor(
+                    slot,
+                    slots[ZeSlot.Add]!!,
+                )
+
+                is ZeSlot.Camera -> ZeEditor(
+                    slot,
+                    slots[ZeSlot.Camera]!!,
                 )
 
                 else -> {
@@ -346,10 +354,15 @@ class ZeBadgeViewModel @Inject constructor(
                 "",
                 R.drawable.soon.toBitmap(),
             )
+
             ZeSlot.Add -> ZeConfiguration.Name(
                 null,
                 null,
                 imageProviderService.provideImageBitmap(R.drawable.add),
+            )
+
+            ZeSlot.Camera -> ZeConfiguration.Camera(
+                imageProviderService.provideImageBitmap(R.drawable.soon),
             )
         }
     }
@@ -469,6 +482,7 @@ class ZeBadgeViewModel @Inject constructor(
             val slots = mapOf(
                 ZeSlot.Name to initialConfiguration(ZeSlot.Name),
                 ZeSlot.FirstSponsor to initialConfiguration(ZeSlot.FirstSponsor),
+                ZeSlot.Camera to initialConfiguration(ZeSlot.Camera),
                 ZeSlot.Add to initialConfiguration(ZeSlot.Add),
             )
             _uiState.update {
@@ -477,8 +491,7 @@ class ZeBadgeViewModel @Inject constructor(
         }
     }
 
-    val lines: StateFlow<List<String>> = contributorsService.contributors()
-        .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
+
 
     private fun getInitialUIState(): ZeBadgeUiState =
         ZeBadgeUiState(

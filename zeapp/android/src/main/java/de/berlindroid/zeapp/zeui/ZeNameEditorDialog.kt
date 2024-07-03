@@ -7,13 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -87,13 +88,19 @@ fun NameEditorDialog(
                 Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(
-            color = ZeBlack,
-            text = stringResource(R.string.add_your_contact_details)
-        ) },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(R.string.add_your_contact_details),
+            )
+        },
         properties = DialogProperties(decorFitsSystemWindows = false),
         text = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+            ) {
                 BinaryImageEditor(
                     bitmap = image,
                     bitmapUpdated = { image = it },
