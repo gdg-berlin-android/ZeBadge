@@ -1,10 +1,10 @@
 package de.berlindroid.zeapp
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -16,12 +16,16 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,21 +62,17 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
@@ -82,10 +82,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -98,8 +94,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.ban.autosizetextfield.AutoSizeTextField
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults.libraryColors
@@ -126,6 +120,7 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import de.berlindroid.zeapp.zevm.copy
+import de.berlindroid.zekompanion.getPlatform
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
@@ -151,8 +146,8 @@ import androidx.compose.ui.Modifier as ZeModifier
 import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
 import androidx.compose.ui.layout.ContentScale as ZeContentScale
+import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
 import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
-import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 
 /**
  * Main View entrance for the app
@@ -167,6 +162,14 @@ class ZeMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        vm.loadData()
+        setContent {
+            DrawUi()
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
         setContent {
             DrawUi()
         }
@@ -176,7 +179,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun DrawUi() {
         val wsc = calculateWindowSizeClass(activity = this)
 
-        if (!wsc.isTabletSize && wsc.isSmartphoneSize) {
+        if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
             CompactUi()
         } else {
             LargeScreenUi(vm)
@@ -187,7 +190,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun CompactUi() {
         if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
             ZeSimulator(
-                page = vm.slotToBitmap(vm.currentSimulatorSlot),
+                page = vm.slotToBitmap(),
                 onButtonPressed = vm::simulatorButtonPressed,
             )
         } else {
@@ -201,7 +204,7 @@ class ZeMainActivity : ComponentActivity() {
             ZeScreen(vm, modifier = Modifier.weight(.3f))
             ZeSpacer(modifier = ZeModifier.width(ZeDimen.Two))
             ZeSimulator(
-                page = vm.slotToBitmap(vm.currentSimulatorSlot),
+                page = vm.slotToBitmap(),
                 onButtonPressed = vm::simulatorButtonPressed,
                 modifier = Modifier.weight(.3f),
             )
@@ -442,9 +445,8 @@ private fun ZeOpenSource(
             Modifier.fillMaxSize(),
             contentPadding = paddingValues,
             colors = libraryColors(
-                backgroundColor = MaterialTheme.colorScheme.surface,
-                badgeBackgroundColor = MaterialTheme.colorScheme.primary,
-                dialogConfirmButtonColor = MaterialTheme.colorScheme.primary,
+                backgroundColor = ZeBlack,
+                badgeBackgroundColor = ZeWhite,
             ),
         )
     }
@@ -529,8 +531,6 @@ private fun ZePages(
             .padding(paddingValues),
     ) {
         val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
-        val isKeyboardVisible by isKeyboardVisibleState()
-        val keyboardController = LocalSoftwareKeyboardController.current
 
         val editor = uiState.currentSlotEditor
         val templateChooser = uiState.currentTemplateChooser
@@ -538,10 +538,6 @@ private fun ZePages(
         val messageProgress = uiState.messageProgress
         val slots = uiState.slots
         val badgeConfiguration = uiState.currentBadgeConfig
-
-        if (isKeyboardVisible && editor == null && templateChooser == null) {
-            keyboardController?.hide()
-        }
 
         if (badgeConfiguration != null) {
             BadgeConfigEditor(
@@ -900,7 +896,7 @@ private fun PagePreview(
         modifier = modifier
             .padding(ZeDimen.Quarter),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = ZeBlack,
             contentColor = ZeWhite,
         ),
         border = BorderStroke(1.dp, ZeWhite),
@@ -967,32 +963,3 @@ private fun PagePreview(
 
 private val ZeSlot.isSponsor: Boolean
     get() = this is ZeSlot.FirstSponsor
-
-// Device size extensions
-private val WindowSizeClass.isTabletSize: Boolean
-    get() = this.widthSizeClass == WindowWidthSizeClass.Expanded &&
-            (this.heightSizeClass == WindowHeightSizeClass.Expanded ||
-                    this.heightSizeClass == WindowHeightSizeClass.Medium)
-
-private val WindowSizeClass.isSmartphoneSize: Boolean
-    get() = this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
-            (this.heightSizeClass == WindowHeightSizeClass.Compact)
-
-@Composable
-private fun isKeyboardVisibleState(): State<Boolean> {
-    val view = LocalView.current
-    var isImeVisible by remember { mutableStateOf(false) }
-
-    DisposableEffect(LocalWindowInfo.current) {
-        val listener = ViewTreeObserver.OnPreDrawListener {
-            isImeVisible = ViewCompat.getRootWindowInsets(view)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
-            true
-        }
-        view.viewTreeObserver.addOnPreDrawListener(listener)
-        onDispose {
-            view.viewTreeObserver.removeOnPreDrawListener(listener)
-        }
-    }
-    return rememberUpdatedState(isImeVisible)
-}
