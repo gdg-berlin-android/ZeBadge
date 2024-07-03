@@ -142,8 +142,8 @@ import androidx.compose.ui.Modifier as ZeModifier
 import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
 import androidx.compose.ui.layout.ContentScale as ZeContentScale
-import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
+import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 
 /**
  * Main View entrance for the app
@@ -157,13 +157,6 @@ class ZeMainActivity : ComponentActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            DrawUi()
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
-        super.onConfigurationChanged(newConfig)
         setContent {
             DrawUi()
         }
