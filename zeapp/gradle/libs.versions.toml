@@ -52,6 +52,7 @@ uiTestManifest = "1.6.4"
 mockk = "1.13.11"
 kotlinxCoroutinesTest = "1.7.3"
 aboutlibraries = "11.2.2"
+hilt-navigation-compose = "1.2.0"
 
 [libraries]
 
@@ -63,6 +64,7 @@ androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 androidx-compose-ui-toolingpreview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-compose-ui-ui = { module = "androidx.compose.ui:ui" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
