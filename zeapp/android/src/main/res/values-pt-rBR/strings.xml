@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Ze Androft</string>
-    <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
-
     <string name="black_and_white">P/B</string>
     <string name="reset">Resetar</string>
     <string name="floyd_steninberg_initials">FS</string>
@@ -11,6 +7,7 @@
     <string name="rotate">Rotacionar</string>
     <string name="invert">Inverter</string>
 
+    <string name="static_tool">Estático</string>
     <string name="generate">Gerar</string>
     <string name="not_binary_image">Não é uma imagem binária. Certifique-se que todos os pixels sejam pretos ou brancos.</string>
     <string name="generate_image_page">Gerar uma página de imagem</string>
@@ -51,5 +48,7 @@
     <string name="hello_my_name_is">Olá, meu nome é</string>
     <string name="upcoming_weather">☀️Previsão do tempo</string>
     <string name="quote_of_the_day">Mensagem do dia</string>
+    <string name="send_icon_text">Enviar</string>
+    <string name="badge_config_editor_title">Editar configuração do crachá</string>
 
 </resources>
