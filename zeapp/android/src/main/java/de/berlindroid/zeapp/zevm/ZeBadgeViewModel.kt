@@ -121,7 +121,7 @@ class ZeBadgeViewModel @Inject constructor(
         val slots = _uiState.value.slots
 
         val configuration = slots.getOrElse(slot) {
-            Timber.e("VM", "Slot $slot is not one of our slots.")
+            Timber.e("VM: Slot $slot is not one of our slots.")
             null
         } ?: return
 
@@ -320,7 +320,7 @@ class ZeBadgeViewModel @Inject constructor(
     fun slotToBitmap(slot: ZeSlot?): Bitmap {
         val slots = _uiState.value.slots
         return slots[slot]?.bitmap ?: R.drawable.error.toBitmap().also {
-            Timber.d("Slot to Bitmap", "Unavailable slot tried to fetch bitmap.")
+            Timber.d("Slot to Bitmap: Unavailable slot tried to fetch bitmap.")
         }
     }
 

@@ -752,7 +752,7 @@ private fun SelectedEditor(
             ZeSlot.Camera,
         )
     ) {
-        Timber.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
+        Timber.e("Slot: This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
             is ZeConfiguration.Name -> NameEditorDialog(
