@@ -71,9 +71,10 @@ fun ToolButton(
     TextButton(
         onClick = onClick,
         modifier = Modifier.wrapContentHeight(),
+        
     ) {
         Column(
-            modifier = Modifier.wrapContentHeight(),
+            modifier = Modifier.wrapContentHeight().semantics(mergeDescendants = true) {},
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
