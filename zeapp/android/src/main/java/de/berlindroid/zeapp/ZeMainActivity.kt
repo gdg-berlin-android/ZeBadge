@@ -628,7 +628,7 @@ private fun ZePages(
 @Composable
 @Preview
 private fun InfoBar(
-    message: String = "Very Important",
+    message: String = stringResource(id = R.string.ze_very_important),
     progress: Float = 0.5f,
     copyMoreToClipboard: (() -> Unit) = {},
 ) {
@@ -680,9 +680,9 @@ private fun InfoBar(
 @Preview
 private fun BadgeConfigEditor(
     config: Map<String, Any?> = mapOf(
-        "sample configuration" to "sample value",
-        "sample int" to 23,
-        "another configuration" to true,
+        stringResource(id = R.string.ze_sample_configuration_key) to stringResource(id = R.string.ze_sample_configuration_value),
+        stringResource(id = R.string.ze_sample_int_key) to 23,
+        stringResource(id = R.string.ze_sample_another_configuration_key) to true,
     ),
     onDismissRequest: () -> Unit = {},
     onConfirmed: (updateConfig: Map<String, Any?>) -> Unit = {},
@@ -801,7 +801,7 @@ private fun SelectedEditor(
             )
 
             is ZeConfiguration.Schedule -> {
-                vm.showMessage(message = "Not added by you yet, please feel free to contribute this editor")
+                vm.showMessage(message = stringResource(id = R.string.ze_not_added_yet_message))
                 vm.slotConfigured(null, null)
             }
 
@@ -874,7 +874,7 @@ private fun TemplateChooserDialog(
         title = {
             ZeText(
                 color = ZeBlack,
-                text = "Select Content",
+                text = stringResource(id = R.string.ze_select_content),
             )
         },
         text = {
@@ -945,7 +945,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.AutoMirrored.Filled.Send,
-                                text = "Send",
+                                text = stringResource(id = R.string.send),
                                 onClick = sendToDevice,
                             )
                         }
@@ -954,7 +954,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.Filled.Refresh,
-                                text = "Reset",
+                                text = stringResource(id = R.string.reset),
                                 onClick = resetThisPage,
                             )
                         }
@@ -963,7 +963,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.Filled.Edit,
-                                text = "Edit",
+                                text = stringResource(id = R.string.ze_edit),
                                 onClick = customizeThisPage,
                             )
                         }

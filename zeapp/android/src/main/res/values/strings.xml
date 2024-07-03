@@ -4,11 +4,13 @@
 
     <string name="black_and_white">B/W</string>
     <string name="reset">Reset</string>
+    <string name="ze_edit">Edit</string>
     <string name="floyd_steninberg_initials">FS</string>
     <string name="positional">Positional</string>
     <string name="rotate">Rotate</string>
     <string name="invert">Invert</string>
     <string name="static_tool">Static</string>
+    <string name="ze_very_important" tools:ignore="MissingTranslation">Very Important</string>
 
     <string name="generate">Generate</string>
     <string name="not_binary_image">Not a binary image. Make sure each pixel is either black or white.</string>
@@ -56,4 +58,11 @@
     <string name="ze_navdrawer_update_config">Update config on badge</string>
     <string name="ze_navdrawer_send_random_page">Send random page to badge</string>
     <string name="ze_navdrawer_open_release_page">Open release page</string>
+    <string name="ze_select_content" tools:ignore="MissingTranslation">Select Content</string>
+    <string name="ze_not_added_yet_message" tools:ignore="MissingTranslation">Not added by you yet, please feel free to contribute this editor</string>
+
+    <string name="ze_sample_configuration_key" tools:ignore="MissingTranslation">sample configuration</string>
+    <string name="ze_sample_configuration_value" tools:ignore="MissingTranslation">sample value</string>
+    <string name="ze_sample_int_key" tools:ignore="MissingTranslation">sample int</string>
+    <string name="ze_sample_another_configuration_key" tools:ignore="MissingTranslation">another configuration</string>
 </resources>
