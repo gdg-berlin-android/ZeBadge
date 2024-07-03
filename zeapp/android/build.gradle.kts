@@ -183,6 +183,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
     implementation(libs.timber)
+    implementation(libs.androidx.compose.hilt.navigation)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
