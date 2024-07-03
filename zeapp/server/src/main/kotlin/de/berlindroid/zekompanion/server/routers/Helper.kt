@@ -1,11 +1,10 @@
 package de.berlindroid.zekompanion.server.routers
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
-import io.ktor.server.request.header
-import io.ktor.server.response.respondText
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.util.pipeline.*
 
 private const val AUTH_TOKEN_ENV = "ZESERVER_AUTH_TOKEN"
 private const val AUTH_TOKEN_HEADER = "ZeAuth"
@@ -22,18 +21,25 @@ suspend fun PipelineContext<Unit, ApplicationCall>.withParameter(
     }
 }
 
-suspend fun PipelineContext<Unit, ApplicationCall>.ifAuthorized(block: suspend PipelineContext<Unit, ApplicationCall>.() -> Unit) {
+suspend fun PipelineContext<Unit, ApplicationCall>.checkAuthorization(
+    unauthorized: suspend PipelineContext<Unit, ApplicationCall>.() -> Unit = {
+        call.respondText(status = HttpStatusCode.Forbidden, text = "Forbidden")
+    },
+    authorized: suspend PipelineContext<Unit, ApplicationCall>.() -> Unit,
+) {
     val authHeader = call.request.header(AUTH_TOKEN_HEADER)
     val authEnv = System.getenv(AUTH_TOKEN_ENV)
 
     if (authEnv.isNullOrBlank()) {
-        println("Auth env ('${AUTH_TOKEN_ENV}') environment var is 'null' or empty, you will not be able to do admin level tasks. " +
-                "Set the env var and restart the server.")
+        println(
+            "Auth env ('${AUTH_TOKEN_ENV}') environment var is 'null' or empty, you will not be able to do admin level tasks. " +
+                    "Set the env var and restart the server.",
+        )
     }
 
     if (authEnv.isNullOrBlank() || authHeader == null || authEnv != authHeader) {
-        call.respondText(status = HttpStatusCode.Forbidden, text = "Forbidden")
+        unauthorized()
     } else {
-        block()
+        authorized()
     }
 }
