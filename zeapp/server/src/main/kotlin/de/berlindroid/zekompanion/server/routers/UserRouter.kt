@@ -8,6 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.pipeline.*
 import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
@@ -17,7 +18,7 @@ import javax.imageio.ImageIO
 fun Route.adminCreateUser(users: UserRepository, ai: AI) =
     post("/api/user") {
         runCatching {
-            ifAuthorized {
+            checkAuthorization {
                 val uuid = UUID.randomUUID().toString()
                 val name = ai.createUserName()
                 val description = ai.createUserDescription(name)
@@ -51,8 +52,8 @@ fun Route.adminCreateUser(users: UserRepository, ai: AI) =
 fun Route.adminCreateUserBadge(users: UserRepository) =
     get("/api/user/{uuid}/badge") {
         runCatching {
-            ifAuthorized {
-                withParameter("uuid") { uuid ->
+            withParameter("uuid") { uuid ->
+                checkAuthorization {
                     val user = users.getUser(uuid)
                     if (user != null) {
                         val baseBadgeResource = javaClass.classLoader.getResource("zeAlternativeBadge.bmp")
@@ -86,7 +87,7 @@ fun Route.adminCreateUserBadge(users: UserRepository) =
 fun Route.adminListUsers(users: UserRepository) =
     get("/api/user") {
         runCatching {
-            ifAuthorized {
+            checkAuthorization {
                 call.respond(status = HttpStatusCode.OK, users.getUsers())
             }
         }.onFailure {
@@ -98,7 +99,7 @@ fun Route.adminListUsers(users: UserRepository) =
 fun Route.adminDeleteUser(users: UserRepository) =
     delete("/api/user/{UUID}") {
         runCatching {
-            ifAuthorized {
+            checkAuthorization {
                 withParameter("UUID") { uuid ->
                     call.respond(status = HttpStatusCode.OK, users.deleteUser(uuid))
                 }
@@ -114,13 +115,31 @@ fun Route.updateUser(users: UserRepository) =
         runCatching {
             withParameter("UUID") { uuid ->
                 val newUser = call.receiveNullable<User>() ?: throw IllegalArgumentException("No user payload found.")
-                val userUpdated = users.updateUser(newUser.copy(uuid = uuid))
+                checkAuthorization(
+                    unauthorized = {
+                        val index = newUser.uuid.toIntOrNull()
+                        if (index != null) {
+                            val userUpdated = users.updateUserByIndex(index, newUser)
 
-                if (userUpdated) {
-                    call.respondText(text = "OK")
-                } else {
-                    call.respondText("invalid", status = HttpStatusCode.NotAcceptable)
-                }
+                            if (userUpdated) {
+                                call.respondText(text = "OK")
+                            } else {
+                                call.respondText("invalid user", status = HttpStatusCode.NotAcceptable)
+                            }
+                        } else {
+                            call.respondText("invalid index", status = HttpStatusCode.NotAcceptable)
+                        }
+                    },
+                    authorized = {
+                        val userUpdated = users.updateUser(newUser.copy(uuid = uuid))
+
+                        if (userUpdated) {
+                            call.respondText(text = "OK")
+                        } else {
+                            call.respondText("invalid", status = HttpStatusCode.NotAcceptable)
+                        }
+                    },
+                )
             }
         }.onFailure {
             it.printStackTrace()
@@ -149,17 +168,29 @@ fun Route.getUser(users: UserRepository) =
 fun Route.getUserProfileImagePng(users: UserRepository) =
     get("/api/user/{UUID}/png") {
         runCatching {
-            withParameter("UUID") { uuid ->
-                val user = users.getUser(uuid)
+            suspend fun PipelineContext<Unit, ApplicationCall>.processUser(user: User?) {
                 if (user != null) {
                     call.respondFile(
-                        File("./profiles/${uuid}.png"),
+                        File("./profiles/${user.uuid}.png"),
                     )
                 } else {
                     call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
                 }
             }
-            call.respondText(status = HttpStatusCode.UnprocessableEntity, text = "No UUID.")
+
+            withParameter("UUID") { uuid ->
+                checkAuthorization(
+                    unauthorized = {
+                        processUser(
+                            users.getUserByIndex(uuid.toIntOrNull() ?: -1),
+                        )
+                    },
+                    authorized = {
+                        processUser(users.getUser(uuid))
+                    },
+                )
+                call.respondText(status = HttpStatusCode.UnprocessableEntity, text = "No UUID.")
+            }
         }.onFailure {
             it.printStackTrace()
             call.respondText("Error: ${it.message}")
@@ -170,12 +201,26 @@ fun Route.getUserProfileImageBinary(users: UserRepository) =
     get("/api/user/{UUID}/b64") {
         runCatching {
             withParameter("UUID") { uuid ->
-                val user = users.getUser(uuid)
-                if (user != null) {
-                    call.respondText { user.profileB64 ?: "" }
-                } else {
-                    call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
+
+                suspend fun PipelineContext<Unit, ApplicationCall>.processUser(user: User?) {
+                    if (user != null) {
+                        call.respondText(status = HttpStatusCode.OK, text = user.profileB64 ?: "")
+                    } else {
+                        call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
+                    }
                 }
+
+                checkAuthorization(
+                    unauthorized = {
+                        processUser(
+                            users.getUserByIndex(uuid.toIntOrNull() ?: -1),
+                        )
+                    },
+                    authorized = {
+                        processUser(users.getUser(uuid))
+                    },
+                )
+                call.respondText(status = HttpStatusCode.UnprocessableEntity, text = "No UUID.")
             }
             call.respondText(status = HttpStatusCode.UnprocessableEntity, text = "No UUID.")
         }.onFailure {
