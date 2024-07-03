@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -48,10 +47,11 @@ fun ZeAbout(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(ZeDimen.Half),
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().padding(top = paddingValues.calculateTopPadding()),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = paddingValues.calculateTopPadding()),
             contentPadding = PaddingValues(
                 start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
