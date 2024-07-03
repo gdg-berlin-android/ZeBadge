@@ -51,6 +51,7 @@ android {
                 "ur",
                 "bs",
                 "pt-rBR",
+                "pl",
             ),
         )
 
