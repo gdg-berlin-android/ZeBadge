@@ -1,6 +1,5 @@
 package de.berlindroid.zekompanion.terminal
 
-import de.berlindroid.zekompanion.BadgePayload
 import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.ditherFloydSteinberg
@@ -14,6 +13,7 @@ import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
 import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BadgePayload.*
 import kotlinx.coroutines.runBlocking
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
@@ -232,10 +232,8 @@ private fun resizeFluidImageCallback(size: String?): IntBuffer.(width: Int, heig
 
 
 private fun storeBufferOntoBadge(filename: String): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
-    val payload = BadgePayload(
-        debug = false,
-        type = "store",
-        meta = filename,
+    val payload = StorePayload(
+        filename = filename,
         payload = toBinary().zipit().base64(),
     )
 
@@ -282,7 +280,7 @@ private fun rawCommand(
     command: String, meta: String = "", payload: String = "",
     resultTransformer: (result: Result<String>) -> String = ::defaultTransformer,
 ) {
-    val badgePayload = BadgePayload(
+    val badgePayload = RawPayload(
         debug = false,
         type = command,
         meta = meta,
@@ -316,11 +314,8 @@ private fun rawCommand(
 }
 
 private fun deleteStoredImageOnBadge(filename: String?): StorageOperation = {
-    val payload = BadgePayload(
-        debug = false,
-        type = "delete",
-        meta = filename ?: "",
-        payload = "",
+    val payload = DeletePayload(
+        filename = filename ?: ""
     )
 
     runBlocking {
@@ -340,10 +335,7 @@ private fun deleteStoredImageOnBadge(filename: String?): StorageOperation = {
 }
 
 private fun previewImageOnBadge(): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
-    val payload = BadgePayload(
-        debug = false,
-        type = "preview",
-        meta = "",
+    val payload = PreviewPayload(
         payload = toBinary().zipit().base64(),
     )
 
