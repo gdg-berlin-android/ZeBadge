@@ -1,7 +1,20 @@
 [![Main](https://github.com/gdg-berlin-android/ZeBadge/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/gdg-berlin-android/ZeBadge/actions/workflows/main.yml)
 
 # ZeBadge
+![badgerrpi2040](https://user-images.githubusercontent.com/1162562/236334466-1ccfff65-6744-4304-b4d3-1d200b16ffe8.png)
+
 Droidcon 2023: The time a new badge saw the light of the day, full with delight and android programming capabilities.
+
+Droidcon 2024: Same amazing badge but with better software, extension modules and a splash of AI.
+
+
+# ZeApp
+App for configuring static images on your badge from your Android phone. Connect ZeBadge to the phone with a USB cable, select an card to display and hit "Send". Super easy, barely an inconvenience.
+
+You can build ZeApp locally or download the latest build from:
+
+1. (Coming soon, see [#58](https://github.com/gdg-berlin-android/ZeBadge/issues/58)) [Firebase App Distribution](https://appdistribution.firebase.dev/i/6373ffacb6e72c23)
+2. [GitHub Release Page](https://github.com/gdg-berlin-android/ZeBadge/releases)
 
 # WebApp
 
@@ -29,42 +42,23 @@ The last step started the remote webserver on port 80, with root rights. 🤓
 
 Ponder docker, k8n, virtualization and more fancy devops things, and then give up thinking you are a mobile dev ops. Unless you are, then [youre help is needed](https://github.com/gdg-berlin-android/ZeBadge/issues/new).
 
-# Install (for local shenanigans and apps)
+# Droidcon 2024 contribution guide: 
 
-1. (Coming soon, see [#58](https://github.com/gdg-berlin-android/ZeBadge/issues/58)) [Firebase App Distribution](https://appdistribution.firebase.dev/i/6373ffacb6e72c23)
-2. [GitHub Release Page](https://github.com/gdg-berlin-android/ZeBadge/releases)
+If you don't have a badge:
 
-This is the badge: 
-![badgerrpi2040](https://user-images.githubusercontent.com/1162562/236334466-1ccfff65-6744-4304-b4d3-1d200b16ffe8.png)
+0. Fork the repo & make write your code.
+1. Use "droidcon/${name}" format for the branch name so we can find it.
+2. When done, open a PR and come to the booth to get you badge.
+3. Open a new PR with some more changes and get one of the extension boards (WiFi module or a keyboard)
 
-And this is the Android app:
-* [latest release](https://github.com/gdg-berlin-android/ZeBadge/releases/)
+If you already have a badge from Droidcon 2023:
 
-> __TBD__
-
-Together they make magic happen. 🪄🦄
-
-# Droidcon contribution guide: 
-1. Fork the repo & make write your code
-2. Use "droidcon/${name}" format for the branch name so we can find it.
-3. When done, open a PR and come to the booth to get you badge.
+0. Visit GDG booth to get you badge flashed with the newest firmware.
+3. Open a new PR with some more changes and get one of the extension boards (WiFi module or a keyboard)
 
 # Getting Started
 
 The following sections are describing the badge in detail, but if you just want to get started, please feel free to follow our [Getting Started](./zehardware/README.md) guide.
-
-# Scenario
-The following lines are the thought experiment on how we imagine a visit to the GDG Berlin Android Droidcon 2023 Berlin booth will look like. Alice is an atenndee and Olivia is an organizer.
-
-| Actor | Dialog |
-|-------|--------|
-| Alice | Hey, I saw that thing everyone is running around, that with their name on it? They said I can find it here, is that true?|
-| Olivia | Yes, you came to the right place, this is _ZeBadge_, a digital badge that displays your name and can be programmed and changed!|
-| Alice | Oh that is amazing, how does this work? How can I get one?|
-| Olivia | You need to do what we all love to do: Write some code and create a PR on our open source repository, controlling the badge and the android app. You can get started with using one of our loaner badges, and read one of our getting started guides. Once you have done "something code" with it, you can get your own badge.|
-| Alice | Oh, neat, that is this qr code to get started _points to one of the printed out sheets_?|
-| Olivia | Indeed, take loaner number four and happy hacking! Feel free to reach out when we can do something for you.|
-|| _Alice went over to the loaners, played for 20 minutes with the badge, and was able to follow the getting started guide and create a new page system, showing the weather on page 2. She pushed a PR._ |
 
 # Graph
 

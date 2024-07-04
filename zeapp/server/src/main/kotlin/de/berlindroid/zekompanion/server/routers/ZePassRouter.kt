@@ -39,7 +39,18 @@ fun Route.postPost(zepass: ZePassRepository, users: UserRepository) =
 fun Route.getPosts(zepass: ZePassRepository) =
     get("/api/zepass") {
         runCatching {
-            call.respond(zepass.getPosts())
+            checkAuthorization(
+                authorized = {
+                    call.respond(zepass.getPosts())
+                },
+                unauthorized = {
+                    call.respond(
+                        zepass.getPosts().mapIndexed() { index, post ->
+                            post.copy(posterUUID = "$index")
+                        },
+                    )
+                },
+            )
         }.onFailure {
             it.printStackTrace()
             call.respondText("Error: ${it.message}")

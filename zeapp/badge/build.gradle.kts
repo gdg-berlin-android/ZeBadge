@@ -41,6 +41,15 @@ kotlin {
                 }
             }
 
+        os.startsWith("Windows") ->
+            jvm("windows") {
+                withJavaEnabled
+
+                jvmToolchain {
+                    languageVersion.set(JavaLanguageVersion.of(17))
+                }
+            }
+
         else -> throw StopActionException("Your operating system is not supported at this time: '${os}'.")
     }
 
@@ -88,6 +97,18 @@ kotlin {
                     }
                 }
             }
+
+            os.startsWith("Windows") -> {
+                val windowsMain by getting {
+                    dependencies {
+                        implementation(libs.jSerialComm)
+                    }
+
+                    sourceSets {
+                        dependsOn(sourceSets.getAt("jvmMain"))
+                    }
+                }
+            }
         }
     }
 }
@@ -96,6 +117,6 @@ android {
     namespace = "de.berlindroid.zebadge"
     compileSdk = 34
     defaultConfig {
-        minSdk = 33
+        minSdk = 29
     }
 }

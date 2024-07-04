@@ -1,9 +1,5 @@
 package de.berlindroid.zeapp.zeui
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -11,19 +7,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
-import coil.imageLoader
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import coil.size.Precision
-import coil.size.Scale
-import com.commit451.coiltransformations.CropTransformation
 import de.berlindroid.zeapp.BuildConfig
-import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.BADGE_WIDTH
+import de.berlindroid.zeapp.zebits.toDitheredImage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
-import de.berlindroid.zekompanion.ditherFloydSteinberg
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -43,36 +31,11 @@ fun ZeCameraEditor(
     val takePicture =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->
             if (pictureTaken) {
-                val imageRequest = ImageRequest.Builder(context)
-                    .data(uri)
-                    .transformations(CropTransformation())
-                    .size(BADGE_WIDTH, BADGE_HEIGHT)
-                    .scale(Scale.FIT)
-                    .precision(Precision.EXACT)
-                    .allowHardware(false)
-                    .memoryCachePolicy(CachePolicy.DISABLED)
-                    .diskCachePolicy(CachePolicy.DISABLED)
-                    .build()
-
                 coroutineScope.launch {
-                    val drawable =
-                        context.imageLoader.execute(imageRequest).drawable as BitmapDrawable
-                    val bitmap = Bitmap.createBitmap(
-                        BADGE_WIDTH,
-                        BADGE_HEIGHT,
-                        Bitmap.Config.ARGB_8888,
-                    )
-                    val canvas = Canvas(bitmap)
-                    canvas.drawColor(Color.WHITE)
-                    canvas.drawBitmap(
-                        drawable.bitmap,
-                        (BADGE_WIDTH / 2f) - (drawable.bitmap.width / 2f),
-                        0f,
-                        null,
-                    )
+                    val bitmap = uri.toDitheredImage(context)
                     vm.slotConfigured(
                         editor.slot,
-                        config.copy(bitmap = bitmap.pixelManipulation { w, h -> ditherFloydSteinberg(w, h) }),
+                        config.copy(bitmap = bitmap),
                     )
                 }
             } else {

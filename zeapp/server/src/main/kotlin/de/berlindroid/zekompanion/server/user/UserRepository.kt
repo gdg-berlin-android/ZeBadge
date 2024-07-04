@@ -60,6 +60,10 @@ class UserRepository(
         return users.find { it.uuid == uuid }
     }
 
+    fun getUserByIndex(index: Int): User? {
+        return users.getOrNull(index)
+    }
+
     fun getUsers(): List<User> {
         return users.toList()
     }
@@ -71,6 +75,15 @@ class UserRepository(
         }
 
         users[index] = newUser
+
+        save(this)
+
+        return true
+    }
+
+    fun updateUserByIndex(index: Int, newUser: User): Boolean {
+        val oldUser = users.getOrNull(index) ?: return false
+        users[index] = newUser.copy(uuid = oldUser.uuid)
 
         save(this)
 

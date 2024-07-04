@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Ze Androft</string>
-    <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
-
     <string name="black_and_white">P/B</string>
     <string name="reset">Resetar</string>
+    <string name="ze_edit">Editar</string>
     <string name="floyd_steninberg_initials">FS</string>
     <string name="positional">Posicional</string>
     <string name="rotate">Rotacionar</string>
     <string name="invert">Inverter</string>
+    <string name="ze_very_important">Muito importante</string>
 
+    <string name="static_tool">Estático</string>
     <string name="generate">Gerar</string>
     <string name="not_binary_image">Não é uma imagem binária. Certifique-se que todos os pixels sejam pretos ou brancos.</string>
     <string name="generate_image_page">Gerar uma página de imagem</string>
@@ -51,5 +50,20 @@
     <string name="hello_my_name_is">Olá, meu nome é</string>
     <string name="upcoming_weather">☀️Previsão do tempo</string>
     <string name="quote_of_the_day">Mensagem do dia</string>
+    <string name="send_icon_text">Enviar</string>
+    <string name="badge_config_editor_title">Editar configuração do crachá</string>
+
+
+    <string name="ze_navdrawer_save_all_pages">Salvar todas as páginas no crachá</string>
+    <string name="ze_navdrawer_update_config">Atualizar configuração no crachá</string>
+    <string name="ze_navdrawer_send_random_page">Enviar página aleatória para o crachá</string>
+    <string name="ze_navdrawer_open_release_page">Abrir página de lançamentos</string>
+    <string name="ze_select_content">Selecione o conteúdo</string>
+    <string name="ze_not_added_yet_message">Ainda não foi adicionado por você, sinta-se livre para contribuir com esse editor</string>
+
+    <string name="ze_sample_configuration_key">Exemplo de configuração</string>
+    <string name="ze_sample_configuration_value">Exemplo de valor</string>
+    <string name="ze_sample_int_key">Exemplo de int</string>
+    <string name="ze_sample_another_configuration_key">Outra configuração</string>
 
 </resources>

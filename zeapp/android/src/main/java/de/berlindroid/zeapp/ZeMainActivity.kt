@@ -1,27 +1,32 @@
 package de.berlindroid.zeapp
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,7 +37,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
@@ -58,17 +62,21 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
@@ -76,8 +84,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -86,12 +98,21 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.ban.autosizetextfield.AutoSizeTextField
 import dagger.hilt.android.AndroidEntryPoint
+import de.berlindroid.zeapp.zebits.toDitheredImage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
@@ -108,18 +129,19 @@ import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
+import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
+import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeCarmine
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import de.berlindroid.zeapp.zevm.copy
-import de.berlindroid.zekompanion.getPlatform
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
-import androidx.compose.foundation.layout.Column as ZeColumn
 import androidx.compose.foundation.layout.Row as ZeRow
 import androidx.compose.foundation.layout.Spacer as ZeSpacer
 import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
@@ -139,8 +161,8 @@ import androidx.compose.ui.Modifier as ZeModifier
 import androidx.compose.ui.graphics.FilterQuality as ZeFilterQuality
 import androidx.compose.ui.graphics.painter.BitmapPainter as ZeBitmapPainter
 import androidx.compose.ui.layout.ContentScale as ZeContentScale
-import de.berlindroid.zeapp.zeui.BadgeSimulator as ZeSimulator
 import de.berlindroid.zeapp.zeui.ToolButton as ZeToolButton
+import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 
 /**
  * Main View entrance for the app
@@ -153,25 +175,37 @@ class ZeMainActivity : ComponentActivity() {
      * Once created, use the main view composable.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        vm.loadData()
+        if (intent.type?.startsWith("image/") == true) {
+            handleSendImage(intent)
+        }
         setContent {
             DrawUi()
         }
     }
 
-    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
-        super.onConfigurationChanged(newConfig)
-        setContent {
-            DrawUi()
+    private fun handleSendImage(intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)?.let(::updateSelectedImage)
+        } else {
+            (intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri)?.let(::updateSelectedImage)
         }
+    }
+
+    private fun updateSelectedImage(imageUri: Uri) = lifecycleScope.launch {
+        val bitmap = imageUri.toDitheredImage(this@ZeMainActivity)
+        vm.slotConfigured(
+            ZeSlot.Camera,
+            ZeConfiguration.Camera(bitmap),
+        )
     }
 
     @Composable
     private fun DrawUi() {
         val wsc = calculateWindowSizeClass(activity = this)
 
-        if (wsc.widthSizeClass != WindowWidthSizeClass.Expanded) {
+        if (!wsc.isTabletSize && wsc.isSmartphoneSize) {
             CompactUi()
         } else {
             LargeScreenUi(vm)
@@ -182,7 +216,7 @@ class ZeMainActivity : ComponentActivity() {
     private fun CompactUi() {
         if (LocalConfiguration.current.orientation == AndroidConfig.ORIENTATION_LANDSCAPE) {
             ZeSimulator(
-                page = vm.slotToBitmap(),
+                page = vm.slotToBitmap(vm.currentSimulatorSlot),
                 onButtonPressed = vm::simulatorButtonPressed,
             )
         } else {
@@ -196,7 +230,7 @@ class ZeMainActivity : ComponentActivity() {
             ZeScreen(vm, modifier = Modifier.weight(.3f))
             ZeSpacer(modifier = ZeModifier.width(ZeDimen.Two))
             ZeSimulator(
-                page = vm.slotToBitmap(),
+                page = vm.slotToBitmap(vm.currentSimulatorSlot),
                 onButtonPressed = vm::simulatorButtonPressed,
                 modifier = Modifier.weight(.3f),
             )
@@ -204,10 +238,13 @@ class ZeMainActivity : ComponentActivity() {
     }
 }
 
+const val ROUTE_HOME = "home"
+const val ROUTE_ABOUT = "about"
+const val ROUTE_OPENSOURCE = "opensource"
+
 @Composable
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
-    var isShowingAbout by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val goToReleases: () -> Unit = remember {
         {
@@ -217,10 +254,29 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
             context.startActivity(intent)
         }
     }
+    val goToGithubPage: () -> Unit = remember {
+        {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/gdg-berlin-android/ZeBadge")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    val navController = rememberNavController()
+    val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
+
+    BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
+        if (drawerState.isOpen) {
+            scope.launch { drawerState.close() }
+        } else {
+            navController.navigateUp()
+        }
+    }
 
     ZeBadgeAppTheme(
         content = {
@@ -232,49 +288,60 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
+                        onGotoContributors = {
+                            if (currentRoute == ROUTE_ABOUT) navController.navigateUp() else navController.navigate(ROUTE_ABOUT)
+                        },
+                        onGotoOpenSourceClick = {
+                            if (currentRoute == ROUTE_OPENSOURCE) navController.navigateUp() else navController.navigate(ROUTE_OPENSOURCE)
+                        },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
                                 drawerState.close()
                             }
                         },
+                        onTitleClick = goToGithubPage,
                     )
                 },
             ) {
                 ZeScaffold(
                     modifier = modifier,
                     floatingActionButton = {
-                        if (!isShowingAbout) {
-                            ZeNavigationPad(
-                                lazyListState,
-                            )
+                        if (currentRoute == ROUTE_HOME) {
+                            ZeNavigationPad(lazyListState)
                         }
                     },
                     topBar = {
                         ZeTopBar(
-                            isShowingAbout = isShowingAbout,
-                            onAboutClick = { isShowingAbout = !isShowingAbout },
                             isNavDrawerOpen = drawerState.isOpen,
                             onOpenMenuClicked = { scope.launch { drawerState.open() } },
                             onCloseMenuClicked = { scope.launch { drawerState.close() } },
+                            onTitleClick = {
+                                scope.launch { drawerState.close() }
+                                goToGithubPage()
+                            },
                         )
                     },
-                    content = { paddingValues ->
-                        if (isShowingAbout) {
-                            ZeAbout(paddingValues, vm, LocalContext.current)
-                        } else {
+                ) { paddingValues ->
+                    NavHost(navController = navController, startDestination = ROUTE_HOME) {
+                        composable(ROUTE_HOME) {
                             ZePages(
                                 paddingValues = paddingValues,
                                 lazyListState = lazyListState,
                                 vm = vm,
                             )
                         }
-                    },
-                )
+                        composable(ROUTE_ABOUT) {
+                            ZeAbout(paddingValues)
+                        }
+                        composable(ROUTE_OPENSOURCE) {
+                            ZeOpenSource(paddingValues)
+                        }
+                    }
+                }
             }
         },
-
-        )
+    )
 }
 
 @Composable
@@ -284,8 +351,11 @@ private fun ZeDrawerContent(
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
+    onGotoContributors: () -> Unit = {},
+    onGotoOpenSourceClick: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
+    onTitleClick: () -> Unit = {},
 ) {
 
     @Composable
@@ -295,6 +365,12 @@ private fun ZeDrawerContent(
         painter: Painter? = null,
         onClick: () -> Unit,
     ) {
+        val shape = RoundedCornerShape(
+            topStart = 0.dp,
+            bottomStart = 0.dp,
+            topEnd = 30.dp,
+            bottomEnd = 30.dp,
+        )
         NavigationDrawerItem(
             modifier = Modifier
                 .padding(
@@ -306,17 +382,13 @@ private fun ZeDrawerContent(
                 .border(
                     width = 1.dp,
                     color = ZeWhite,
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        bottomStart = 0.dp,
-                        topEnd = 30.dp,
-                        bottomEnd = 30.dp,
-                    ),
+                    shape = shape,
                 ),
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedTextColor = ZeWhite,
                 unselectedContainerColor = ZeBlack,
             ),
+            shape = shape,
             icon = {
                 if (vector != null) {
                     ZeIcon(imageVector = vector, contentDescription = text, tint = ZeWhite)
@@ -335,7 +407,7 @@ private fun ZeDrawerContent(
     }
 
     ModalDrawerSheet(
-        drawerContainerColor = ZeBlack,
+        drawerContainerColor = MaterialTheme.colorScheme.secondary,
         drawerShape = DrawerDefaults.shape,
         modifier = Modifier
             .border(
@@ -346,20 +418,22 @@ private fun ZeDrawerContent(
     ) {
         ZeTitle(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 64.dp),
-        )
+        ) {
+            onTitleClick()
+        }
 
         LazyColumn {
             item {
                 NavDrawerItem(
                     onClick = onSaveAllClick,
                     painter = painterResource(id = R.drawable.save_all),
-                    text = "Save all pages to badge",
+                    text = stringResource(id = R.string.ze_navdrawer_save_all_pages),
                 )
             }
 
             item {
                 NavDrawerItem(
-                    text = "Update config on badge",
+                    text = stringResource(id = R.string.ze_navdrawer_update_config),
                     vector = Icons.Default.ThumbUp,
                     onClick = onUpdateConfig,
                 )
@@ -368,7 +442,7 @@ private fun ZeDrawerContent(
             item {
                 NavDrawerItem(
                     painter = painterResource(id = R.drawable.ic_random),
-                    text = "Send random page to badge",
+                    text = stringResource(id = R.string.ze_navdrawer_send_random_page),
                     onClick = onGetStoredPages,
                 )
             }
@@ -376,75 +450,47 @@ private fun ZeDrawerContent(
             item {
                 HorizontalDivider(
                     thickness = 0.dp,
-                    color = ZeBlack,
+                    color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 40.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
                     ),
                 )
             }
 
             item {
                 NavDrawerItem(
-                    text = "Open release page",
+                    text = stringResource(id = R.string.ze_navdrawer_contributors),
+                    painter = rememberVectorPainter(Icons.Default.Info),
+                    onClick = onGotoContributors,
+                )
+            }
+
+            item {
+                NavDrawerItem(
+                    text = stringResource(id = R.string.ze_navdrawer_open_source),
+                    painter = painterResource(id = R.drawable.ic_open_source_initiative),
+                    onClick = onGotoOpenSourceClick,
+                )
+            }
+
+            item {
+                HorizontalDivider(
+                    thickness = 0.dp,
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.padding(
+                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
+                    ),
+                )
+            }
+
+            item {
+                NavDrawerItem(
+                    text = stringResource(id = R.string.ze_navdrawer_open_release_page),
                     painter = painterResource(id = R.drawable.ic_update),
                     onClick = onGotoReleaseClick,
                 )
             }
-        }
-    }
-}
 
-@Composable
-private fun ZeAbout(
-    paddingValues: PaddingValues,
-    vm: ZeBadgeViewModel,
-    context: Context,
-) {
-    val lines by vm.lines.collectAsState()
-
-    ZeSurface(
-        modifier = ZeModifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(ZeDimen.Half),
-    ) {
-        Column {
-            ZeText(
-                text = "${lines.count()} contributors",
-                modifier = Modifier.padding(8.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 24.sp,
-            )
-            ZeText(
-                text = "Running on '${getPlatform()}'.",
-            )
-            ZeLazyColumn {
-                items(lines) { line ->
-                    ZeRow(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val email = line.substring(line.indexOf('<').plus(1), line.lastIndexOf('>')).trim()
-                        ZeText(
-                            text = line.substring(0, line.indexOf('<')).trim(),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(8.dp),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontSize = 18.sp,
-                        )
-                        ZeIcon(
-                            painter = painterResource(id = R.drawable.email),
-                            contentDescription = "Send random page to badge",
-                            Modifier
-                                .size(20.dp, 20.dp)
-                                .clickable {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:$email"))
-                                    context.startActivity(intent)
-                                },
-                        )
-                    }
-                }
-            }
         }
     }
 }
@@ -452,11 +498,10 @@ private fun ZeAbout(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ZeTopBar(
-    isShowingAbout: Boolean,
-    onAboutClick: () -> Unit,
     isNavDrawerOpen: Boolean,
     onOpenMenuClicked: () -> Unit,
     onCloseMenuClicked: () -> Unit,
+    onTitleClick: () -> Unit,
 ) {
     ZeTopAppBar(
         navigationIcon = {
@@ -472,7 +517,9 @@ private fun ZeTopBar(
             }
         },
         title = {
-            ZeTitle()
+            ZeTitle {
+                onTitleClick()
+            }
         },
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondary,
@@ -480,24 +527,18 @@ private fun ZeTopBar(
             actionIconContentColor = MaterialTheme.colorScheme.primary,
             navigationIconContentColor = MaterialTheme.colorScheme.primary,
         ),
-        actions = {
-            ZeIconButton(onClick = onAboutClick) {
-                if (isShowingAbout) {
-                    ZeIcon(Icons.Default.Close, contentDescription = "About")
-                } else {
-                    ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
-                }
-            }
-        },
     )
 }
 
 @Composable
 private fun ZeTitle(
     modifier: Modifier = Modifier,
+    titleClick: () -> Unit,
 ) {
     ZeText(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            titleClick()
+        },
         style = MaterialTheme.typography.titleLarge,
         text = buildAnnotatedString {
             pushStyle(SpanStyle(fontWeight = FontWeight.Black))
@@ -510,6 +551,7 @@ private fun ZeTitle(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ZePages(
     paddingValues: PaddingValues,
@@ -517,11 +559,11 @@ private fun ZePages(
     lazyListState: LazyListState,
 ) {
     ZeSurface(
-        modifier = ZeModifier
-            .fillMaxSize()
-            .padding(paddingValues),
+        modifier = ZeModifier.fillMaxSize(),
     ) {
         val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
+        val isKeyboardVisible by isKeyboardVisibleState()
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         val editor = uiState.currentSlotEditor
         val templateChooser = uiState.currentTemplateChooser
@@ -530,71 +572,77 @@ private fun ZePages(
         val slots = uiState.slots
         val badgeConfiguration = uiState.currentBadgeConfig
 
+        if (isKeyboardVisible && editor == null && templateChooser == null) {
+            keyboardController?.hide()
+        }
+
         if (badgeConfiguration != null) {
             BadgeConfigEditor(
                 config = badgeConfiguration,
                 onDismissRequest = vm::closeConfiguration,
                 onConfirmed = vm::updateConfiguration,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
         if (editor != null) {
-            SelectedEditor(editor, vm)
+            Box(Modifier.padding(paddingValues)) {
+                SelectedEditor(editor, vm)
+            }
         }
 
         if (templateChooser != null) {
-            TemplateChooserDialog(vm, templateChooser)
+            TemplateChooserDialog(vm, templateChooser, modifier = Modifier.padding(paddingValues))
         }
 
-        // column surrounding a lazycolumn: so the message stays ontop.
-        ZeColumn {
+        ZeLazyColumn(
+            state = lazyListState,
+            modifier = Modifier
+                .padding(top = paddingValues.calculateTopPadding()),
+            contentPadding = PaddingValues(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
+        ) {
             if (message.isNotEmpty()) {
-                InfoBar(message, messageProgress, vm::copyInfoToClipboard)
-            }
-
-            ZeLazyColumn(
-                state = lazyListState,
-                contentPadding = PaddingValues(
-                    start = ZeDimen.One,
-                    end = ZeDimen.One,
-                    top = ZeDimen.Half,
-                    bottom = ZeDimen.One,
-                ),
-            ) {
-                items(
-                    slots.keys.toList(),
-                ) { slot ->
-                    var isVisible by remember { mutableStateOf(false) }
-                    val alpha: Float by animateFloatAsState(
-                        targetValue = if (isVisible) 1f else 0f,
-                        label = "alpha",
-                        animationSpec = tween(durationMillis = 750),
-                    )
-                    LaunchedEffect(slot) {
-                        isVisible = true
-                    }
-
-                    PagePreview(
-                        modifier = Modifier.graphicsLayer { this.alpha = alpha },
-                        name = slot::class.simpleName ?: "WTF",
-                        bitmap = vm.slotToBitmap(slot),
-                        customizeThisPage = if (slot.isSponsor) {
-                            { vm.customizeSponsorSlot(slot) }
-                        } else {
-                            { vm.customizeSlot(slot) }
-                        },
-                        resetThisPage = if (slot.isSponsor) {
-                            null
-                        } else {
-                            { vm.resetSlot(slot) }
-                        },
-                        sendToDevice = {
-                            vm.sendPageToBadgeAndDisplay(slot)
-                        },
-                    )
-
-                    ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
+                stickyHeader {
+                    InfoBar(message, messageProgress, vm::copyInfoToClipboard)
                 }
+            }
+            items(
+                slots.keys.toList(),
+            ) { slot ->
+                var isVisible by remember { mutableStateOf(false) }
+                val alpha: Float by animateFloatAsState(
+                    targetValue = if (isVisible) 1f else 0f,
+                    label = "alpha",
+                    animationSpec = tween(durationMillis = 750),
+                )
+                LaunchedEffect(slot) {
+                    isVisible = true
+                }
+
+                PagePreview(
+                    modifier = Modifier.graphicsLayer { this.alpha = alpha },
+                    name = slot::class.simpleName ?: "WTF",
+                    bitmap = vm.slotToBitmap(slot),
+                    customizeThisPage = if (slot.isSponsor) {
+                        { vm.customizeSponsorSlot(slot) }
+                    } else {
+                        { vm.customizeSlot(slot) }
+                    },
+                    resetThisPage = if (slot.isSponsor) {
+                        null
+                    } else {
+                        { vm.resetSlot(slot) }
+                    },
+                    sendToDevice = {
+                        vm.sendPageToBadgeAndDisplay(slot)
+                    },
+                )
+
+                ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
             }
         }
     }
@@ -606,18 +654,18 @@ private fun ZePages(
 @Composable
 @Preview
 private fun InfoBar(
-    message: String = "Very Important",
+    message: String = stringResource(id = R.string.ze_very_important),
     progress: Float = 0.5f,
     copyMoreToClipboard: (() -> Unit) = {},
 ) {
     ZeCard(
         modifier = ZeModifier
             .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
-            .background(ZeWhite, ZeRoundedCornerShape(ZeDimen.One))
+            .background(ZeCarmine, ZeRoundedCornerShape(ZeDimen.One))
             .zIndex(10.0f),
         colors = CardDefaults.cardColors(
-            containerColor = ZeWhite,
-            contentColor = ZeBlack,
+            containerColor = ZeCarmine,
+            contentColor = ZeWhite,
         ),
     ) {
         ZeRow(
@@ -628,7 +676,7 @@ private fun InfoBar(
                 modifier = ZeModifier.weight(1.0f),
                 fontSize = 20.sp,
                 fontFamily = FontFamily.Monospace,
-                color = ZeBlack,
+                color = ZeWhite,
                 text = message,
             )
 
@@ -657,10 +705,11 @@ private fun InfoBar(
 @Composable
 @Preview
 private fun BadgeConfigEditor(
+    modifier: Modifier = Modifier,
     config: Map<String, Any?> = mapOf(
-        "sample configuration" to "sample value",
-        "sample int" to 23,
-        "another configuration" to true,
+        stringResource(id = R.string.ze_sample_configuration_key) to stringResource(id = R.string.ze_sample_configuration_value),
+        stringResource(id = R.string.ze_sample_int_key) to 23,
+        stringResource(id = R.string.ze_sample_another_configuration_key) to true,
     ),
     onDismissRequest: () -> Unit = {},
     onConfirmed: (updateConfig: Map<String, Any?>) -> Unit = {},
@@ -669,7 +718,7 @@ private fun BadgeConfigEditor(
     var error by remember { mutableStateOf(mapOf<String, String>()) }
 
     AlertDialog(
-        modifier = Modifier.imePadding(),
+        modifier = modifier.imePadding(),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             Button(
@@ -752,9 +801,11 @@ private fun SelectedEditor(
             ZeSlot.Weather,
             ZeSlot.Quote,
             ZeSlot.BarCode,
+            ZeSlot.Add,
+            ZeSlot.Camera,
         )
     ) {
-        Timber.e("Slot", "This slot '${editor.slot}' is not supposed to be editable.")
+        Timber.e("Slot: This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
             is ZeConfiguration.Name -> NameEditorDialog(
@@ -777,7 +828,7 @@ private fun SelectedEditor(
             )
 
             is ZeConfiguration.Schedule -> {
-                vm.showMessage(message = "Not added by you yet, please feel free to contribute this editor")
+                vm.showMessage(message = stringResource(id = R.string.ze_not_added_yet_message))
                 vm.slotConfigured(null, null)
             }
 
@@ -833,11 +884,14 @@ private fun SelectedEditor(
 }
 
 @Composable
+@Preview
 private fun TemplateChooserDialog(
     vm: ZeBadgeViewModel,
     templateChooser: ZeTemplateChooser?,
+    modifier: Modifier = Modifier,
 ) {
     ZeAlertDialog(
+        modifier = modifier,
         containerColor = ZeWhite,
         onDismissRequest = {
             vm.templateSelected(null, null)
@@ -850,7 +904,7 @@ private fun TemplateChooserDialog(
         title = {
             ZeText(
                 color = ZeBlack,
-                text = "Select Content",
+                text = stringResource(id = R.string.ze_select_content),
             )
         },
         text = {
@@ -871,6 +925,7 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
+@Preview
 @Suppress("LongParameterList")
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
@@ -885,7 +940,7 @@ private fun PagePreview(
         modifier = modifier
             .padding(ZeDimen.Quarter),
         colors = CardDefaults.cardColors(
-            containerColor = ZeBlack,
+            containerColor = MaterialTheme.colorScheme.surface,
             contentColor = ZeWhite,
         ),
         border = BorderStroke(1.dp, ZeWhite),
@@ -921,7 +976,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.AutoMirrored.Filled.Send,
-                                text = "Send",
+                                text = stringResource(id = R.string.send),
                                 onClick = sendToDevice,
                             )
                         }
@@ -930,7 +985,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.Filled.Refresh,
-                                text = "Reset",
+                                text = stringResource(id = R.string.reset),
                                 onClick = resetThisPage,
                             )
                         }
@@ -939,7 +994,7 @@ private fun PagePreview(
                         item {
                             ZeToolButton(
                                 imageVector = Icons.Filled.Edit,
-                                text = "Edit",
+                                text = stringResource(id = R.string.ze_edit),
                                 onClick = customizeThisPage,
                             )
                         }
@@ -952,3 +1007,32 @@ private fun PagePreview(
 
 private val ZeSlot.isSponsor: Boolean
     get() = this is ZeSlot.FirstSponsor
+
+// Device size extensions
+private val WindowSizeClass.isTabletSize: Boolean
+    get() = this.widthSizeClass == WindowWidthSizeClass.Expanded &&
+            (this.heightSizeClass == WindowHeightSizeClass.Expanded ||
+                    this.heightSizeClass == WindowHeightSizeClass.Medium)
+
+private val WindowSizeClass.isSmartphoneSize: Boolean
+    get() = this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
+            (this.heightSizeClass == WindowHeightSizeClass.Compact)
+
+@Composable
+private fun isKeyboardVisibleState(): State<Boolean> {
+    val view = LocalView.current
+    var isImeVisible by remember { mutableStateOf(false) }
+
+    DisposableEffect(LocalWindowInfo.current) {
+        val listener = ViewTreeObserver.OnPreDrawListener {
+            isImeVisible = ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+            true
+        }
+        view.viewTreeObserver.addOnPreDrawListener(listener)
+        onDispose {
+            view.viewTreeObserver.removeOnPreDrawListener(listener)
+        }
+    }
+    return rememberUpdatedState(isImeVisible)
+}

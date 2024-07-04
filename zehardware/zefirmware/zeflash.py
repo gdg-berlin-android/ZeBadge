@@ -289,13 +289,13 @@ def find_firmware_file(name: str) -> Optional[str]:
         return None
 
 
-if __name__ == '__main__':
+def doit():
     badge_path = find_base_badge_path()
     if badge_path:
         print(f"Found a badge on '{colorize(badge_path)}', happy days.")
     else:
         print(colorize("No Badge found!"))
-        exit(-1)
+        return
 
     nuke()
 
@@ -306,3 +306,9 @@ if __name__ == '__main__':
     inject_user(request_new_user())
 
     print(colorize("!! DONE !!"))
+
+if __name__ == '__main__':
+    while True:
+        doit()
+        time.sleep(.3)
+
