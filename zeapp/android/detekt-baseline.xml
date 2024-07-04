@@ -2,8 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>OptionalWhenBraces:ZeMainActivity.kt$is ZeConfiguration.Kodee -&gt; { vm.slotConfigured(editor.slot, config) }</ID>
-    <ID>OptionalWhenBraces:ZeMainActivity.kt$is ZeConfiguration.Quote -&gt; { RandomQuotesEditorDialog( accepted = { vm.slotConfigured(editor.slot, it) }, dismissed = { vm.slotConfigured(null, null) }, config = config, snackbarMessage = vm::showSnackBar, ) }</ID>
+    <ID>LongMethod:ZeScreen.kt$@Composable internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier)</ID>
     <ID>OptionalWhenBraces:ZePreferencesService.kt$ZePreferencesService$ZeBadgeType.NAME -&gt; { ZeConfiguration.Name( name = slot.preferencesValue("name"), contact = slot.preferencesValue("contact"), bitmap = bitmap, ) }</ID>
     <ID>OptionalWhenBraces:ZePreferencesService.kt$ZePreferencesService$is ZeConfiguration.CustomPhrase -&gt; { preferences[slot.preferencesKey("random_phrase")] = config.phrase }</ID>
     <ID>OptionalWhenBraces:ZePreferencesService.kt$ZePreferencesService$is ZeConfiguration.ImageGen -&gt; { preferences[slot.preferencesKey("prompt")] = config.prompt }</ID>
