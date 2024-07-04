@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import time
+from typing import Optional
 
 import requests
 
@@ -14,6 +15,7 @@ SERVER_TOKEN = os.getenv("ZESERVER_AUTH_TOKEN")
 BASE_URL = "https://zebadge.app/"
 
 BASE_BADGE_PATH = "/Volumes"
+FIRMWARE_DIR = "firmware"
 
 
 def hsv(h, s, v):
@@ -138,13 +140,11 @@ def find_base_badge_path():
 
 
 def nuke():
-    nuke_ware = list(filter(lambda x: 'nuke' in x, os.listdir("./")))
+    nuke_ware = find_firmware_file("nuke")
 
     if not nuke_ware:
         print(colorize("No nuke firmware found!"))
         return False
-
-    nuke_ware = nuke_ware[0]
 
     path = find_mount_point('RPI')
     if not path:
@@ -173,13 +173,11 @@ def nuke():
 
 
 def flash():
-    zepython = list(filter(lambda x: 'zepython' in x, os.listdir("./")))
+    zepython = find_firmware_file("zepython")
 
     if not zepython:
         print(colorize("No zepython firmware found!"))
         return False
-
-    zepython = zepython[0]
 
     path = find_mount_point('RPI')
     if not path:
@@ -282,6 +280,13 @@ def inject_user(user):
             },
         ).content
     )
+
+def find_firmware_file(name: str) -> Optional[str]:
+    matching_files = list(filter(lambda x: name in x, os.listdir(f"./{FIRMWARE_DIR}/")))
+    if matching_files:
+        return os.path.join(FIRMWARE_DIR, matching_files[0])
+    else:
+        return None
 
 
 def doit():

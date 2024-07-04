@@ -1,7 +1,7 @@
 plugins {
     application
     kotlin("jvm")
-    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "de.berlindroid"

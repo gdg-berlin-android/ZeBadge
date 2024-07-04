@@ -2,8 +2,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose")
-    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "com.example"
