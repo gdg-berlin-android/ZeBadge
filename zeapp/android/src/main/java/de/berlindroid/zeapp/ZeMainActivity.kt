@@ -126,6 +126,7 @@ import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
+import de.berlindroid.zeapp.zeui.zetheme.ZeCarmine
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import de.berlindroid.zeapp.zevm.copy
@@ -630,11 +631,11 @@ private fun InfoBar(
     ZeCard(
         modifier = ZeModifier
             .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
-            .background(ZeWhite, ZeRoundedCornerShape(ZeDimen.One))
+            .background(ZeCarmine, ZeRoundedCornerShape(ZeDimen.One))
             .zIndex(10.0f),
         colors = CardDefaults.cardColors(
-            containerColor = ZeWhite,
-            contentColor = ZeBlack,
+            containerColor = ZeCarmine,
+            contentColor = ZeWhite,
         ),
     ) {
         ZeRow(
@@ -645,7 +646,7 @@ private fun InfoBar(
                 modifier = ZeModifier.weight(1.0f),
                 fontSize = 20.sp,
                 fontFamily = FontFamily.Monospace,
-                color = ZeBlack,
+                color = ZeWhite,
                 text = message,
             )
 
@@ -852,6 +853,7 @@ private fun SelectedEditor(
 }
 
 @Composable
+@Preview
 private fun TemplateChooserDialog(
     vm: ZeBadgeViewModel,
     templateChooser: ZeTemplateChooser?,
@@ -890,6 +892,7 @@ private fun TemplateChooserDialog(
 }
 
 @Composable
+@Preview
 @Suppress("LongParameterList")
 private fun PagePreview(
     @PreviewParameter(BinaryBitmapPageProvider::class, 1)
