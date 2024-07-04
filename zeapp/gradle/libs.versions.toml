@@ -2,9 +2,10 @@
 
 [versions]
 android-gradle-plugin = "8.3.2"
+android-gradle-test-plugin = "8.0.2"
 androidx-activity = "1.9.0"
 androidx-compose-bom = "2024.06.00"
-androidx-compose-compiler = "1.5.3"
+androidx-compose-compiler = "1.5.14"
 androidx-core = "1.13.1"
 androidx-datastore = "1.1.1"
 androidx-lifecycle = "2.8.3"
@@ -16,7 +17,7 @@ coil = "2.6.0"
 dagger-hilt = "2.51.1"
 detekt-gradle = "1.23.1"
 jSerialComm = "2.10.3"
-kotlin = "1.9.10"
+kotlin = "1.9.24"
 kotlinx-coroutines-core = "1.8.1"
 kotlinxSerializationJson = "1.6.3"
 ktlint-gradle = "11.6.1"
@@ -50,6 +51,7 @@ compose-ui-manifest = "1.6.8"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+android-test = { id = "com.android.test", version.ref = "android-gradle-test-plugin" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }
@@ -59,7 +61,6 @@ ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gr
 license-report-gradle = { id = "com.jaredsburrows.license", version.ref = "license-report-gradle" }
 aboutlibraries-gradle = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-android-test = { id = "com.android.test", version.ref = "android-test" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
