@@ -40,7 +40,7 @@ jobs:
       - name: Check folders after assembleRelease
         run: tree -P '*.apk' --prune
       - name: Upload Release APK to GitHub Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Release APK
           path: zeapp/android/build/outputs/apk/release/android-release.apk
