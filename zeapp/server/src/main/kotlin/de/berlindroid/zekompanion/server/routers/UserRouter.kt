@@ -3,12 +3,20 @@ package de.berlindroid.zekompanion.server.routers
 import de.berlindroid.zekompanion.server.ai.AI
 import de.berlindroid.zekompanion.server.user.User
 import de.berlindroid.zekompanion.server.user.UserRepository
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.util.pipeline.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.request.receiveNullable
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondFile
+import io.ktor.server.response.respondOutputStream
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.util.pipeline.PipelineContext
 import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
@@ -150,13 +158,25 @@ fun Route.updateUser(users: UserRepository) =
 fun Route.getUser(users: UserRepository) =
     get("/api/user/{UUID}") {
         runCatching {
-            withParameter("UUID") { uuid ->
-                val user = users.getUser(uuid)
+            suspend fun PipelineContext<Unit, ApplicationCall>.respondUser(user: User?) {
                 if (user != null) {
                     call.respond(status = HttpStatusCode.OK, user)
                 } else {
                     call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
                 }
+            }
+
+            withParameter("UUID") { uuid ->
+                checkAuthorization(
+                    unauthorized = {
+                        val user = users.getUserByIndex(uuid.toIntOrNull() ?: -1)
+                        respondUser(user)
+                    },
+                    authorized = {
+                        val user = users.getUser(uuid)
+                        respondUser(user)
+                    },
+                )
             }
             call.respondText(status = HttpStatusCode.UnprocessableEntity, text = "No UUID.")
         }.onFailure {

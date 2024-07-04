@@ -24,6 +24,7 @@ ktlint-gradle = "11.6.1"
 license-report-gradle = "0.9.3"
 material3-wsc = "1.2.1"
 mik3y-usb-serial = "3.7.0"
+navigation-compose = "2.7.7"
 retrofit = "2.11.0"
 sl4j = "2.0.12"
 timber = "5.0.1"
@@ -81,6 +82,7 @@ androidx-compose-ui-toolingpreview = { module = "androidx.compose.ui:ui-tooling-
 androidx-compose-ui-ui = { module = "androidx.compose.ui:ui" }
 androidx-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
