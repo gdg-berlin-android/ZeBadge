@@ -40,7 +40,16 @@ execute jar (jolo)
 
 The last step started the remote webserver on port 80, with root rights. 🤓
 
-Ponder docker, k8n, virtualization and more fancy devops things, and then give up thinking you are a mobile dev ops. Unless you are, then [youre help is needed](https://github.com/gdg-berlin-android/ZeBadge/issues/new).
+## Building the WebApp with Docker 
+
+Just run the following docker commands to build and run the server. 
+```bash 
+docker build -t ze-server -f ./zeapp/Dockerfile ./zeapp
+docker run -p 8080:1337 ze-server:latest
+```
+
+Open the http://localhost:8080/ should display "yes" in the browser.
+
 
 # Droidcon 2024 contribution guide: 
 
