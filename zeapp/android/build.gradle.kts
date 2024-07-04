@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.gradle)
+    alias(libs.plugins.roborazzi)
 }
 
 val isCi = System.getenv("CI") == "true"
@@ -153,6 +154,12 @@ android {
                 )
         }
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 detekt {
@@ -164,7 +171,7 @@ detekt {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-    implementation(project(":badge"))
+    implementation(projects.badge)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -193,11 +200,12 @@ dependencies {
     testImplementation(libs.testJunit4)
     testImplementation(libs.testMockk)
     testImplementation(libs.testCoroutines)
+    testImplementation(libs.bundles.screeshottest.android)
 
     androidTestImplementation(libs.testComposeJunit)
     debugImplementation(libs.testComposeManifest)
     kapt(libs.dagger.hilt.compiler)
-    baselineProfile(project(":benchmark"))
+    baselineProfile(projects.benchmark)
 }
 
 // Ktlint
@@ -256,4 +264,8 @@ licenseReport {
     generateHtmlReport = true
     generateJsonReport = false
     copyHtmlReportToAssets = false
+}
+
+roborazzi {
+    outputDir.set(project.layout.projectDirectory.dir("src/snapshots/roborazzi/images"))
 }
