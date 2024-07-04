@@ -29,7 +29,7 @@ jobs:
       - name: "Assemble Debug"
         run: ./gradlew :android:assembleDebug --no-daemon
       - name: "Upload Debug APK to GitHub"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Debug APK
           path: zeapp/android/build/outputs/apk/debug/android-debug.apk
