@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.gradle)
@@ -110,7 +111,7 @@ android {
     }
 
     sourceSets.getByName("main").assets.srcDir(
-        "$buildDir/generated/assets",
+        "${layout.buildDirectory}/generated/assets",
     )
 
     compileOptions {
@@ -155,14 +156,9 @@ android {
 
 detekt {
     allRules = true
-    config = files("$rootDir/config/detekt/detekt-config.yml")
+    config.from(files("$rootDir/config/detekt/detekt-config.yml"))
     baseline = file("detekt-baseline.xml")
     buildUponDefaultConfig = true
-    reports {
-        html { required = true }
-        xml { required = true }
-        txt { required = false }
-    }
 }
 
 dependencies {
@@ -179,7 +175,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation)
     implementation(libs.retrofit2.retrofit)
-    implementation(libs.retrofit2.converter.gson)
+    implementation(libs.retrofit2.converter.serialization)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.zxing)
     implementation(libs.material3.wsc)
     implementation(libs.dagger.hilt)

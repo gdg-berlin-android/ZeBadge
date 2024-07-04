@@ -12,25 +12,23 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = ZeWhite,
-    secondary = ZeBlack,
+    secondary = ZeGrey,
     onPrimary = ZeBlack,
-    onSecondary = ZeWhite,
-    error = ZeWhite,
+    onSecondary = ZeBlack,
+    error = ZeCarmine,
     onError = ZeBlack,
     background = ZeBlack,
     onBackground = ZeWhite,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = ZeTeal,
-    secondary = ZePurple,
+    primary = ZeBlack,
+    secondary = ZeGrey,
     onPrimary = ZeWhite,
     onSecondary = ZeBlack,
-    surface = ZeGrey,
-    onSurface = ZeBlack,
-    background = ZeWhite,
     error = ZeCarmine,
     onError = ZeWhite,
+    background = ZeWhite,
     onBackground = ZeBlack,
 )
 
