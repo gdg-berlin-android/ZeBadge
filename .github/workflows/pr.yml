@@ -24,7 +24,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: "Validate Gradle wrapper"
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
       - name: "Assemble Debug"
         run: ./gradlew :android:assembleDebug --no-daemon
       - name: "Upload Debug APK to GitHub"
@@ -45,7 +45,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: "Validate Gradle wrapper"
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
       - name: "Lint"
         run: ./gradlew ktlintFormat --no-daemon
 
@@ -61,7 +61,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: "Validate Gradle wrapper"
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
       - name: "Lint"
         run: ./gradlew lint --no-daemon
   detekt:
@@ -76,7 +76,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: "Validate Gradle wrapper"
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
       - name: "Detekt"
         run: ./gradlew detekt
   test:
@@ -91,7 +91,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: "Validate Gradle wrapper"
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
       - name: "Test"
         run: ./gradlew linuxTest
     
