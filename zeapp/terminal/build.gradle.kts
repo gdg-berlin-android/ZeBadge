@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":badge"))
+    implementation(projects.badge)
 
     implementation(libs.kotlinx.coroutines.core)
 }
@@ -20,4 +20,3 @@ dependencies {
 application {
     mainClass.set("de.berlindroid.zekompanion.terminal.MainKt")
 }
-

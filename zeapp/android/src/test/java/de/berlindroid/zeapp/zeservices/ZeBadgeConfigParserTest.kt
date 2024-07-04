@@ -5,6 +5,9 @@ import assertk.assertFailure
 import assertk.assertions.messageContains
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.mockk.unmockkObject
+import io.mockk.unmockkStatic
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -17,6 +20,11 @@ class ZeBadgeConfigParserTest {
     fun setup() {
         mockkStatic(Base64::class)
         every { Base64.decode(any<String>(), any<Int>()) } returns byteArrayOf(1, 2, 3, 4)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(Base64::class)
     }
 
     @Test
