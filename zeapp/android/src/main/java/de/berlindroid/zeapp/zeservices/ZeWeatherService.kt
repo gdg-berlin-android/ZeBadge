@@ -1,8 +1,11 @@
 package de.berlindroid.zeapp.zeservices
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,25 +37,31 @@ internal suspend fun fetchWeather(date: String): WeatherData {
     }
 }
 
+private val json = Json {
+    ignoreUnknownKeys = true
+}
+
 private val retrofit = Retrofit.Builder()
     .baseUrl("https://api.open-meteo.com")
-    .addConverterFactory(GsonConverterFactory.create())
+    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
     .build()
 
 private val weatherApiService = retrofit.create(WeatherApi::class.java)
 
 private interface WeatherApi {
 
+    @Serializable
     data class Weather(
-        @SerializedName("hourly")
+        @SerialName(value = "hourly")
         val hourly: Hourly,
     )
 
+    @Serializable
     data class Hourly(
-        @SerializedName("time")
+        @SerialName(value = "time")
         val time: List<String>,
 
-        @SerializedName("temperature_2m")
+        @SerialName(value = "temperature_2m")
         val temperature: List<Double>,
     )
 

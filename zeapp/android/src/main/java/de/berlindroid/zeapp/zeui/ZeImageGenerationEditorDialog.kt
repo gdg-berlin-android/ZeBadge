@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.gson.annotations.SerializedName
 import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.BADGE_WIDTH
@@ -36,11 +35,15 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -208,9 +211,13 @@ private suspend fun requestImageGeneration(
 
 private val ok = OkHttpClient.Builder().build()
 
+private val json = Json {
+    ignoreUnknownKeys = true
+}
+
 private val retrofit = Retrofit.Builder()
     .baseUrl("https://api.openai.com")
-    .addConverterFactory(GsonConverterFactory.create())
+    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
     .build()
 
 private val openAiApi = retrofit.create(OpenAIApi::class.java)
@@ -225,9 +232,10 @@ private interface OpenAIApi {
         )
     }
 
+    @Serializable
     data class GenerateImages(
         val prompt: String,
-        @SerializedName("n") val imageCount: Int = 1,
+        @SerialName(value = "n") val imageCount: Int = 1,
         val size: String = "512x512",
     )
 
