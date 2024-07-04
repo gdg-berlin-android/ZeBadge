@@ -21,7 +21,7 @@ jobs:
     environment: default
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check folders after checkout repo
@@ -34,13 +34,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@v3
       - name: Assemble Release
         run: ./gradlew :android:assembleRelease --no-daemon
       - name: Check folders after assembleRelease
         run: tree -P '*.apk' --prune
       - name: Upload Release APK to GitHub Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Release APK
           path: zeapp/android/build/outputs/apk/release/android-release.apk
@@ -71,7 +71,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@v3
       - name: Lint
         run: ./gradlew lint --no-daemon
   detekt:
@@ -87,6 +87,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@v3
       - name: Detekt
         run: ./gradlew detekt
