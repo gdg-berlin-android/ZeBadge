@@ -14,6 +14,6 @@ class ZeAboutViewModel @Inject constructor(
     contributorsService: ZeContributorsService,
 ):ViewModel(){
 
-    val lines: StateFlow<List<String>> = contributorsService.contributors()
+    val lines: StateFlow<List<Contributor>> = contributorsService.contributors()
         .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
 }
