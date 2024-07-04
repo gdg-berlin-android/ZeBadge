@@ -31,7 +31,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Assemble Release
@@ -67,7 +68,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Lint
@@ -82,7 +84,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Detekt
