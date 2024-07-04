@@ -176,6 +176,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.toolingpreview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.navigation)
     implementation(libs.retrofit2.retrofit)
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.zxing)

@@ -80,9 +80,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -100,9 +100,11 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.ban.autosizetextfield.AutoSizeTextField
-import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
-import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults.libraryColors
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
@@ -121,6 +123,7 @@ import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
+import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
@@ -209,11 +212,13 @@ class ZeMainActivity : ComponentActivity() {
     }
 }
 
+const val ROUTE_HOME = "home"
+const val ROUTE_ABOUT = "about"
+const val ROUTE_OPENSOURCE = "opensource"
+
 @Composable
 private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
-    var isShowingAbout by remember { mutableStateOf(false) }
-    var isShowingOpenSource by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val goToReleases: () -> Unit = remember {
         {
@@ -235,10 +240,11 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    BackHandler(isShowingOpenSource || isShowingAbout) {
-        isShowingOpenSource = false
-        isShowingAbout = false
-    }
+    val navController = rememberNavController()
+    val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
+
+    BackHandler(currentRoute != ROUTE_HOME) { navController.navigateUp() }
 
     ZeBadgeAppTheme(
         content = {
@@ -250,7 +256,12 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
-                        onGotoOpenSourceClick = { isShowingOpenSource = !isShowingOpenSource },
+                        onGotoContributors = {
+                            if (currentRoute == ROUTE_ABOUT) navController.navigateUp() else navController.navigate(ROUTE_ABOUT)
+                        },
+                        onGotoOpenSourceClick = {
+                            if (currentRoute == ROUTE_OPENSOURCE) navController.navigateUp() else navController.navigate(ROUTE_OPENSOURCE)
+                        },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -264,7 +275,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 ZeScaffold(
                     modifier = modifier,
                     floatingActionButton = {
-                        if (!isShowingAbout) {
+                        if (currentRoute == ROUTE_HOME) {
                             ZeNavigationPad(
                                 lazyListState,
                             )
@@ -272,8 +283,6 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     },
                     topBar = {
                         ZeTopBar(
-                            isShowingAbout = isShowingAbout,
-                            onAboutClick = { isShowingAbout = !isShowingAbout },
                             isNavDrawerOpen = drawerState.isOpen,
                             onOpenMenuClicked = { scope.launch { drawerState.open() } },
                             onCloseMenuClicked = { scope.launch { drawerState.close() } },
@@ -283,24 +292,26 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             },
                         )
                     },
-                    content = { paddingValues ->
-                        if (isShowingAbout) {
-                            ZeAbout(paddingValues)
-                        } else if (isShowingOpenSource) {
-                            ZeOpenSource(paddingValues)
-                        } else {
+                ) { paddingValues ->
+                    NavHost(navController = navController, startDestination = ROUTE_HOME) {
+                        composable(ROUTE_HOME) {
                             ZePages(
                                 paddingValues = paddingValues,
                                 lazyListState = lazyListState,
                                 vm = vm,
                             )
                         }
-                    },
-                )
+                        composable(ROUTE_ABOUT) {
+                            ZeAbout(paddingValues)
+                        }
+                        composable(ROUTE_OPENSOURCE) {
+                            ZeOpenSource(paddingValues)
+                        }
+                    }
+                }
             }
         },
-
-        )
+    )
 }
 
 @Composable
@@ -310,6 +321,7 @@ private fun ZeDrawerContent(
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
+    onGotoContributors: () -> Unit = {},
     onGotoOpenSourceClick: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
@@ -416,9 +428,9 @@ private fun ZeDrawerContent(
 
             item {
                 NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_open_release_page),
-                    painter = painterResource(id = R.drawable.ic_update),
-                    onClick = onGotoReleaseClick,
+                    text = stringResource(id = R.string.ze_navdrawer_contributors),
+                    painter = rememberVectorPainter(Icons.Default.Info),
+                    onClick = onGotoContributors,
                 )
             }
 
@@ -429,32 +441,33 @@ private fun ZeDrawerContent(
                     onClick = onGotoOpenSourceClick,
                 )
             }
-        }
-    }
-}
 
-@Composable
-private fun ZeOpenSource(
-    paddingValues: PaddingValues,
-) {
-    ZeSurface {
-        LibrariesContainer(
-            Modifier.fillMaxSize(),
-            contentPadding = paddingValues,
-            colors = libraryColors(
-                backgroundColor = MaterialTheme.colorScheme.surface,
-                badgeBackgroundColor = MaterialTheme.colorScheme.primary,
-                dialogConfirmButtonColor = MaterialTheme.colorScheme.primary,
-            ),
-        )
+            item {
+                HorizontalDivider(
+                    thickness = 0.dp,
+                    color = ZeBlack,
+                    modifier = Modifier.padding(
+                        start = 0.dp,
+                        end = 40.dp, top = 16.dp, bottom = 16.dp,
+                    ),
+                )
+            }
+
+            item {
+                NavDrawerItem(
+                    text = stringResource(id = R.string.ze_navdrawer_open_release_page),
+                    painter = painterResource(id = R.drawable.ic_update),
+                    onClick = onGotoReleaseClick,
+                )
+            }
+
+        }
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ZeTopBar(
-    isShowingAbout: Boolean,
-    onAboutClick: () -> Unit,
     isNavDrawerOpen: Boolean,
     onOpenMenuClicked: () -> Unit,
     onCloseMenuClicked: () -> Unit,
@@ -484,15 +497,6 @@ private fun ZeTopBar(
             actionIconContentColor = MaterialTheme.colorScheme.primary,
             navigationIconContentColor = MaterialTheme.colorScheme.primary,
         ),
-        actions = {
-            ZeIconButton(onClick = onAboutClick) {
-                if (isShowingAbout) {
-                    ZeIcon(Icons.Default.Close, contentDescription = "About")
-                } else {
-                    ZeIcon(Icons.Default.Info, contentDescription = "Close About screen")
-                }
-            }
-        },
     )
 }
 
