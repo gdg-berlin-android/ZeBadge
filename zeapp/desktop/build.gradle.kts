@@ -1,9 +1,11 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.roborazzi)
 }
 
 group = "com.example"
@@ -21,8 +23,11 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
-    implementation(project(":badge"))
+    implementation(projects.badge)
     implementation(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.roborazzi.compose.desktop)
+    testImplementation(kotlin("test"))
 }
 
 compose.desktop {
@@ -37,5 +42,15 @@ compose.desktop {
                 iconFile.set(project.file("icon.icns"))
             }
         }
+    }
+}
+
+roborazzi {
+    outputDir.set(project.layout.projectDirectory.dir("src/snapshots/roborazzi/images"))
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xcontext-receivers"
     }
 }
