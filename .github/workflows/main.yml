@@ -21,7 +21,7 @@ jobs:
     environment: default
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check folders after checkout repo
