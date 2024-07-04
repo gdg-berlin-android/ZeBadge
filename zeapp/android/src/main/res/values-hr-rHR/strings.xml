@@ -26,4 +26,42 @@
     <string name="qr_vcard">vCard</string>
     <string name="qr_code_email">Email</string>
     <string name="qr_code_phone">Telefon</string>
+
+    <string name="your_name_here">Vaše ime ovdje</string>
+    <string name="contact_me_here">Kontaktirajte me ovdje</string>
+    <string name="binary_image_needed">Potrebna binarna slika. Pritisnite jedan od gumba ispod slike.</string>
+    <string name="add_your_phrase_here">Dodajte svoju frazu ovdje</string>
+    <string name="random_phrase">Slučajna fraza</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view">Jednorog na android konferenciji u izometričnom prikazu.</string>
+    <string name="name">Ime</string>
+    <string name="contact">Kontakt</string>
+    <string name="clear">Očisti</string>
+    <string name="add_your_contact_details">Dodajte svoje kontakt podatke</string>
+    <string name="set_picture">Postavi sliku</string>
+    <string name="click_get_to_show_quote_of_the_day">Kliknite Get za prikaz citata dana</string>
+    <string name="get">Preuzmi</string>
+    <string name="decline">Odbij</string>
+    <string name="send">Pošalji</string>
+    <string name="n_a">N/A</string>
+    <string name="load_weather">Učitaj vremensku prognozu</string>
+    <string name="hello_my_github_profile_is">Pozdrav, moj github profil je</string>
+    <string name="your_phrase_here">Vaša fraza ovdje</string>
+    <string name="hello_my_name_is">Pozdrav, moje ime je</string>
+    <string name="upcoming_weather">☀️ Nadolazeće vrijeme</string>
+    <string name="quote_of_the_day">Citat dana</string>
+    <string name="send_icon_text">Pošalji</string>
+    <string name="badge_config_editor_title">Uredi konfiguraciju značke</string>
+
+    <string name="ze_navdrawer_save_all_pages">Spremi sve stranice na značku</string>
+    <string name="ze_navdrawer_update_config">Ažuriraj konfiguraciju na znački</string>
+    <string name="ze_navdrawer_send_random_page">Pošalji nasumičnu stranicu na značku</string>
+    <string name="ze_navdrawer_open_release_page">Otvori stranicu izdanja</string>
+    <string name="ze_navdrawer_open_source">Otvoreni izvor</string>
+    <string name="ze_select_content">Odaberite sadržaj</string>
+    <string name="ze_not_added_yet_message">Još nije dodano, slobodno pridonesite ovom uređivaču</string>
+
+    <string name="ze_sample_configuration_key">uzorak konfiguracije</string>
+    <string name="ze_sample_configuration_value">uzorak vrijednosti</string>
+    <string name="ze_sample_int_key">uzorak int</string>
+    <string name="ze_sample_another_configuration_key">druga konfiguracija</string>
 </resources>
