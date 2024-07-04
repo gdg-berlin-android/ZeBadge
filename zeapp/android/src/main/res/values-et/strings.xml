@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Ze Androft</string>
+    <string name="black_and_white">M/V</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="reset">Lähtesta</string>
+    <string name="positional">Positsiooniline</string>
+    <string name="rotate">Pööra</string>
+    <string name="invert">Pööra ümber</string>
+
+    <string name="generate">Loo</string>
+    <string name="not_binary_image">Ei ole binaarne pilt. Veenduge, et iga piksel oleks must või valge.</string>
+    <string name="generate_image_page">Loo pildileht</string>
+    <string name="draw_image_page">Joonista pildileht</string>
+    <string name="enter_prompt">Sisestage oma märguanne siia.</string>
+    <string name="could_not_generate_image">Pilti ei saanud luua</string>
+
+    <string name="image_needed">Vajalik on binaarne pilt. Vajutage allolevatel nuppudel ühte.</string>
+    <string name="add_qr_url">Lisa oma QR-URL.</string>
+    <string name="qr_code_title">QR-koodi pealkiri</string>
+    <string name="qr_code_text">Lisatekst</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Lisa oma vöötkoodi URL.</string>
+    <string name="bar_code_title">Vöötkoodi pealkiri</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">E-post</string>
+    <string name="qr_code_phone">Telefon</string>
+</resources>
