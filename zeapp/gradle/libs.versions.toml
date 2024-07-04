@@ -43,7 +43,7 @@ kotlinxCoroutinesTest = "1.8.1"
 aboutlibraries = "11.2.2"
 hilt-navigation-compose = "1.2.0"
 android-test = "8.0.2"
-jetbrains-compose = "1.5.3"
+jetbrains-compose = "1.6.11"
 
 [plugins]
 
