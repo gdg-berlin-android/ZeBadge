@@ -3,6 +3,7 @@ package de.berlindroid.zeapp
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -105,12 +105,14 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ban.autosizetextfield.AutoSizeTextField
 import dagger.hilt.android.AndroidEntryPoint
+import de.berlindroid.zeapp.zebits.toDitheredImage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
@@ -174,9 +176,28 @@ class ZeMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        if (intent.type?.startsWith("image/") == true) {
+            handleSendImage(intent)
+        }
         setContent {
             DrawUi()
         }
+    }
+
+    private fun handleSendImage(intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)?.let(::updateSelectedImage)
+        } else {
+            (intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri)?.let(::updateSelectedImage)
+        }
+    }
+
+    private fun updateSelectedImage(imageUri: Uri) = lifecycleScope.launch {
+        val bitmap = imageUri.toDitheredImage(this@ZeMainActivity)
+        vm.slotConfigured(
+            ZeSlot.Camera,
+            ZeConfiguration.Camera(bitmap),
+        )
     }
 
     @Composable
