@@ -14,6 +14,9 @@ import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
 import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.DeleteLoad
+import de.berlindroid.zekompanion.PreviewLoad
+import de.berlindroid.zekompanion.StoreLoad
 import kotlinx.coroutines.runBlocking
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
@@ -232,9 +235,8 @@ private fun resizeFluidImageCallback(size: String?): IntBuffer.(width: Int, heig
 
 
 private fun storeBufferOntoBadge(filename: String): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
-    val payload = BadgePayload(
+    val payload = StoreLoad(
         debug = false,
-        type = "store",
         meta = filename,
         payload = toBinary().zipit().base64(),
     )
@@ -316,9 +318,8 @@ private fun rawCommand(
 }
 
 private fun deleteStoredImageOnBadge(filename: String?): StorageOperation = {
-    val payload = BadgePayload(
+    val payload = DeleteLoad(
         debug = false,
-        type = "delete",
         meta = filename ?: "",
         payload = "",
     )
@@ -340,9 +341,8 @@ private fun deleteStoredImageOnBadge(filename: String?): StorageOperation = {
 }
 
 private fun previewImageOnBadge(): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
-    val payload = BadgePayload(
+    val payload = PreviewLoad(
         debug = false,
-        type = "preview",
         meta = "",
         payload = toBinary().zipit().base64(),
     )
