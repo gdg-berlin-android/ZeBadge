@@ -25,7 +25,6 @@ class ZeBadgeViewModelTest {
     private val zeBadgeManager = mockk<ZeBadgeManager>()
     private val zePreferencesService = mockk<ZePreferencesService>()
     private val clipboardService = mockk<ZeClipboardService>()
-    private val contributorsService = mockk<ZeContributorsService>()
     private val templateConfigurations = mockk<GetTemplateConfigurations>()
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -37,7 +36,6 @@ class ZeBadgeViewModelTest {
     @Test
     fun testCopyToClipBoard() {
         // Given
-        every { contributorsService.contributors() } returns emptyFlow()
         every { clipboardService.copyToClipboard("") } returns Unit
         val zeBadgeViewModel = provideViewModel()
 
@@ -54,7 +52,6 @@ class ZeBadgeViewModelTest {
         preferencesService = zePreferencesService,
         clipboardService = clipboardService,
         getTemplateConfigurations = templateConfigurations,
-        contributorsService = contributorsService,
     )
 
     @After
