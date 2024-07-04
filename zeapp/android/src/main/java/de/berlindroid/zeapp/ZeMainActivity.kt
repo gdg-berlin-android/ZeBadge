@@ -244,7 +244,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
 
-    BackHandler(currentRoute == ROUTE_HOME) { navController.navigateUp() }
+    BackHandler(currentRoute != ROUTE_HOME) { navController.navigateUp() }
 
     ZeBadgeAppTheme(
         content = {
