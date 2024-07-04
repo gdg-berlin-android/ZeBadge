@@ -45,7 +45,7 @@ The last step started the remote webserver on port 80, with root rights. 🤓
 Just run the following docker commands to build and run the server. 
 ```bash 
 docker build -t ze-server -f ./zeapp/Dockerfile ./zeapp
-docker run -p 8080:1337 ze-server:latest
+docker run -p 1337:1337 -p 433:433 ze-server:latest
 ```
 
 Open the http://localhost:8080/ should display "yes" in the browser.
