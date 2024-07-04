@@ -49,4 +49,11 @@
     <string name="quote_of_the_day">Цитата Дня</string>
     <string name="send_icon_text">Надіслати</string>
     <string name="badge_config_editor_title">Редагувати Налаштування Значка</string>
+    <string name="ze_navdrawer_save_all_pages">Зберегти всі сторінки на значок</string>
+    <string name="ze_navdrawer_update_config">Оновити конфігурацію на значку</string>
+    <string name="ze_navdrawer_send_random_page">Надіслати випадкову сторінку на значок</string>
+    <string name="ze_navdrawer_open_release_page">Про реліз</string>
+    <string name="ze_navdrawer_contributors">Співавтори</string>
+    <string name="ze_navdrawer_open_source">Відкритий код</string>
+
 </resources>
