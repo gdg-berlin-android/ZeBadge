@@ -156,6 +156,7 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
     if (!isEmpty) {
         Icon(
             Icons.Rounded.Clear,
+            tint = ZeWhite,
             contentDescription = stringResource(R.string.clear),
             modifier = modifier.clickable(onClick = onClick),
         )

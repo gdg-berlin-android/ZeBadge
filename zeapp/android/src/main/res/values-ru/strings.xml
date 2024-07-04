@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="black_and_white">Ч/Б</string>
+    <string name="reset">Сброс</string>
+    <string name="ze_edit">Редактировать</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Позиционный</string>
+    <string name="rotate">Повернуть</string>
+    <string name="invert">Инвертировать</string>
+    <string name="static_tool">Статичный</string>
+
+    <string name="generate">Генерировать</string>
+    <string name="not_binary_image">Изображение не бинарное. Убедитесь, что каждый пиксель либо черный либо белый.</string>
+    <string name="generate_image_page">Генерировать изображение</string>
+    <string name="draw_image_page">Нарисовать страницу изображения</string>
+    <string name="enter_prompt">Введите свою подсказку</string>
+    <string name="could_not_generate_image">Не получилось сгенерировать изображение</string>
+
+    <string name="image_needed">Необходимо бинарное изображение. Нажмите одну из кнопок под изображением.</string>
+    <string name="add_qr_url">Добавьте свой QR с URL</string>
+    <string name="qr_code_title">Заголовок QR кода</string>
+    <string name="qr_code_text">Дополнительный текст</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Добавьте свой URL штрих кода</string>
+    <string name="bar_code_title">Заголовок штрих кода</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Телефон</string>
+    <string name="badge_config_editor_title">Редактировать Настройки Значка</string>
+
+    <string name="ze_navdrawer_save_all_pages">Сохранить все страницы на значок</string>
+    <string name="ze_navdrawer_update_config">Обновить настройки на значке</string>
+    <string name="ze_navdrawer_send_random_page">Отправить случайную страницу на значок</string>
+    <string name="ze_navdrawer_open_release_page">Открыть страницу релизов</string>
+    <string name="ze_navdrawer_contributors">Участники</string>
+    <string name="ze_navdrawer_open_source">Открыть Исходный Код</string>
+
+</resources>

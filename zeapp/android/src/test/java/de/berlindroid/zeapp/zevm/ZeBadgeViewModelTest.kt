@@ -33,6 +33,11 @@ class ZeBadgeViewModelTest {
         Dispatchers.setMain(testDispatcher)
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     @Test
     fun testCopyToClipBoard() {
         // Given
