@@ -34,7 +34,7 @@ jobs:
           name: Debug APK
           path: zeapp/android/build/outputs/apk/debug/android-debug.apk
 
-  format:
+  ktlint:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repo"
@@ -46,10 +46,10 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-      - name: "Validate Gradle wrapper"
+      - name: "ktLint Check"
         uses: gradle/actions/wrapper-validation@v3
-      - name: "Lint"
-        run: ./gradlew ktlintFormat --no-daemon
+      - name: "ktLint"
+        run: ./gradlew ktlintCheck --no-daemon
 
   lint:
     runs-on: ubuntu-latest
