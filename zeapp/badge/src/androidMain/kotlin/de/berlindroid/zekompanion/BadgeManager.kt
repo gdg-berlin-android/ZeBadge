@@ -22,6 +22,9 @@ class AndroidBadgeManager(
     companion object {
         const val ACTION_USB_PERMISSION = "ACTION_USB_PERMISSION"
         const val ACTION_USB_PERMISSION_REQUEST_CODE = 4711
+        const val BAUD_RATE = 115200
+        const val READ_BYTE_ARRAY_SIZE = 1024
+        const val READ_WRITE_TIMEOUT = 3_000
     }
 
     private val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
@@ -59,74 +62,55 @@ class AndroidBadgeManager(
 
     override fun isConnected(): Boolean = manager.findConnectedBadge() != null
 
-    private fun sendCommandToBadge(
-        command: String,
-    ): Result<Int> {
+    private fun <RETURN_TYPE> performReturnableActionOnBadge(
+        action: (UsbSerialPort) -> RETURN_TYPE,
+    ): Result<RETURN_TYPE> {
         val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
 
         val driver = availableDrivers.first()
         val port = driver.ports.last()
         val connection = manager.openDevice(driver.device)
 
+
         return kotlin.runCatching {
             port.open(connection)
             port.dtr = true
             port.setParameters(
-                /* baudRate = */115200,
+                /* baudRate = */BAUD_RATE,
                 /* dataBits = */UsbSerialPort.DATABITS_8,
                 /* stopBits = */UsbSerialPort.STOPBITS_1,
                 /* parity = */UsbSerialPort.PARITY_NONE,
             )
-            port.write(command.toByteArray(), 3_000)
-            Timber.i("badge: Wrote '$command' to port ${port.portNumber}.")
 
-            command.length
+            action.invoke(port)
         }.recoverCatching {
-            Timber.e(it, "badge: Couldn't write to port ${port.portNumber}.")
+            Timber.e(it, "badge: Couldn't perform actions with port ${port.portNumber}.")
             // Just send a generic exception with a message we want
-            throw RuntimeException("Failed to write")
+            throw RuntimeException("Failed to perform actions")
         }.also {
             if (port.isOpen) {
                 port.close()
             }
             connection.close()
         }
+
     }
 
-    private fun receiveResponseFromBadge(): Result<String> {
-        val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
+    private fun sendCommandToBadge(
+        command: String,
+    ) = performReturnableActionOnBadge { port ->
+        port.write(command.toByteArray(), READ_WRITE_TIMEOUT)
+        Timber.i("badge: Wrote '$command' to port ${port.portNumber}.")
+        command.length
+    }
 
-        val driver = availableDrivers.first()
-        val port = driver.ports.last()
-        val connection = manager.openDevice(driver.device)
+    private fun receiveResponseFromBadge() = performReturnableActionOnBadge { port ->
+        val bytes = ByteArray(READ_BYTE_ARRAY_SIZE)
+        val count = port.read(bytes, READ_WRITE_TIMEOUT)
 
-        return kotlin.runCatching {
-            port.open(connection)
-            port.dtr = true
-            port.setParameters(
-                /* baudRate = */115200,
-                /* dataBits = */UsbSerialPort.DATABITS_8,
-                /* stopBits = */UsbSerialPort.STOPBITS_1,
-                /* parity = */UsbSerialPort.PARITY_NONE,
-            )
+        Timber.i("badge: Read '$count' bytes from port ${port.portNumber}.")
+        String(bytes)
 
-            val bytes = ByteArray(1024)
-            val count = port.read(bytes, 3_000)
-
-            Timber.i("badge: Read '$count' bytes from port ${port.portNumber}.")
-
-            String(bytes)
-
-        }.recoverCatching {
-            Timber.e(it, "badge: Couldn't read from port ${port.portNumber}.")
-            // Just send a generic exception with a message we want
-            throw RuntimeException("Failed to read")
-        }.also {
-            if (port.isOpen) {
-                port.close()
-            }
-            connection.close()
-        }
     }
 
     private fun informNoBadgeFound(manager: UsbManager): Result<Nothing> {
