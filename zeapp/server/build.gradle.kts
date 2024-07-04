@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":badge"))
+    implementation(projects.badge)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.ktor.core)

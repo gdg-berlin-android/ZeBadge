@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zeui.pixelBuffer
 import de.berlindroid.zekompanion.*
+import de.berlindroid.zekompanion.BadgePayload.*
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import javax.inject.Inject
@@ -30,9 +31,7 @@ class ZeBadgeManager @Inject constructor(
             .zipit()
             .base64()
 
-        val payload = BadgePayload(
-            type = "preview",
-            meta = "",
+        val payload = PreviewPayload(
             payload = binaryPayload,
         )
 
@@ -52,9 +51,8 @@ class ZeBadgeManager @Inject constructor(
             .zipit()
             .base64()
 
-        val payload = BadgePayload(
-            type = "store",
-            meta = name,
+        val payload = StorePayload(
+            filename = name,
             payload = binaryPayload,
         )
 
@@ -67,10 +65,8 @@ class ZeBadgeManager @Inject constructor(
      * @param name a file name on the badge to be shown
      */
     suspend fun showPage(name: String): Result<Int> {
-        val payload = BadgePayload(
-            type = "show",
-            meta = name,
-            payload = "",
+        val payload = ShowPayload(
+            filename = name
         )
 
         return badgeManager.sendPayload(payload)
@@ -80,11 +76,7 @@ class ZeBadgeManager @Inject constructor(
      * Return the name of the pages stored on the badge.
      */
     suspend fun requestPagesStored(): Result<String> {
-        val payload = BadgePayload(
-            type = "list",
-            meta = "",
-            payload = "",
-        )
+        val payload = ListPayload()
 
         return if (badgeManager.sendPayload(payload).isSuccess) {
             badgeManager.readResponse()
@@ -98,21 +90,13 @@ class ZeBadgeManager @Inject constructor(
      */
     suspend fun listConfiguration(): Result<Map<String, Any?>> {
         badgeManager.sendPayload(
-            BadgePayload(
-                type = "config_load",
-                meta = "",
-                payload = "",
-            ),
+            ConfigLoadPayload(),
         )
 
         badgeManager.readResponse()
         delay(300)
 
-        val payload = BadgePayload(
-            type = "config_list",
-            meta = "",
-            payload = "",
-        )
+        val payload = ConfigListPayload()
 
         if (badgeManager.sendPayload(payload).isSuccess) {
             val response = badgeManager.readResponse()
@@ -148,10 +132,8 @@ class ZeBadgeManager @Inject constructor(
 
         val config = detypedConfig.entries.joinToString(separator = " ")
 
-        val payload = BadgePayload(
-            type = "config_update",
-            meta = "",
-            payload = config,
+        val payload = ConfigUpdatePayload(
+            config = config,
         )
 
         if (badgeManager.sendPayload(payload).isSuccess) {
@@ -159,11 +141,7 @@ class ZeBadgeManager @Inject constructor(
             delay(300)
 
             return if (badgeManager.sendPayload(
-                    BadgePayload(
-                        type = "config_save",
-                        meta = "",
-                        payload = "",
-                    ),
+                    ConfigSavePayload(),
                 ).isSuccess
             ) {
                 Result.success(true)
