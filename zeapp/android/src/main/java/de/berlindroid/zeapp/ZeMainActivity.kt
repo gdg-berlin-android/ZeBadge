@@ -357,7 +357,6 @@ private fun ZeDrawerContent(
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
 ) {
-
     @Composable
     fun NavDrawerItem(
         text: String,
@@ -403,7 +402,6 @@ private fun ZeDrawerContent(
                 onCloseDrawer()
             },
         )
-
     }
 
     ModalDrawerSheet(
@@ -452,7 +450,10 @@ private fun ZeDrawerContent(
                     thickness = 0.dp,
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp,
+                        end = 0.dp,
+                        top = 16.dp,
+                        bottom = 16.dp,
                     ),
                 )
             }
@@ -478,7 +479,10 @@ private fun ZeDrawerContent(
                     thickness = 0.dp,
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp,
+                        end = 0.dp,
+                        top = 16.dp,
+                        bottom = 16.dp,
                     ),
                 )
             }
@@ -490,7 +494,6 @@ private fun ZeDrawerContent(
                     onClick = onGotoReleaseClick,
                 )
             }
-
         }
     }
 }
@@ -780,7 +783,6 @@ private fun BadgeConfigEditor(
                             trailingIcon = {},
                             placeholder = {},
                         )
-
                     }
                 }
             }
@@ -1011,12 +1013,14 @@ private val ZeSlot.isSponsor: Boolean
 // Device size extensions
 private val WindowSizeClass.isTabletSize: Boolean
     get() = this.widthSizeClass == WindowWidthSizeClass.Expanded &&
-            (this.heightSizeClass == WindowHeightSizeClass.Expanded ||
-                    this.heightSizeClass == WindowHeightSizeClass.Medium)
+        (
+            this.heightSizeClass == WindowHeightSizeClass.Expanded ||
+                this.heightSizeClass == WindowHeightSizeClass.Medium
+            )
 
 private val WindowSizeClass.isSmartphoneSize: Boolean
     get() = this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
-            (this.heightSizeClass == WindowHeightSizeClass.Compact)
+        (this.heightSizeClass == WindowHeightSizeClass.Compact)
 
 @Composable
 private fun isKeyboardVisibleState(): State<Boolean> {

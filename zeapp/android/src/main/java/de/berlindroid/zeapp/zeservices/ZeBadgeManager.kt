@@ -122,7 +122,7 @@ class ZeBadgeManager @Inject constructor(
                 val config = response.getOrDefault("").replace("\r\n", "")
                 Timber.v(
                     "Badge sent response: successfully received configuration: " +
-                            "'${config.replace("\n", "\\n")}'.",
+                        "'${config.replace("\n", "\\n")}'.",
                 )
 
                 val parseResult = badgeConfigParser.parse(config)
@@ -140,7 +140,6 @@ class ZeBadgeManager @Inject constructor(
      * Update configuration on badge..
      */
     suspend fun updateConfiguration(configuration: Map<String, Any?>): Result<Any> {
-
         val detypedConfig: Map<String, String> = configuration.map { e ->
             val (k, v) = e
             k to kotlinToPython(v)
@@ -160,10 +159,10 @@ class ZeBadgeManager @Inject constructor(
 
             return if (badgeManager.sendPayload(
                     BadgePayload(
-                        type = "config_save",
-                        meta = "",
-                        payload = "",
-                    ),
+                            type = "config_save",
+                            meta = "",
+                            payload = "",
+                        ),
                 ).isSuccess
             ) {
                 Result.success(true)

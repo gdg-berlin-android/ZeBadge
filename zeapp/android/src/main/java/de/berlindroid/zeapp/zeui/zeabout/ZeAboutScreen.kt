@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import de.berlindroid.zeapp.R
-import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zekompanion.getPlatform
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -46,7 +45,7 @@ fun ZeAbout(
     val context = LocalContext.current
     Surface(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         LazyColumn(
             modifier = Modifier

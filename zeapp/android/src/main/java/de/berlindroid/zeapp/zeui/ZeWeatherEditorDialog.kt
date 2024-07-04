@@ -107,10 +107,12 @@ fun WeatherEditorDialog(
                 Text(text = stringResource(android.R.string.cancel))
             }
         },
-        title = { Text(
-            color = ZeBlack,
-            text = stringResource(id = R.string.add_your_contact_details)
-        ) },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.add_your_contact_details),
+            )
+        },
         properties = DialogProperties(),
         text = {
             LazyColumn {
