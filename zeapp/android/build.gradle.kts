@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.gradle)
