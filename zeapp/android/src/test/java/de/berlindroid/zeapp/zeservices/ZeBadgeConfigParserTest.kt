@@ -5,7 +5,12 @@ import assertk.assertFailure
 import assertk.assertions.messageContains
 import io.mockk.every
 import io.mockk.mockkStatic
-import org.junit.Assert.*
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.UUID

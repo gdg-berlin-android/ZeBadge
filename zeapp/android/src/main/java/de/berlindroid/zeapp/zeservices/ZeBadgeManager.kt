@@ -4,7 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zeui.pixelBuffer
-import de.berlindroid.zekompanion.*
+import de.berlindroid.zekompanion.BadgePayload
+import de.berlindroid.zekompanion.Environment
+import de.berlindroid.zekompanion.base64
+import de.berlindroid.zekompanion.buildBadgeManager
+import de.berlindroid.zekompanion.toBinary
+import de.berlindroid.zekompanion.zipit
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import javax.inject.Inject
