@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: "gradle" # See documentation for possible values
-    directory: "/" # this means root of the repo for almost everything
+    directory: "zeapp/" # this means root of the repo for almost everything
     schedule:
       interval: "daily"
       
