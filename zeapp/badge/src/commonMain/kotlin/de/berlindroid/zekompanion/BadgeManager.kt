@@ -19,10 +19,10 @@ open class BadgePayload(
     fun toBadgeCommand(): String = "${if (debug) "debug:" else ""}$type:$meta:${payload}"
 }
 
-class HelpLoad(
+class HelpCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ): BadgePayload(
     debug = debug,
     type = "help",
@@ -30,10 +30,10 @@ class HelpLoad(
     payload = payload,
 )
 
-data class ReloadLoad(
+data class ReloadCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ): BadgePayload(
     debug = debug,
     type = "reload",
@@ -41,10 +41,10 @@ data class ReloadLoad(
     payload = payload,
 )
 
-data class ExitLoad(
+data class ExitCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ): BadgePayload(
     debug = debug,
     type = "exit",
@@ -52,10 +52,10 @@ data class ExitLoad(
     payload = payload,
 )
 
-data class TerminalLoad(
+data class TerminalCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ): BadgePayload(
     debug = debug,
     type = "terminal",
@@ -63,10 +63,10 @@ data class TerminalLoad(
     payload = payload,
 )
 
-data class RefreshLoad(
+data class RefreshCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ): BadgePayload(
     debug = debug,
     type = "refresh",
@@ -74,10 +74,10 @@ data class RefreshLoad(
     payload = payload,
 )
 
-data class ConfigSaveLoad(
+data class ConfigSaveCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ): BadgePayload(
     debug = debug,
     type = "config_save",
@@ -85,10 +85,10 @@ data class ConfigSaveLoad(
     payload = payload,
 )
 
-data class ConfigLoad(
+data class ConfigCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ) : BadgePayload(
     debug = debug,
     type = "config_load",
@@ -96,10 +96,10 @@ data class ConfigLoad(
     payload = payload,
 )
 
-data class ConfigUpdateLoad(
+data class ConfigUpdateCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ) : BadgePayload(
     debug = debug,
     type = "config_update",
@@ -107,10 +107,10 @@ data class ConfigUpdateLoad(
     payload = payload,
 )
 
-data class ConfigListLoad(
+data class ConfigListCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ) : BadgePayload(
     debug = debug,
     type = "config_list",
@@ -118,10 +118,10 @@ data class ConfigListLoad(
     payload = payload,
 )
 
-data class ShowLoad(
+data class ShowCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ) : BadgePayload(
     debug = debug,
     type = "show",
@@ -129,10 +129,10 @@ data class ShowLoad(
     payload = payload,
 )
 
-data class StoreLoad(
+data class StoreCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ) : BadgePayload(
     debug = debug,
     type = "store",
@@ -140,10 +140,10 @@ data class StoreLoad(
     payload = payload,
 )
 
-data class PreviewLoad(
+data class PreviewCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ): BadgePayload(
     debug = debug,
     type = "preview",
@@ -151,10 +151,10 @@ data class PreviewLoad(
     payload = payload,
 )
 
-data class ListLoad(
+data class ListCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ) : BadgePayload(
     debug = debug,
     type = "list",
@@ -162,10 +162,10 @@ data class ListLoad(
     payload = payload,
 )
 
-data class DeleteLoad(
+data class DeleteCommand(
     override val debug: Boolean = false,
-    override val meta: String,
-    override val payload: String,
+    override val meta: String = "",
+    override val payload: String = "",
 ) : BadgePayload(
     debug = debug,
     type = "delete",

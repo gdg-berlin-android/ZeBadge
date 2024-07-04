@@ -30,8 +30,7 @@ class ZeBadgeManager @Inject constructor(
             .zipit()
             .base64()
 
-        val payload = PreviewLoad(
-            meta = "",
+        val payload = PreviewCommand(
             payload = binaryPayload,
         )
 
@@ -51,7 +50,7 @@ class ZeBadgeManager @Inject constructor(
             .zipit()
             .base64()
 
-        val payload = StoreLoad(
+        val payload = StoreCommand(
             meta = name,
             payload = binaryPayload,
         )
@@ -65,10 +64,7 @@ class ZeBadgeManager @Inject constructor(
      * @param name a file name on the badge to be shown
      */
     suspend fun showPage(name: String): Result<Int> {
-        val payload = ShowLoad(
-            meta = name,
-            payload = "",
-        )
+        val payload = ShowCommand(meta = name)
 
         return badgeManager.sendPayload(payload)
     }
@@ -77,11 +73,7 @@ class ZeBadgeManager @Inject constructor(
      * Return the name of the pages stored on the badge.
      */
     suspend fun requestPagesStored(): Result<String> {
-        val payload = ListLoad(
-            meta = "",
-            payload = "",
-        )
-
+        val payload = ListCommand()
         return if (badgeManager.sendPayload(payload).isSuccess) {
             badgeManager.readResponse()
         } else {
@@ -94,19 +86,13 @@ class ZeBadgeManager @Inject constructor(
      */
     suspend fun listConfiguration(): Result<Map<String, Any?>> {
         badgeManager.sendPayload(
-            ConfigLoad(
-                meta = "",
-                payload = "",
-            ),
+            ConfigCommand(),
         )
 
         badgeManager.readResponse()
         delay(300)
 
-        val payload = ConfigListLoad(
-            meta = "",
-            payload = "",
-        )
+        val payload = ConfigListCommand()
 
         if (badgeManager.sendPayload(payload).isSuccess) {
             val response = badgeManager.readResponse()
@@ -142,8 +128,7 @@ class ZeBadgeManager @Inject constructor(
 
         val config = detypedConfig.entries.joinToString(separator = " ")
 
-        val payload = ConfigUpdateLoad(
-            meta = "",
+        val payload = ConfigUpdateCommand(
             payload = config,
         )
 
@@ -152,10 +137,7 @@ class ZeBadgeManager @Inject constructor(
             delay(300)
 
             return if (badgeManager.sendPayload(
-                    ConfigSaveLoad(
-                        meta = "",
-                        payload = "",
-                    ),
+                    ConfigSaveCommand(),
                 ).isSuccess
             ) {
                 Result.success(true)
