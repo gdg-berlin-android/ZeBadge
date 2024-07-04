@@ -1,10 +1,8 @@
 package de.berlindroid.zeapp.zeui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -14,13 +12,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @Composable
 fun ZeNavigationPad(
     lazyListState: LazyListState,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val scrollLength = 425f
     val topReached by remember { derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.offset == 0 } }
     val bottomReached by remember {
         derivedStateOf {
@@ -36,11 +34,14 @@ fun ZeNavigationPad(
         horizontalAlignment = Alignment.End,
     ) {
         if (!topReached) {
-            ZeFloatingScroller(coroutineScope, lazyListState, -scrollLength, "↑")
+            ZeFloatingScroller(text = "↑") {
+                coroutineScope.launch { lazyListState.animateScrollToItem(0) }
+            }
         }
-        Spacer(modifier = Modifier.size(10.dp))
         if (!bottomReached) {
-            ZeFloatingScroller(coroutineScope, lazyListState, scrollLength, "↓")
+            ZeFloatingScroller(text = "↓") {
+                coroutineScope.launch { lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount - 1) }
+            }
         }
     }
 }

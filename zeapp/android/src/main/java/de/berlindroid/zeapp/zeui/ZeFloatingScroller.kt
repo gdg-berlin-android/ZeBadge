@@ -19,25 +19,20 @@ import androidx.compose.material3.Text as ZeText
 
 @Composable
 fun ZeFloatingScroller(
-    coroutineScope: CoroutineScope,
-    lazyListState: LazyListState,
-    scrollLength: Float,
+    modifier: Modifier = Modifier,
     text: String,
+    onClick: () -> Unit,
 ) {
     FloatingActionButton(
         containerColor = ZeBlack,
-        modifier = Modifier
+        modifier = modifier
             .padding(16.dp)
             .border(
                 width = 1.dp,
                 color = ZeWhite,
                 shape = RoundedCornerShape(16.dp),
             ),
-        onClick = {
-            coroutineScope.launch {
-                lazyListState.animateScrollBy(scrollLength)
-            }
-        },
+        onClick = onClick,
     ) {
         ZeText(
             text = text,
