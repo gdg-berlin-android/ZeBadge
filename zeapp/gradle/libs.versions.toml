@@ -2,7 +2,7 @@
 
 [versions]
 
-android-gradle-plugin = "8.2.2"
+android-gradle-plugin = "8.3.2"
 androidx-activity = "1.9.0"
 androidx-compose-bom = "2024.06.00"
 androidx-compose-compiler = "1.5.3"
@@ -11,14 +11,11 @@ androidx-datastore = "1.1.1"
 androidx-lifecycle = "2.8.3"
 androidx-navigation = "2.7.7"
 androidx-test-ext-junit = "1.2.1"
-appcompat = "1.7.0"
 benchmark = "1.2.4"
 benchmarkMacroJunit4 = "1.2.4"
-core-ktx = "1.13.1"
 coil = "2.6.0"
 dagger-hilt = "2.51.1"
 detekt-gradle = "1.23.1"
-espresso-core = "3.6.1"
 jSerialComm = "2.10.3"
 kotlin = "1.9.10"
 kotlinx-coroutines-core = "1.8.1"
@@ -60,7 +57,6 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 android-test = { id = "com.android.test", version.ref = "android-test" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 [libraries]
 
@@ -85,13 +81,9 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 coil-transformations = "com.github.Commit451.coil-transformations:transformations:2.0.2"
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm" }
 ktor-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
-ktor-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
-ktor-jetty = { group = "io.ktor", name = "ktor-server-jetty", version.ref = "ktor" }
 ktor-tomcat = { group = "io.ktor", name = "ktor-server-tomcat", version.ref = "ktor" }
-ktor-cio = { group = "io.ktor", name = "ktor-server-cio", version.ref = "ktor" }
 ktor-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-content-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-network-tls = { group = "io.ktor", name = "ktor-network-tls-certificates", version.ref = "ktor" }
