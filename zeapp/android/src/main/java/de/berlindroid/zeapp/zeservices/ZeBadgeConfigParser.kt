@@ -5,6 +5,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 private const val SPACE_ESCAPED = "\$SPACE#"
+private val CONFIG_REGEX = Regex("""([^\s]+?)=([^\s]+?)(?:\s+|$)""")
 
 /**
  * Parses the badge configuration using the following format:
@@ -13,7 +14,7 @@ private const val SPACE_ESCAPED = "\$SPACE#"
  * wifi_attached=False user.uuid=4d3f6ca7‑d256‑4f84‑a6c6‑099a26055d4c \
  * user.description=Edward$SPACE#Bernard,$SPACE#a$SPACE#veteran \
  * user.name=Edward$SPACE#Bernard developer_mode=True \
- * user.iconB64=eNpjYGBgUJnkqaIg6MDAAmTX/+U+WGf//399OwNjYfv/gk1AQ=="
+ * user.iconB64=eNpjYGBgUJnkqaIg6MDAAmTX/+U+WGf//399OwNjYfv/gk1AQ==
  * ```
  */
 class ZeBadgeConfigParser
@@ -21,16 +22,19 @@ class ZeBadgeConfigParser
     constructor() {
         fun parse(configString: String): ParseResult {
             val configMap =
-                configString
-                    .split("\\s+".toRegex())
-                    .map { it.split("=", limit = 2) }
-                    .filter { it.size == 2 }
-                    .associate { it[0] to it[1] }
+                CONFIG_REGEX.findAll(configString)
+                    .map { it.groupValues }
+                    .associate { it[1] to it[2] }
+                    .mapValues { it.value.replace(SPACE_ESCAPED, " ") }
 
-            val userId = parseUserId(configMap)
-            val userName = parseUserName(configMap)
-            val userDescription = parseUserDescription(configMap)
-            val userProfilePhoto = parseUserProfilePhoto(configMap)
+            val userId = configMap["user.uuid"]?.let { UUID.fromString(it) }
+            val userName = configMap["user.name"]
+            val userDescription = configMap["user.description"]
+            val userProfilePhoto = configMap["user.iconB64"]?.let { Base64.decode(it, Base64.DEFAULT) }
+
+            val isWiFiAttached = configMap["wifi_attached"]?.toBoolean() ?: false
+            val isDeveloperMode = configMap["developer_mode"]?.toBoolean() ?: false
+
             val userInfo =
                 if (
                     userId != null && userName != null && userDescription != null && userProfilePhoto != null
@@ -41,26 +45,11 @@ class ZeBadgeConfigParser
                 }
 
             return ParseResult(
-                userInfo = userInfo,
-                isWiFiAttached = parseWiFiAttached(configMap),
-                isDeveloperMode = parseDeveloperMode(configMap),
+                userInfo,
+                isWiFiAttached,
+                isDeveloperMode,
             )
         }
-
-        private fun parseWiFiAttached(configMap: Map<String, String>): Boolean = configMap["wifi_attached"]?.toBoolean() ?: false
-
-        private fun parseDeveloperMode(configMap: Map<String, String>): Boolean = configMap["developer_mode"]?.toBoolean() ?: false
-
-        private fun parseUserId(configMap: Map<String, String>): UUID? = configMap["user.uuid"]?.let { UUID.fromString(it) }
-
-        private fun parseUserProfilePhoto(configMap: Map<String, String>): ByteArray? =
-            configMap["user.iconB64"]?.let { Base64.decode(it, Base64.DEFAULT) }
-
-        private fun parseUserName(configMap: Map<String, String>): String? = configMap["user.name"]?.unescape()
-
-        private fun parseUserDescription(configMap: Map<String, String>): String? = configMap["user.description"]?.unescape()
-
-        private fun String.unescape() = replace(SPACE_ESCAPED, " ")
     }
 
 data class ParseResult(
