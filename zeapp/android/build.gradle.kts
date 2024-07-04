@@ -111,7 +111,7 @@ android {
     }
 
     sourceSets.getByName("main").assets.srcDir(
-        "$buildDir/generated/assets",
+        "${layout.buildDirectory}/generated/assets",
     )
 
     compileOptions {
@@ -156,14 +156,9 @@ android {
 
 detekt {
     allRules = true
-    config = files("$rootDir/config/detekt/detekt-config.yml")
+    config.from(files("$rootDir/config/detekt/detekt-config.yml"))
     baseline = file("detekt-baseline.xml")
     buildUponDefaultConfig = true
-    reports {
-        html { required = true }
-        xml { required = true }
-        txt { required = false }
-    }
 }
 
 dependencies {
