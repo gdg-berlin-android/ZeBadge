@@ -13,10 +13,15 @@ import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +37,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
@@ -94,6 +98,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -135,7 +140,6 @@ import timber.log.Timber
 import android.content.res.Configuration as AndroidConfig
 import androidx.compose.foundation.Image as ZeImage
 import androidx.compose.foundation.layout.Arrangement as ZeArrangement
-import androidx.compose.foundation.layout.Column as ZeColumn
 import androidx.compose.foundation.layout.Row as ZeRow
 import androidx.compose.foundation.layout.Spacer as ZeSpacer
 import androidx.compose.foundation.lazy.LazyColumn as ZeLazyColumn
@@ -245,7 +249,13 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
 
-    BackHandler(currentRoute != ROUTE_HOME) { navController.navigateUp() }
+    BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
+        if (drawerState.isOpen) {
+            scope.launch { drawerState.close() }
+        } else {
+            navController.navigateUp()
+        }
+    }
 
     ZeBadgeAppTheme(
         content = {
@@ -277,9 +287,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     modifier = modifier,
                     floatingActionButton = {
                         if (currentRoute == ROUTE_HOME) {
-                            ZeNavigationPad(
-                                lazyListState,
-                            )
+                            ZeNavigationPad(lazyListState)
                         }
                     },
                     topBar = {
@@ -336,6 +344,12 @@ private fun ZeDrawerContent(
         painter: Painter? = null,
         onClick: () -> Unit,
     ) {
+        val shape = RoundedCornerShape(
+            topStart = 0.dp,
+            bottomStart = 0.dp,
+            topEnd = 30.dp,
+            bottomEnd = 30.dp,
+        )
         NavigationDrawerItem(
             modifier = Modifier
                 .padding(
@@ -347,17 +361,13 @@ private fun ZeDrawerContent(
                 .border(
                     width = 1.dp,
                     color = ZeWhite,
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        bottomStart = 0.dp,
-                        topEnd = 30.dp,
-                        bottomEnd = 30.dp,
-                    ),
+                    shape = shape,
                 ),
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedTextColor = ZeWhite,
                 unselectedContainerColor = ZeBlack,
             ),
+            shape = shape,
             icon = {
                 if (vector != null) {
                     ZeIcon(imageVector = vector, contentDescription = text, tint = ZeWhite)
@@ -419,10 +429,9 @@ private fun ZeDrawerContent(
             item {
                 HorizontalDivider(
                     thickness = 0.dp,
-                    color = ZeBlack,
+                    color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 40.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
                     ),
                 )
             }
@@ -446,10 +455,9 @@ private fun ZeDrawerContent(
             item {
                 HorizontalDivider(
                     thickness = 0.dp,
-                    color = ZeBlack,
+                    color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 40.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
                     ),
                 )
             }
@@ -522,6 +530,7 @@ private fun ZeTitle(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ZePages(
     paddingValues: PaddingValues,
@@ -529,9 +538,7 @@ private fun ZePages(
     lazyListState: LazyListState,
 ) {
     ZeSurface(
-        modifier = ZeModifier
-            .fillMaxSize()
-            .padding(paddingValues),
+        modifier = ZeModifier.fillMaxSize(),
     ) {
         val uiState by vm.uiState.collectAsState() // should be replace with 'collectAsStateWithLifecycle'
         val isKeyboardVisible by isKeyboardVisibleState()
@@ -553,66 +560,68 @@ private fun ZePages(
                 config = badgeConfiguration,
                 onDismissRequest = vm::closeConfiguration,
                 onConfirmed = vm::updateConfiguration,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
         if (editor != null) {
-            SelectedEditor(editor, vm)
+            Box(Modifier.padding(paddingValues)) {
+                SelectedEditor(editor, vm)
+            }
         }
 
         if (templateChooser != null) {
-            TemplateChooserDialog(vm, templateChooser)
+            TemplateChooserDialog(vm, templateChooser, modifier = Modifier.padding(paddingValues))
         }
 
-        // column surrounding a lazycolumn: so the message stays ontop.
-        ZeColumn {
+        ZeLazyColumn(
+            state = lazyListState,
+            modifier = Modifier
+                .padding(top = paddingValues.calculateTopPadding()),
+            contentPadding = PaddingValues(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
+        ) {
             if (message.isNotEmpty()) {
-                InfoBar(message, messageProgress, vm::copyInfoToClipboard)
-            }
-
-            ZeLazyColumn(
-                state = lazyListState,
-                contentPadding = PaddingValues(
-                    start = ZeDimen.One,
-                    end = ZeDimen.One,
-                    top = ZeDimen.Half,
-                    bottom = ZeDimen.One,
-                ),
-            ) {
-                items(
-                    slots.keys.toList(),
-                ) { slot ->
-                    var isVisible by remember { mutableStateOf(false) }
-                    val alpha: Float by animateFloatAsState(
-                        targetValue = if (isVisible) 1f else 0f,
-                        label = "alpha",
-                        animationSpec = tween(durationMillis = 750),
-                    )
-                    LaunchedEffect(slot) {
-                        isVisible = true
-                    }
-
-                    PagePreview(
-                        modifier = Modifier.graphicsLayer { this.alpha = alpha },
-                        name = slot::class.simpleName ?: "WTF",
-                        bitmap = vm.slotToBitmap(slot),
-                        customizeThisPage = if (slot.isSponsor) {
-                            { vm.customizeSponsorSlot(slot) }
-                        } else {
-                            { vm.customizeSlot(slot) }
-                        },
-                        resetThisPage = if (slot.isSponsor) {
-                            null
-                        } else {
-                            { vm.resetSlot(slot) }
-                        },
-                        sendToDevice = {
-                            vm.sendPageToBadgeAndDisplay(slot)
-                        },
-                    )
-
-                    ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
+                stickyHeader {
+                    InfoBar(message, messageProgress, vm::copyInfoToClipboard)
                 }
+            }
+            items(
+                slots.keys.toList(),
+            ) { slot ->
+                var isVisible by remember { mutableStateOf(false) }
+                val alpha: Float by animateFloatAsState(
+                    targetValue = if (isVisible) 1f else 0f,
+                    label = "alpha",
+                    animationSpec = tween(durationMillis = 750),
+                )
+                LaunchedEffect(slot) {
+                    isVisible = true
+                }
+
+                PagePreview(
+                    modifier = Modifier.graphicsLayer { this.alpha = alpha },
+                    name = slot::class.simpleName ?: "WTF",
+                    bitmap = vm.slotToBitmap(slot),
+                    customizeThisPage = if (slot.isSponsor) {
+                        { vm.customizeSponsorSlot(slot) }
+                    } else {
+                        { vm.customizeSlot(slot) }
+                    },
+                    resetThisPage = if (slot.isSponsor) {
+                        null
+                    } else {
+                        { vm.resetSlot(slot) }
+                    },
+                    sendToDevice = {
+                        vm.sendPageToBadgeAndDisplay(slot)
+                    },
+                )
+
+                ZeSpacer(modifier = ZeModifier.height(ZeDimen.One))
             }
         }
     }
@@ -675,6 +684,7 @@ private fun InfoBar(
 @Composable
 @Preview
 private fun BadgeConfigEditor(
+    modifier: Modifier = Modifier,
     config: Map<String, Any?> = mapOf(
         stringResource(id = R.string.ze_sample_configuration_key) to stringResource(id = R.string.ze_sample_configuration_value),
         stringResource(id = R.string.ze_sample_int_key) to 23,
@@ -687,7 +697,7 @@ private fun BadgeConfigEditor(
     var error by remember { mutableStateOf(mapOf<String, String>()) }
 
     AlertDialog(
-        modifier = Modifier.imePadding(),
+        modifier = modifier.imePadding(),
         onDismissRequest = onDismissRequest,
         confirmButton = {
             Button(
@@ -857,8 +867,10 @@ private fun SelectedEditor(
 private fun TemplateChooserDialog(
     vm: ZeBadgeViewModel,
     templateChooser: ZeTemplateChooser?,
+    modifier: Modifier = Modifier,
 ) {
     ZeAlertDialog(
+        modifier = modifier,
         containerColor = ZeWhite,
         onDismissRequest = {
             vm.templateSelected(null, null)
