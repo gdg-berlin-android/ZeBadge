@@ -250,9 +250,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
 
     BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
         if (drawerState.isOpen) {
-            scope.launch {
-                drawerState.close()
-            }
+            scope.launch { drawerState.close() }
         } else {
             navController.navigateUp()
         }
@@ -288,9 +286,7 @@ private fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     modifier = modifier,
                     floatingActionButton = {
                         if (currentRoute == ROUTE_HOME) {
-                            ZeNavigationPad(
-                                lazyListState,
-                            )
+                            ZeNavigationPad(lazyListState)
                         }
                     },
                     topBar = {
