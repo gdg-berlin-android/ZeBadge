@@ -7,12 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.content.IntentCompat
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zebits.toDitheredImage
@@ -104,3 +106,4 @@ const val ROUTE_HOME = "home"
 const val ROUTE_ABOUT = "about"
 const val ROUTE_OPENSOURCE = "opensource"
 const val ROUTE_ZEPASS = "zepass"
+const val ROUTE_LANGUAGES = "languages"

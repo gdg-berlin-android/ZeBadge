@@ -23,6 +23,11 @@ val zeAppDebug = "ZEapp23"
 android {
     namespace = "de.berlindroid.zeapp"
 
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        generateLocaleConfig = true
+    }
+
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
         compileSdk = 34
@@ -193,6 +198,7 @@ dependencies {
     implementation(libs.aboutlibraries.compose)
     implementation(libs.androidx.compose.hilt.navigation)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
+    implementation(libs.androidx.appcompat)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

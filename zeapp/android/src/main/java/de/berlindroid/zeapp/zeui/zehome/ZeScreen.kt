@@ -3,6 +3,7 @@ package de.berlindroid.zeapp.zeui.zehome
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -21,10 +22,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import de.berlindroid.zeapp.ROUTE_ABOUT
 import de.berlindroid.zeapp.ROUTE_HOME
+import de.berlindroid.zeapp.ROUTE_LANGUAGES
 import de.berlindroid.zeapp.ROUTE_OPENSOURCE
 import de.berlindroid.zeapp.ROUTE_ZEPASS
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
+import de.berlindroid.zeapp.zeui.zelanguages.ZeLanguages
 import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
@@ -92,6 +95,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGotoContributors = { routeTo(ROUTE_ABOUT) },
                         onGotoOpenSourceClick = { routeTo(ROUTE_OPENSOURCE) },
                         onGotoZePass = { routeTo(ROUTE_ZEPASS) },
+                        onGotoLanguagesSettings = { routeTo(ROUTE_LANGUAGES) },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -134,9 +138,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             )
                         }
                         composable(ROUTE_ZEPASS) {
-                            ZeUserProfile(
-
-                            )
+                            ZeUserProfile(paddingValues = PaddingValues())
                         }
                         composable(ROUTE_ZEPASS) {
                             ZeUserProfile(paddingValues)
@@ -154,6 +156,13 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 scope = scope,
                             )
                             ZeOpenSource(paddingValues)
+                        }
+                        composable(ROUTE_LANGUAGES) {
+                            DrawerBackHandler(
+                                drawerState = drawerState,
+                                scope = scope,
+                            )
+                            ZeLanguages(paddingValues)
                         }
                     }
                 }
