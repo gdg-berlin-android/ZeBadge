@@ -5,10 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.annotation.DrawableRes
 import dagger.hilt.android.qualifiers.ApplicationContext
-import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import javax.inject.Inject
 
 class ZeImageProviderService @Inject constructor(

@@ -72,7 +72,7 @@ fun ToolButton(
     TextButton(
         onClick = onClick,
         modifier = Modifier.wrapContentHeight(),
-        
+
     ) {
         Column(
             modifier = Modifier.wrapContentHeight().semantics(mergeDescendants = true) {},

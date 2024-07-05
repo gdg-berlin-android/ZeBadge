@@ -13,7 +13,7 @@ class ZeVcardStringBuilderTest {
             title = "Software Engineer",
             phone = "+49123456789",
             email = "zemail@berlindroid.de",
-            url = "https://berlindroid.de"
+            url = "https://berlindroid.de",
         )
         val vcardString = zeVcardStringBuilder.buildString()
         val expectedVcardString = """
@@ -33,7 +33,7 @@ class ZeVcardStringBuilderTest {
     @Test
     fun `buildString should return a vcard string with only required fields`() {
         val zeVcardStringBuilder = ZeVcardStringBuilder(
-            formattedName = "John Doe"
+            formattedName = "John Doe",
         )
         val vcardString = zeVcardStringBuilder.buildString()
         val expectedVcardString = """
@@ -66,7 +66,7 @@ class ZeVcardStringBuilderTest {
             title = null,
             phone = null,
             email = null,
-            url = null
+            url = null,
         )
         val vcardString = zeVcardStringBuilder.buildString()
         val expectedVcardString = """
@@ -85,7 +85,7 @@ class ZeVcardStringBuilderTest {
             title = "",
             phone = "",
             email = "",
-            url = ""
+            url = "",
         )
         val vcardString = zeVcardStringBuilder.buildString()
         val expectedVcardString = """
@@ -104,7 +104,7 @@ class ZeVcardStringBuilderTest {
             title = "",
             phone = null,
             email = "john.doe@example.com",
-            url = "http://example.com"
+            url = "http://example.com",
         )
         val vcardString = zeVcardStringBuilder.buildString()
         val expectedVcardString = """

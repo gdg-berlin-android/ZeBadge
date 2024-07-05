@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ZeAboutViewModel @Inject constructor(
     contributorsService: ZeContributorsService,
-):ViewModel(){
+) : ViewModel() {
 
     val lines: StateFlow<List<Contributor>> = contributorsService.contributors()
         .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())

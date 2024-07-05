@@ -5,7 +5,6 @@ import assertk.assertFailure
 import assertk.assertions.messageContains
 import io.mockk.every
 import io.mockk.mockkStatic
-import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import org.junit.After
 import org.junit.Assert.*

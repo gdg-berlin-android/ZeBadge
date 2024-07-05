@@ -20,9 +20,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import de.berlindroid.zeapp.R
 import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.BADGE_WIDTH
-import de.berlindroid.zeapp.R
 
 /**
  * A composable that represents a weather card, to be renderd as a bitmap.

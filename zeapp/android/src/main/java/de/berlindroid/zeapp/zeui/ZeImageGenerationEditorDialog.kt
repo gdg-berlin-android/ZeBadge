@@ -22,8 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import de.berlindroid.zeapp.OPENAI_API_KEY
-import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.copy
 import de.berlindroid.zeapp.zebits.cropPageFromCenter
@@ -32,6 +30,8 @@ import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

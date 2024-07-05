@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -107,10 +106,12 @@ fun WeatherEditorDialog(
                 Text(text = stringResource(android.R.string.cancel))
             }
         },
-        title = { Text(
-            color = ZeBlack,
-            text = stringResource(id = R.string.add_your_contact_details)
-        ) },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.add_your_contact_details),
+            )
+        },
         properties = DialogProperties(),
         text = {
             LazyColumn {

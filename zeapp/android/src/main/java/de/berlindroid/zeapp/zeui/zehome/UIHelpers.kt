@@ -24,12 +24,14 @@ internal val ZeSlot.isSponsor: Boolean
 // Device size extensions
 internal val WindowSizeClass.isTabletSize: Boolean
     get() = this.widthSizeClass == WindowWidthSizeClass.Expanded &&
-            (this.heightSizeClass == WindowHeightSizeClass.Expanded ||
-                    this.heightSizeClass == WindowHeightSizeClass.Medium)
+        (
+            this.heightSizeClass == WindowHeightSizeClass.Expanded ||
+                this.heightSizeClass == WindowHeightSizeClass.Medium
+            )
 
 internal val WindowSizeClass.isSmartphoneSize: Boolean
     get() = this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
-            (this.heightSizeClass == WindowHeightSizeClass.Compact)
+        (this.heightSizeClass == WindowHeightSizeClass.Compact)
 
 @Composable
 fun isKeyboardVisibleState(): State<Boolean> {

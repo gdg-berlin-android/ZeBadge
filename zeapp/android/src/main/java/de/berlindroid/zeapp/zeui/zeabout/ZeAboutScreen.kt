@@ -36,7 +36,7 @@ fun ZeAbout(
 
     Surface(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         LazyColumn(
             modifier = Modifier

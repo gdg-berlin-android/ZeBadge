@@ -49,7 +49,6 @@ class ZeBadgeViewModel @Inject constructor(
     private val getTemplateConfigurations: GetTemplateConfigurations,
 ) : ViewModel() {
 
-
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
 
@@ -519,7 +518,6 @@ class ZeBadgeViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun getInitialUIState(): ZeBadgeUiState =
         ZeBadgeUiState(
