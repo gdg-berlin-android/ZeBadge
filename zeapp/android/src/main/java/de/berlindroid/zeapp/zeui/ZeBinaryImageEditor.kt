@@ -34,6 +34,7 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.zebits.copy
 import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeGrey
 import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.BADGE_WIDTH
@@ -62,8 +63,6 @@ fun BinaryImageEditor(
 ) {
     var last by remember { mutableStateOf<Bitmap?>(null) }
 
-    val isImageBinary = remember { bitmap.isBinary() }
-
     Column {
         Image(
             modifier = Modifier
@@ -79,8 +78,11 @@ fun BinaryImageEditor(
             contentDescription = null,
         )
 
-        if (isImageBinary) {
-            Text(text = stringResource(id = R.string.remind_binary_image))
+        if (!bitmap.isBinary()) {
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.remind_binary_image),
+            )
         }
 
         LazyRow(
