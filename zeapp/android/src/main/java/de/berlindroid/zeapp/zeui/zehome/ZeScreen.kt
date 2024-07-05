@@ -144,9 +144,6 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         composable(ROUTE_ZEPASS) {
                             ZeUserProfile(paddingValues)
                         }
-                        composable(ROUTE_ZEPASS) {
-                            ZeUserProfile(paddingValues)
-                        }
                         composable(ROUTE_ABOUT) {
                             DrawerBackHandler(
                                 drawerState = drawerState,

@@ -36,7 +36,6 @@ fun ZeUserProfile(
     val viewModel: ZePassVm = hiltViewModel()
 
     val state by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     Surface(
         modifier = Modifier.fillMaxSize(),
