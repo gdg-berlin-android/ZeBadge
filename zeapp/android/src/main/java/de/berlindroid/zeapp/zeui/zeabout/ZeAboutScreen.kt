@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,7 +77,7 @@ fun ZeAbout(
                         model = contributor.imageUrl,
                         contentDescription = "avatar",
                         modifier = Modifier.padding(8.dp).size(50.dp).clip(CircleShape),
-                        )
+                    )
                     Text(
                         text = "${contributor.name}: ${contributor.contributions}",
                         color = MaterialTheme.colorScheme.onSurface,
