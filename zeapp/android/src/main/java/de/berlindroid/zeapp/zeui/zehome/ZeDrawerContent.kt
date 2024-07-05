@@ -37,7 +37,6 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 @Preview
 internal fun ZeDrawerContent(
     drawerState: DrawerState = DrawerState(DrawerValue.Open),
-    viewModel: ZeDrawerViewModel = hiltViewModel(),
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
@@ -46,8 +45,8 @@ internal fun ZeDrawerContent(
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
-    newReleaseVersion: Int? = null,
 ) {
+    val viewModel: ZeDrawerViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     @Composable
