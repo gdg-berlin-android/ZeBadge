@@ -8,14 +8,21 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ZeAboutViewModel @Inject constructor(
-    contributorsService: ZeContributorsService,
+    private val contributorsService: ZeContributorsService,
 ) : ViewModel() {
 
-    val lines: StateFlow<List<Contributor>> = contributorsService.contributors()
+    val zeContributors: StateFlow<List<Contributor>> = contributorsService.contributors
         .map { contributors -> contributors.sortedBy { -it.contributions } }
         .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
+
+    fun onEndOfContributorsList() {
+        viewModelScope.launch {
+            contributorsService.loadMore()
+        }
+    }
 }

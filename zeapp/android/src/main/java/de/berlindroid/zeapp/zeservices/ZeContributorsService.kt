@@ -1,27 +1,45 @@
 package de.berlindroid.zeapp.zeservices
 
+import android.util.Log
 import de.berlindroid.zeapp.zeui.zeabout.Contributor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okio.IOException
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
+import timber.log.Timber
 import javax.inject.Inject
 
 class ZeContributorsService @Inject constructor() {
-    fun contributors(): Flow<List<Contributor>> = flow {
-        val contributors = githubApiService.getContributors()
 
-        emit(
-            contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) },
-        )
-    }.flowOn(Dispatchers.IO)
+    private val _contributors = MutableStateFlow<List<Contributor>>(emptyList())
+    val contributors = _contributors.asStateFlow()
+    // For some reason GitHub's pagination starts at 1
+    private var currentPage = 1
+    private var lastPageLoaded = false
+
+    suspend fun loadMore() {
+        if (lastPageLoaded) return
+        try {
+            val contributors = githubApiService.getContributors(currentPage)
+                .map { Contributor(it.login, it.url, it.imageUrl, it.contributions) }
+            if (contributors.isEmpty()) lastPageLoaded = true
+            currentPage += 1
+            _contributors.update { (it + contributors)}
+        } catch (ioException: IOException) {
+            Timber.w(ioException, "Failed to load contributors")
+        } catch (httpException: HttpException) {
+            Timber.w(httpException, "Failed to load contributors")
+        }
+    }
 }
 
 private val json = Json {
@@ -53,5 +71,5 @@ private interface GithubApi {
     )
 
     @GET("contributors")
-    suspend fun getContributors(): List<Contributor>
+    suspend fun getContributors(@Query("page") page: Int, @Query("per_page") pageSize: Int = 30): List<Contributor>
 }
