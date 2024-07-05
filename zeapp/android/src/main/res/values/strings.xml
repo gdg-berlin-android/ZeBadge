@@ -31,7 +31,7 @@
     <string name="qr_code_phone">Phone</string>
     <string name="your_name_here" tools:ignore="MissingTranslation">Your Name Here</string>
     <string name="contact_me_here" tools:ignore="MissingTranslation">Contact Me Here</string>
-    <string name="binary_image_needed" tools:ignore="MissingTranslation">Binary image needed. Press one of the buttons below the image.</string>
+    <string name="binary_image_needed" tools:ignore="MissingTranslation">Binary image needed.</string>
     <string name="add_your_phrase_here" tools:ignore="MissingTranslation">Add your phrase here</string>
     <string name="random_phrase" tools:ignore="MissingTranslation">Random Phrase</string>
     <string name="unicorn_at_an_android_conference_in_isometric_view" tools:ignore="MissingTranslation">Unicorn at an android conference in isometric view.</string>

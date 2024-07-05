@@ -1,6 +1,7 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -52,6 +53,9 @@ class ZeBadgeViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
 
+    private val _errorUiState: MutableStateFlow<ZeBadgeErrorUiState> = MutableStateFlow(ZeBadgeErrorUiState.Initial)
+    val errorUiState: StateFlow<ZeBadgeErrorUiState> = _errorUiState.asStateFlow()
+
     // See if disappearing message is ongoing
     private var hideMessageJob: Job? = null
     private var messageProgressJob: Job? = null
@@ -76,6 +80,7 @@ class ZeBadgeViewModel @Inject constructor(
 
     fun showMessage(
         message: String,
+        showAsError: Boolean = false,
         duration: Long = MESSAGE_DISPLAY_DURATION,
     ) {
         _uiState.update {
@@ -83,6 +88,14 @@ class ZeBadgeViewModel @Inject constructor(
         }
 
         scheduleMessageDisappearance(duration)
+
+        if (showAsError) {
+            emitSnackBarAction(message = message)
+        }
+    }
+
+    private fun emitSnackBarAction(message: String) {
+        _errorUiState.value = ZeBadgeErrorUiState.ShowError(message)
     }
 
     private fun scheduleMessageDisappearance(
@@ -213,7 +226,7 @@ class ZeBadgeViewModel @Inject constructor(
                 slot,
                 slots[slot]!!,
             )
-            newCurrentSlotEditor?.let { currentSlotEditor ->
+            newCurrentSlotEditor.let { currentSlotEditor ->
                 _uiState.update {
                     it.copy(currentSlotEditor = currentSlotEditor)
                 }
@@ -528,6 +541,10 @@ class ZeBadgeViewModel @Inject constructor(
             slots = emptyMap(),
             currentBadgeConfig = null,
         )
+
+    fun clearErrorState() {
+        _errorUiState.value = ZeBadgeErrorUiState.ClearError
+    }
 }
 
 data class ZeBadgeUiState(
@@ -538,5 +555,15 @@ data class ZeBadgeUiState(
     val slots: Map<ZeSlot, ZeConfiguration>,
     val currentBadgeConfig: Map<String, Any?>?,
 )
+
+sealed class ZeBadgeErrorUiState {
+    data object Initial : ZeBadgeErrorUiState()
+
+    data class ShowLocalisedError(@StringRes val messageResId: Int) : ZeBadgeErrorUiState()
+
+    data class ShowError(val message: String) : ZeBadgeErrorUiState()
+
+    data object ClearError : ZeBadgeErrorUiState()
+}
 
 // ¹ https://www.reddit.com/r/ProgrammerHumor/comments/27yykv/indent_hadouken/
