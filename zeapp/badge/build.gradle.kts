@@ -1,11 +1,15 @@
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.kotlin.multiplatform)
     id("com.android.library")
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     targetHierarchy.default()
+
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 
     androidTarget {
         compilations.all {
@@ -26,28 +30,16 @@ kotlin {
         os.startsWith("Mac OS") ->
             jvm("mac") {
                 withJavaEnabled
-
-                jvmToolchain {
-                    languageVersion.set(JavaLanguageVersion.of(17))
-                }
             }
 
         os.startsWith("Linux") ->
             jvm("linux") {
                 withJavaEnabled
-
-                jvmToolchain {
-                    languageVersion.set(JavaLanguageVersion.of(17))
-                }
             }
 
         os.startsWith("Windows") ->
             jvm("windows") {
                 withJavaEnabled
-
-                jvmToolchain {
-                    languageVersion.set(JavaLanguageVersion.of(17))
-                }
             }
 
         else -> throw StopActionException("Your operating system is not supported at this time: '${os}'.")
