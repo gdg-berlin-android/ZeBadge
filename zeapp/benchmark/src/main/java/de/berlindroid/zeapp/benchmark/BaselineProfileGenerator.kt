@@ -22,6 +22,7 @@ class BaselineProfileGenerator {
         const val MEDIUM_DELAY = 5000L
         const val LARGE_DELAY = 10_000L
         const val SMALL_DELAY = 2_000L
+        const val DEFAULT_STABLE_ITERATION = 5
     }
 
     @get:Rule
@@ -30,6 +31,7 @@ class BaselineProfileGenerator {
     @Test
     fun startup() = baselineRule.collect(
         packageName = "de.berlindroid.zeapp",
+        stableIterations = DEFAULT_STABLE_ITERATION,
         includeInStartupProfile = true,
     ) {
         pressHome()
