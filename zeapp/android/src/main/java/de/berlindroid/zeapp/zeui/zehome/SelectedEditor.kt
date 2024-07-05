@@ -74,6 +74,7 @@ internal fun SelectedEditor(
                 dismissed = { vm.slotConfigured(null, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
                 updateMessage = vm::showMessage,
+                onFetchWeatherClick = vm::fetchWeather
             )
 
             is ZeConfiguration.Quote -> RandomQuotesEditorDialog(

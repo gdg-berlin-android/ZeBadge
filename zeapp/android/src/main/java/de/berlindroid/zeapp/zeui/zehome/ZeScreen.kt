@@ -3,6 +3,7 @@ package de.berlindroid.zeapp.zeui.zehome
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -134,9 +135,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             )
                         }
                         composable(ROUTE_ZEPASS) {
-                            ZeUserProfile(
-
-                            )
+                            ZeUserProfile(paddingValues = PaddingValues())
                         }
                         composable(ROUTE_ZEPASS) {
                             ZeUserProfile(paddingValues)
