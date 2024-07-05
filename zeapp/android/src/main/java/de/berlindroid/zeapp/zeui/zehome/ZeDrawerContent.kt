@@ -18,6 +18,8 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
@@ -34,6 +37,7 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 @Preview
 internal fun ZeDrawerContent(
     drawerState: DrawerState = DrawerState(DrawerValue.Open),
+    viewModel: ZeDrawerViewModel = hiltViewModel(),
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
@@ -42,7 +46,10 @@ internal fun ZeDrawerContent(
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
+    newReleaseVersion: Int? = null,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     @Composable
     fun NavDrawerItem(
         text: String,
@@ -173,6 +180,14 @@ internal fun ZeDrawerContent(
                 )
             }
 
+            uiState.newReleaseVersion?.let { version ->
+                item {
+                    Text(
+                        stringResource(id = R.string.ze_navdrawer_new_release, version),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
+            }
             item {
                 NavDrawerItem(
                     text = stringResource(id = R.string.ze_navdrawer_open_release_page),

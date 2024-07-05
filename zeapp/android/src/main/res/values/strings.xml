@@ -57,6 +57,7 @@
     <string name="ze_navdrawer_save_all_pages">Save all pages to badge</string>
     <string name="ze_navdrawer_update_config">Update config on badge</string>
     <string name="ze_navdrawer_send_random_page">Send random page to badge</string>
+    <string name="ze_navdrawer_new_release">✨ New release available: %d</string>
     <string name="ze_navdrawer_open_release_page">Open release page</string>
     <string name="ze_navdrawer_contributors">Contributors</string>
     <string name="ze_navdrawer_open_source">Open Source</string>

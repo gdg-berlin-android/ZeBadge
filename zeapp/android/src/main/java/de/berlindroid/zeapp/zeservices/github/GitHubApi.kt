@@ -22,6 +22,21 @@ interface GitHubApi {
         val imageUrl: String,
     )
 
+    @Serializable
+    data class Release(
+        @SerialName(value = "url")
+        val url: String,
+
+        @SerialName(value = "name")
+        val name: String,
+
+        @SerialName(value = "tag_name")
+        val tagName: String,
+    )
+
     @GET("contributors")
     suspend fun getContributors(@Query("page") page: Int): List<Contributor>
+
+    @GET("releases")
+    suspend fun getReleases(@Query("per_page") pageSize: Int = 30): List<Release>
 }
