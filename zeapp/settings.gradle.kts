@@ -11,11 +11,20 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        google()
-        mavenCentral()
+        google {
+            content {
+                includeGroupByRegex("androidx\\..*")
+                includeGroupByRegex("com\\.android\\..*")
+            }
+        }
         maven {
             setUrl("https://jitpack.io")
+            content {
+                includeGroup("com.github.mik3y")
+                includeGroup("com.github.Commit451.coil-transformations")
+            }
         }
+        mavenCentral()
     }
 }
 

@@ -1,0 +1,72 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">ZeApp</string>
+    <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
+
+    <string name="black_and_white">B/W</string>
+    <string name="reset">Alaphelyzet</string>
+    <string name="ze_edit">Szerkesztés</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Helyzeti</string>
+    <string name="rotate">Forgatás</string>
+    <string name="invert">Invertálás</string>
+    <string name="static_tool">Statikus</string>
+    <string name="ze_very_important" tools:ignore="MissingTranslation">Nagyon fontos</string>
+    <string name="remind_binary_image" tools:ignore="MissingTranslation">(Ez nem egy fekete-fehér kép fájl. Válassz egy szín szűrőt az alábbiakból!)</string>
+
+    <string name="generate">Generálás</string>
+    <string name="not_binary_image">Nem fekete-fehér kép fájl. Minden pixelnek feketének vagy fehérnek kell lennie.</string>
+    <string name="generate_image_page">Kép generálása</string>
+    <string name="draw_image_page">Kép rajzolása</string>
+    <string name="enter_prompt">Itt írd be a promptodat</string>
+    <string name="could_not_generate_image">Nem sikerült legenerálni a képet</string>
+
+    <string name="image_needed">Itt fekete-fehér képre van szükség. Nyomd meg az egyik gombot a kép alatt!</string>
+    <string name="add_qr_url">Add meg a QR URL-t</string>
+    <string name="qr_code_title">QR kód címe</string>
+    <string name="qr_code_text">További szöveg</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Add meg a vonalkód URL-jét</string>
+    <string name="bar_code_title">Vonalkód címe</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Email</string>
+    <string name="qr_code_phone">Telefon</string>
+    <string name="your_name_here" tools:ignore="MissingTranslation">Neved</string>
+    <string name="contact_me_here" tools:ignore="MissingTranslation">Elérhetőséged</string>
+    <string name="binary_image_needed" tools:ignore="MissingTranslation">Bináris képre van szükség.</string>
+    <string name="add_your_phrase_here" tools:ignore="MissingTranslation">Adj meg egy kifejezést</string>
+    <string name="random_phrase" tools:ignore="MissingTranslation">Véletlenszerű kifejezés</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view" tools:ignore="MissingTranslation">Unicorn at an android conference in isometric view.</string>
+    <string name="name" tools:ignore="MissingTranslation">Név</string>
+    <string name="contact" tools:ignore="MissingTranslation">Elérhetőség</string>
+    <string name="clear" tools:ignore="MissingTranslation">Törlés</string>
+    <string name="add_your_contact_details" tools:ignore="MissingTranslation">Add meg az elérhetőségedet</string>
+    <string name="set_picture" tools:ignore="MissingTranslation">Kép beállítása</string>
+    <string name="click_get_to_show_quote_of_the_day" tools:ignore="MissingTranslation">Kattints a Nap idézetére</string>
+    <string name="get" tools:ignore="MissingTranslation">Beszerzés</string>
+    <string name="decline" tools:ignore="MissingTranslation">Elutasítás</string>
+    <string name="send" tools:ignore="MissingTranslation">Küldés</string>
+    <string name="n_a" tools:ignore="MissingTranslation">N/A</string>
+    <string name="load_weather" tools:ignore="MissingTranslation">Időjárás betöltése</string>
+    <string name="hello_my_github_profile_is" tools:ignore="MissingTranslation">Hello, my github profile is</string>
+    <string name="your_phrase_here" tools:ignore="MissingTranslation">A kifejezésed</string>
+    <string name="hello_my_name_is" tools:ignore="MissingTranslation">Hello, my name is</string>
+    <string name="upcoming_weather" tools:ignore="MissingTranslation">☀️Upcoming weather</string>
+    <string name="quote_of_the_day" tools:ignore="MissingTranslation">Quote of The Day</string>
+    <string name="send_icon_text" tools:ignore="MissingTranslation">Küldés</string>
+    <string name="badge_config_editor_title">Badge összeállítás szerkesztése</string>
+
+    <string name="ze_navdrawer_save_all_pages">Minden összeállítás mentése a badge-re</string>
+    <string name="ze_navdrawer_update_config">Beállítások frissítése a badge-en</string>
+    <string name="ze_navdrawer_send_random_page">Véletlenszerű összeállítás letöltése a badge-re</string>
+    <string name="ze_navdrawer_new_release">✨ Új verzió elérhető: %d</string>
+    <string name="ze_navdrawer_open_release_page">Kiadott verziók megtekintése</string>
+    <string name="ze_navdrawer_contributors">Hozzájárulók</string>
+    <string name="ze_navdrawer_open_source">Open Source</string>
+    <string name="ze_select_content" tools:ignore="MissingTranslation">Tartalom kiválasztása</string>
+    <string name="ze_not_added_yet_message" tools:ignore="MissingTranslation">Nem járultál még hozzá ezzel! Bármit hozzáadhatsz ehhez a szerkesztőhöz!</string>
+
+    <string name="ze_sample_configuration_key" tools:ignore="MissingTranslation">minta összeállítás</string>
+    <string name="ze_sample_configuration_value" tools:ignore="MissingTranslation">minta érték</string>
+    <string name="ze_sample_int_key" tools:ignore="MissingTranslation">minta szám</string>
+    <string name="ze_sample_another_configuration_key" tools:ignore="MissingTranslation">másik összeállítás</string>
+</resources>

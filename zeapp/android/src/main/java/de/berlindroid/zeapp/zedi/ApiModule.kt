@@ -1,6 +1,5 @@
 package de.berlindroid.zeapp.zedi
 
-import android.util.Log
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,20 +8,19 @@ import de.berlindroid.zeapp.zeservices.ZePassApi
 import de.berlindroid.zeapp.zeservices.ZePassService
 import de.berlindroid.zeapp.zeservices.ZeUserApi
 import de.berlindroid.zeapp.zeservices.ZeUserService
+import de.berlindroid.zeapp.zeservices.ZeWeatherApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.Response
-import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import timber.log.Timber
 
 data class ZeServerBaseUrl(
     val value: String,
 )
 
 private val BASE_URL = ZeServerBaseUrl("https://zebadge.app/api/")
+private val METEO_URL = ZeServerBaseUrl("https://api.open-meteo.com")
 
 @InstallIn(ViewModelComponent::class)
 @Module
@@ -58,7 +56,8 @@ object ApiModule {
         service: ZeUserService,
         baseUrl: ZeServerBaseUrl,
     ): ZeUserApi = ZeUserApi(
-        service, baseUrl,
+        service,
+        baseUrl,
     )
 
     @Provides
@@ -76,7 +75,16 @@ object ApiModule {
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(
-                ZeUserService::
-                class.java,
+                ZeUserService::class.java,
             )
+
+    @Provides
+    fun provideZeWeatherApi(
+        json: Json,
+    ): ZeWeatherApi =
+        Retrofit.Builder()
+            .baseUrl(METEO_URL.value)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .build()
+            .create(ZeWeatherApi::class.java)
 }

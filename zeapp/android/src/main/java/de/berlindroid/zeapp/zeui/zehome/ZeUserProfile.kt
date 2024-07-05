@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -36,7 +35,6 @@ fun ZeUserProfile(
     val viewModel: ZePassVm = hiltViewModel()
 
     val state by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -80,7 +78,7 @@ fun ZeUserProfile(
                         Text(
                             style = MaterialTheme.typography.bodyMedium,
                             text = message.text,
-                            )
+                        )
                     }
                 }
             }

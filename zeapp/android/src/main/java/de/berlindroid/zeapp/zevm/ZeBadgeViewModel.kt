@@ -19,6 +19,7 @@ import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import de.berlindroid.zeapp.zeservices.ZeWeatherService
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zeapp.zeui.simulator.ZeSimulatorButtonAction
 import de.berlindroid.zekompanion.ditherFloydSteinberg
@@ -47,6 +48,7 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeManager: ZeBadgeManager,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
+    private val weatherService: ZeWeatherService,
     private val getTemplateConfigurations: GetTemplateConfigurations,
 ) : ViewModel() {
 
@@ -532,6 +534,8 @@ class ZeBadgeViewModel @Inject constructor(
             }
         }
     }
+
+    suspend fun fetchWeather(date: String) = weatherService.fetchWeather(date)
 
     private fun getInitialUIState(): ZeBadgeUiState =
         ZeBadgeUiState(
