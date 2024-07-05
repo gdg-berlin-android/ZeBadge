@@ -17,10 +17,14 @@ dependencyResolutionManagement {
                 includeGroupByRegex("com\\.android\\..*")
             }
         }
-        mavenCentral()
         maven {
             setUrl("https://jitpack.io")
+            content {
+                includeGroup("com.github.mik3y")
+                includeGroup("com.github.Commit451.coil-transformations")
+            }
         }
+        mavenCentral()
     }
 }
 
