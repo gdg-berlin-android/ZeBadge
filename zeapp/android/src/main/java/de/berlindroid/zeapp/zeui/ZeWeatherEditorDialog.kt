@@ -162,7 +162,7 @@ fun WeatherEditorDialog(
                         }
                     }
 
-                    BoxWithConstraints(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(),
