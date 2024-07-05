@@ -35,20 +35,22 @@ fun RandomQuotePage(
     val size by remember { mutableStateOf(6.sp) }
 
     Column(
-        modifier = Modifier
-            .background(
-                color = Color.White,
-            )
-            .size(
-                width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
-                height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
-            ),
+        modifier =
+            Modifier
+                .background(
+                    color = Color.White,
+                )
+                .size(
+                    width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
+                    height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Black),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black),
             fontFamily = FontFamily.Monospace,
             fontSize = 8.sp,
             textAlign = TextAlign.Center,
@@ -57,17 +59,19 @@ fun RandomQuotePage(
             text = stringResource(R.string.quote_of_the_day),
         )
         Text(
-            modifier = Modifier
-                .wrapContentSize()
-                .weight(1.0f),
+            modifier =
+                Modifier
+                    .wrapContentSize()
+                    .weight(1.0f),
             fontSize = size,
             textAlign = TextAlign.Center,
             text = message,
         )
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Black),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black),
             fontFamily = FontFamily.Monospace,
             fontSize = 6.sp,
             color = Color.White,

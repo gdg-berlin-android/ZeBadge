@@ -18,7 +18,6 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ZeBadgeViewModelTest {
-
     private val imageProviderService = mockk<ZeImageProviderService>()
     private val zeBadgeManager = mockk<ZeBadgeManager>()
     private val zePreferencesService = mockk<ZePreferencesService>()
@@ -49,13 +48,14 @@ class ZeBadgeViewModelTest {
         verify { clipboardService.copyToClipboard("") }
     }
 
-    private fun provideViewModel() = ZeBadgeViewModel(
-        imageProviderService = imageProviderService,
-        badgeManager = zeBadgeManager,
-        preferencesService = zePreferencesService,
-        clipboardService = clipboardService,
-        getTemplateConfigurations = templateConfigurations,
-    )
+    private fun provideViewModel() =
+        ZeBadgeViewModel(
+            imageProviderService = imageProviderService,
+            badgeManager = zeBadgeManager,
+            preferencesService = zePreferencesService,
+            clipboardService = clipboardService,
+            getTemplateConfigurations = templateConfigurations,
+        )
 
     @After
     fun clearMainDispatcher() {

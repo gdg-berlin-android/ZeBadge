@@ -126,9 +126,10 @@ fun WeatherEditorDialog(
                     var openDialog by remember { mutableStateOf(false) }
 
                     if (openDialog) {
-                        val datePickerState = rememberDatePickerState(
-                            initialSelectedDateMillis = Instant.now().toEpochMilli(),
-                        )
+                        val datePickerState =
+                            rememberDatePickerState(
+                                initialSelectedDateMillis = Instant.now().toEpochMilli(),
+                            )
                         val confirmEnabled by remember {
                             derivedStateOf { datePickerState.selectedDateMillis != null }
                         }
@@ -140,9 +141,10 @@ fun WeatherEditorDialog(
                                 TextButton(
                                     onClick = {
                                         openDialog = false
-                                        date = datePickerState.selectedDateMillis?.let {
-                                            Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
-                                        }?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString()
+                                        date =
+                                            datePickerState.selectedDateMillis?.let {
+                                                Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+                                            }?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString()
                                     },
                                     enabled = confirmEnabled,
                                 ) {
@@ -164,35 +166,38 @@ fun WeatherEditorDialog(
                     }
 
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
                     ) {
                         OutlinedTextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .focusable(false),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .focusable(false),
                             interactionSource = remember { MutableInteractionSource() },
                             readOnly = true,
                             value = date,
                             maxLines = 1,
                             label = { Text(text = "Date") },
                             onValueChange = { newValue ->
-                                if (newValue.length <= MaxCharacters * 2) {
+                                if (newValue.length <= MAX_CHARACTERS * 2) {
                                     date = newValue
                                     redrawComposableImage()
                                 }
                             },
                         )
                         Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .clickable {
-                                    if (!openDialog) {
-                                        openDialog = true
-                                    }
-                                },
+                            modifier =
+                                Modifier
+                                    .matchParentSize()
+                                    .clickable {
+                                        if (!openDialog) {
+                                            openDialog = true
+                                        }
+                                    },
                         )
                     }
                 }

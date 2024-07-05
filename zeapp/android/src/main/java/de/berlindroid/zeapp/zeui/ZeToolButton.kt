@@ -66,13 +66,11 @@ fun ToolButton(
 fun ToolButton(
     imageVector: ImageVector = Icons.AutoMirrored.Filled.Send,
     text: String = stringResource(id = de.berlindroid.zeapp.R.string.send_icon_text),
-
     onClick: () -> Unit = {},
 ) {
     TextButton(
         onClick = onClick,
         modifier = Modifier.wrapContentHeight(),
-
     ) {
         Column(
             modifier = Modifier.wrapContentHeight().semantics(mergeDescendants = true) {},

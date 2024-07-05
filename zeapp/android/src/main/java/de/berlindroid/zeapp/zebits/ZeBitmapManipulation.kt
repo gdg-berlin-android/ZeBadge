@@ -63,11 +63,16 @@ fun composableToBitmap(
             )
         }
 
-        private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
-            view.layoutParams = LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT,
-            )
+        private fun createBitmapFromView(
+            view: View,
+            width: Int,
+            height: Int,
+        ): Bitmap {
+            view.layoutParams =
+                LayoutParams(
+                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT,
+                )
 
             view.measure(
                 MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
@@ -133,11 +138,16 @@ fun qrComposableToBitmap(
             )
         }
 
-        private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
-            view.layoutParams = LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT,
-            )
+        private fun createBitmapFromView(
+            view: View,
+            width: Int,
+            height: Int,
+        ): Bitmap {
+            view.layoutParams =
+                LayoutParams(
+                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT,
+                )
 
             view.measure(
                 MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
@@ -202,11 +212,16 @@ fun barCodeComposableToBitmap(
             )
         }
 
-        private fun createBitmapFromView(view: View, width: Int, height: Int): Bitmap {
-            view.layoutParams = LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT,
-            )
+        private fun createBitmapFromView(
+            view: View,
+            width: Int,
+            height: Int,
+        ): Bitmap {
+            view.layoutParams =
+                LayoutParams(
+                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT,
+                )
 
             view.measure(
                 MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
@@ -240,7 +255,10 @@ fun barCodeComposableToBitmap(
  *
  * Every pixel corresponds to one bit in the byte buffer: 1 means white, 0 means black.
  */
-fun ByteBuffer.toBitmap(width: Int, height: Int): Bitmap {
+fun ByteBuffer.toBitmap(
+    width: Int,
+    height: Int,
+): Bitmap {
     val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 
     val buffer = IntBuffer.allocate(width * height)
@@ -252,11 +270,12 @@ fun ByteBuffer.toBitmap(width: Int, height: Int): Bitmap {
             // have we found a byte whose bit at the current position is not null?
             // aka is the current byte null?
             val bitOnlyByte = byte and (1 shl (7 - bitNumber)).toByte()
-            val color = if (bitOnlyByte == 0.toByte()) {
-                Color.BLACK
-            } else {
-                Color.WHITE
-            }
+            val color =
+                if (bitOnlyByte == 0.toByte()) {
+                    Color.BLACK
+                } else {
+                    Color.WHITE
+                }
 
             buffer.put(color)
         }
@@ -323,14 +342,22 @@ fun Bitmap.copy(): Bitmap = copy(config, true)
 /**
  * Only scale an image if it is needed, otherwise return a copy.
  */
-fun Bitmap.scaleIfNeeded(targetWidth: Int, targetHeight: Int): Bitmap =
+fun Bitmap.scaleIfNeeded(
+    targetWidth: Int,
+    targetHeight: Int,
+): Bitmap =
     if (width != targetWidth || height != targetHeight) {
         scale(targetWidth, targetHeight)
     } else {
         copy()
     }
 
-private fun Bitmap.crop(fromX: Int, fromY: Int, targetWidth: Int, targetHeight: Int): Bitmap {
+private fun Bitmap.crop(
+    fromX: Int,
+    fromY: Int,
+    targetWidth: Int,
+    targetHeight: Int,
+): Bitmap {
     val result = Bitmap.createBitmap(targetWidth, targetHeight, config)
     val canvas = Canvas(result)
     canvas.drawBitmap(this, fromX.toFloat(), fromY.toFloat(), null)

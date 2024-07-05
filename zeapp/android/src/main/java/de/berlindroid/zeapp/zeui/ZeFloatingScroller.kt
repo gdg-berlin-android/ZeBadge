@@ -26,13 +26,14 @@ fun ZeFloatingScroller(
 ) {
     FloatingActionButton(
         containerColor = ZeBlack,
-        modifier = Modifier
-            .padding(16.dp)
-            .border(
-                width = 1.dp,
-                color = ZeWhite,
-                shape = RoundedCornerShape(16.dp),
-            ),
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .border(
+                    width = 1.dp,
+                    color = ZeWhite,
+                    shape = RoundedCornerShape(16.dp),
+                ),
         onClick = {
             coroutineScope.launch {
                 lazyListState.animateScrollBy(scrollLength)

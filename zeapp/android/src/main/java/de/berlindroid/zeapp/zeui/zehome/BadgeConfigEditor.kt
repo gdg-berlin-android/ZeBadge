@@ -29,11 +29,12 @@ import de.berlindroid.zeapp.zevm.copy
 @Preview
 internal fun BadgeConfigEditor(
     modifier: Modifier = Modifier,
-    config: Map<String, Any?> = mapOf(
-        stringResource(id = R.string.ze_sample_configuration_key) to stringResource(id = R.string.ze_sample_configuration_value),
-        stringResource(id = R.string.ze_sample_int_key) to 23,
-        stringResource(id = R.string.ze_sample_another_configuration_key) to true,
-    ),
+    config: Map<String, Any?> =
+        mapOf(
+            stringResource(id = R.string.ze_sample_configuration_key) to stringResource(id = R.string.ze_sample_configuration_value),
+            stringResource(id = R.string.ze_sample_int_key) to 23,
+            stringResource(id = R.string.ze_sample_another_configuration_key) to true,
+        ),
     onDismissRequest: () -> Unit = {},
     onConfirmed: (updateConfig: Map<String, Any?>) -> Unit = {},
 ) {
@@ -70,39 +71,42 @@ internal fun BadgeConfigEditor(
             LazyColumn {
                 items(config.keys.toList()) { key ->
                     when (val value = configState[key]) {
-                        is Boolean -> AutoSizeTextField(
-                            value = value.toString(),
-                            label = { Text("$key (read only)") },
-                            onValueChange = { },
-                            placeholder = {},
-                            trailingIcon = {
-                                Icon(
-                                    Icons.Rounded.Lock,
-                                    tint = ZeBlack,
-                                    contentDescription = null,
-                                )
-                            },
-                            supportingText = { },
-                        )
-
-                        else -> AutoSizeTextField(
-                            value = "$value",
-                            isError = !error[key].isNullOrEmpty(),
-                            onValueChange = { updated ->
-                                if (updated != value) {
-                                    error = error.copy(key to "")
-                                    configState = configState.copy(
-                                        key to updated,
+                        is Boolean ->
+                            AutoSizeTextField(
+                                value = value.toString(),
+                                label = { Text("$key (read only)") },
+                                onValueChange = { },
+                                placeholder = {},
+                                trailingIcon = {
+                                    Icon(
+                                        Icons.Rounded.Lock,
+                                        tint = ZeBlack,
+                                        contentDescription = null,
                                     )
-                                }
-                            },
-                            label = { Text(text = key) },
-                            supportingText = {
-                                Text(text = error.getOrDefault(key, ""))
-                            },
-                            trailingIcon = {},
-                            placeholder = {},
-                        )
+                                },
+                                supportingText = { },
+                            )
+
+                        else ->
+                            AutoSizeTextField(
+                                value = "$value",
+                                isError = !error[key].isNullOrEmpty(),
+                                onValueChange = { updated ->
+                                    if (updated != value) {
+                                        error = error.copy(key to "")
+                                        configState =
+                                            configState.copy(
+                                                key to updated,
+                                            )
+                                    }
+                                },
+                                label = { Text(text = key) },
+                                supportingText = {
+                                    Text(text = error.getOrDefault(key, ""))
+                                },
+                                trailingIcon = {},
+                                placeholder = {},
+                            )
                     }
                 }
             }

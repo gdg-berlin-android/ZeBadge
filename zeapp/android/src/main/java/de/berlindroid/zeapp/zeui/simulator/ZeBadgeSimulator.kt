@@ -40,23 +40,26 @@ fun BadgeSimulator(
     onButtonPressed: (ZeSimulatorButtonAction) -> Unit = {},
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .paint(
-                painterResource(id = R.drawable.badgerrpi2040),
-                contentScale = ContentScale.Fit,
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .paint(
+                    painterResource(id = R.drawable.badgerrpi2040),
+                    contentScale = ContentScale.Fit,
+                ),
     ) {
         Spacer(Modifier.fillMaxHeight(.2f))
         Row(Modifier.fillMaxHeight(.76f)) {
             Spacer(modifier = Modifier.weight(1.5f))
             Image(
-                modifier = Modifier
-                    .width(550.dp)
-                    .fillMaxHeight(),
-                bitmap = page
-                    .scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
-                    .asImageBitmap(),
+                modifier =
+                    Modifier
+                        .width(550.dp)
+                        .fillMaxHeight(),
+                bitmap =
+                    page
+                        .scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                        .asImageBitmap(),
                 contentDescription = null,
                 filterQuality = FilterQuality.None,
             )

@@ -50,29 +50,32 @@ internal fun ZeDrawerContent(
         painter: Painter? = null,
         onClick: () -> Unit,
     ) {
-        val shape = RoundedCornerShape(
-            topStart = 0.dp,
-            bottomStart = 0.dp,
-            topEnd = 30.dp,
-            bottomEnd = 30.dp,
-        )
+        val shape =
+            RoundedCornerShape(
+                topStart = 0.dp,
+                bottomStart = 0.dp,
+                topEnd = 30.dp,
+                bottomEnd = 30.dp,
+            )
         NavigationDrawerItem(
-            modifier = Modifier
-                .padding(
-                    start = 0.dp,
-                    end = 32.dp,
-                    top = 4.dp,
-                    bottom = 4.dp,
-                )
-                .border(
-                    width = 1.dp,
-                    color = ZeWhite,
-                    shape = shape,
+            modifier =
+                Modifier
+                    .padding(
+                        start = 0.dp,
+                        end = 32.dp,
+                        top = 4.dp,
+                        bottom = 4.dp,
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = ZeWhite,
+                        shape = shape,
+                    ),
+            colors =
+                NavigationDrawerItemDefaults.colors(
+                    unselectedTextColor = ZeWhite,
+                    unselectedContainerColor = ZeBlack,
                 ),
-            colors = NavigationDrawerItemDefaults.colors(
-                unselectedTextColor = ZeWhite,
-                unselectedContainerColor = ZeBlack,
-            ),
             shape = shape,
             icon = {
                 if (vector != null) {
@@ -93,12 +96,13 @@ internal fun ZeDrawerContent(
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.secondary,
         drawerShape = DrawerDefaults.shape,
-        modifier = Modifier
-            .border(
-                width = 1.dp,
-                color = ZeWhite,
-                shape = DrawerDefaults.shape,
-            ),
+        modifier =
+            Modifier
+                .border(
+                    width = 1.dp,
+                    color = ZeWhite,
+                    shape = DrawerDefaults.shape,
+                ),
     ) {
         ZeTitle(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 64.dp),
@@ -135,12 +139,13 @@ internal fun ZeDrawerContent(
                 HorizontalDivider(
                     thickness = 0.dp,
                     color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 0.dp,
-                        top = 16.dp,
-                        bottom = 16.dp,
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            start = 0.dp,
+                            end = 0.dp,
+                            top = 16.dp,
+                            bottom = 16.dp,
+                        ),
                 )
             }
 
@@ -164,12 +169,13 @@ internal fun ZeDrawerContent(
                 HorizontalDivider(
                     thickness = 0.dp,
                     color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 0.dp,
-                        top = 16.dp,
-                        bottom = 16.dp,
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            start = 0.dp,
+                            end = 0.dp,
+                            top = 16.dp,
+                            bottom = 16.dp,
+                        ),
                 )
             }
 

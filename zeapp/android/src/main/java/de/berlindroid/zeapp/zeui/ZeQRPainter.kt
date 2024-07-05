@@ -37,31 +37,34 @@ fun rememberQrBitmapPainter(
 
         val qrCodeWriter = QRCodeWriter()
 
-        val encodeHints = mutableMapOf<EncodeHintType, Any?>()
-            .apply {
-                this[EncodeHintType.MARGIN] = paddingPx
-            }
+        val encodeHints =
+            mutableMapOf<EncodeHintType, Any?>()
+                .apply {
+                    this[EncodeHintType.MARGIN] = paddingPx
+                }
 
-        val bitmapMatrix = try {
-            qrCodeWriter.encode(
-                content,
-                BarcodeFormat.QR_CODE,
-                sizePx,
-                sizePx,
-                encodeHints,
-            )
-        } catch (ex: WriterException) {
-            null
-        }
+        val bitmapMatrix =
+            try {
+                qrCodeWriter.encode(
+                    content,
+                    BarcodeFormat.QR_CODE,
+                    sizePx,
+                    sizePx,
+                    encodeHints,
+                )
+            } catch (ex: WriterException) {
+                null
+            }
 
         val matrixWidth = bitmapMatrix?.width ?: sizePx
         val matrixHeight = bitmapMatrix?.height ?: sizePx
 
-        val newBitmap = Bitmap.createBitmap(
-            bitmapMatrix?.width ?: sizePx,
-            bitmapMatrix?.height ?: sizePx,
-            Bitmap.Config.ARGB_8888,
-        )
+        val newBitmap =
+            Bitmap.createBitmap(
+                bitmapMatrix?.width ?: sizePx,
+                bitmapMatrix?.height ?: sizePx,
+                Bitmap.Config.ARGB_8888,
+            )
 
         for (x in 0 until matrixWidth) {
             for (y in 0 until matrixHeight) {
@@ -76,11 +79,12 @@ fun rememberQrBitmapPainter(
     }
 
     return remember(bitmap) {
-        val currentBitmap = bitmap ?: Bitmap.createBitmap(
-            sizePx,
-            sizePx,
-            Bitmap.Config.ARGB_8888,
-        ).apply { eraseColor(Color.TRANSPARENT) }
+        val currentBitmap =
+            bitmap ?: Bitmap.createBitmap(
+                sizePx,
+                sizePx,
+                Bitmap.Config.ARGB_8888,
+            ).apply { eraseColor(Color.TRANSPARENT) }
 
         BitmapPainter(currentBitmap.asImageBitmap())
     }

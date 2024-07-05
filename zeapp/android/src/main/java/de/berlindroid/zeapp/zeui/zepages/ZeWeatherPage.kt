@@ -36,20 +36,22 @@ fun WeatherPage(
     var size by remember { mutableStateOf(10.sp) }
 
     Column(
-        modifier = Modifier
-            .background(
-                color = Color.White,
-            )
-            .size(
-                width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
-                height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
-            ),
+        modifier =
+            Modifier
+                .background(
+                    color = Color.White,
+                )
+                .size(
+                    width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
+                    height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF4444FF)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF4444FF)),
             fontFamily = FontFamily.Monospace,
             fontSize = 10.sp,
             textAlign = TextAlign.Center,
@@ -58,9 +60,10 @@ fun WeatherPage(
             text = stringResource(R.string.upcoming_weather),
         )
         Text(
-            modifier = Modifier
-                .wrapContentSize()
-                .weight(1.0f),
+            modifier =
+                Modifier
+                    .wrapContentSize()
+                    .weight(1.0f),
             fontSize = size,
             textAlign = TextAlign.Center,
             text = date,
@@ -71,9 +74,10 @@ fun WeatherPage(
             },
         )
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF4444FF)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF4444FF)),
             fontFamily = FontFamily.Monospace,
             fontSize = 8.sp,
             color = Color.White,

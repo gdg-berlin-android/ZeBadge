@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class ZeAboutViewModel @Inject constructor(
-    contributorsService: ZeContributorsService,
-) : ViewModel() {
-
-    val lines: StateFlow<List<Contributor>> = contributorsService.contributors()
-        .map { contributors -> contributors.sortedBy { -it.contributions } }
-        .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
-}
+class ZeAboutViewModel
+    @Inject
+    constructor(
+        contributorsService: ZeContributorsService,
+    ) : ViewModel() {
+        val lines: StateFlow<List<Contributor>> =
+            contributorsService.contributors()
+                .map { contributors -> contributors.sortedBy { -it.contributions } }
+                .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
+    }

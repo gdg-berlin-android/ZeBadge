@@ -9,16 +9,15 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibraryDefaults.libraryColors
 
 @Composable
-fun ZeOpenSource(
-    paddingValues: PaddingValues,
-) {
+fun ZeOpenSource(paddingValues: PaddingValues) {
     LibrariesContainer(
         Modifier.fillMaxSize(),
         contentPadding = paddingValues,
-        colors = libraryColors(
-            backgroundColor = MaterialTheme.colorScheme.surface,
-            badgeBackgroundColor = MaterialTheme.colorScheme.primary,
-            dialogConfirmButtonColor = MaterialTheme.colorScheme.primary,
-        ),
+        colors =
+            libraryColors(
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                badgeBackgroundColor = MaterialTheme.colorScheme.primary,
+                dialogConfirmButtonColor = MaterialTheme.colorScheme.primary,
+            ),
     )
 }

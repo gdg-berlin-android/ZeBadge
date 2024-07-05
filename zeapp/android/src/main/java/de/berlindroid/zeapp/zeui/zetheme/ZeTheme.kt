@@ -10,27 +10,29 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = ZeWhite,
-    secondary = ZeGrey,
-    onPrimary = ZeBlack,
-    onSecondary = ZeBlack,
-    error = ZeCarmine,
-    onError = ZeBlack,
-    background = ZeBlack,
-    onBackground = ZeWhite,
-)
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = ZeWhite,
+        secondary = ZeGrey,
+        onPrimary = ZeBlack,
+        onSecondary = ZeBlack,
+        error = ZeCarmine,
+        onError = ZeBlack,
+        background = ZeBlack,
+        onBackground = ZeWhite,
+    )
 
-private val LightColorScheme = lightColorScheme(
-    primary = ZeBlack,
-    secondary = ZeGrey,
-    onPrimary = ZeWhite,
-    onSecondary = ZeBlack,
-    error = ZeCarmine,
-    onError = ZeWhite,
-    background = ZeWhite,
-    onBackground = ZeBlack,
-)
+private val LightColorScheme =
+    lightColorScheme(
+        primary = ZeBlack,
+        secondary = ZeGrey,
+        onPrimary = ZeWhite,
+        onSecondary = ZeBlack,
+        error = ZeCarmine,
+        onError = ZeWhite,
+        background = ZeWhite,
+        onBackground = ZeBlack,
+    )
 
 @Composable
 fun ZeBadgeAppTheme(

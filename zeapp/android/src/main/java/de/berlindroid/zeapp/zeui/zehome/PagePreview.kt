@@ -50,24 +50,28 @@ internal fun PagePreview(
     sendToDevice: (() -> Unit)? = null,
 ) {
     Card(
-        modifier = modifier
-            .padding(ZeDimen.Quarter),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ),
+        modifier =
+            modifier
+                .padding(ZeDimen.Quarter),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
         border = BorderStroke(1.dp, ZeWhite),
     ) {
         Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(unbounded = true)
-                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
-                .clip(RoundedCornerShape(4.dp)),
-            painter = BitmapPainter(
-                image = bitmap.asImageBitmap(),
-                filterQuality = FilterQuality.None,
-            ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(unbounded = true)
+                    .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
+                    .clip(RoundedCornerShape(4.dp)),
+            painter =
+                BitmapPainter(
+                    image = bitmap.asImageBitmap(),
+                    filterQuality = FilterQuality.None,
+                ),
             contentScale = ContentScale.FillWidth,
             contentDescription = null,
         )
@@ -75,9 +79,10 @@ internal fun PagePreview(
         Row {
             Text(
                 text = name,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = ZeDimen.One),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = ZeDimen.One),
             )
             if (resetThisPage != null || customizeThisPage != null || sendToDevice != null) {
                 LazyRow(

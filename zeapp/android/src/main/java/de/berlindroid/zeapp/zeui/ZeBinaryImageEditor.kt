@@ -61,29 +61,33 @@ fun BinaryImageEditor(
 
     Column {
         Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(unbounded = false)
-                .height(BADGE_HEIGHT.dp)
-                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
-            painter = BitmapPainter(
-                image = bitmap.asImageBitmap(),
-                filterQuality = FilterQuality.None,
-            ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(unbounded = false)
+                    .height(BADGE_HEIGHT.dp)
+                    .padding(horizontal = ZeDimen.One, vertical = ZeDimen.Half),
+            painter =
+                BitmapPainter(
+                    image = bitmap.asImageBitmap(),
+                    filterQuality = FilterQuality.None,
+                ),
             contentScale = ContentScale.FillWidth,
             contentDescription = null,
         )
 
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = ZeGrey,
-                    shape = RoundedCornerShape(
-                        4.dp,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = ZeGrey,
+                        shape =
+                            RoundedCornerShape(
+                                4.dp,
+                            ),
                     ),
-                ),
             contentPadding = PaddingValues(horizontal = ZeDimen.Quarter),
             horizontalArrangement = Arrangement.End,
         ) {

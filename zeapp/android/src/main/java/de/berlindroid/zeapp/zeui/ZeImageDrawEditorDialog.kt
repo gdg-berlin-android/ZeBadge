@@ -67,46 +67,51 @@ fun ZeImageDrawEditorDialog(
     // recomposition is triggered by reassigning the same path object
     var path by remember { mutableStateOf(Path(), policy = neverEqualPolicy()) }
 
-    val drawContainer = remember {
-        ComposeView(context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-            )
-            setContent {
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
-                        .clipToBounds()
-                        .background(Color.White)
-                        .pointerInput(Unit) {
-                            detectDragGestures(
-                                onDragStart = { offset ->
-                                    path = path.apply { moveTo(offset.x, offset.y) }
-                                },
-                                onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
-                                    val currentPosition = pointerInputChange.position + offset
-                                    path = path.apply {
-                                        lineTo(currentPosition.x, currentPosition.y)
-                                    }
-                                },
-                            )
-                        },
-                ) {
-                    drawPath(
-                        color = Color.Black,
-                        path = path,
-                        style = Stroke(
-                            width = 4.dp.toPx(),
-                            cap = StrokeCap.Round,
-                            join = StrokeJoin.Round,
-                        ),
+    val drawContainer =
+        remember {
+            ComposeView(context).apply {
+                layoutParams =
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
                     )
+                setContent {
+                    Canvas(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
+                                .clipToBounds()
+                                .background(Color.White)
+                                .pointerInput(Unit) {
+                                    detectDragGestures(
+                                        onDragStart = { offset ->
+                                            path = path.apply { moveTo(offset.x, offset.y) }
+                                        },
+                                        onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
+                                            val currentPosition = pointerInputChange.position + offset
+                                            path =
+                                                path.apply {
+                                                    lineTo(currentPosition.x, currentPosition.y)
+                                                }
+                                        },
+                                    )
+                                },
+                    ) {
+                        drawPath(
+                            color = Color.Black,
+                            path = path,
+                            style =
+                                Stroke(
+                                    width = 4.dp.toPx(),
+                                    cap = StrokeCap.Round,
+                                    join = StrokeJoin.Round,
+                                ),
+                        )
+                    }
                 }
             }
         }
-    }
     AlertDialog(
         containerColor = ZeWhite,
         onDismissRequest = dismissed,
@@ -141,11 +146,12 @@ fun ZeImageDrawEditorDialog(
         },
         text = {
             AndroidView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
-                    .clipToBounds()
-                    .background(Color.Green),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
+                        .clipToBounds()
+                        .background(Color.Green),
                 factory = {
                     drawContainer
                 },

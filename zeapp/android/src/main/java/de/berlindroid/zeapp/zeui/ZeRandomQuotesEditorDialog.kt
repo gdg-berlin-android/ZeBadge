@@ -100,7 +100,7 @@ fun RandomQuotesEditorDialog(
                         message = quoteList[index].q
                         author = quoteList[index].a
                         redrawComposableImage()
-                    },) {
+                    }) {
                         Text(text = stringResource(R.string.get))
                     }
                 }
@@ -114,15 +114,16 @@ data class Quote(
     val a: String,
 )
 
-private val quoteList = listOf(
-    Quote("You win more from losing than winning.", "Morgan Wootten"),
-    Quote("The Only Thing That Is Constant Is Change", "Heraclitus"),
-    Quote("Once you choose hope, anything's possible.", "Christopher Reeve"),
-    Quote("The love of money is the root of all evil.", "the Bible"),
-    Quote("The only thing we have to fear is fear itself.", "Franklin D. Roosevelt"),
-    Quote("Whoever is happy will make others happy too.", "Anne Frank"),
-    Quote("The purpose of our lives is to be happy", "Dalai Lama"),
-    Quote("Only a life lived for others is a life worthwhile.", "Albert Einstein"),
-    Quote("Live in the sunshine, swim the sea, drink the wild air.", "Ralph Waldo Emerson"),
-    Quote("Life is trying things to see if they work.", "Ralph Waldo Emerson"),
-)
+private val quoteList =
+    listOf(
+        Quote("You win more from losing than winning.", "Morgan Wootten"),
+        Quote("The Only Thing That Is Constant Is Change", "Heraclitus"),
+        Quote("Once you choose hope, anything's possible.", "Christopher Reeve"),
+        Quote("The love of money is the root of all evil.", "the Bible"),
+        Quote("The only thing we have to fear is fear itself.", "Franklin D. Roosevelt"),
+        Quote("Whoever is happy will make others happy too.", "Anne Frank"),
+        Quote("The purpose of our lives is to be happy", "Dalai Lama"),
+        Quote("Only a life lived for others is a life worthwhile.", "Albert Einstein"),
+        Quote("Live in the sunshine, swim the sea, drink the wild air.", "Ralph Waldo Emerson"),
+        Quote("Life is trying things to see if they work.", "Ralph Waldo Emerson"),
+    )

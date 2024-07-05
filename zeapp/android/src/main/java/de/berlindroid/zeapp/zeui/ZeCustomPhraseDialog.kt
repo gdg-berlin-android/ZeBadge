@@ -85,7 +85,7 @@ fun CustomPhraseEditorDialog(
                 value = randomPhrase,
                 label = { Text(text = stringResource(R.string.random_phrase)) },
                 onValueChange = { newValue ->
-                    if (newValue.length <= MaxCharacters * 2) {
+                    if (newValue.length <= MAX_CHARACTERS * 2) {
                         randomPhrase = newValue
                         redrawComposableImage()
                     }
@@ -93,7 +93,7 @@ fun CustomPhraseEditorDialog(
                 placeholder = {},
                 trailingIcon = {},
                 supportingText = {
-                    Text(text = "${randomPhrase.length}/${MaxCharacters * 2}")
+                    Text(text = "${randomPhrase.length}/${MAX_CHARACTERS * 2}")
                 },
             )
         },

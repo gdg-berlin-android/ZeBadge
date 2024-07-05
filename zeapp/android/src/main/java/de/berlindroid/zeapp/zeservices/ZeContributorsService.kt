@@ -14,40 +14,41 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
 import javax.inject.Inject
 
-class ZeContributorsService @Inject constructor() {
-    fun contributors(): Flow<List<Contributor>> = flow {
-        val contributors = githubApiService.getContributors()
+class ZeContributorsService
+    @Inject
+    constructor() {
+        fun contributors(): Flow<List<Contributor>> =
+            flow {
+                val contributors = githubApiService.getContributors()
 
-        emit(
-            contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) },
-        )
-    }.flowOn(Dispatchers.IO)
-}
+                emit(
+                    contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) },
+                )
+            }.flowOn(Dispatchers.IO)
+    }
 
-private val json = Json {
-    ignoreUnknownKeys = true
-}
+private val json =
+    Json {
+        ignoreUnknownKeys = true
+    }
 
-private val retrofit = Retrofit.Builder()
-    .baseUrl("https://api.github.com/repos/gdg-berlin-android/zebadge/")
-    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-    .build()
+private val retrofit =
+    Retrofit.Builder()
+        .baseUrl("https://api.github.com/repos/gdg-berlin-android/zebadge/")
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
 
 private val githubApiService = retrofit.create(GithubApi::class.java)
 
 private interface GithubApi {
-
     @Serializable
     data class Contributor(
         @SerialName(value = "login")
         val login: String,
-
         @SerialName(value = "contributions")
         val contributions: Int,
-
         @SerialName(value = "html_url")
         val url: String,
-
         @SerialName(value = "avatar_url")
         val imageUrl: String,
     )

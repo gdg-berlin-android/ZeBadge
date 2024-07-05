@@ -34,20 +34,22 @@ fun BarCodePage(
     url: String = stringResource(R.string.repo_url),
 ) {
     Column(
-        modifier = Modifier
-            .background(
-                color = Color.White,
-            )
-            .size(
-                width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
-                height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
-            ),
+        modifier =
+            Modifier
+                .background(
+                    color = Color.White,
+                )
+                .size(
+                    width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
+                    height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF801000)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF801000)),
             fontFamily = FontFamily.Cursive,
             fontSize = 10.sp,
             textAlign = TextAlign.Center,

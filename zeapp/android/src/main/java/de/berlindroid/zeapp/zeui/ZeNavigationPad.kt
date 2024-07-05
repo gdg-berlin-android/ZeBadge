@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ZeNavigationPad(
-    lazyListState: LazyListState,
-) {
+fun ZeNavigationPad(lazyListState: LazyListState) {
     val coroutineScope = rememberCoroutineScope()
     val scrollLength = 425f
     val topReached by remember { derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.offset == 0 } }

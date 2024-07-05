@@ -13,9 +13,10 @@ internal suspend fun fetchWeather(date: String): WeatherData {
     try {
         val weather = weatherApiService.getWeather()
 
-        val tempIndex = weather.hourly.time.indexOfFirst {
-            it.contains("${date}T12:00")
-        }
+        val tempIndex =
+            weather.hourly.time.indexOfFirst {
+                it.contains("${date}T12:00")
+            }
         if (tempIndex == -1) {
             return WeatherData(
                 day = null,
@@ -36,19 +37,20 @@ internal suspend fun fetchWeather(date: String): WeatherData {
     }
 }
 
-private val json = Json {
-    ignoreUnknownKeys = true
-}
+private val json =
+    Json {
+        ignoreUnknownKeys = true
+    }
 
-private val retrofit = Retrofit.Builder()
-    .baseUrl("https://api.open-meteo.com")
-    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-    .build()
+private val retrofit =
+    Retrofit.Builder()
+        .baseUrl("https://api.open-meteo.com")
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
 
 private val weatherApiService = retrofit.create(WeatherApi::class.java)
 
 private interface WeatherApi {
-
     @Serializable
     data class Weather(
         @SerialName(value = "hourly")
@@ -59,7 +61,6 @@ private interface WeatherApi {
     data class Hourly(
         @SerialName(value = "time")
         val time: List<String>,
-
         @SerialName(value = "temperature_2m")
         val temperature: List<Double>,
     )

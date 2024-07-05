@@ -23,11 +23,12 @@ internal fun ZeTopBar(
         navigationIcon = {
             IconButton(onClick = if (isNavDrawerOpen) onCloseMenuClicked else onOpenMenuClicked) {
                 Icon(
-                    imageVector = if (isNavDrawerOpen) {
-                        Icons.AutoMirrored.Filled.ArrowBack
-                    } else {
-                        Icons.Filled.Menu
-                    },
+                    imageVector =
+                        if (isNavDrawerOpen) {
+                            Icons.AutoMirrored.Filled.ArrowBack
+                        } else {
+                            Icons.Filled.Menu
+                        },
                     contentDescription = "Menu button",
                 )
             }
@@ -37,11 +38,12 @@ internal fun ZeTopBar(
                 onTitleClick()
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-            actionIconContentColor = MaterialTheme.colorScheme.primary,
-            navigationIconContentColor = MaterialTheme.colorScheme.primary,
-        ),
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+                actionIconContentColor = MaterialTheme.colorScheme.primary,
+                navigationIconContentColor = MaterialTheme.colorScheme.primary,
+            ),
     )
 }

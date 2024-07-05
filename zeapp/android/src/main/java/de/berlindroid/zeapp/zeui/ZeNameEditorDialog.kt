@@ -34,7 +34,7 @@ import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
-const val MaxCharacters: Int = 20
+const val MAX_CHARACTERS: Int = 20
 
 /**
  * Editor dialog for changing the name of the participant badge.
@@ -97,9 +97,10 @@ fun NameEditorDialog(
         properties = DialogProperties(decorFitsSystemWindows = false),
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
             ) {
                 BinaryImageEditor(
                     bitmap = image,
@@ -110,13 +111,13 @@ fun NameEditorDialog(
                     modifier = Modifier.fillMaxWidth(),
                     value = name ?: "",
                     onValueChange = { newValue ->
-                        if (newValue.length <= MaxCharacters * 2) {
+                        if (newValue.length <= MAX_CHARACTERS * 2) {
                             name = newValue
                             redrawComposableImage()
                         }
                     },
                     supportingText = {
-                        Text(text = "${name?.length ?: 0}/${MaxCharacters * 2}")
+                        Text(text = "${name?.length ?: 0}/${MAX_CHARACTERS * 2}")
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = name?.isEmpty() ?: true) {
@@ -132,13 +133,13 @@ fun NameEditorDialog(
                     placeholder = { Text(text = stringResource(R.string.contact)) },
                     onValueChange = { newValue ->
                         // Limit Characters so they're displayed correctly in the screen
-                        if (newValue.length <= MaxCharacters) {
+                        if (newValue.length <= MAX_CHARACTERS) {
                             contact = newValue
                             redrawComposableImage()
                         }
                     },
                     supportingText = {
-                        Text(text = "${contact?.length ?: 0}/$MaxCharacters")
+                        Text(text = "${contact?.length ?: 0}/$MAX_CHARACTERS")
                     },
                     trailingIcon = {
                         ClearIcon(isEmpty = contact?.isEmpty() ?: true) {
@@ -152,7 +153,11 @@ fun NameEditorDialog(
 }
 
 @Composable
-fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun ClearIcon(
+    isEmpty: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     if (!isEmpty) {
         Icon(
             Icons.Rounded.Clear,

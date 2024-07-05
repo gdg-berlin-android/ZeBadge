@@ -24,7 +24,8 @@ internal fun SelectedEditor(
     editor: ZeEditor,
     vm: ZeBadgeViewModel,
 ) {
-    if (editor.slot !in listOf(
+    if (editor.slot !in
+        listOf(
             ZeSlot.Name,
             ZeSlot.FirstCustom,
             ZeSlot.SecondCustom,
@@ -39,77 +40,87 @@ internal fun SelectedEditor(
         Timber.e("Slot: This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
-            is ZeConfiguration.Name -> NameEditorDialog(
-                config = config,
-                dismissed = { vm.slotConfigured(editor.slot, null) },
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                updateMessage = vm::showMessage,
-            )
+            is ZeConfiguration.Name ->
+                NameEditorDialog(
+                    config = config,
+                    dismissed = { vm.slotConfigured(editor.slot, null) },
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                    updateMessage = vm::showMessage,
+                )
 
-            is ZeConfiguration.Picture -> PictureEditorDialog(
-                dismissed = { vm.slotConfigured(null, null) },
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                updateMessage = vm::showMessage,
-            )
+            is ZeConfiguration.Picture ->
+                PictureEditorDialog(
+                    dismissed = { vm.slotConfigured(null, null) },
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                    updateMessage = vm::showMessage,
+                )
 
-            is ZeConfiguration.ImageGen -> ImageGenerationEditorDialog(
-                initialPrompt = config.prompt,
-                dismissed = { vm.slotConfigured(null, null) },
-                accepted = { vm.slotConfigured(editor.slot, it) },
-            )
+            is ZeConfiguration.ImageGen ->
+                ImageGenerationEditorDialog(
+                    initialPrompt = config.prompt,
+                    dismissed = { vm.slotConfigured(null, null) },
+                    accepted = { vm.slotConfigured(editor.slot, it) },
+                )
 
             is ZeConfiguration.Schedule -> {
                 vm.showMessage(message = stringResource(id = R.string.ze_not_added_yet_message))
                 vm.slotConfigured(null, null)
             }
 
-            is ZeConfiguration.Weather -> WeatherEditorDialog(
-                config = config,
-                dismissed = { vm.slotConfigured(null, null) },
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                updateMessage = vm::showMessage,
-            )
+            is ZeConfiguration.Weather ->
+                WeatherEditorDialog(
+                    config = config,
+                    dismissed = { vm.slotConfigured(null, null) },
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                    updateMessage = vm::showMessage,
+                )
 
-            is ZeConfiguration.Quote -> RandomQuotesEditorDialog(
-                accepted = { vm.slotConfigured(editor.slot, it) },
-                dismissed = { vm.slotConfigured(null, null) },
-                config = config,
-                updateMessage = vm::showMessage,
-            )
+            is ZeConfiguration.Quote ->
+                RandomQuotesEditorDialog(
+                    accepted = { vm.slotConfigured(editor.slot, it) },
+                    dismissed = { vm.slotConfigured(null, null) },
+                    config = config,
+                    updateMessage = vm::showMessage,
+                )
 
-            is ZeConfiguration.QRCode -> QRCodeEditorDialog(
-                config = config,
-                dismissed = { vm.slotConfigured(editor.slot, null) },
-                updateMessage = vm::showMessage,
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-            )
+            is ZeConfiguration.QRCode ->
+                QRCodeEditorDialog(
+                    config = config,
+                    dismissed = { vm.slotConfigured(editor.slot, null) },
+                    updateMessage = vm::showMessage,
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                )
 
-            is ZeConfiguration.BarCode -> BarCodeEditorDialog(
-                config = config,
-                dismissed = { vm.slotConfigured(editor.slot, null) },
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-            )
+            is ZeConfiguration.BarCode ->
+                BarCodeEditorDialog(
+                    config = config,
+                    dismissed = { vm.slotConfigured(editor.slot, null) },
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                )
 
             is ZeConfiguration.Kodee ->
                 vm.slotConfigured(editor.slot, config)
 
-            is ZeConfiguration.ImageDraw -> ZeImageDrawEditorDialog(
-                dismissed = { vm.slotConfigured(editor.slot, null) },
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-            )
+            is ZeConfiguration.ImageDraw ->
+                ZeImageDrawEditorDialog(
+                    dismissed = { vm.slotConfigured(editor.slot, null) },
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                )
 
-            is ZeConfiguration.Camera -> ZeCameraEditor(
-                editor = editor,
-                config = config,
-                vm = vm,
-            )
+            is ZeConfiguration.Camera ->
+                ZeCameraEditor(
+                    editor = editor,
+                    config = config,
+                    vm = vm,
+                )
 
-            is ZeConfiguration.CustomPhrase -> CustomPhraseEditorDialog(
-                config = config,
-                dismissed = { vm.slotConfigured(editor.slot, null) },
-                udpateMessage = vm::showMessage,
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-            )
+            is ZeConfiguration.CustomPhrase ->
+                CustomPhraseEditorDialog(
+                    config = config,
+                    dismissed = { vm.slotConfigured(editor.slot, null) },
+                    udpateMessage = vm::showMessage,
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                )
         }
     }
 }

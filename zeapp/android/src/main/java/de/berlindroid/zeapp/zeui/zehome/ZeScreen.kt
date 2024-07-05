@@ -29,31 +29,38 @@ import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
+internal fun ZeScreen(
+    vm: ZeBadgeViewModel,
+    modifier: Modifier = Modifier,
+) {
     val lazyListState = rememberLazyListState()
     val context = LocalContext.current
-    val goToReleases: () -> Unit = remember {
-        {
-            val intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases"),
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val goToReleases: () -> Unit =
+        remember {
+            {
+                val intent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases"),
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                context.startActivity(intent)
             }
-            context.startActivity(intent)
         }
-    }
-    val goToGithubPage: () -> Unit = remember {
-        {
-            val intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/gdg-berlin-android/ZeBadge"),
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val goToGithubPage: () -> Unit =
+        remember {
+            {
+                val intent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/gdg-berlin-android/ZeBadge"),
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                context.startActivity(intent)
             }
-            context.startActivity(intent)
         }
-    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
