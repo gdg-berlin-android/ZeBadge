@@ -35,7 +35,6 @@ import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.WeatherData
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zeservices.fetchWeather
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
@@ -59,6 +58,7 @@ fun WeatherEditorDialog(
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Weather) -> Unit,
     updateMessage: (String) -> Unit,
+    onFetchWeatherClick: suspend (String) -> WeatherData,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -200,9 +200,8 @@ fun WeatherEditorDialog(
                 item {
                     Button(
                         onClick = {
-                            // Fix this please :)
                             scope.launch {
-                                weatherData = fetchWeather(date)
+                                weatherData = onFetchWeatherClick(date)
                                 redrawComposableImage()
                             }
                         },
