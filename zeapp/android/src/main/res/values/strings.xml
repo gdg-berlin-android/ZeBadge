@@ -11,6 +11,7 @@
     <string name="invert">Invert</string>
     <string name="static_tool">Static</string>
     <string name="ze_very_important" tools:ignore="MissingTranslation">Very Important</string>
+    <string name="remind_binary_image" tools:ignore="MissingTranslation">(This is a non-binary image. Please select a color filter below.)</string>
 
     <string name="generate">Generate</string>
     <string name="not_binary_image">Not a binary image. Make sure each pixel is either black or white.</string>
