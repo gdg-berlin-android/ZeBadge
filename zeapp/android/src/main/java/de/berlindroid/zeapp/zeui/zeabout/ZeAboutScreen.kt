@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -76,7 +77,10 @@ fun ZeAbout(
                     AsyncImage(
                         model = contributor.imageUrl,
                         contentDescription = "avatar",
-                        modifier = Modifier.padding(8.dp).size(50.dp).clip(CircleShape),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(50.dp)
+                            .clip(CircleShape),
                     )
                     Text(
                         text = "${contributor.name}: ${contributor.contributions}",
@@ -85,6 +89,12 @@ fun ZeAbout(
                         style = MaterialTheme.typography.bodyMedium,
                         fontSize = 18.sp,
                     )
+                }
+            }
+            item {
+                LaunchedEffect(true) {
+                    if (contributors.isNotEmpty())
+                        vm.loadNextPage()
                 }
             }
         }
