@@ -1,5 +1,6 @@
 package de.berlindroid.zeapp.zeservices
 
+import de.berlindroid.zeapp.zemodels.WeatherData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -7,8 +8,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 internal suspend fun fetchWeather(date: String): WeatherData {
     try {
@@ -67,22 +66,4 @@ private interface WeatherApi {
 
     @GET("v1/forecast?latitude=52.5244&longitude=13.4105&hourly=temperature_2m&forecast_days=16")
     suspend fun getWeather(): Weather
-}
-
-data class WeatherData(
-    val day: String?,
-    val temperature: Double,
-) {
-
-    val formattedTemperature: String
-        get() = "${temperature}C"
-
-    fun formattedDate(): String {
-        return if (day == null) {
-            "N/A"
-        } else {
-            val dateTime = LocalDateTime.parse(day, DateTimeFormatter.ISO_DATE_TIME)
-            dateTime.format(DateTimeFormatter.ofPattern("d MMM uuuu"))
-        }
-    }
 }

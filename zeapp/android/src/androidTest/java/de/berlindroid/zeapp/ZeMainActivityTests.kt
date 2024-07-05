@@ -1,12 +1,14 @@
 package de.berlindroid.zeapp
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import org.junit.Rule
 import org.junit.Test
 
-class ZeMainActivityTest {
+class ZeMainActivityTests {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ZeMainActivity>()

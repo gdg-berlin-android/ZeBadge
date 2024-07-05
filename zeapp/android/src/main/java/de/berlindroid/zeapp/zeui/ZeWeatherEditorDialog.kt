@@ -33,8 +33,8 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zemodels.WeatherData
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zeservices.WeatherData
 import de.berlindroid.zeapp.zeservices.fetchWeather
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
