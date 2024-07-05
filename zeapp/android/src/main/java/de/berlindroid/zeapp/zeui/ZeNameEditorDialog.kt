@@ -1,5 +1,4 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
-
 package de.berlindroid.zeapp.zeui
 
 import android.app.Activity
@@ -15,10 +14,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,17 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ban.autosizetextfield.AutoSizeTextField
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zeui.snackbar.SnackBarData
 import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
-import de.berlindroid.zeapp.zevm.ZeBadgeUiAction
-import kotlinx.coroutines.flow.SharedFlow
+import de.berlindroid.zeapp.zevm.ZeBadgeErrorUiState
+import kotlinx.coroutines.flow.StateFlow
 
 const val MaxCharacters: Int = 20
 
@@ -54,9 +51,8 @@ fun NameEditorDialog(
     config: ZeConfiguration.Name,
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Name) -> Unit,
-    updateMessage: (String) -> Unit,
-    onShowSnackBar: (SnackBarData) -> Unit,
-    uiAction: SharedFlow<ZeBadgeUiAction>,
+    updateMessage: (String, Boolean) -> Unit,
+    errorUiState: StateFlow<ZeBadgeErrorUiState>,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -83,7 +79,7 @@ fun NameEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Name(name, contact, image))
                     } else {
-                        updateMessage(activity.resources.getString(R.string.binary_image_needed))
+                        updateMessage(activity.resources.getString(R.string.binary_image_needed), true)
                     }
                 },
             ) {
@@ -153,13 +149,21 @@ fun NameEditorDialog(
                         }
                     },
                 )
+
+                when (val viewState = errorUiState.collectAsStateWithLifecycle().value) {
+                    is ZeBadgeErrorUiState.ShowError -> {
+                        Text(text = "Error: ${viewState.message}")
+                    }
+
+                    is ZeBadgeErrorUiState.ShowLocalisedError -> {
+                        Text(text = "Error: ${stringResource(id = viewState.messageResId)}")
+                    }
+
+                    else -> return@Column
+                }
+
             }
         },
-    )
-
-    ZeNameEditorDialogAction(
-        onShowSnackBar = onShowSnackBar,
-        uiAction = uiAction,
     )
 }
 
@@ -175,33 +179,3 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
     }
 }
 
-@Composable
-fun ZeNameEditorDialogAction(
-    onShowSnackBar: (SnackBarData) -> Unit,
-    uiAction: SharedFlow<ZeBadgeUiAction>,
-) {
-    val resources = LocalContext.current.resources
-    LaunchedEffect(Unit) {
-        uiAction.collect { action ->
-            when (action) {
-                is ZeBadgeUiAction.ShowLocalisedMessageInSnackBar -> {
-                    onShowSnackBar(
-                        SnackBarData.SnackBarWithMessage(
-                            message = resources.getString(action.messageResId),
-                            snackbarDuration = SnackbarDuration.Long,
-                        )
-                    )
-                }
-
-                is ZeBadgeUiAction.ShowMessageInSnackBar -> {
-                    onShowSnackBar(
-                        SnackBarData.SnackBarWithMessage(
-                            message = action.message,
-                            snackbarDuration = SnackbarDuration.Long,
-                        )
-                    )
-                }
-            }
-        }
-    }
-}

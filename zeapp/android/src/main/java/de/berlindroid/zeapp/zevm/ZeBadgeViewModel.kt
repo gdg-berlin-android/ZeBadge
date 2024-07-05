@@ -25,11 +25,8 @@ import de.berlindroid.zekompanion.ditherFloydSteinberg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,8 +53,8 @@ class ZeBadgeViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
 
-    private val _uiAction: MutableSharedFlow<ZeBadgeUiAction> = MutableSharedFlow()
-    val uiAction: SharedFlow<ZeBadgeUiAction> = _uiAction.asSharedFlow()
+    private val _errorUiState: MutableStateFlow<ZeBadgeErrorUiState> = MutableStateFlow(ZeBadgeErrorUiState.Initial)
+    val errorUiState: StateFlow<ZeBadgeErrorUiState> = _errorUiState.asStateFlow()
 
     // See if disappearing message is ongoing
     private var hideMessageJob: Job? = null
@@ -83,6 +80,7 @@ class ZeBadgeViewModel @Inject constructor(
 
     fun showMessage(
         message: String,
+        showAsError: Boolean = false,
         duration: Long = MESSAGE_DISPLAY_DURATION,
     ) {
         _uiState.update {
@@ -91,13 +89,13 @@ class ZeBadgeViewModel @Inject constructor(
 
         scheduleMessageDisappearance(duration)
 
-        emitSnackBarAction(message = message)
+        if (showAsError) {
+            emitSnackBarAction(message = message)
+        }
     }
 
     private fun emitSnackBarAction(message: String) {
-        viewModelScope.launch {
-            _uiAction.emit(ZeBadgeUiAction.ShowMessageInSnackBar(message = message))
-        }
+        _errorUiState.value = ZeBadgeErrorUiState.ShowError(message)
     }
 
     private fun scheduleMessageDisappearance(
@@ -543,6 +541,10 @@ class ZeBadgeViewModel @Inject constructor(
             slots = emptyMap(),
             currentBadgeConfig = null,
         )
+
+    fun clearErrorState() {
+        _errorUiState.value = ZeBadgeErrorUiState.ClearError
+    }
 }
 
 data class ZeBadgeUiState(
@@ -554,10 +556,15 @@ data class ZeBadgeUiState(
     val currentBadgeConfig: Map<String, Any?>?,
 )
 
-sealed class ZeBadgeUiAction {
-    data class ShowLocalisedMessageInSnackBar(@StringRes val messageResId: Int) : ZeBadgeUiAction()
+sealed class ZeBadgeErrorUiState {
+    data object Initial : ZeBadgeErrorUiState()
 
-    data class ShowMessageInSnackBar(val message: String) : ZeBadgeUiAction()
+    data class ShowLocalisedError(@StringRes val messageResId: Int) : ZeBadgeErrorUiState()
+
+    data class ShowError(val message: String) : ZeBadgeErrorUiState()
+
+    data object ClearError : ZeBadgeErrorUiState()
+
 }
 
 // ¹ https://www.reddit.com/r/ProgrammerHumor/comments/27yykv/indent_hadouken/

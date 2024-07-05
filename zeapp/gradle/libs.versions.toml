@@ -47,6 +47,7 @@ espresso = "3.6.1"
 compose-ui-core = "1.6.8"
 compose-ui-junit = "1.6.8"
 compose-ui-manifest = "1.6.8"
+lifecycleRuntimeComposeAndroid = "2.8.3"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
@@ -120,6 +121,7 @@ androidx-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "andr
 compose-ui-core = { module = "androidx.compose.ui:ui-test", version.ref = "compose-ui-core" }
 compose-ui-junit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui-junit" }
 compose-ui-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ui-manifest" }
+androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 
 [bundles]
 screeshottest-android = [

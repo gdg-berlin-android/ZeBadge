@@ -191,6 +191,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.aboutlibraries.compose)
     implementation(libs.androidx.compose.hilt.navigation)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
