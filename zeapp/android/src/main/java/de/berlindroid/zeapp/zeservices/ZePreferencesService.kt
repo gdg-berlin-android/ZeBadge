@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,6 +41,7 @@ class ZePreferencesService @Inject constructor(
         val OPEN_API_PREFERENCES_KEY = stringPreferencesKey("openapi")
         const val TYPE_KEY = "type"
         const val IMAGE_KEY = "bitmap"
+        val THEME_KEY = intPreferencesKey("theme")
     }
 
     private val dataStore = context.dataStore
@@ -113,6 +115,17 @@ class ZePreferencesService @Inject constructor(
                     preferences[slot.preferencesKey("random_phrase")] = config.phrase
                 }
             }
+        }
+    }
+
+    suspend fun getThemeSettings(): Int {
+        return dataStore.data.map { preferences -> preferences[THEME_KEY] ?: 0 }
+            .first()
+    }
+
+    suspend fun setThemeSettings(themeSettings: Int) {
+        dataStore.edit { preferences ->
+            preferences[THEME_KEY] = themeSettings
         }
     }
 

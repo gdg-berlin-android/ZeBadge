@@ -33,7 +33,56 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
 @Composable
+fun NavDrawerItem(
+    text: String,
+    vector: ImageVector? = null,
+    painter: Painter? = null,
+    onClick: () -> Unit,
+    onCloseDrawer: () -> Unit,
+) {
+    val shape = RoundedCornerShape(
+        topStart = 0.dp,
+        bottomStart = 0.dp,
+        topEnd = 30.dp,
+        bottomEnd = 30.dp,
+    )
+    NavigationDrawerItem(
+        modifier = Modifier
+            .padding(
+                start = 0.dp,
+                end = 32.dp,
+                top = 4.dp,
+                bottom = 4.dp,
+            )
+            .border(
+                width = 1.dp,
+                color = ZeWhite,
+                shape = shape,
+            ),
+        colors = NavigationDrawerItemDefaults.colors(
+            unselectedTextColor = ZeWhite,
+            unselectedContainerColor = ZeBlack,
+        ),
+        shape = shape,
+        icon = {
+            if (vector != null) {
+                Icon(imageVector = vector, contentDescription = text, tint = ZeWhite)
+            } else if (painter != null) {
+                Icon(painter = painter, contentDescription = text, tint = ZeWhite)
+            }
+        },
+        label = { Text(text = text) },
+        selected = false,
+        onClick = {
+            onClick()
+            onCloseDrawer()
+        },
+    )
+}
+
+@Composable
 @Preview
+@Suppress("LongParameterList", "LongMethod")
 internal fun ZeDrawerContent(
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
@@ -42,59 +91,13 @@ internal fun ZeDrawerContent(
     onGotoLanguagesSettings: () -> Unit = {},
     onGotoOpenSourceClick: () -> Unit = {},
     onGotoZePass: () -> Unit = {},
+    onGoToSettings: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
 ) {
     val viewModel: ZeDrawerViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-
-    @Composable
-    fun NavDrawerItem(
-        text: String,
-        vector: ImageVector? = null,
-        painter: Painter? = null,
-        onClick: () -> Unit,
-    ) {
-        val shape = RoundedCornerShape(
-            topStart = 0.dp,
-            bottomStart = 0.dp,
-            topEnd = 30.dp,
-            bottomEnd = 30.dp,
-        )
-        NavigationDrawerItem(
-            modifier = Modifier
-                .padding(
-                    start = 0.dp,
-                    end = 32.dp,
-                    top = 4.dp,
-                    bottom = 4.dp,
-                )
-                .border(
-                    width = 1.dp,
-                    color = ZeWhite,
-                    shape = shape,
-                ),
-            colors = NavigationDrawerItemDefaults.colors(
-                unselectedTextColor = ZeWhite,
-                unselectedContainerColor = ZeBlack,
-            ),
-            shape = shape,
-            icon = {
-                if (vector != null) {
-                    Icon(imageVector = vector, contentDescription = text, tint = ZeWhite)
-                } else if (painter != null) {
-                    Icon(painter = painter, contentDescription = text, tint = ZeWhite)
-                }
-            },
-            label = { Text(text = text) },
-            selected = false,
-            onClick = {
-                onClick()
-                onCloseDrawer()
-            },
-        )
-    }
 
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.secondary,
@@ -118,6 +121,7 @@ internal fun ZeDrawerContent(
                     text = "{YOUR NAME HERE, ADD BADGE OR SOMETHING}",
                     vector = Icons.Default.AccountBox,
                     onClick = onGotoZePass,
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
             item {
@@ -125,6 +129,7 @@ internal fun ZeDrawerContent(
                     onClick = onSaveAllClick,
                     painter = painterResource(id = R.drawable.save_all),
                     text = stringResource(id = R.string.ze_navdrawer_save_all_pages),
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
 
@@ -133,6 +138,7 @@ internal fun ZeDrawerContent(
                     text = stringResource(id = R.string.ze_navdrawer_update_config),
                     vector = Icons.Default.ThumbUp,
                     onClick = onUpdateConfig,
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
 
@@ -141,8 +147,22 @@ internal fun ZeDrawerContent(
                     painter = painterResource(id = R.drawable.ic_random),
                     text = stringResource(id = R.string.ze_navdrawer_send_random_page),
                     onClick = onGetStoredPages,
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
+
+            item { Divider() }
+
+            item {
+                NavDrawerItem(
+                    painter = painterResource(id = R.drawable.ic_settings),
+                    text = stringResource(id = R.string.ze_navdrawer_settings),
+                    onClick = onGoToSettings,
+                    onCloseDrawer = onCloseDrawer,
+                )
+            }
+
+            item { Divider() }
 
             item {
                 NavDrawerItem(
@@ -170,6 +190,7 @@ internal fun ZeDrawerContent(
                     text = stringResource(id = R.string.ze_navdrawer_contributors),
                     painter = rememberVectorPainter(Icons.Default.Info),
                     onClick = onGotoContributors,
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
 
@@ -178,21 +199,11 @@ internal fun ZeDrawerContent(
                     text = stringResource(id = R.string.ze_navdrawer_open_source),
                     painter = painterResource(id = R.drawable.ic_open_source_initiative),
                     onClick = onGotoOpenSourceClick,
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
 
-            item {
-                HorizontalDivider(
-                    thickness = 0.dp,
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 0.dp,
-                        top = 16.dp,
-                        bottom = 16.dp,
-                    ),
-                )
-            }
+            item { Divider() }
 
             uiState.newReleaseVersion?.let { version ->
                 item {
@@ -207,8 +218,23 @@ internal fun ZeDrawerContent(
                     text = stringResource(id = R.string.ze_navdrawer_open_release_page),
                     painter = painterResource(id = R.drawable.ic_update),
                     onClick = onGotoReleaseClick,
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
         }
     }
+}
+
+@Composable
+private fun Divider() {
+    HorizontalDivider(
+        thickness = 0.dp,
+        color = MaterialTheme.colorScheme.background,
+        modifier = Modifier.padding(
+            start = 0.dp,
+            end = 0.dp,
+            top = 16.dp,
+            bottom = 16.dp,
+        ),
+    )
 }

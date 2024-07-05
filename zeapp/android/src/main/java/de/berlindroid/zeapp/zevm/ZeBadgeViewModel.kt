@@ -19,6 +19,7 @@ import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import de.berlindroid.zeapp.zeservices.ZeWeatherService
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zeapp.zeui.simulator.ZeSimulatorButtonAction
 import de.berlindroid.zekompanion.ditherFloydSteinberg
@@ -47,6 +48,7 @@ class ZeBadgeViewModel @Inject constructor(
     private val badgeManager: ZeBadgeManager,
     private val preferencesService: ZePreferencesService,
     private val clipboardService: ZeClipboardService,
+    private val weatherService: ZeWeatherService,
     private val getTemplateConfigurations: GetTemplateConfigurations,
 ) : ViewModel() {
 
@@ -518,6 +520,16 @@ class ZeBadgeViewModel @Inject constructor(
         showMessage("Copied")
     }
 
+    fun setThemeSettings(themeSettings: Int) {
+        _uiState.update {
+            it.copy(themeSettings = themeSettings)
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesService.setThemeSettings(themeSettings)
+        }
+    }
+
     /**
      * Loads data from Datastore
      */
@@ -527,11 +539,15 @@ class ZeBadgeViewModel @Inject constructor(
                 initialConfiguration(it)
             }
 
+            val themeSettings = preferencesService.getThemeSettings()
+
             _uiState.update {
-                it.copy(slots = slots)
+                it.copy(slots = slots, themeSettings = themeSettings)
             }
         }
     }
+
+    suspend fun fetchWeather(date: String) = weatherService.fetchWeather(date)
 
     private fun getInitialUIState(): ZeBadgeUiState =
         ZeBadgeUiState(
@@ -541,6 +557,7 @@ class ZeBadgeViewModel @Inject constructor(
             currentTemplateChooser = null,
             slots = emptyMap(),
             currentBadgeConfig = null,
+            themeSettings = null,
         )
 
     fun clearErrorState() {
@@ -555,6 +572,7 @@ data class ZeBadgeUiState(
     val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
     val slots: Map<ZeSlot, ZeConfiguration>,
     val currentBadgeConfig: Map<String, Any?>?,
+    val themeSettings: Int?,
 )
 
 sealed class ZeBadgeErrorUiState {

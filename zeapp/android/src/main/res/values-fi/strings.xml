@@ -1,0 +1,72 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">ZeApp</string>
+    <string name="repo_url" translatable="false">https://github.com/gdg-berlin-android</string>
+
+    <string name="black_and_white">M/V</string>
+    <string name="reset">Resetoi</string>
+    <string name="ze_edit">Muokkaa</string>
+    <string name="floyd_steninberg_initials">FS</string>
+    <string name="positional">Positional</string>
+    <string name="rotate">Käännä</string>
+    <string name="invert">Käännä</string>
+    <string name="static_tool">Staattinen</string>
+    <string name="ze_very_important" tools:ignore="MissingTranslation">Erittäin tärkeä</string>
+    <string name="remind_binary_image" tools:ignore="MissingTranslation">(Tämä ei ole mustavalkoinen kuva. Valitse alta värisuodatin.)</string>
+
+    <string name="generate">Luo</string>
+    <string name="not_binary_image">Kuva ei ole mustavalkoinen. Varmista, että jokainen pikseli on joko musta tai valkoinen.</string>
+    <string name="generate_image_page">Luo kuva</string>
+    <string name="draw_image_page">Piirrä kuvasivu</string>
+    <string name="enter_prompt">Kirjoita kehote tähän</string>
+    <string name="could_not_generate_image">Kuvaa ei voitu luoda</string>
+
+    <string name="image_needed">Mustavalkoinen kuva tarvitaan. Paina yhtä kuvan alla olevista painikkeista.</string>
+    <string name="add_qr_url">Lisää QR-koodin URL</string>
+    <string name="qr_code_title">QR koodin otsikko</string>
+    <string name="qr_code_text">Lisäteksti</string>
+    <string name="url">URL</string>
+    <string name="add_barcode_url">Lisää viivakoodin URL</string>
+    <string name="bar_code_title">Viivakoodin otsikko</string>
+    <string name="qr_vcard">vCard</string>
+    <string name="qr_code_email">Sähköposti</string>
+    <string name="qr_code_phone">Puhelinnumero</string>
+    <string name="your_name_here" tools:ignore="MissingTranslation">Nimi tähän</string>
+    <string name="contact_me_here" tools:ignore="MissingTranslation">Ota yhteyttä tähän</string>
+    <string name="binary_image_needed" tools:ignore="MissingTranslation">Kuvan täytyy olla mustavalkoinen.</string>
+    <string name="add_your_phrase_here" tools:ignore="MissingTranslation">Lisää teksti tähän</string>
+    <string name="random_phrase" tools:ignore="MissingTranslation">Satunnainen lause</string>
+    <string name="unicorn_at_an_android_conference_in_isometric_view" tools:ignore="MissingTranslation">Unicorn at an android conference in isometric view.</string>
+    <string name="name" tools:ignore="MissingTranslation">Nimi</string>
+    <string name="contact" tools:ignore="MissingTranslation">Yhteystieto</string>
+    <string name="clear" tools:ignore="MissingTranslation">Tyhjennä</string>
+    <string name="add_your_contact_details" tools:ignore="MissingTranslation">Lisää yhteystiedot</string>
+    <string name="set_picture" tools:ignore="MissingTranslation">Aseta kuva</string>
+    <string name="click_get_to_show_quote_of_the_day" tools:ignore="MissingTranslation">Paina "Hae" näyttääksesi päivän lainauksen</string>
+    <string name="get" tools:ignore="MissingTranslation">Hae</string>
+    <string name="decline" tools:ignore="MissingTranslation">Kieltäydy</string>
+    <string name="send" tools:ignore="MissingTranslation">Lähetä</string>
+    <string name="n_a" tools:ignore="MissingTranslation">N/A</string>
+    <string name="load_weather" tools:ignore="MissingTranslation">Lataa sää</string>
+    <string name="hello_my_github_profile_is" tools:ignore="MissingTranslation">Hei, Github-profiilini on</string>
+    <string name="your_phrase_here" tools:ignore="MissingTranslation">Lisää teksti tähän</string>
+    <string name="hello_my_name_is" tools:ignore="MissingTranslation">Hei, nimeni on</string>
+    <string name="upcoming_weather" tools:ignore="MissingTranslation">☀️Sääennuste</string>
+    <string name="quote_of_the_day" tools:ignore="MissingTranslation">Päivän lainaus</string>
+    <string name="send_icon_text" tools:ignore="MissingTranslation">Lähetä</string>
+    <string name="badge_config_editor_title">Muokkaa nimikortin asetuksia</string>
+
+    <string name="ze_navdrawer_save_all_pages">Tallenna sivut nimikorttiin</string>
+    <string name="ze_navdrawer_update_config">Päivitä nimikortin asetukset</string>
+    <string name="ze_navdrawer_send_random_page">Lähetä satunnainen sivu nimikorttiin</string>
+    <string name="ze_navdrawer_new_release">✨ Uusi julkaisu saatavilla: %d</string>
+    <string name="ze_navdrawer_open_release_page">Avaa julkaisut</string>
+    <string name="ze_navdrawer_contributors">Tekijät</string>
+    <string name="ze_navdrawer_open_source">Avoin lähdekoodi</string>
+    <string name="ze_select_content" tools:ignore="MissingTranslation">Valitse sisältö</string>
+    <string name="ze_not_added_yet_message" tools:ignore="MissingTranslation">Et ole lisännyt tätä vielä, voit muokata tätä editoria</string>
+
+    <string name="ze_sample_configuration_key" tools:ignore="MissingTranslation">esimerkkiasetukset</string>
+    <string name="ze_sample_configuration_value" tools:ignore="MissingTranslation">esimerkkiarvo</string>
+    <string name="ze_sample_int_key" tools:ignore="MissingTranslation">esimerkkinumero</string>
+    <string name="ze_sample_another_configuration_key" tools:ignore="MissingTranslation">toiset asetukset</string>
+</resources>

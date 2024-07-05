@@ -24,11 +24,13 @@ import de.berlindroid.zeapp.ROUTE_ABOUT
 import de.berlindroid.zeapp.ROUTE_HOME
 import de.berlindroid.zeapp.ROUTE_LANGUAGES
 import de.berlindroid.zeapp.ROUTE_OPENSOURCE
+import de.berlindroid.zeapp.ROUTE_SETTINGS
 import de.berlindroid.zeapp.ROUTE_ZEPASS
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zelanguages.ZeLanguages
 import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
+import de.berlindroid.zeapp.zeui.zesettings.ZeSettings
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -70,9 +72,13 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
 
     fun routeTo(target: String) {
-        if (currentRoute == target) navController.navigateUp() else navController.navigate(
-            target,
-        )
+        if (currentRoute == target) {
+            navController.navigateUp()
+        } else {
+            navController.navigate(
+                target,
+            )
+        }
     }
 
     BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
@@ -84,6 +90,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     }
 
     ZeBadgeAppTheme(
+        themeSettings = vm.uiState.value.themeSettings ?: 0,
         content = {
             ModalNavigationDrawer(
                 drawerState = drawerState,
@@ -96,6 +103,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGotoOpenSourceClick = { routeTo(ROUTE_OPENSOURCE) },
                         onGotoZePass = { routeTo(ROUTE_ZEPASS) },
                         onGotoLanguagesSettings = { routeTo(ROUTE_LANGUAGES) },
+                        onGoToSettings = { routeTo(ROUTE_SETTINGS) },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -136,12 +144,10 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 lazyListState = lazyListState,
                                 vm = vm,
                             )
+                            )
                         }
                         composable(ROUTE_ZEPASS) {
                             ZeUserProfile(paddingValues = PaddingValues())
-                        }
-                        composable(ROUTE_ZEPASS) {
-                            ZeUserProfile(paddingValues)
                         }
                         composable(ROUTE_ABOUT) {
                             DrawerBackHandler(
@@ -156,6 +162,19 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 scope = scope,
                             )
                             ZeOpenSource(paddingValues)
+                        }
+                        composable(ROUTE_SETTINGS) {
+                            DrawerBackHandler(
+                                drawerState = drawerState,
+                                scope = scope,
+                            )
+                            ZeSettings(
+                                paddingValues = paddingValues,
+                                themeSettings = vm.uiState.value.themeSettings ?: 0,
+                                onThemeChange = {
+                                    vm.setThemeSettings(it)
+                                },
+                            )
                         }
                         composable(ROUTE_LANGUAGES) {
                             DrawerBackHandler(

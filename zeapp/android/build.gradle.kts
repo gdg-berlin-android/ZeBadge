@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.ktlint.gradle)
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
@@ -60,6 +60,8 @@ android {
                 "pl",
                 "et",
                 "ru",
+                "fi",
+                "hu",
             ),
         )
 
@@ -210,7 +212,7 @@ dependencies {
 
     androidTestImplementation(libs.testComposeJunit)
     debugImplementation(libs.testComposeManifest)
-    kapt(libs.dagger.hilt.compiler)
+    ksp(libs.dagger.hilt.compiler)
     baselineProfile(projects.benchmark)
 }
 
@@ -229,14 +231,6 @@ ktlint {
     filter {
         exclude("**/generated/**")
     }
-}
-
-kapt {
-    correctErrorTypes = true
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs::class).configureEach {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
 
 licenseReport {
