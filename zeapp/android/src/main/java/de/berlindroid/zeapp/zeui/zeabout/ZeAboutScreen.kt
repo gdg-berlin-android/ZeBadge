@@ -93,8 +93,9 @@ fun ZeAbout(
             }
             item {
                 LaunchedEffect(true) {
-                    if (contributors.isNotEmpty())
+                    if (contributors.isNotEmpty()){
                         vm.loadNextPage()
+                    }
                 }
             }
         }

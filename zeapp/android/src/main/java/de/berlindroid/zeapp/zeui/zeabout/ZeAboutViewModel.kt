@@ -13,15 +13,15 @@ import javax.inject.Inject
 class ZeAboutViewModel @Inject constructor(
     private val contributorsService: ZeContributorsService,
 ) : ViewModel() {
-    var page: Int = 1
+    private var page: Int = 1
 
-    val _lines = MutableStateFlow(emptyList<Contributor>())
-    val lines = _lines.asStateFlow()
+    private val linesMutableState = MutableStateFlow(emptyList<Contributor>())
+    val lines = linesMutableState.asStateFlow()
 
     init {
         viewModelScope.launch {
             contributorsService.contributors(page).collect {
-                _lines.emit(it)
+                linesMutableState.emit(it)
             }
         }
     }
@@ -30,7 +30,7 @@ class ZeAboutViewModel @Inject constructor(
         page++
         viewModelScope.launch {
             contributorsService.contributors(page).collect {
-                _lines.emit(lines.value + it)
+                linesMutableState.emit(lines.value + it)
             }
         }
     }
