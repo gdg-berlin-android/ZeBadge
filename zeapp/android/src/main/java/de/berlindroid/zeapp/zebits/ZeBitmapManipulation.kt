@@ -11,10 +11,10 @@ import android.widget.LinearLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.graphics.scale
-import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.zeui.zepages.BarCodePage
 import de.berlindroid.zeapp.zeui.zepages.QRCodePage
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.forEach
 import de.berlindroid.zekompanion.forEachIndexed
 import de.berlindroid.zekompanion.isBinary

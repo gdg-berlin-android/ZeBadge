@@ -4,5 +4,5 @@ enum class ZeSimulatorButtonAction {
     FORWARD,
     BACKWARD,
     UP,
-    DOWN
+    DOWN,
 }
