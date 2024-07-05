@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-
 @Composable
 fun ZeLanguages(
     paddingValues: PaddingValues,
@@ -46,24 +45,24 @@ fun ZeLanguages(
 
 val SUPPORTED_LANGUAGES = listOf(
     "ar-EG", // Arabic (Egypt)
-    "bs",    // Bosnian
+    "bs", // Bosnian
     "de-DE", // German (Germany)
     "en-GB", // English (United Kingdom)
-    "es",    // Spanish
-    "et",    // Estonian
-    "fr",    // French
-    "hi",    // Hindi
+    "es", // Spanish
+    "et", // Estonian
+    "fr", // French
+    "hi", // Hindi
     "hr-HR", // Croatian (Croatia)
-    "it",    // Italian
-    "ja",    // Japanese
-    "lt",    // Lithuanian
-    "mr",    // Marathi
-    "nl",    // Dutch
-    "pl",    // Polish
+    "it", // Italian
+    "ja", // Japanese
+    "lt", // Lithuanian
+    "mr", // Marathi
+    "nl", // Dutch
+    "pl", // Polish
     "pt-BR", // Portuguese (Brazil)
-    "ru",    // Russian
-    "sq",    // Albanian
-    "tr",    // Turkish
-    "uk",    // Ukrainian
-    "ur",     // Urdu
+    "ru", // Russian
+    "sq", // Albanian
+    "tr", // Turkish
+    "uk", // Ukrainian
+    "ur", // Urdu
 )

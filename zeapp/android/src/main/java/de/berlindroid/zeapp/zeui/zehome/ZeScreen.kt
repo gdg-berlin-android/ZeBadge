@@ -144,7 +144,6 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 lazyListState = lazyListState,
                                 vm = vm,
                             )
-                            )
                         }
                         composable(ROUTE_ZEPASS) {
                             ZeUserProfile(paddingValues = PaddingValues())
