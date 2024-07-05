@@ -5,10 +5,16 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,10 +28,14 @@ import de.berlindroid.zeapp.ROUTE_ABOUT
 import de.berlindroid.zeapp.ROUTE_HOME
 import de.berlindroid.zeapp.ROUTE_OPENSOURCE
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
+import de.berlindroid.zeapp.zeui.snackbar.SnackBarData
+import de.berlindroid.zeapp.zeui.snackbar.showSnackbarWithAction
+import de.berlindroid.zeapp.zeui.snackbar.showSnackbarWithMessage
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -61,6 +71,8 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
+    val snackBarHostState = remember { SnackbarHostState() }
+    val snackBarData = remember { MutableSharedFlow<SnackBarData>() }
 
     BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
         if (drawerState.isOpen) {
@@ -126,6 +138,18 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             },
                         )
                     },
+                    snackbarHost = {
+                        SnackbarHost(
+                            hostState = snackBarHostState,
+                            snackbar = {
+                                Snackbar(
+                                    snackbarData = it,
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    contentColor = MaterialTheme.colorScheme.onSurface,
+                                )
+                            },
+                        )
+                    },
                 ) { paddingValues ->
                     NavHost(navController = navController, startDestination = ROUTE_HOME) {
                         composable(ROUTE_HOME) {
@@ -133,6 +157,11 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 paddingValues = paddingValues,
                                 lazyListState = lazyListState,
                                 vm = vm,
+                                onShowSnackBar = { data ->
+                                    scope.launch {
+                                        snackBarData.emit(data)
+                                    }
+                                }
                             )
                         }
                         composable(ROUTE_ABOUT) {
@@ -146,4 +175,28 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
             }
         },
     )
+
+    LaunchedEffect(Unit) {
+        snackBarData.collect { data ->
+            when (data) {
+                is SnackBarData.SnackBarWithAction -> {
+                    when (snackBarHostState.showSnackbarWithAction(data)) {
+                        SnackbarResult.ActionPerformed -> {
+                            data.onActionClicked.invoke()
+                        }
+
+                        SnackbarResult.Dismissed -> {
+                            data.onDismissed?.invoke()
+                        }
+                    }
+                }
+
+                is SnackBarData.SnackBarWithMessage -> {
+                    if (snackBarHostState.showSnackbarWithMessage(data) == SnackbarResult.Dismissed) {
+                        data.onDismissed?.invoke()
+                    }
+                }
+            }
+        }
+    }
 }

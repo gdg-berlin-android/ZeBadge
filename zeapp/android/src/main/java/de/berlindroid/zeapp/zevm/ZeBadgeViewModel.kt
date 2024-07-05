@@ -1,6 +1,7 @@
 package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,8 +25,11 @@ import de.berlindroid.zekompanion.ditherFloydSteinberg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,6 +55,9 @@ class ZeBadgeViewModel @Inject constructor(
 
     private val _uiState: MutableStateFlow<ZeBadgeUiState> = MutableStateFlow(getInitialUIState())
     val uiState: StateFlow<ZeBadgeUiState> = _uiState.asStateFlow()
+
+    private val _uiAction: MutableSharedFlow<ZeBadgeUiAction> = MutableSharedFlow()
+    val uiAction: SharedFlow<ZeBadgeUiAction> = _uiAction.asSharedFlow()
 
     // See if disappearing message is ongoing
     private var hideMessageJob: Job? = null
@@ -83,6 +90,14 @@ class ZeBadgeViewModel @Inject constructor(
         }
 
         scheduleMessageDisappearance(duration)
+
+        emitSnackBarAction(message = message)
+    }
+
+    private fun emitSnackBarAction(message: String) {
+        viewModelScope.launch {
+            _uiAction.emit(ZeBadgeUiAction.ShowMessageInSnackBar(message = message))
+        }
     }
 
     private fun scheduleMessageDisappearance(
@@ -213,7 +228,7 @@ class ZeBadgeViewModel @Inject constructor(
                 slot,
                 slots[slot]!!,
             )
-            newCurrentSlotEditor?.let { currentSlotEditor ->
+            newCurrentSlotEditor.let { currentSlotEditor ->
                 _uiState.update {
                     it.copy(currentSlotEditor = currentSlotEditor)
                 }
@@ -538,5 +553,11 @@ data class ZeBadgeUiState(
     val slots: Map<ZeSlot, ZeConfiguration>,
     val currentBadgeConfig: Map<String, Any?>?,
 )
+
+sealed class ZeBadgeUiAction {
+    data class ShowLocalisedMessageInSnackBar(@StringRes val messageResId: Int) : ZeBadgeUiAction()
+
+    data class ShowMessageInSnackBar(val message: String) : ZeBadgeUiAction()
+}
 
 // ¹ https://www.reddit.com/r/ProgrammerHumor/comments/27yykv/indent_hadouken/

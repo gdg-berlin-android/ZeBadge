@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.LayoutDirection
 import de.berlindroid.zeapp.ZeDimen
+import de.berlindroid.zeapp.zeui.snackbar.SnackBarData
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,6 +36,7 @@ internal fun ZePages(
     paddingValues: PaddingValues,
     vm: ZeBadgeViewModel,
     lazyListState: LazyListState,
+    onShowSnackBar: (SnackBarData) -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -65,7 +67,7 @@ internal fun ZePages(
 
         if (editor != null) {
             Box(Modifier.padding(paddingValues)) {
-                SelectedEditor(editor, vm)
+                SelectedEditor(editor, vm, onShowSnackBar)
             }
         }
 

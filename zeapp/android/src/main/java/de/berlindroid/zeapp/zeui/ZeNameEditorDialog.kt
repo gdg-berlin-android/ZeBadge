@@ -15,8 +15,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +32,12 @@ import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
+import de.berlindroid.zeapp.zeui.snackbar.SnackBarData
 import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
+import de.berlindroid.zeapp.zevm.ZeBadgeUiAction
+import kotlinx.coroutines.flow.SharedFlow
 
 const val MaxCharacters: Int = 20
 
@@ -50,6 +55,8 @@ fun NameEditorDialog(
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Name) -> Unit,
     updateMessage: (String) -> Unit,
+    onShowSnackBar: (SnackBarData) -> Unit,
+    uiAction: SharedFlow<ZeBadgeUiAction>,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -149,6 +156,11 @@ fun NameEditorDialog(
             }
         },
     )
+
+    ZeNameEditorDialogAction(
+        onShowSnackBar = onShowSnackBar,
+        uiAction = uiAction,
+    )
 }
 
 @Composable
@@ -160,5 +172,36 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
             contentDescription = stringResource(R.string.clear),
             modifier = modifier.clickable(onClick = onClick),
         )
+    }
+}
+
+@Composable
+fun ZeNameEditorDialogAction(
+    onShowSnackBar: (SnackBarData) -> Unit,
+    uiAction: SharedFlow<ZeBadgeUiAction>,
+) {
+    val resources = LocalContext.current.resources
+    LaunchedEffect(Unit) {
+        uiAction.collect { action ->
+            when (action) {
+                is ZeBadgeUiAction.ShowLocalisedMessageInSnackBar -> {
+                    onShowSnackBar(
+                        SnackBarData.SnackBarWithMessage(
+                            message = resources.getString(action.messageResId),
+                            snackbarDuration = SnackbarDuration.Long,
+                        )
+                    )
+                }
+
+                is ZeBadgeUiAction.ShowMessageInSnackBar -> {
+                    onShowSnackBar(
+                        SnackBarData.SnackBarWithMessage(
+                            message = action.message,
+                            snackbarDuration = SnackbarDuration.Long,
+                        )
+                    )
+                }
+            }
+        }
     }
 }

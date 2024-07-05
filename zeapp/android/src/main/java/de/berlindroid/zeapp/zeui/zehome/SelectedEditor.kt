@@ -16,6 +16,7 @@ import de.berlindroid.zeapp.zeui.RandomQuotesEditorDialog
 import de.berlindroid.zeapp.zeui.WeatherEditorDialog
 import de.berlindroid.zeapp.zeui.ZeCameraEditor
 import de.berlindroid.zeapp.zeui.ZeImageDrawEditorDialog
+import de.berlindroid.zeapp.zeui.snackbar.SnackBarData
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import timber.log.Timber
 
@@ -23,6 +24,7 @@ import timber.log.Timber
 internal fun SelectedEditor(
     editor: ZeEditor,
     vm: ZeBadgeViewModel,
+    onShowSnackBar: (SnackBarData) -> Unit,
 ) {
     if (editor.slot !in listOf(
             ZeSlot.Name,
@@ -44,6 +46,8 @@ internal fun SelectedEditor(
                 dismissed = { vm.slotConfigured(editor.slot, null) },
                 accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
                 updateMessage = vm::showMessage,
+                onShowSnackBar = onShowSnackBar,
+                uiAction = vm.uiAction,
             )
 
             is ZeConfiguration.Picture -> PictureEditorDialog(
