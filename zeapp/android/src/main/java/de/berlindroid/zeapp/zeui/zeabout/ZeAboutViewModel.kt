@@ -16,6 +16,6 @@ class ZeAboutViewModel @Inject constructor(
 ) : ViewModel() {
 
     val lines: StateFlow<List<Contributor>> = contributorsService.contributors()
-        .map { contributors -> contributors.sortedBy { - it.contributions } }
+        .map { contributors -> contributors.sortedBy { -it.contributions } }
         .stateIn(viewModelScope, SharingStarted.Lazily, initialValue = emptyList())
 }
