@@ -33,7 +33,23 @@ jobs:
         with:
           name: Debug APK
           path: zeapp/android/build/outputs/apk/debug/android-debug.apk
-
+  build-debug-windows:
+      runs-on: windows-latest
+      steps:
+      - name: "Checkout Repo"
+        uses: actions/checkout@v4
+      - name: "Setup Java 17"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: "Validate Gradle wrapper"
+        uses: gradle/actions/wrapper-validation@v3
+      - name: "Assemble Debug"
+        run: ./gradlew :android:assembleDebug --no-daemon
+      # Not uploading the APK cause the other step will generate the same thing anyway
   ktlint:
     runs-on: ubuntu-latest
     steps:
