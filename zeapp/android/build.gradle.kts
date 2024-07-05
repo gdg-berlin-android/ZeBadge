@@ -54,7 +54,7 @@ android {
                 "pt-rBR",
                 "pl",
                 "et",
-                "ru"
+                "ru",
             ),
         )
 

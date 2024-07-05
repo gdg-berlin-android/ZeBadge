@@ -103,7 +103,6 @@ internal fun BadgeConfigEditor(
                             trailingIcon = {},
                             placeholder = {},
                         )
-
                     }
                 }
             }
