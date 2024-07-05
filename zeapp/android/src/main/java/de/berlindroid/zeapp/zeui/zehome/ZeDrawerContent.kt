@@ -5,11 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.DrawerDefaults
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,12 +35,12 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 @Composable
 @Preview
 internal fun ZeDrawerContent(
-    drawerState: DrawerState = DrawerState(DrawerValue.Open),
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
     onGotoContributors: () -> Unit = {},
     onGotoOpenSourceClick: () -> Unit = {},
+    onGotoZePass: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
@@ -113,6 +112,13 @@ internal fun ZeDrawerContent(
         }
 
         LazyColumn {
+            item {
+                NavDrawerItem(
+                    text = "{YOUR NAME HERE, ADD BADGE OR SOMETHING}",
+                    vector = Icons.Default.AccountBox,
+                    onClick = onGotoZePass,
+                )
+            }
             item {
                 NavDrawerItem(
                     onClick = onSaveAllClick,
