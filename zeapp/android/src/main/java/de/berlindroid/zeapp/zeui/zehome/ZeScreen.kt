@@ -195,8 +195,7 @@ private fun getZeDrawerItems(
         onClick = goToReleases,
         icon = R.drawable.ic_update,
         text = R.string.ze_navdrawer_open_release_page,
-
-        ),
+    ),
     ZeDrawerItemData.HorizontalDivider,
 )
 

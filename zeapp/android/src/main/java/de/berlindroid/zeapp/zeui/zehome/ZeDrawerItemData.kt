@@ -14,5 +14,4 @@ sealed class ZeDrawerItemData {
     ) : ZeDrawerItemData()
 
     data object HorizontalDivider : ZeDrawerItemData()
-
 }
