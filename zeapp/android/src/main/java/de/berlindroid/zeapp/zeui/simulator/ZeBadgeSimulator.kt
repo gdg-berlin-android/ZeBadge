@@ -14,10 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -140,18 +140,18 @@ private fun rememberDrawingState(key: Any, size: IntSize): DrawingState {
     }
 }
 
-private data class DrawingState(
+private class DrawingState(
     /** size of the badge */
     val size: IntSize,
     /** this bitmap holds the pixels to be applied to the badge */
     val bitmap: ImageBitmap,
     /** this canvas draws onto the bitmap */
     val canvas: Canvas,
+) {
 
     /** this bitmap (and its canvas) its used only for the preview on the android device */
-    private var _drawBitmap: ImageBitmap? = null,
-    private var _drawCanvas: Canvas? = null,
-) {
+    private var _drawBitmap: ImageBitmap? = null
+    private var _drawCanvas: Canvas? = null
 
     val drawBitmap: ImageBitmap
         get() = _drawBitmap!!
@@ -190,27 +190,40 @@ private val drawPaint = Paint().apply {
 @Composable
 private fun Modifier.drawing(state: DrawingState): Modifier {
     var invalidate by remember { mutableIntStateOf(0) }
+    var lastPosition by remember {
+        mutableStateOf<Offset?>(null)
+    }
     return this
         .pointerInput(Unit) {
             awaitPointerEventScope {
                 while (true) {
-                    val event = awaitPointerEvent().changes.first()
+                    val pointerEvent = awaitPointerEvent()
+                    val event = pointerEvent.changes.first()
+                    val localLastPosition = lastPosition
 
                     // scaled down dot added to the [bitmap] to be sent to the badge
                     val scaleX = size.width / state.size.width.toFloat()
                     val scaleY = size.height / state.size.height.toFloat()
 
-                    val point = Offset(
-                        event.position.x / scaleX,
-                        event.position.y / scaleY,
-                    )
-                    state.canvas.drawPoints(PointMode.Points, listOf(point), paint)
-
+                    val point = Offset(event.position.x / scaleX, event.position.y / scaleY)
+                    if (localLastPosition == null) {
+                        state.canvas.drawPoints(PointMode.Points, listOf(point), paint)
+                    } else {
+                        val lastPoint = Offset(localLastPosition.x / scaleX, localLastPosition.y / scaleY)
+                        state.canvas.drawPoints(PointMode.Lines, listOf(lastPoint, point), paint)
+                    }
 
                     // scaled up dot added to be show on the device screen
                     drawPaint.strokeWidth = min(scaleX, scaleY)
-                    state.drawCanvas.drawPoints(PointMode.Points, listOf(event.position), drawPaint)
+                    if (localLastPosition == null) {
+                        state.drawCanvas.drawPoints(PointMode.Points, listOf(event.position), drawPaint)
+                    } else {
+                        state.drawCanvas.drawPoints(PointMode.Lines, listOf(localLastPosition, event.position), drawPaint)
+                    }
 
+                    lastPosition = event.position.takeUnless {
+                        pointerEvent.type == PointerEventType.Exit || pointerEvent.type == PointerEventType.Release
+                    }
 
                     // this update++ is a hack
                     // I could not find a way to invalidate the drawing directly,
@@ -240,6 +253,7 @@ private fun Modifier.drawing(state: DrawingState): Modifier {
 
             // DEBUG only code:
             // This will draw the bitmap for the badge onto the screen
+
 //            val scaleX = size.width / state.size.width.toFloat()
 //            val scaleY = size.height / state.size.height.toFloat()
 //            scale(scaleX, scaleY, pivot = Offset.Zero) {
