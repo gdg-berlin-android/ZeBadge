@@ -82,6 +82,7 @@ fun NavDrawerItem(
 
 @Composable
 @Preview
+@Suppress("LongParameterList", "LongMethod")
 internal fun ZeDrawerContent(
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
