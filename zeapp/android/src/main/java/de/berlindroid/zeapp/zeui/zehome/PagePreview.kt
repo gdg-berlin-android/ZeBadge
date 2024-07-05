@@ -54,7 +54,7 @@ internal fun PagePreview(
             .padding(ZeDimen.Quarter),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = ZeWhite,
+            contentColor = MaterialTheme.colorScheme.primary,
         ),
         border = BorderStroke(1.dp, ZeWhite),
     ) {
