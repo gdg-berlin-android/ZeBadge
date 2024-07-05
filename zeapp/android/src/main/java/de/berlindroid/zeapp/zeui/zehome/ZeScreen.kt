@@ -95,6 +95,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGotoContributors = { routeTo(ROUTE_ABOUT) },
                         onGotoOpenSourceClick = { routeTo(ROUTE_OPENSOURCE) },
                         onGotoZePass = { routeTo(ROUTE_ZEPASS) },
+                        onGoToSettings = { routeTo(ROUTE_SETTINGS) },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -137,9 +138,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             )
                         }
                         composable(ROUTE_ZEPASS) {
-                            ZeUserProfile(
-
-                            )
+                            ZeUserProfile(paddingValues)
                         }
                         composable(ROUTE_ZEPASS) {
                             ZeUserProfile(paddingValues)
