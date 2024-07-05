@@ -19,7 +19,7 @@ import io.ktor.server.routing.put
 import io.ktor.util.pipeline.PipelineContext
 import java.awt.image.BufferedImage
 import java.io.File
-import java.util.*
+import java.util.UUID
 import javax.imageio.ImageIO
 
 

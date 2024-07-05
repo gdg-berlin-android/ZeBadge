@@ -1,10 +1,11 @@
 package de.berlindroid.zekompanion
 
+import de.berlindroid.zekompanion.PathDirection.HORIZONTAL
+import de.berlindroid.zekompanion.PathDirection.VERTICAL
 import java.nio.IntBuffer
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
-import de.berlindroid.zekompanion.PathDirection.*
 
 
 /**
