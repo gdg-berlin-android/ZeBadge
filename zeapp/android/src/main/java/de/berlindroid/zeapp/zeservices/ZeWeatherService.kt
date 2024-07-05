@@ -3,7 +3,6 @@ package de.berlindroid.zeapp.zeservices
 import de.berlindroid.zeapp.zemodels.WeatherData
 import javax.inject.Inject
 
-
 /**
  * Service to fetch the weather data from the API by the provided date
  */
