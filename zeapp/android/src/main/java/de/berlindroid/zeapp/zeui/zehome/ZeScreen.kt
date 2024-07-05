@@ -23,6 +23,7 @@ import de.berlindroid.zeapp.ROUTE_ABOUT
 import de.berlindroid.zeapp.ROUTE_HOME
 import de.berlindroid.zeapp.ROUTE_OPENSOURCE
 import de.berlindroid.zeapp.ROUTE_SETTINGS
+import de.berlindroid.zeapp.ROUTE_ZEPASS
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
@@ -36,6 +37,7 @@ import kotlinx.coroutines.launch
 internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     val context = LocalContext.current
+
     val goToReleases: () -> Unit = remember {
         {
             val intent = Intent(
@@ -66,6 +68,20 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
 
+    fun routeTo(target: String) {
+        if (currentRoute == target) navController.navigateUp() else navController.navigate(
+            target,
+        )
+    }
+
+    BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
+        if (drawerState.isOpen) {
+            scope.launch { drawerState.close() }
+        } else {
+            navController.navigateUp()
+        }
+    }
+
     ZeBadgeAppTheme(
         themeSettings = vm.uiState.value.themeSettings ?: 0,
         content = {
@@ -73,37 +89,12 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 drawerState = drawerState,
                 drawerContent = {
                     ZeDrawerContent(
-                        drawerState,
                         onGetStoredPages = vm::getStoredPages,
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
-                        onGotoContributors = {
-                            if (currentRoute == ROUTE_ABOUT) {
-                                navController.navigateUp()
-                            } else {
-                                navController.navigate(
-                                    ROUTE_ABOUT,
-                                )
-                            }
-                        },
-                        onGotoOpenSourceClick = {
-                            if (currentRoute == ROUTE_OPENSOURCE) {
-                                navController.navigateUp()
-                            } else {
-                                navController.navigate(
-                                    ROUTE_OPENSOURCE,
-                                )
-                            }
-                        },
-                        onGoToSettings = {
-                            if(currentRoute == ROUTE_SETTINGS) {
-                                navController.navigateUp()
-                            } else {
-                                navController.navigate(
-                                    ROUTE_SETTINGS,
-                                )
-                            }
-                        },
+                        onGotoContributors = { routeTo(ROUTE_ABOUT) },
+                        onGotoOpenSourceClick = { routeTo(ROUTE_OPENSOURCE) },
+                        onGotoZePass = { routeTo(ROUTE_ZEPASS) },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
@@ -144,6 +135,14 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 lazyListState = lazyListState,
                                 vm = vm,
                             )
+                        }
+                        composable(ROUTE_ZEPASS) {
+                            ZeUserProfile(
+
+                            )
+                        }
+                        composable(ROUTE_ZEPASS) {
+                            ZeUserProfile(paddingValues)
                         }
                         composable(ROUTE_ABOUT) {
                             DrawerBackHandler(

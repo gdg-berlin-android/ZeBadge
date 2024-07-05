@@ -11,6 +11,7 @@
     <string name="invert">Invert</string>
     <string name="static_tool">Static</string>
     <string name="ze_very_important" tools:ignore="MissingTranslation">Very Important</string>
+    <string name="remind_binary_image" tools:ignore="MissingTranslation">(This is a non-binary image. Please select a color filter below.)</string>
 
     <string name="generate">Generate</string>
     <string name="not_binary_image">Not a binary image. Make sure each pixel is either black or white.</string>
@@ -31,7 +32,7 @@
     <string name="qr_code_phone">Phone</string>
     <string name="your_name_here" tools:ignore="MissingTranslation">Your Name Here</string>
     <string name="contact_me_here" tools:ignore="MissingTranslation">Contact Me Here</string>
-    <string name="binary_image_needed" tools:ignore="MissingTranslation">Binary image needed. Press one of the buttons below the image.</string>
+    <string name="binary_image_needed" tools:ignore="MissingTranslation">Binary image needed.</string>
     <string name="add_your_phrase_here" tools:ignore="MissingTranslation">Add your phrase here</string>
     <string name="random_phrase" tools:ignore="MissingTranslation">Random Phrase</string>
     <string name="unicorn_at_an_android_conference_in_isometric_view" tools:ignore="MissingTranslation">Unicorn at an android conference in isometric view.</string>
@@ -57,6 +58,7 @@
     <string name="ze_navdrawer_save_all_pages">Save all pages to badge</string>
     <string name="ze_navdrawer_update_config">Update config on badge</string>
     <string name="ze_navdrawer_send_random_page">Send random page to badge</string>
+    <string name="ze_navdrawer_new_release">✨ New release available: %d</string>
     <string name="ze_navdrawer_open_release_page">Open release page</string>
     <string name="ze_navdrawer_contributors">Contributors</string>
     <string name="ze_navdrawer_open_source">Open Source</string>

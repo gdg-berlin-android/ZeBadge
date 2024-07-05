@@ -180,6 +180,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.toolingpreview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.retrofit2.retrofit)
     implementation(libs.retrofit2.converter.serialization)
     implementation(libs.kotlinx.serialization.json)
@@ -191,6 +192,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.aboutlibraries.compose)
     implementation(libs.androidx.compose.hilt.navigation)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

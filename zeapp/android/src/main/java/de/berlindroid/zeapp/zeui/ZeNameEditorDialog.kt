@@ -22,9 +22,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ban.autosizetextfield.AutoSizeTextField
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
@@ -33,6 +36,8 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.NamePage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
+import de.berlindroid.zeapp.zevm.ZeBadgeErrorUiState
+import kotlinx.coroutines.flow.StateFlow
 
 const val MaxCharacters: Int = 20
 
@@ -49,7 +54,8 @@ fun NameEditorDialog(
     config: ZeConfiguration.Name,
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.Name) -> Unit,
-    updateMessage: (String) -> Unit,
+    updateMessage: (String, Boolean) -> Unit,
+    errorUiState: StateFlow<ZeBadgeErrorUiState>,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -76,7 +82,7 @@ fun NameEditorDialog(
                     if (image.isBinary()) {
                         accepted(ZeConfiguration.Name(name, contact, image))
                     } else {
-                        updateMessage(activity.resources.getString(R.string.binary_image_needed))
+                        updateMessage(activity.resources.getString(R.string.binary_image_needed), true)
                     }
                 },
             ) {
@@ -146,9 +152,32 @@ fun NameEditorDialog(
                         }
                     },
                 )
+
+                ErrorPlaceHolder(errorUiState)
             }
         },
     )
+}
+
+@Composable
+private fun ErrorPlaceHolder(errorUiState: StateFlow<ZeBadgeErrorUiState>) {
+    when (val viewState = errorUiState.collectAsStateWithLifecycle().value) {
+        is ZeBadgeErrorUiState.ShowError -> {
+            Text(
+                text = "Error: ${viewState.message}",
+                style = TextStyle(color = Color.Red),
+            )
+        }
+
+        is ZeBadgeErrorUiState.ShowLocalisedError -> {
+            Text(
+                text = "Error: ${stringResource(id = viewState.messageResId)}",
+                style = TextStyle(color = Color.Red),
+            )
+        }
+
+        else -> return
+    }
 }
 
 @Composable

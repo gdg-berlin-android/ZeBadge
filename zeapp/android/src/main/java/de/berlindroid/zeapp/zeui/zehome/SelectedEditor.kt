@@ -39,12 +39,18 @@ internal fun SelectedEditor(
         Timber.e("Slot: This slot '${editor.slot}' is not supposed to be editable.")
     } else {
         when (val config = editor.config) {
-            is ZeConfiguration.Name -> NameEditorDialog(
-                config = config,
-                dismissed = { vm.slotConfigured(editor.slot, null) },
-                accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
-                updateMessage = vm::showMessage,
-            )
+            is ZeConfiguration.Name -> {
+                NameEditorDialog(
+                    config = config,
+                    dismissed = {
+                        vm.clearErrorState()
+                        vm.slotConfigured(editor.slot, null)
+                    },
+                    accepted = { newConfig -> vm.slotConfigured(editor.slot, newConfig) },
+                    updateMessage = vm::showMessage,
+                    errorUiState = vm.errorUiState,
+                )
+            }
 
             is ZeConfiguration.Picture -> PictureEditorDialog(
                 dismissed = { vm.slotConfigured(null, null) },

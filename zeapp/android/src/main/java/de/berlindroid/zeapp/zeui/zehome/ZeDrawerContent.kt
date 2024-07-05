@@ -5,11 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.DrawerDefaults
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +17,8 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
@@ -33,17 +35,20 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 @Composable
 @Preview
 internal fun ZeDrawerContent(
-    drawerState: DrawerState = DrawerState(DrawerValue.Open),
     onSaveAllClick: () -> Unit = {},
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
     onGotoContributors: () -> Unit = {},
     onGotoOpenSourceClick: () -> Unit = {},
     onGoToSettings: () -> Unit = {},
+    onGotoZePass: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
 ) {
+    val viewModel: ZeDrawerViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
     @Composable
     fun NavDrawerItem(
         text: String,
@@ -108,6 +113,13 @@ internal fun ZeDrawerContent(
         }
 
         LazyColumn {
+            item {
+                NavDrawerItem(
+                    text = "{YOUR NAME HERE, ADD BADGE OR SOMETHING}",
+                    vector = Icons.Default.AccountBox,
+                    onClick = onGotoZePass,
+                )
+            }
             item {
                 NavDrawerItem(
                     onClick = onSaveAllClick,
@@ -182,6 +194,14 @@ internal fun ZeDrawerContent(
                 )
             }
 
+            uiState.newReleaseVersion?.let { version ->
+                item {
+                    Text(
+                        stringResource(id = R.string.ze_navdrawer_new_release, version),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
+            }
             item {
                 NavDrawerItem(
                     text = stringResource(id = R.string.ze_navdrawer_open_release_page),
