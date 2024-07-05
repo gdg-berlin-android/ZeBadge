@@ -4,6 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -14,10 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.ROUTE_ABOUT
 import de.berlindroid.zeapp.ROUTE_HOME
 import de.berlindroid.zeapp.ROUTE_OPENSOURCE
@@ -77,34 +82,18 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                 drawerContent = {
                     ZeDrawerContent(
                         drawerState,
-                        onGetStoredPages = vm::getStoredPages,
-                        onSaveAllClick = vm::saveAll,
-                        onGotoReleaseClick = goToReleases,
-                        onGotoContributors = {
-                            if (currentRoute == ROUTE_ABOUT) {
-                                navController.navigateUp()
-                            } else {
-                                navController.navigate(
-                                    ROUTE_ABOUT,
-                                )
-                            }
-                        },
-                        onGotoOpenSourceClick = {
-                            if (currentRoute == ROUTE_OPENSOURCE) {
-                                navController.navigateUp()
-                            } else {
-                                navController.navigate(
-                                    ROUTE_OPENSOURCE,
-                                )
-                            }
-                        },
-                        onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {
                             scope.launch {
                                 drawerState.close()
                             }
                         },
                         onTitleClick = goToGithubPage,
+                        zeDrawerItems = getZeDrawerItems(
+                            zeBadgeViewModel = vm,
+                            currentRoute = currentRoute,
+                            navController = navController,
+                            goToReleases = goToReleases,
+                        ),
                     )
                 },
             ) {
@@ -147,3 +136,60 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
         },
     )
 }
+
+private fun getZeDrawerItems(
+    zeBadgeViewModel: ZeBadgeViewModel,
+    currentRoute: String,
+    navController: NavHostController,
+    goToReleases: () -> Unit,
+): List<ZeDrawerItemData> = listOf(
+    ZeDrawerItemData.ItemWithText(
+        onClick = zeBadgeViewModel::saveAll,
+        icon = R.drawable.save_all,
+        text = R.string.ze_navdrawer_save_all_pages,
+    ),
+    ZeDrawerItemData.ItemWithText(
+        onClick = zeBadgeViewModel::listConfiguration,
+        imageVector = Icons.Default.ThumbUp,
+        text = R.string.ze_navdrawer_update_config,
+    ),
+    ZeDrawerItemData.ItemWithText(
+        onClick = zeBadgeViewModel::listConfiguration,
+        icon = R.drawable.ic_random,
+        text = R.string.ze_navdrawer_send_random_page,
+    ),
+    ZeDrawerItemData.HorizontalDivider,
+    ZeDrawerItemData.ItemWithText(
+        onClick = {
+            if (currentRoute == ROUTE_ABOUT) {
+                navController.navigateUp()
+            } else {
+                navController.navigate(
+                    ROUTE_ABOUT,
+                )
+            }
+        },
+        imageVector = Icons.Default.Info,
+        text = R.string.ze_navdrawer_contributors,
+    ),
+    ZeDrawerItemData.ItemWithText(
+        onClick = {
+            if (currentRoute == ROUTE_OPENSOURCE) {
+                navController.navigateUp()
+            } else {
+                navController.navigate(
+                    ROUTE_OPENSOURCE,
+                )
+            }
+        },
+        icon = R.drawable.ic_open_source_initiative,
+        text = R.string.ze_navdrawer_open_source,
+    ),
+    ZeDrawerItemData.ItemWithText(
+        onClick = goToReleases,
+        icon = R.drawable.ic_update,
+        text = R.string.ze_navdrawer_open_release_page,
+
+        ),
+    ZeDrawerItemData.HorizontalDivider,
+)
