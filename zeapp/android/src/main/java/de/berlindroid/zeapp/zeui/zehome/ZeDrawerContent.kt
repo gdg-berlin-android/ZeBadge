@@ -39,6 +39,7 @@ internal fun ZeDrawerContent(
     onGotoReleaseClick: () -> Unit = {},
     onGotoContributors: () -> Unit = {},
     onGotoOpenSourceClick: () -> Unit = {},
+    onGoToSettings: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
@@ -128,6 +129,14 @@ internal fun ZeDrawerContent(
                     painter = painterResource(id = R.drawable.ic_random),
                     text = stringResource(id = R.string.ze_navdrawer_send_random_page),
                     onClick = onGetStoredPages,
+                )
+            }
+
+            item {
+                NavDrawerItem(
+                    painter = painterResource(id = R.drawable.ic_settings),
+                    text = stringResource(id = R.string.ze_navdrawer_settings),
+                    onClick = onGoToSettings,
                 )
             }
 

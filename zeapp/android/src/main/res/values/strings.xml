@@ -60,6 +60,7 @@
     <string name="ze_navdrawer_open_release_page">Open release page</string>
     <string name="ze_navdrawer_contributors">Contributors</string>
     <string name="ze_navdrawer_open_source">Open Source</string>
+    <string name="ze_navdrawer_settings">Settings</string>
     <string name="ze_select_content" tools:ignore="MissingTranslation">Select Content</string>
     <string name="ze_not_added_yet_message" tools:ignore="MissingTranslation">Not added by you yet, please feel free to contribute this editor</string>
 

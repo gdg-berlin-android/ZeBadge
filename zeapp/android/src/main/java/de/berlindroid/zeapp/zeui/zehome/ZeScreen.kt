@@ -22,9 +22,11 @@ import androidx.navigation.compose.rememberNavController
 import de.berlindroid.zeapp.ROUTE_ABOUT
 import de.berlindroid.zeapp.ROUTE_HOME
 import de.berlindroid.zeapp.ROUTE_OPENSOURCE
+import de.berlindroid.zeapp.ROUTE_SETTINGS
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
+import de.berlindroid.zeapp.zeui.zesettings.ZeSettings
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -65,6 +67,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
 
     ZeBadgeAppTheme(
+        themeSettings = vm.uiState.value.themeSettings ?: 0,
         content = {
             ModalNavigationDrawer(
                 drawerState = drawerState,
@@ -89,6 +92,15 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             } else {
                                 navController.navigate(
                                     ROUTE_OPENSOURCE,
+                                )
+                            }
+                        },
+                        onGoToSettings = {
+                            if(currentRoute == ROUTE_SETTINGS) {
+                                navController.navigateUp()
+                            } else {
+                                navController.navigate(
+                                    ROUTE_SETTINGS,
                                 )
                             }
                         },
@@ -146,6 +158,19 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 scope = scope,
                             )
                             ZeOpenSource(paddingValues)
+                        }
+                        composable(ROUTE_SETTINGS) {
+                            DrawerBackHandler(
+                                drawerState = drawerState,
+                                scope = scope,
+                            )
+                            ZeSettings(
+                                paddingValues = paddingValues,
+                                themeSettings = vm.uiState.value.themeSettings ?: 0,
+                                onThemeChange = {
+                                    vm.setThemeSettings(it)
+                                }
+                            )
                         }
                     }
                 }
