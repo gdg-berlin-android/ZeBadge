@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.ZeDimen
 import de.berlindroid.zeapp.zebits.copy
+import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeGrey
 import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.BADGE_WIDTH
@@ -50,6 +53,7 @@ import java.nio.IntBuffer
  * @param bitmap the initial bitmap to be converted
  * @param bitmapUpdated update callback to be called when the bitmap is updated.
  */
+@Suppress("LongMethod")
 @Composable
 @Preview
 fun BinaryImageEditor(
@@ -73,6 +77,13 @@ fun BinaryImageEditor(
             contentScale = ContentScale.FillWidth,
             contentDescription = null,
         )
+
+        if (!bitmap.isBinary()) {
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.remind_binary_image),
+            )
+        }
 
         LazyRow(
             modifier = Modifier
