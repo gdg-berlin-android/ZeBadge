@@ -124,32 +124,33 @@ class ZeBadgeViewModel @Inject constructor(
             null
         } ?: return
 
+        val bitmap = configuration.bitmap
+        if (!bitmap.isBinary()) {
+            showMessage("Please create a binary image for page '${slot.name}'.")
+            return
+        }
+
         if (!badgeManager.isConnected()) {
             showMessage("Please connect a badge.")
             return
         }
 
-        val bitmap = configuration.bitmap
-        if (bitmap.isBinary()) {
-            viewModelScope.launch {
-                badgeManager.storePage(configuration.type.name, bitmap).fold(
-                    onSuccess = { storeResult ->
-                        delay(300) // serial stuff
-                        badgeManager.showPage(configuration.type.name).fold(
-                            onSuccess = { showResult ->
-                                showMessage(
-                                    // Hadouken¹
-                                    "${showResult + storeResult} bytes were sent.",
-                                )
-                            },
-                            onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
-                        )
-                    },
-                    onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
-                )
-            }
-        } else {
-            showMessage("Please create a binary image for page '${slot.name}'.")
+        viewModelScope.launch {
+            badgeManager.storePage(configuration.type.name, bitmap).fold(
+                onSuccess = { storeResult ->
+                    delay(300) // serial stuff
+                    badgeManager.showPage(configuration.type.name).fold(
+                        onSuccess = { showResult ->
+                            showMessage(
+                                // Hadouken¹
+                                "${showResult + storeResult} bytes were sent.",
+                            )
+                        },
+                        onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
+                    )
+                },
+                onFailure = { showMessage("❗${it.message ?: "Unknown error"} ❗") },
+            )
         }
     }
 
