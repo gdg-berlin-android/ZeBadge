@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -26,6 +27,7 @@ import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zeopensource.ZeOpenSource
 import de.berlindroid.zeapp.zeui.zetheme.ZeBadgeAppTheme
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -68,14 +70,6 @@ internal fun ZeScreen(
     val navController = rememberNavController()
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
-
-    BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
-        if (drawerState.isOpen) {
-            scope.launch { drawerState.close() }
-        } else {
-            navController.navigateUp()
-        }
-    }
 
     ZeBadgeAppTheme(
         content = {
@@ -136,6 +130,10 @@ internal fun ZeScreen(
                 ) { paddingValues ->
                     NavHost(navController = navController, startDestination = ROUTE_HOME) {
                         composable(ROUTE_HOME) {
+                            DrawerBackHandler(
+                                drawerState = drawerState,
+                                scope = scope,
+                            )
                             ZePages(
                                 paddingValues = paddingValues,
                                 lazyListState = lazyListState,
@@ -143,9 +141,17 @@ internal fun ZeScreen(
                             )
                         }
                         composable(ROUTE_ABOUT) {
+                            DrawerBackHandler(
+                                drawerState = drawerState,
+                                scope = scope,
+                            )
                             ZeAbout(paddingValues)
                         }
                         composable(ROUTE_OPENSOURCE) {
+                            DrawerBackHandler(
+                                drawerState = drawerState,
+                                scope = scope,
+                            )
                             ZeOpenSource(paddingValues)
                         }
                     }
@@ -153,4 +159,11 @@ internal fun ZeScreen(
             }
         },
     )
+}
+
+@Composable
+fun DrawerBackHandler(drawerState: DrawerState, scope: CoroutineScope) {
+    BackHandler(drawerState.isOpen) {
+        scope.launch { drawerState.close() }
+    }
 }

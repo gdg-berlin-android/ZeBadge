@@ -111,7 +111,7 @@ android {
     }
 
     sourceSets.getByName("main").assets.srcDir(
-        "${layout.buildDirectory}/generated/assets",
+        "${layout.buildDirectory.get()}/generated/assets",
     )
 
     compileOptions {

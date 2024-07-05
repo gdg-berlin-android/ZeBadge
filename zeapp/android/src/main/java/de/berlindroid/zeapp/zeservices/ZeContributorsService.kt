@@ -12,14 +12,15 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 import javax.inject.Inject
 
 class ZeContributorsService
     @Inject
     constructor() {
-        fun contributors(): Flow<List<Contributor>> =
+        fun contributors(page: Int): Flow<List<Contributor>> =
             flow {
-                val contributors = githubApiService.getContributors()
+                val contributors = githubApiService.getContributors(page)
 
                 emit(
                     contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) },
@@ -54,5 +55,5 @@ private interface GithubApi {
     )
 
     @GET("contributors")
-    suspend fun getContributors(): List<Contributor>
+    suspend fun getContributors(@Query("page") page: Int): List<Contributor>
 }

@@ -18,12 +18,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ZeNavigationPad(lazyListState: LazyListState) {
     val coroutineScope = rememberCoroutineScope()
-    val scrollLength = 425f
-    val topReached by remember { derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.offset == 0 } }
-    val bottomReached by remember {
+
+    val topReached by remember {
         derivedStateOf {
-            lazyListState.layoutInfo.visibleItemsInfo
-                .lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1
+            lazyListState.firstVisibleItemIndex == 0 && lazyListState.firstVisibleItemScrollOffset == 0
         }
     }
 
@@ -33,12 +31,15 @@ fun ZeNavigationPad(lazyListState: LazyListState) {
             .padding(24.dp),
         horizontalAlignment = Alignment.End,
     ) {
-        if (!topReached) {
-            ZeFloatingScroller(coroutineScope, lazyListState, -scrollLength, "↑")
-        }
-        Spacer(modifier = Modifier.size(10.dp))
-        if (!bottomReached) {
-            ZeFloatingScroller(coroutineScope, lazyListState, scrollLength, "↓")
-        }
+        ZeFloatingScroller(
+            coroutineScope = coroutineScope,
+            lazyListState = lazyListState,
+            direction = if (topReached) {
+                LazyListScrollDirections.DOWN
+            } else {
+                LazyListScrollDirections.UP
+            },
+        )
+        Spacer(modifier = Modifier.size(16.dp))
     }
 }

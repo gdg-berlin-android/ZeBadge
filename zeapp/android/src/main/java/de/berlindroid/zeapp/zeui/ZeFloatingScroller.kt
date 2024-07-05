@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp.zeui
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,9 +20,13 @@ import androidx.compose.material3.Text as ZeText
 fun ZeFloatingScroller(
     coroutineScope: CoroutineScope,
     lazyListState: LazyListState,
-    scrollLength: Float,
-    text: String,
+    direction: LazyListScrollDirections,
 ) {
+    val text = when (direction) {
+        LazyListScrollDirections.UP -> "↑"
+        LazyListScrollDirections.DOWN -> "↓"
+    }
+
     FloatingActionButton(
         containerColor = ZeBlack,
         modifier =
@@ -36,7 +39,12 @@ fun ZeFloatingScroller(
                 ),
         onClick = {
             coroutineScope.launch {
-                lazyListState.animateScrollBy(scrollLength)
+                when (direction) {
+                    LazyListScrollDirections.UP -> lazyListState.animateScrollToItem(0)
+                    LazyListScrollDirections.DOWN -> lazyListState.animateScrollToItem(
+                        lazyListState.layoutInfo.totalItemsCount - 1,
+                    )
+                }
             }
         },
     ) {

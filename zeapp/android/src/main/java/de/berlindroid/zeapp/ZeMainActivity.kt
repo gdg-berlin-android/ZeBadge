@@ -2,7 +2,6 @@ package de.berlindroid.zeapp
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +12,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zebits.toDitheredImage
@@ -51,11 +51,8 @@ class ZeMainActivity : ComponentActivity() {
     }
 
     private fun handleSendImage(intent: Intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)?.let(::updateSelectedImage)
-        } else {
-            (intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri)?.let(::updateSelectedImage)
-        }
+        IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+            ?.let(::updateSelectedImage)
     }
 
     private fun updateSelectedImage(imageUri: Uri) =
