@@ -520,6 +520,16 @@ class ZeBadgeViewModel @Inject constructor(
         showMessage("Copied")
     }
 
+    fun setThemeSettings(themeSettings: Int) {
+        _uiState.update {
+            it.copy(themeSettings = themeSettings)
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesService.setThemeSettings(themeSettings)
+        }
+    }
+
     /**
      * Loads data from Datastore
      */
@@ -529,8 +539,10 @@ class ZeBadgeViewModel @Inject constructor(
                 initialConfiguration(it)
             }
 
+            val themeSettings = preferencesService.getThemeSettings()
+
             _uiState.update {
-                it.copy(slots = slots)
+                it.copy(slots = slots, themeSettings = themeSettings)
             }
         }
     }
@@ -545,6 +557,7 @@ class ZeBadgeViewModel @Inject constructor(
             currentTemplateChooser = null,
             slots = emptyMap(),
             currentBadgeConfig = null,
+            themeSettings = null,
         )
 
     fun clearErrorState() {
@@ -559,6 +572,7 @@ data class ZeBadgeUiState(
     val currentTemplateChooser: ZeTemplateChooser?, // if that is not null, we are currently configuring which editor / template to use
     val slots: Map<ZeSlot, ZeConfiguration>,
     val currentBadgeConfig: Map<String, Any?>?,
+    val themeSettings: Int?,
 )
 
 sealed class ZeBadgeErrorUiState {

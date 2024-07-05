@@ -89,6 +89,7 @@ internal fun ZeDrawerContent(
     onGotoContributors: () -> Unit = {},
     onGotoOpenSourceClick: () -> Unit = {},
     onGotoZePass: () -> Unit = {},
+    onGoToSettings: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
@@ -149,6 +150,30 @@ internal fun ZeDrawerContent(
             }
 
             item { Divider() }
+
+            item {
+                NavDrawerItem(
+                    painter = painterResource(id = R.drawable.ic_settings),
+                    text = stringResource(id = R.string.ze_navdrawer_settings),
+                    onClick = onGoToSettings,
+                    onCloseDrawer = onCloseDrawer,
+                )
+            }
+
+            item { Divider() }
+
+            item {
+                HorizontalDivider(
+                    thickness = 0.dp,
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.padding(
+                        start = 0.dp,
+                        end = 0.dp,
+                        top = 16.dp,
+                        bottom = 16.dp,
+                    ),
+                )
+            }
 
             item {
                 NavDrawerItem(

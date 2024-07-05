@@ -103,4 +103,5 @@ class ZeMainActivity : ComponentActivity() {
 const val ROUTE_HOME = "home"
 const val ROUTE_ABOUT = "about"
 const val ROUTE_OPENSOURCE = "opensource"
+const val ROUTE_SETTINGS = "settings"
 const val ROUTE_ZEPASS = "zepass"
