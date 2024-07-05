@@ -169,6 +169,7 @@ internal fun ZeDrawerContent(
                     painter = painterResource(id = R.drawable.ic_language),
                     text = stringResource(id = R.string.ze_navdrawer_language_settings),
                     onClick = onGotoLanguagesSettings,
+                    onCloseDrawer = onCloseDrawer,
                 )
             }
 
