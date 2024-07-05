@@ -88,6 +88,7 @@ internal fun ZeDrawerContent(
     onGetStoredPages: () -> Unit = {},
     onGotoReleaseClick: () -> Unit = {},
     onGotoContributors: () -> Unit = {},
+    onGotoLanguagesSettings: () -> Unit = {},
     onGotoOpenSourceClick: () -> Unit = {},
     onGotoZePass: () -> Unit = {},
     onGoToSettings: () -> Unit = {},
@@ -162,6 +163,14 @@ internal fun ZeDrawerContent(
             }
 
             item { Divider() }
+
+            item {
+                NavDrawerItem(
+                    painter = painterResource(id = R.drawable.ic_language),
+                    text = stringResource(id = R.string.ze_navdrawer_language_settings),
+                    onClick = onGotoLanguagesSettings,
+                )
+            }
 
             item {
                 HorizontalDivider(
