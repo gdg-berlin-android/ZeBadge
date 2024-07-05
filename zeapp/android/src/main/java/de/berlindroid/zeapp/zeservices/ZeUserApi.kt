@@ -25,7 +25,7 @@ class ZeUserApi
     private val service: ZeUserService,
     private val baseUrl: ZeServerBaseUrl,
 ) {
-    fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/${uuid}/png"
+    fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/png"
 
     suspend fun getOneUser(uuid: String): User? = service.getOneUser(uuid)
 }
