@@ -1,6 +1,5 @@
 package de.berlindroid.zeapp.zeservices
 
-import de.berlindroid.zeapp.zedi.ZeServerBaseUrl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.http.Body

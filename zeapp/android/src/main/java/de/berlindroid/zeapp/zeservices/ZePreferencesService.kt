@@ -118,9 +118,9 @@ class ZePreferencesService @Inject constructor(
         }
     }
 
-     suspend fun getThemeSettings(): Int {
-         return dataStore.data.map { preferences -> preferences[THEME_KEY] ?: 0 }
-             .first()
+    suspend fun getThemeSettings(): Int {
+        return dataStore.data.map { preferences -> preferences[THEME_KEY] ?: 0 }
+            .first()
     }
 
     suspend fun setThemeSettings(themeSettings: Int) {

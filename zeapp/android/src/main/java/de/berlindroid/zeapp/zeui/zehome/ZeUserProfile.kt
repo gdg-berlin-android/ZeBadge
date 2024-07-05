@@ -80,7 +80,7 @@ fun ZeUserProfile(
                         Text(
                             style = MaterialTheme.typography.bodyMedium,
                             text = message.text,
-                            )
+                        )
                     }
                 }
             }

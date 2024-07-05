@@ -40,9 +40,9 @@ fun ZeBadgeAppTheme(
 ) {
     val colorScheme: ColorScheme
     if (themeSettings == 0) {
-         colorScheme = if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
+        colorScheme = if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
     } else {
-         colorScheme = if (themeSettings == 1) DarkColorScheme else LightColorScheme
+        colorScheme = if (themeSettings == 1) DarkColorScheme else LightColorScheme
     }
 
     val isDarkTheme = colorScheme == DarkColorScheme

@@ -69,9 +69,13 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: ROUTE_HOME
 
     fun routeTo(target: String) {
-        if (currentRoute == target) navController.navigateUp() else navController.navigate(
-            target,
-        )
+        if (currentRoute == target) {
+            navController.navigateUp()
+        } else {
+            navController.navigate(
+                target,
+            )
+        }
     }
 
     BackHandler(drawerState.isOpen || currentRoute != ROUTE_HOME) {
@@ -167,7 +171,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 themeSettings = vm.uiState.value.themeSettings ?: 0,
                                 onThemeChange = {
                                     vm.setThemeSettings(it)
-                                }
+                                },
                             )
                         }
                     }

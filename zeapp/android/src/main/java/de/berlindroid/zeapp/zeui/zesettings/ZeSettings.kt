@@ -38,11 +38,11 @@ fun ZeSettings(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
     ) {
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { expanded = it }
+            onExpandedChange = { expanded = it },
         ) {
             OutlinedTextField(
                 value = selectedTheme,
@@ -52,12 +52,12 @@ fun ZeSettings(
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
-                label = { Text("Theme") }
+                label = { Text("Theme") },
             )
 
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
             ) {
                 themes.forEach { theme ->
                     DropdownMenuItem(
@@ -66,7 +66,7 @@ fun ZeSettings(
                             selectedTheme = theme
                             expanded = false
                             onThemeChange(themes.indexOf(selectedTheme))
-                        }
+                        },
                     )
                 }
             }
@@ -86,6 +86,6 @@ fun ZeSettingsPreview() {
     ZeSettings(
         paddingValues = PaddingValues(16.dp),
         themeSettings = 0,
-        onThemeChange = {}
+        onThemeChange = {},
     )
 }
