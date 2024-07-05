@@ -98,3 +98,10 @@ Badge --> Badge: Show user page `u`
 Alice -->> Badge: Button 'down'
 Badge --> Badge: Show user page `d`
 ```
+### ZeContributors
+
+<a href="https://github.com/gdg-berlin-android/ZeBadge/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=gdg-berlin-android/ZeBadge" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
