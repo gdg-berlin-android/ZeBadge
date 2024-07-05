@@ -4,6 +4,7 @@ import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeservices.ZePreferencesService
+import de.berlindroid.zeapp.zeservices.ZeWeatherService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,6 +24,7 @@ class ZeBadgeViewModelTest {
     private val zeBadgeManager = mockk<ZeBadgeManager>()
     private val zePreferencesService = mockk<ZePreferencesService>()
     private val clipboardService = mockk<ZeClipboardService>()
+    private val weatherService = mockk<ZeWeatherService>()
     private val templateConfigurations = mockk<GetTemplateConfigurations>()
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -54,6 +56,7 @@ class ZeBadgeViewModelTest {
         badgeManager = zeBadgeManager,
         preferencesService = zePreferencesService,
         clipboardService = clipboardService,
+        weatherService = weatherService,
         getTemplateConfigurations = templateConfigurations,
     )
 
