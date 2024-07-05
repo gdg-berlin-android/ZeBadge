@@ -35,5 +35,4 @@ class ZeWeatherService @Inject constructor(private val zeWeatherApi: ZeWeatherAp
             )
         }
     }
-
 }
