@@ -9,7 +9,10 @@ androidx-core = "1.13.1"
 androidx-datastore = "1.1.1"
 androidx-lifecycle = "2.8.3"
 androidx-navigation = "2.7.7"
+androidx-test-core = "1.6.1"
+androidx-test-espresso = "3.6.1"
 androidx-test-ext-junit = "1.2.1"
+androidx-test-uiautomator = "2.3.0"
 benchmark = "1.2.4"
 benchmarkMacroJunit4 = "1.2.4"
 coil = "2.6.0"
@@ -26,7 +29,6 @@ mik3y-usb-serial = "3.7.0"
 retrofit = "2.11.0"
 sl4j = "2.0.12"
 timber = "5.0.1"
-uiautomator = "2.3.0"
 zxing = "3.5.3"
 assertk = "0.27.0"
 junit4 = "4.13.2"
@@ -38,8 +40,6 @@ hilt-navigation-compose = "1.2.0"
 jetbrains-compose = "1.6.11"
 roborazzi = "1.21.0"
 robolectric = "4.12.2"
-android-ktx = "1.6.1"
-espresso = "3.6.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
@@ -76,8 +76,10 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-test-core = { group = "androidx.test", name = "core-ktx", version.ref = "androidx-test-core" }
+androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
-androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-transformations = "com.github.Commit451.coil-transformations:transformations:2.0.2"
 dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
@@ -106,18 +108,16 @@ roborazzi-core = { module = "io.github.takahirom.roborazzi:roborazzi", version.r
 roborazzi-compose-android = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-compose-desktop = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop", version.ref = "roborazzi" }
 roborazzi-junit = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
-androidx-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "android-ktx" }
 
 [bundles]
 screenshotTest-android = [
     "roborazzi-core",
     "roborazzi-compose-android",
     "roborazzi-junit",
-    "espresso-core",
     "robolectric",
-    "androidx-ktx",
+    "androidx-test-core",
+    "androidx-test-espresso-core",
     "androidx-compose-ui-test-junit",
     "androidx-compose-ui-test-manifest",
 ]
