@@ -3,7 +3,6 @@ package de.berlindroid.zekompanion
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
-import org.junit.Ignore
 import org.junit.Test
 import java.io.FileNotFoundException
 import java.nio.IntBuffer

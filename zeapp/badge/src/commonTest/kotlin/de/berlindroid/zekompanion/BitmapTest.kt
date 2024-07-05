@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
 import java.io.File
 import java.io.FileNotFoundException
-import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import javax.imageio.ImageIO
 
