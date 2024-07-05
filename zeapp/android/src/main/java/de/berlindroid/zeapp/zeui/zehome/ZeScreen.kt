@@ -75,14 +75,22 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onSaveAllClick = vm::saveAll,
                         onGotoReleaseClick = goToReleases,
                         onGotoContributors = {
-                            if (currentRoute == ROUTE_ABOUT) navController.navigateUp() else navController.navigate(
-                                ROUTE_ABOUT,
-                            )
+                            if (currentRoute == ROUTE_ABOUT) {
+                                navController.navigateUp()
+                            } else {
+                                navController.navigate(
+                                    ROUTE_ABOUT,
+                                )
+                            }
                         },
                         onGotoOpenSourceClick = {
-                            if (currentRoute == ROUTE_OPENSOURCE) navController.navigateUp() else navController.navigate(
-                                ROUTE_OPENSOURCE,
-                            )
+                            if (currentRoute == ROUTE_OPENSOURCE) {
+                                navController.navigateUp()
+                            } else {
+                                navController.navigate(
+                                    ROUTE_OPENSOURCE,
+                                )
+                            }
                         },
                         onUpdateConfig = vm::listConfiguration,
                         onCloseDrawer = {

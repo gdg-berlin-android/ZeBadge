@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,8 +33,8 @@ import androidx.compose.ui.window.DialogProperties
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.composableToBitmap
 import de.berlindroid.zeapp.zebits.isBinary
+import de.berlindroid.zeapp.zemodels.WeatherData
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
-import de.berlindroid.zeapp.zeservices.WeatherData
 import de.berlindroid.zeapp.zeservices.fetchWeather
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
@@ -107,10 +106,12 @@ fun WeatherEditorDialog(
                 Text(text = stringResource(android.R.string.cancel))
             }
         },
-        title = { Text(
-            color = ZeBlack,
-            text = stringResource(id = R.string.add_your_contact_details)
-        ) },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.add_your_contact_details),
+            )
+        },
         properties = DialogProperties(),
         text = {
             LazyColumn {
@@ -162,7 +163,7 @@ fun WeatherEditorDialog(
                         }
                     }
 
-                    BoxWithConstraints(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(),
