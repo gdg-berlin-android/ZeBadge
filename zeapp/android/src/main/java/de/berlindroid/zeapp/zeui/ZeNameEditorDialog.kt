@@ -153,26 +153,31 @@ fun NameEditorDialog(
                     },
                 )
 
-                when (val viewState = errorUiState.collectAsStateWithLifecycle().value) {
-                    is ZeBadgeErrorUiState.ShowError -> {
-                        Text(
-                            text = "Error: ${viewState.message}",
-                            style = TextStyle(color = Color.Red),
-                        )
-                    }
-
-                    is ZeBadgeErrorUiState.ShowLocalisedError -> {
-                        Text(
-                            text = "Error: ${stringResource(id = viewState.messageResId)}",
-                            style = TextStyle(color = Color.Red),
-                        )
-                    }
-
-                    else -> return@Column
-                }
+                ErrorPlaceHolder(errorUiState)
             }
         },
     )
+}
+
+@Composable
+private fun ErrorPlaceHolder(errorUiState: StateFlow<ZeBadgeErrorUiState>) {
+    when (val viewState = errorUiState.collectAsStateWithLifecycle().value) {
+        is ZeBadgeErrorUiState.ShowError -> {
+            Text(
+                text = "Error: ${viewState.message}",
+                style = TextStyle(color = Color.Red),
+            )
+        }
+
+        is ZeBadgeErrorUiState.ShowLocalisedError -> {
+            Text(
+                text = "Error: ${stringResource(id = viewState.messageResId)}",
+                style = TextStyle(color = Color.Red),
+            )
+        }
+
+        else -> return
+    }
 }
 
 @Composable
@@ -186,4 +191,3 @@ fun ClearIcon(isEmpty: Boolean, modifier: Modifier = Modifier, onClick: () -> Un
         )
     }
 }
-
