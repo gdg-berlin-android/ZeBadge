@@ -49,11 +49,7 @@ jobs:
         uses: gradle/actions/wrapper-validation@v3
       - name: "Assemble Debug"
         run: ./gradlew :android:assembleDebug --no-daemon
-      - name: "Upload Debug APK to GitHub"
-        uses: actions/upload-artifact@v4
-        with:
-          name: Debug APK
-          path: zeapp/android/build/outputs/apk/debug/android-debug.apk
+      # Not uploading the APK cause the other step will generate the same thing anyway
   ktlint:
     runs-on: ubuntu-latest
     steps:
