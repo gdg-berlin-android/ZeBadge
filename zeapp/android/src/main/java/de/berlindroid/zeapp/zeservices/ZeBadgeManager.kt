@@ -4,7 +4,19 @@ import android.content.Context
 import android.graphics.Bitmap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zeui.pixelBuffer
-import de.berlindroid.zekompanion.*
+import de.berlindroid.zekompanion.ConfigCommand
+import de.berlindroid.zekompanion.ConfigListCommand
+import de.berlindroid.zekompanion.ConfigSaveCommand
+import de.berlindroid.zekompanion.ConfigUpdateCommand
+import de.berlindroid.zekompanion.Environment
+import de.berlindroid.zekompanion.ListCommand
+import de.berlindroid.zekompanion.PreviewCommand
+import de.berlindroid.zekompanion.ShowCommand
+import de.berlindroid.zekompanion.StoreCommand
+import de.berlindroid.zekompanion.base64
+import de.berlindroid.zekompanion.buildBadgeManager
+import de.berlindroid.zekompanion.toBinary
+import de.berlindroid.zekompanion.zipit
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import javax.inject.Inject
@@ -102,7 +114,7 @@ class ZeBadgeManager @Inject constructor(
                 val config = response.getOrDefault("").replace("\r\n", "")
                 Timber.v(
                     "Badge sent response: successfully received configuration: " +
-                            "'${config.replace("\n", "\\n")}'.",
+                        "'${config.replace("\n", "\\n")}'.",
                 )
 
                 val parseResult = badgeConfigParser.parse(config)
@@ -120,7 +132,6 @@ class ZeBadgeManager @Inject constructor(
      * Update configuration on badge..
      */
     suspend fun updateConfiguration(configuration: Map<String, Any?>): Result<Any> {
-
         val detypedConfig: Map<String, String> = configuration.map { e ->
             val (k, v) = e
             k to kotlinToPython(v)
