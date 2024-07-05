@@ -1,5 +1,6 @@
 package de.berlindroid.zekompanion.terminal
 
+import de.berlindroid.zekompanion.BadgePayload
 import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.ditherFloydSteinberg
@@ -13,7 +14,9 @@ import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
 import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.BadgePayload.*
+import de.berlindroid.zekompanion.DeleteCommand
+import de.berlindroid.zekompanion.PreviewCommand
+import de.berlindroid.zekompanion.StoreCommand
 import kotlinx.coroutines.runBlocking
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB
@@ -232,8 +235,9 @@ private fun resizeFluidImageCallback(size: String?): IntBuffer.(width: Int, heig
 
 
 private fun storeBufferOntoBadge(filename: String): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
-    val payload = StorePayload(
-        filename = filename,
+    val payload = StoreCommand(
+        debug = false,
+        meta = filename,
         payload = toBinary().zipit().base64(),
     )
 
@@ -280,7 +284,7 @@ private fun rawCommand(
     command: String, meta: String = "", payload: String = "",
     resultTransformer: (result: Result<String>) -> String = ::defaultTransformer,
 ) {
-    val badgePayload = RawPayload(
+    val badgePayload = BadgePayload(
         debug = false,
         type = command,
         meta = meta,
@@ -314,8 +318,9 @@ private fun rawCommand(
 }
 
 private fun deleteStoredImageOnBadge(filename: String?): StorageOperation = {
-    val payload = DeletePayload(
-        filename = filename ?: ""
+    val payload = DeleteCommand(
+        debug = false,
+        meta = filename ?: "",
     )
 
     runBlocking {
@@ -335,7 +340,8 @@ private fun deleteStoredImageOnBadge(filename: String?): StorageOperation = {
 }
 
 private fun previewImageOnBadge(): IntBuffer.(width: Int, height: Int) -> IntBuffer = { _, _ ->
-    val payload = PreviewPayload(
+    val payload = PreviewCommand(
+        debug = false,
         payload = toBinary().zipit().base64(),
     )
 
