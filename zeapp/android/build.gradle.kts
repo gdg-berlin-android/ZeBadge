@@ -55,7 +55,7 @@ android {
                 "pl",
                 "et",
                 "ru",
-                "fi"
+                "fi",
                 "hu",
             ),
         )
