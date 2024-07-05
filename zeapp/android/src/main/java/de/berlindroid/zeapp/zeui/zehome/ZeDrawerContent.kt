@@ -43,7 +43,6 @@ internal fun ZeDrawerContent(
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
 ) {
-
     @Composable
     fun NavDrawerItem(
         text: String,
@@ -89,7 +88,6 @@ internal fun ZeDrawerContent(
                 onCloseDrawer()
             },
         )
-
     }
 
     ModalDrawerSheet(
@@ -138,7 +136,10 @@ internal fun ZeDrawerContent(
                     thickness = 0.dp,
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp,
+                        end = 0.dp,
+                        top = 16.dp,
+                        bottom = 16.dp,
                     ),
                 )
             }
@@ -164,7 +165,10 @@ internal fun ZeDrawerContent(
                     thickness = 0.dp,
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.padding(
-                        start = 0.dp, end = 0.dp, top = 16.dp, bottom = 16.dp,
+                        start = 0.dp,
+                        end = 0.dp,
+                        top = 16.dp,
+                        bottom = 16.dp,
                     ),
                 )
             }
@@ -176,7 +180,6 @@ internal fun ZeDrawerContent(
                     onClick = onGotoReleaseClick,
                 )
             }
-
         }
     }
 }

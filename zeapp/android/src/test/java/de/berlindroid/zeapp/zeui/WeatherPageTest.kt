@@ -1,7 +1,5 @@
 package de.berlindroid.zeapp.zeui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import de.berlindroid.zeapp.RoborazziTest
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
