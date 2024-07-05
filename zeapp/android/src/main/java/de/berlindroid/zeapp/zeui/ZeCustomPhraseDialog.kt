@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,10 +66,12 @@ fun CustomPhraseEditorDialog(
                 Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(
-            color = ZeBlack,
-            text = stringResource(R.string.add_your_phrase_here)
-        ) },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(R.string.add_your_phrase_here),
+            )
+        },
         properties = DialogProperties(),
         text = {
             Column {

@@ -21,9 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.BADGE_WIDTH
-import de.berlindroid.zeapp.zeui.rememberQrBitmapPainter
 
 /**
  * A composable that represents a badge, to be rendered as a bitmap.

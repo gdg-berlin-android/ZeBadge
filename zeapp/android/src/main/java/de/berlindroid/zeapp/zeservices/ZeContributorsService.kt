@@ -16,11 +16,10 @@ import javax.inject.Inject
 
 class ZeContributorsService @Inject constructor() {
     fun contributors(): Flow<List<Contributor>> = flow {
-
         val contributors = githubApiService.getContributors()
 
         emit(
-            contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) }
+            contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) },
         )
     }.flowOn(Dispatchers.IO)
 }
