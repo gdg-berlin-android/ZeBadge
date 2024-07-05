@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import androidx.lifecycle.viewmodel.compose.viewModel
 import de.berlindroid.zekompanion.getPlatform
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -113,4 +112,3 @@ fun LazyListState.isScrolledToEnd(lastItemOffset: Int = 5) = with(layoutInfo) {
     val lastVisibleItemIndex = visibleItemsInfo.lastOrNull()?.index ?: 0
     lastVisibleItemIndex + 1 > (totalItemsCount - lastItemOffset)
 }
-

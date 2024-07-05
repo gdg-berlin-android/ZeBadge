@@ -1,6 +1,5 @@
 package de.berlindroid.zeapp.zeservices
 
-import android.util.Log
 import de.berlindroid.zeapp.zeui.zeabout.Contributor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,9 +21,10 @@ class ZeContributorsService @Inject constructor() {
 
     private val _contributors = MutableStateFlow<List<Contributor>>(emptyList())
     val contributors = _contributors.asStateFlow()
+    private var lastPageLoaded = false
+
     // For some reason GitHub's pagination starts at 1
     private var currentPage = 1
-    private var lastPageLoaded = false
 
     suspend fun loadMore() {
         if (lastPageLoaded) return
@@ -33,7 +33,7 @@ class ZeContributorsService @Inject constructor() {
                 .map { Contributor(it.login, it.url, it.imageUrl, it.contributions) }
             if (contributors.isEmpty()) lastPageLoaded = true
             currentPage += 1
-            _contributors.update { (it + contributors)}
+            _contributors.update { (it + contributors) }
         } catch (ioException: IOException) {
             Timber.w(ioException, "Failed to load contributors")
         } catch (httpException: HttpException) {
