@@ -56,7 +56,8 @@ object ApiModule {
         service: ZeUserService,
         baseUrl: ZeServerBaseUrl,
     ): ZeUserApi = ZeUserApi(
-        service, baseUrl,
+        service,
+        baseUrl,
     )
 
     @Provides
@@ -74,8 +75,7 @@ object ApiModule {
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(
-                ZeUserService::
-                class.java,
+                ZeUserService::class.java,
             )
 
     @Provides
