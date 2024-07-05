@@ -174,7 +174,8 @@ dependencies {
     implementation(projects.badge)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui.ui)
     implementation(libs.androidx.datastore)
@@ -193,7 +194,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.aboutlibraries.compose)
     implementation(libs.androidx.compose.hilt.navigation)
-    implementation(libs.androidx.lifecycle.runtime.compose.android)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
@@ -201,10 +201,10 @@ dependencies {
     testImplementation(libs.testJunit4)
     testImplementation(libs.testMockk)
     testImplementation(libs.testCoroutines)
-    testImplementation(libs.bundles.screeshottest.android)
+    testImplementation(libs.bundles.screenshotTest.android)
 
-    androidTestImplementation(libs.testComposeJunit)
-    debugImplementation(libs.testComposeManifest)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit)
     kapt(libs.dagger.hilt.compiler)
     baselineProfile(projects.benchmark)
 }
