@@ -4,9 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -21,12 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 
@@ -34,14 +29,9 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 @Preview
 internal fun ZeDrawerContent(
     drawerState: DrawerState = DrawerState(DrawerValue.Open),
-    onSaveAllClick: () -> Unit = {},
-    onGetStoredPages: () -> Unit = {},
-    onGotoReleaseClick: () -> Unit = {},
-    onGotoContributors: () -> Unit = {},
-    onGotoOpenSourceClick: () -> Unit = {},
-    onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
+    zeDrawerItems: List<ZeDrawerItemData> = listOf(),
 ) {
     @Composable
     fun NavDrawerItem(
@@ -107,78 +97,37 @@ internal fun ZeDrawerContent(
         }
 
         LazyColumn {
-            item {
-                NavDrawerItem(
-                    onClick = onSaveAllClick,
-                    painter = painterResource(id = R.drawable.save_all),
-                    text = stringResource(id = R.string.ze_navdrawer_save_all_pages),
-                )
-            }
+            items(zeDrawerItems.size) { index ->
+                when (val currentItem = zeDrawerItems[index]) {
+                    is ZeDrawerItemData.ItemWithText -> {
+                        if (currentItem.icon != null) {
+                            NavDrawerItem(
+                                onClick = currentItem.onClick,
+                                painter = painterResource(id = currentItem.icon),
+                                text = stringResource(id = currentItem.text),
+                            )
+                        } else if (currentItem.imageVector != null) {
+                            NavDrawerItem(
+                                onClick = currentItem.onClick,
+                                vector = currentItem.imageVector,
+                                text = stringResource(id = currentItem.text),
+                            )
+                        }
+                    }
 
-            item {
-                NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_update_config),
-                    vector = Icons.Default.ThumbUp,
-                    onClick = onUpdateConfig,
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    painter = painterResource(id = R.drawable.ic_random),
-                    text = stringResource(id = R.string.ze_navdrawer_send_random_page),
-                    onClick = onGetStoredPages,
-                )
-            }
-
-            item {
-                HorizontalDivider(
-                    thickness = 0.dp,
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 0.dp,
-                        top = 16.dp,
-                        bottom = 16.dp,
-                    ),
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_contributors),
-                    painter = rememberVectorPainter(Icons.Default.Info),
-                    onClick = onGotoContributors,
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_open_source),
-                    painter = painterResource(id = R.drawable.ic_open_source_initiative),
-                    onClick = onGotoOpenSourceClick,
-                )
-            }
-
-            item {
-                HorizontalDivider(
-                    thickness = 0.dp,
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.padding(
-                        start = 0.dp,
-                        end = 0.dp,
-                        top = 16.dp,
-                        bottom = 16.dp,
-                    ),
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_open_release_page),
-                    painter = painterResource(id = R.drawable.ic_update),
-                    onClick = onGotoReleaseClick,
-                )
+                    is ZeDrawerItemData.HorizontalDivider -> {
+                        HorizontalDivider(
+                            thickness = 0.dp,
+                            color = MaterialTheme.colorScheme.background,
+                            modifier = Modifier.padding(
+                                start = 0.dp,
+                                end = 0.dp,
+                                top = 16.dp,
+                                bottom = 16.dp,
+                            ),
+                        )
+                    }
+                }
             }
         }
     }
