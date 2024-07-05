@@ -80,10 +80,11 @@ fun ZeAbout(
                     AsyncImage(
                         model = contributor.imageUrl,
                         contentDescription = "avatar",
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(50.dp)
-                            .clip(CircleShape),
+                        modifier =
+                            Modifier
+                                .padding(8.dp)
+                                .size(50.dp)
+                                .clip(CircleShape),
                     )
                     Text(
                         text = "${contributor.name}: ${contributor.contributions}",

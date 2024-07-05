@@ -55,5 +55,7 @@ private interface GithubApi {
     )
 
     @GET("contributors")
-    suspend fun getContributors(@Query("page") page: Int): List<Contributor>
+    suspend fun getContributors(
+        @Query("page") page: Int,
+    ): List<Contributor>
 }

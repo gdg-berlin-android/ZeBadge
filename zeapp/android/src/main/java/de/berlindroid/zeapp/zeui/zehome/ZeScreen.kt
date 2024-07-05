@@ -162,7 +162,10 @@ internal fun ZeScreen(
 }
 
 @Composable
-fun DrawerBackHandler(drawerState: DrawerState, scope: CoroutineScope) {
+fun DrawerBackHandler(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+) {
     BackHandler(drawerState.isOpen) {
         scope.launch { drawerState.close() }
     }

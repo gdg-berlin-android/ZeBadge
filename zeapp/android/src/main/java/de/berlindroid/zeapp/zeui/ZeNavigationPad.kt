@@ -34,11 +34,12 @@ fun ZeNavigationPad(lazyListState: LazyListState) {
         ZeFloatingScroller(
             coroutineScope = coroutineScope,
             lazyListState = lazyListState,
-            direction = if (topReached) {
-                LazyListScrollDirections.DOWN
-            } else {
-                LazyListScrollDirections.UP
-            },
+            direction =
+                if (topReached) {
+                    LazyListScrollDirections.DOWN
+                } else {
+                    LazyListScrollDirections.UP
+                },
         )
         Spacer(modifier = Modifier.size(16.dp))
     }
