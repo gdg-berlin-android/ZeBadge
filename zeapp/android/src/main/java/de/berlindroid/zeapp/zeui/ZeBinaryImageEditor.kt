@@ -52,6 +52,7 @@ import java.nio.IntBuffer
  * @param bitmap the initial bitmap to be converted
  * @param bitmapUpdated update callback to be called when the bitmap is updated.
  */
+@Suppress("LongMethod")
 @Composable
 @Preview
 fun BinaryImageEditor(
