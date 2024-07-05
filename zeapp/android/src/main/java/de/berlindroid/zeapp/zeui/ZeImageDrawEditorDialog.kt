@@ -34,14 +34,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.drawToBitmap
-import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
 import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.threshold
 import kotlinx.coroutines.launch
 
@@ -136,7 +136,7 @@ fun ZeImageDrawEditorDialog(
         title = {
             Text(
                 color = ZeBlack,
-                text = stringResource(id = R.string.draw_image_page)
+                text = stringResource(id = R.string.draw_image_page),
             )
         },
         text = {

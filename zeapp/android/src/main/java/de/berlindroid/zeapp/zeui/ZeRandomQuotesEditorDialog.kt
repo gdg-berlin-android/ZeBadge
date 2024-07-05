@@ -78,10 +78,12 @@ fun RandomQuotesEditorDialog(
                 Text(text = stringResource(id = android.R.string.cancel))
             }
         },
-        title = { Text(
-            color = ZeBlack,
-            text = stringResource(R.string.click_get_to_show_quote_of_the_day)
-        ) },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(R.string.click_get_to_show_quote_of_the_day),
+            )
+        },
         properties = DialogProperties(),
         text = {
             LazyColumn {

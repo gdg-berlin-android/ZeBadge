@@ -54,7 +54,7 @@ android {
                 "pt-rBR",
                 "pl",
                 "et",
-                "ru"
+                "ru",
             ),
         )
 
@@ -213,7 +213,7 @@ ktlint {
     android.set(true)
     outputToConsole.set(true)
     outputColorName.set("RED")
-    ignoreFailures.set(true)
+    ignoreFailures.set(false)
     reporters {
         reporter(ReporterType.PLAIN)
         reporter(ReporterType.CHECKSTYLE)

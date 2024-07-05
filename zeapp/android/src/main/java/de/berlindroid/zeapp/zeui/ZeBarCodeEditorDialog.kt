@@ -72,10 +72,12 @@ fun BarCodeEditorDialog(
                 Text(text = stringResource(id = android.R.string.ok))
             }
         },
-        title = { Text(
-            color = ZeBlack,
-            text = stringResource(id = R.string.add_barcode_url)
-        ) },
+        title = {
+            Text(
+                color = ZeBlack,
+                text = stringResource(id = R.string.add_barcode_url),
+            )
+        },
         properties = DialogProperties(),
         text = {
             LazyColumn {
