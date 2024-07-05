@@ -564,7 +564,6 @@ sealed class ZeBadgeErrorUiState {
     data class ShowError(val message: String) : ZeBadgeErrorUiState()
 
     data object ClearError : ZeBadgeErrorUiState()
-
 }
 
 // ¹ https://www.reddit.com/r/ProgrammerHumor/comments/27yykv/indent_hadouken/

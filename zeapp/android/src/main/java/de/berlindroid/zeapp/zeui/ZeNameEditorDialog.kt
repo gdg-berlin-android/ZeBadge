@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
 package de.berlindroid.zeapp.zeui
 
 import android.app.Activity
@@ -21,8 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ban.autosizetextfield.AutoSizeTextField
@@ -152,16 +155,21 @@ fun NameEditorDialog(
 
                 when (val viewState = errorUiState.collectAsStateWithLifecycle().value) {
                     is ZeBadgeErrorUiState.ShowError -> {
-                        Text(text = "Error: ${viewState.message}")
+                        Text(
+                            text = "Error: ${viewState.message}",
+                            style = TextStyle(color = Color.Red),
+                        )
                     }
 
                     is ZeBadgeErrorUiState.ShowLocalisedError -> {
-                        Text(text = "Error: ${stringResource(id = viewState.messageResId)}")
+                        Text(
+                            text = "Error: ${stringResource(id = viewState.messageResId)}",
+                            style = TextStyle(color = Color.Red),
+                        )
                     }
 
                     else -> return@Column
                 }
-
             }
         },
     )
