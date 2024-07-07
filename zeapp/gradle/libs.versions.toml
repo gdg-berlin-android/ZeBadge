@@ -3,6 +3,7 @@
 [versions]
 android-gradle-plugin = "8.5.0"
 androidx-activity = "1.9.0"
+androidx-appcompat = "1.7.0"
 androidx-compose-bom = "2024.06.00"
 androidx-compose-compiler = "1.5.14"
 androidx-core = "1.13.1"
@@ -22,6 +23,7 @@ jSerialComm = "2.10.3"
 kotlin = "1.9.24"
 kotlinx-coroutines-core = "1.8.1"
 kotlinxSerializationJson = "1.6.3"
+ksp = "1.9.24-1.0.20"
 ktlint-gradle = "11.6.1"
 license-report-gradle = "0.9.3"
 material3-wsc = "1.2.1"
@@ -49,7 +51,7 @@ baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
 license-report-gradle = { id = "com.jaredsburrows.license", version.ref = "license-report-gradle" }
 aboutlibraries-gradle = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
@@ -61,6 +63,7 @@ roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 [libraries]
 aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }

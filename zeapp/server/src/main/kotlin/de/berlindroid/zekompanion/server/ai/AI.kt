@@ -7,9 +7,7 @@ import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
 import java.awt.Image
 import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.nio.ByteBuffer
 import javax.imageio.ImageIO
 
 const val USER_PROFILE_PICTURE_SIZE = 32

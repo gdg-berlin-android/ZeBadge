@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.ktlint.gradle)
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
@@ -22,6 +22,11 @@ val zeAppDebug = "ZEapp23"
 
 android {
     namespace = "de.berlindroid.zeapp"
+
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        generateLocaleConfig = true
+    }
 
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
@@ -177,6 +182,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.ui.ui)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.compose.ui.graphics)
@@ -205,7 +211,7 @@ dependencies {
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit)
-    kapt(libs.dagger.hilt.compiler)
+    ksp(libs.dagger.hilt.compiler)
     baselineProfile(projects.benchmark)
 }
 
@@ -224,14 +230,6 @@ ktlint {
     filter {
         exclude("**/generated/**")
     }
-}
-
-kapt {
-    correctErrorTypes = true
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs::class).configureEach {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
 
 licenseReport {
