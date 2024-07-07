@@ -1,6 +1,11 @@
 package de.berlindroid.zekompanion.terminal
 
+import de.berlindroid.zekompanion.BADGE_HEIGHT
+import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.BadgePayload
+import de.berlindroid.zekompanion.DeleteCommand
+import de.berlindroid.zekompanion.PreviewCommand
+import de.berlindroid.zekompanion.StoreCommand
 import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.ditherFloydSteinberg
@@ -12,11 +17,6 @@ import de.berlindroid.zekompanion.resizeAndCarve
 import de.berlindroid.zekompanion.threshold
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
-import de.berlindroid.zekompanion.BADGE_WIDTH
-import de.berlindroid.zekompanion.BADGE_HEIGHT
-import de.berlindroid.zekompanion.DeleteCommand
-import de.berlindroid.zekompanion.PreviewCommand
-import de.berlindroid.zekompanion.StoreCommand
 import kotlinx.coroutines.runBlocking
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_INT_RGB

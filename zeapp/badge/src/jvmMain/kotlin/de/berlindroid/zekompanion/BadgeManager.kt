@@ -2,7 +2,6 @@ package de.berlindroid.zekompanion
 
 import com.fazecast.jSerialComm.SerialPort
 import java.lang.Thread.sleep
-import kotlin.IllegalStateException
 
 abstract class JvmBadgeManager : BadgeManager {
 

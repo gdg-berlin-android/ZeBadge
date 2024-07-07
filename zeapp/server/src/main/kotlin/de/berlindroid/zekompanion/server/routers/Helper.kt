@@ -1,10 +1,11 @@
 package de.berlindroid.zekompanion.server.routers
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.request.header
+import io.ktor.server.response.respondText
+import io.ktor.util.pipeline.PipelineContext
 
 private const val AUTH_TOKEN_ENV = "ZESERVER_AUTH_TOKEN"
 private const val AUTH_TOKEN_HEADER = "ZeAuth"
