@@ -3,10 +3,10 @@ package de.berlindroid.zeapp
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -33,7 +33,7 @@ import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
  * Main View entrance for the app
  */
 @AndroidEntryPoint
-class ZeMainActivity : ComponentActivity() {
+class ZeMainActivity : AppCompatActivity() {
     private val vm: ZeBadgeViewModel by viewModels()
 
     /**
