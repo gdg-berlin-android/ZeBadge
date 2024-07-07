@@ -14,28 +14,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun ZeLanguages(
     paddingValues: PaddingValues,
+    onLocaleChange: (String?) -> Unit,
 ) {
-    val vm: ZeLanguagesViewModel = viewModel()
     val appLanguages = SUPPORTED_LANGUAGES
 
-    Column(Modifier.padding(paddingValues)) {
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp)
+    ) {
         Text(text = "App Language", style = MaterialTheme.typography.titleMedium)
 
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn {
             item {
-                Button(onClick = { vm.setLocale(null) }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { onLocaleChange(null) }, modifier = Modifier.fillMaxWidth()) {
                     Text(text = "Set default")
                 }
             }
             items(appLanguages) {
-                Button(onClick = { vm.setLocale(it) }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { onLocaleChange(it) }, modifier = Modifier.fillMaxWidth()) {
                     Text(text = it)
                 }
             }
@@ -43,7 +46,7 @@ fun ZeLanguages(
     }
 }
 
-val SUPPORTED_LANGUAGES = listOf(
+private val SUPPORTED_LANGUAGES = listOf(
     "ar-EG", // Arabic (Egypt)
     "bs", // Bosnian
     "de-DE", // German (Germany)

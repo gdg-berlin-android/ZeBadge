@@ -2,9 +2,11 @@ package de.berlindroid.zeapp.zevm
 
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -528,6 +530,11 @@ class ZeBadgeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             preferencesService.setThemeSettings(themeSettings)
         }
+    }
+
+    fun setLocale(locale: String?) {
+        // Call this on the main thread as it may require Activity.restart()
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(locale))
     }
 
     /**
