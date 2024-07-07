@@ -185,7 +185,7 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 onLocaleChange = {
                                     vm.setLocale(it)
                                     navController.navigateUp()
-                                }
+                                },
                             )
                         }
                     }
