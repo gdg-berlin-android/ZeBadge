@@ -180,7 +180,13 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                                 drawerState = drawerState,
                                 scope = scope,
                             )
-                            ZeLanguages(paddingValues)
+                            ZeLanguages(
+                                paddingValues = paddingValues,
+                                onLocaleChange = {
+                                    vm.setLocale(it)
+                                    navController.navigateUp()
+                                },
+                            )
                         }
                     }
                 }
