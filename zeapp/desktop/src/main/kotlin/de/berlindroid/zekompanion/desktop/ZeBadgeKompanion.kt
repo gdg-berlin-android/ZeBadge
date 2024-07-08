@@ -10,7 +10,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.BADGE_WIDTH
-import de.berlindroid.zekompanion.BadgePayload.*
+import de.berlindroid.zekompanion.BadgePayload
 import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.desktop.ui.DrawNameBadge
@@ -161,8 +161,10 @@ private fun sendImageToBadge(image: BufferedImage, callback: (Result<Int>) -> Un
         GlobalScope.launch {
             with(buildBadgeManager("")) {
                 if (isConnected()) {
-                    val payload = PreviewPayload(
+                    val payload = BadgePayload(
                         debug = false,
+                        type = "preview",
+                        meta = "",
                         image.toPayload(),
                     )
 

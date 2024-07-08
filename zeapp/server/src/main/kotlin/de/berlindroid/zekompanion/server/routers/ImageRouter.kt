@@ -1,6 +1,6 @@
 package de.berlindroid.zekompanion.server.routers
 
-import de.berlindroid.zekompanion.BadgePayload.*
+import de.berlindroid.zekompanion.BadgePayload
 import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.server.ext.ImageExt.toImage
 import de.berlindroid.zekompanion.server.ext.ImageExt.transform
@@ -30,7 +30,10 @@ fun Route.imageBin() =
         runCatching {
             val image = call.receiveNullable<ImageRequest>() ?: throw IllegalArgumentException("Payload is null")
 
-            val payload = PreviewPayload(
+            val payload = BadgePayload(
+                debug = false,
+                type = "preview",
+                meta = "",
                 payload = image.transform()
                     .toBinary()
                     .zipit()
