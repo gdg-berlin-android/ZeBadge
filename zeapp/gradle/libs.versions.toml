@@ -41,7 +41,7 @@ aboutlibraries = "11.2.2"
 hilt-navigation-compose = "1.2.0"
 jetbrains-compose = "1.6.11"
 roborazzi = "1.21.0"
-robolectric = "4.12.2"
+robolectric = "4.13"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
