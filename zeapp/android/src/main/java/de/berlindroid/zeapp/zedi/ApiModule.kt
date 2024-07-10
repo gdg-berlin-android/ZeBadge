@@ -28,6 +28,7 @@ object ApiModule {
     @Provides
     fun provideSerialization(): Json = Json {
         ignoreUnknownKeys = true
+        isLenient = true
     }
 
     @Provides
