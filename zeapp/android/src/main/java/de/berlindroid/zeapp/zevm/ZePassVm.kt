@@ -52,7 +52,7 @@ class ZePassVm @Inject constructor(
     private suspend fun List<Message>.toUi() = map {
         MessageUi(
             text = it.message,
-            profileUrl = userApi.getUserProfilePng(it.poster),
+            profileUrl = userApi.getSmallUserProfilePng(it.poster),
             userName = userApi.getOneUser(it.poster)?.name ?: "",
         )
     }

@@ -3,7 +3,6 @@ package de.berlindroid.zeapp.zeui.zehome
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -21,11 +20,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import de.berlindroid.zeapp.ROUTE_ABOUT
+import de.berlindroid.zeapp.ROUTE_ALTER_EGOS
 import de.berlindroid.zeapp.ROUTE_HOME
 import de.berlindroid.zeapp.ROUTE_LANGUAGES
 import de.berlindroid.zeapp.ROUTE_OPENSOURCE
 import de.berlindroid.zeapp.ROUTE_SETTINGS
 import de.berlindroid.zeapp.ROUTE_ZEPASS
+import de.berlindroid.zeapp.zealteregos.ui.ZeAlterEgos
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zelanguages.ZeLanguages
@@ -104,13 +105,14 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                         onGotoZePass = { routeTo(ROUTE_ZEPASS) },
                         onGotoLanguagesSettings = { routeTo(ROUTE_LANGUAGES) },
                         onGoToSettings = { routeTo(ROUTE_SETTINGS) },
+                        onGoToAlterEgos = { routeTo(ROUTE_ALTER_EGOS) },
                         onUpdateConfig = vm::listConfiguration,
+                        onTitleClick = goToGithubPage,
                         onCloseDrawer = {
                             scope.launch {
                                 drawerState.close()
                             }
                         },
-                        onTitleClick = goToGithubPage,
                     )
                 },
             ) {
@@ -146,7 +148,10 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                             )
                         }
                         composable(ROUTE_ZEPASS) {
-                            ZeUserProfile(paddingValues = PaddingValues())
+                            ZeUserProfile(paddingValues = paddingValues)
+                        }
+                        composable(ROUTE_ALTER_EGOS) {
+                            ZeAlterEgos(paddingValues = paddingValues)
                         }
                         composable(ROUTE_ABOUT) {
                             DrawerBackHandler(
