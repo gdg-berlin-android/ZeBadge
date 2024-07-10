@@ -7,8 +7,10 @@ import shutil
 import subprocess
 import time
 from typing import Optional
-
 import requests
+import platform
+if platform.system() == 'Windows':
+    import win32api
 
 OPEN_AI_TOKEN = os.getenv("OPEN_AI_TOKEN")
 SERVER_TOKEN = os.getenv("ZESERVER_AUTH_TOKEN")
@@ -114,6 +116,29 @@ def request_new_user():
 
 
 def find_mount_point(name):
+    if platform.system() == 'Windows':
+        return find_mount_point_win(name)
+    else:
+        return find_mount_point_unix(name)
+
+
+def find_mount_point_win(name):
+    drives = win32api.GetLogicalDriveStrings().split("\\\x00")
+
+    for drive in drives:
+        if not drive:
+            continue
+        try:
+            volume_info = win32api.GetVolumeInformation(drive + "\\")
+            if name in volume_info[0]:
+                return drive + "\\"
+        except Exception as e:
+            print(f"Error retrieving information for drive {drive}: {e}")
+            continue
+    return None
+
+
+def find_mount_point_unix(name):
     mount = subprocess.run(["mount"], capture_output=True, check=True)
     if mount.returncode != 0:
         print(
