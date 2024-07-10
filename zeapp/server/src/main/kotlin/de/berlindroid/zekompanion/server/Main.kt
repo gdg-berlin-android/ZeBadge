@@ -9,6 +9,7 @@ import de.berlindroid.zekompanion.server.routers.adminDeleteUser
 import de.berlindroid.zekompanion.server.routers.listUsers
 import de.berlindroid.zekompanion.server.routers.getOptimizedPosts
 import de.berlindroid.zekompanion.server.routers.getPosts
+import de.berlindroid.zekompanion.server.routers.getResizedUserProfileImagePng
 import de.berlindroid.zekompanion.server.routers.getUser
 import de.berlindroid.zekompanion.server.routers.getUserProfileImageBinary
 import de.berlindroid.zekompanion.server.routers.getUserProfileImagePng
@@ -123,6 +124,7 @@ private fun embeddedWebServer(
                     getUser(users)
                     getUserProfileImageBinary(users)
                     getUserProfileImagePng(users)
+                    getResizedUserProfileImagePng(users)
 
                     postPost(zepass, users)
                     getPosts(zepass)

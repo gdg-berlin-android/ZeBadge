@@ -224,6 +224,50 @@ fun Route.getUserProfileImagePng(users: UserRepository) =
         }
     }
 
+fun Route.getResizedUserProfileImagePng(users: UserRepository) =
+    get("/api/user/{UUID}/{SIZE}/png") {
+        runCatching {
+            suspend fun PipelineContext<Unit, ApplicationCall>.processUser(user: User?) {
+                if (user != null) {
+                    withParameter("SIZE") { size ->
+                        val (width, height) = if (size.contains("x")) {
+                            size.split("x").take(2).map { it.toIntOrNull() ?: 256 }
+                        } else {
+                            val dim = size.toIntOrNull() ?: 256
+                            listOf(dim, dim)
+                        }
+
+                        val imagePath = "./profiles/${user.uuid}-${width}x${height}.png"
+                        if (!File(imagePath).exists()) {
+                            val inputImagePath = "./profiles/${user.uuid}.png"
+                            resizeProfileImage(inputImagePath, width, height, imagePath)
+                        }
+
+                        call.respondFile(File(imagePath))
+                    }
+                } else {
+                    call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
+                }
+            }
+
+            withParameter("UUID") { uuid ->
+                checkAuthorization(
+                    unauthorized = {
+                        processUser(
+                            users.getUserByIndex(uuid.toIntOrNull() ?: -1),
+                        )
+                    },
+                    authorized = {
+                        processUser(users.getUser(uuid))
+                    },
+                )
+            }
+        }.onFailure {
+            it.printStackTrace()
+            call.respondText("Error: ${it.message}")
+        }
+    }
+
 fun Route.getUserProfileImageBinary(users: UserRepository) =
     get("/api/user/{UUID}/b64") {
         runCatching {
@@ -255,3 +299,12 @@ fun Route.getUserProfileImageBinary(users: UserRepository) =
             call.respondText("Error: ${it.message}")
         }
     }
+
+private fun resizeProfileImage(input: String, width: Int, height: Int, output: String) {
+    val inputImage = ImageIO.read(File(input))
+    val outputImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+
+    outputImage.graphics.drawImage(inputImage, 0, 0, width, height, null)
+
+    ImageIO.write(outputImage, "png", File(output))
+}
