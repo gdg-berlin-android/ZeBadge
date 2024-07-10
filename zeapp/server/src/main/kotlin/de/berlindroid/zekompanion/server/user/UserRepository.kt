@@ -61,7 +61,7 @@ class UserRepository(
     }
 
     fun getUserByIndex(index: Int): User? {
-        return users.getOrNull(index)?.copy(uuid = "$index")
+        return users.getOrNull(index)
     }
 
     fun getUsers(): List<User> {

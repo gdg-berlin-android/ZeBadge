@@ -19,6 +19,7 @@ import io.ktor.server.routing.put
 import io.ktor.util.pipeline.PipelineContext
 import java.awt.image.BufferedImage
 import java.io.File
+import java.io.IOException
 import java.util.UUID
 import javax.imageio.ImageIO
 
@@ -176,7 +177,8 @@ fun Route.getUser(users: UserRepository) =
             withParameter("UUID") { uuid ->
                 checkAuthorization(
                     unauthorized = {
-                        val user = users.getUserByIndex(uuid.toIntOrNull() ?: -1)
+                        val index = uuid.toIntOrNull() ?: -1
+                        val user = users.getUserByIndex(index)?.copy(uuid = "$index")
                         respondUser(user)
                     },
                     authorized = {
@@ -195,7 +197,7 @@ fun Route.getUser(users: UserRepository) =
 fun Route.getUserProfileImagePng(users: UserRepository) =
     get("/api/user/{UUID}/png") {
         runCatching {
-            suspend fun PipelineContext<Unit, ApplicationCall>.processUser(user: User?) {
+            suspend fun PipelineContext<Unit, ApplicationCall>.processUser(user: User?) = try {
                 if (user != null) {
                     call.respondFile(
                         File("./profiles/${user.uuid}.png"),
@@ -203,6 +205,8 @@ fun Route.getUserProfileImagePng(users: UserRepository) =
                 } else {
                     call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
                 }
+            } catch (io: IOException) {
+                call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
             }
 
             withParameter("UUID") { uuid ->
@@ -227,7 +231,7 @@ fun Route.getUserProfileImagePng(users: UserRepository) =
 fun Route.getResizedUserProfileImagePng(users: UserRepository) =
     get("/api/user/{UUID}/{SIZE}/png") {
         runCatching {
-            suspend fun PipelineContext<Unit, ApplicationCall>.processUser(user: User?) {
+            suspend fun PipelineContext<Unit, ApplicationCall>.processUser(user: User?) = try {
                 if (user != null) {
                     withParameter("SIZE") { size ->
                         val (width, height) = if (size.contains("x")) {
@@ -235,6 +239,11 @@ fun Route.getResizedUserProfileImagePng(users: UserRepository) =
                         } else {
                             val dim = size.toIntOrNull() ?: 256
                             listOf(dim, dim)
+                        }
+
+                        val validSizes = width == height && (width == 48 || width == 256)
+                        if (!validSizes) {
+                            throw IOException("Image size not supported.")
                         }
 
                         val imagePath = "./profiles/${user.uuid}-${width}x${height}.png"
@@ -248,6 +257,8 @@ fun Route.getResizedUserProfileImagePng(users: UserRepository) =
                 } else {
                     call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
                 }
+            } catch (io: IOException) {
+                call.respondText(status = HttpStatusCode.NotFound, text = "Not Found.")
             }
 
             withParameter("UUID") { uuid ->
