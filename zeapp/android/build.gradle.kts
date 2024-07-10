@@ -23,11 +23,6 @@ val zeAppDebug = "ZEapp23"
 android {
     namespace = "de.berlindroid.zeapp"
 
-    androidResources {
-        @Suppress("UnstableApiUsage")
-        generateLocaleConfig = true
-    }
-
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
         compileSdk = 34
