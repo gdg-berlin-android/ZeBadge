@@ -61,11 +61,15 @@ class UserRepository(
     }
 
     fun getUserByIndex(index: Int): User? {
-        return users.getOrNull(index)
+        return users.getOrNull(index)?.copy(uuid = "$index")
     }
 
     fun getUsers(): List<User> {
         return users.toList()
+    }
+
+    fun getIndexedUsers(): List<User> {
+        return users.mapIndexed { index, user -> user.copy(uuid = "$index") }
     }
 
     fun updateUser(newUser: User): Boolean {

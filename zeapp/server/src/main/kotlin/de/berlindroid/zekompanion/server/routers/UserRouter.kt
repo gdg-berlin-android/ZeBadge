@@ -92,17 +92,6 @@ fun Route.adminCreateUserBadge(users: UserRepository) =
         }
     }
 
-fun Route.adminListUsers(users: UserRepository) =
-    get("/api/user") {
-        runCatching {
-            checkAuthorization {
-                call.respond(status = HttpStatusCode.OK, users.getUsers())
-            }
-        }.onFailure {
-            it.printStackTrace()
-            call.respondText("Error: ${it.message}")
-        }
-    }
 
 fun Route.adminDeleteUser(users: UserRepository) =
     delete("/api/user/{UUID}") {
@@ -117,6 +106,24 @@ fun Route.adminDeleteUser(users: UserRepository) =
             call.respondText("Error: ${it.message}")
         }
     }
+
+fun Route.listUsers(users: UserRepository) =
+    get("/api/user") {
+        runCatching {
+            checkAuthorization(
+                authorized = {
+                    call.respond(status = HttpStatusCode.OK, users.getUsers())
+                },
+                unauthorized = {
+                    call.respond(status = HttpStatusCode.OK, users.getIndexedUsers())
+                },
+            )
+        }.onFailure {
+            it.printStackTrace()
+            call.respondText("Error: ${it.message}")
+        }
+    }
+
 
 fun Route.updateUser(users: UserRepository) =
     put("/api/user/{UUID}") {
