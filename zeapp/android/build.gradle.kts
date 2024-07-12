@@ -3,6 +3,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.jetbrains.compose.compiler)
     alias(libs.plugins.ktlint.gradle)
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)

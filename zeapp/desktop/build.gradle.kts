@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
+    alias(libs.plugins.jetbrains.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.roborazzi)
@@ -49,8 +50,9 @@ roborazzi {
     outputDir.set(project.layout.projectDirectory.dir("src/snapshots/roborazzi/images"))
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += "-Xcontext-receivers"
+kotlin{
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-receivers")
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
