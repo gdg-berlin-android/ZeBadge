@@ -5,8 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -92,6 +93,7 @@ internal fun ZeDrawerContent(
     onGotoOpenSourceClick: () -> Unit = {},
     onGotoZePass: () -> Unit = {},
     onGoToSettings: () -> Unit = {},
+    onGoToAlterEgos: () -> Unit = {},
     onUpdateConfig: () -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     onTitleClick: () -> Unit = {},
@@ -118,12 +120,26 @@ internal fun ZeDrawerContent(
         LazyColumn {
             item {
                 NavDrawerItem(
-                    text = "{YOUR NAME HERE, ADD BADGE OR SOMETHING}",
-                    vector = Icons.Default.AccountBox,
+                    text = stringResource(R.string.open_zepass_chat),
+                    vector = Icons.Default.Person,
                     onClick = onGotoZePass,
                     onCloseDrawer = onCloseDrawer,
                 )
             }
+
+            item {
+                NavDrawerItem(
+                    text = stringResource(R.string.show_all_alter_egos),
+                    vector = Icons.Default.Star,
+                    onClick = onGoToAlterEgos,
+                    onCloseDrawer = onCloseDrawer,
+                )
+            }
+
+            item {
+                Divider()
+            }
+
             item {
                 NavDrawerItem(
                     onClick = onSaveAllClick,

@@ -68,6 +68,10 @@ class UserRepository(
         return users.toList()
     }
 
+    fun getIndexedUsers(): List<User> {
+        return users.mapIndexed { index, user -> user.copy(uuid = "$index") }
+    }
+
     fun updateUser(newUser: User): Boolean {
         val index = users.indexOfFirst { it.uuid == newUser.uuid }
         if (index < 0) {

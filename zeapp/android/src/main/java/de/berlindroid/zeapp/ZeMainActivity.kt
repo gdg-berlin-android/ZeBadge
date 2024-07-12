@@ -102,6 +102,7 @@ class ZeMainActivity : AppCompatActivity() {
 
 const val ROUTE_HOME = "home"
 const val ROUTE_ABOUT = "about"
+const val ROUTE_ALTER_EGOS = "alter egos"
 const val ROUTE_OPENSOURCE = "opensource"
 const val ROUTE_SETTINGS = "settings"
 const val ROUTE_ZEPASS = "zepass"

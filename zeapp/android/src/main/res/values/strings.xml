@@ -71,4 +71,6 @@
     <string name="ze_sample_configuration_value" tools:ignore="MissingTranslation">sample value</string>
     <string name="ze_sample_int_key" tools:ignore="MissingTranslation">sample int</string>
     <string name="ze_sample_another_configuration_key" tools:ignore="MissingTranslation">another configuration</string>
+    <string name="open_zepass_chat">Open ZePass Chat</string>
+    <string name="show_all_alter_egos">Open Alter Ego Explorer</string>
 </resources>
