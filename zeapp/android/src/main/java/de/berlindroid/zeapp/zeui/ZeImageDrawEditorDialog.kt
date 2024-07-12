@@ -48,7 +48,6 @@ import kotlinx.coroutines.launch
 /**
  * Use Canvas to draw something with a finger on the badge.
  *
- * @param initialPrompt the initial prompt to be used to generate an image.
  * @param dismissed callback called when the editor dialog is dismissed
  * @param accepted callback called when the image is accepted
  */
@@ -56,7 +55,6 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 fun ZeImageDrawEditorDialog(
-    initialPrompt: String = stringResource(id = R.string.unicorn_at_an_android_conference_in_isometric_view),
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.ImageDraw) -> Unit = {},
     snackbarMessage: (String) -> Unit = {},
