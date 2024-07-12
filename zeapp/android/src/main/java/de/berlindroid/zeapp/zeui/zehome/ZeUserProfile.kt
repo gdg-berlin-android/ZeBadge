@@ -29,9 +29,7 @@ import coil.compose.AsyncImage
 import de.berlindroid.zeapp.zevm.ZePassVm
 
 @Composable
-fun ZeUserProfile(
-    paddingValues: PaddingValues,
-) {
+fun ZeUserProfile(paddingValues: PaddingValues) {
     val viewModel: ZePassVm = hiltViewModel()
 
     val state by viewModel.uiState.collectAsState()
@@ -40,14 +38,16 @@ fun ZeUserProfile(
         modifier = Modifier.fillMaxSize(),
     ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = paddingValues.calculateTopPadding()),
-            contentPadding = PaddingValues(
-                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
-                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-                bottom = paddingValues.calculateBottomPadding(),
-            ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = paddingValues.calculateTopPadding()),
+            contentPadding =
+                PaddingValues(
+                    start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                    end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = paddingValues.calculateBottomPadding(),
+                ),
         ) {
             item {
                 Text(

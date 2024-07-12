@@ -22,27 +22,30 @@ fun ZeFloatingScroller(
     lazyListState: LazyListState,
     direction: LazyListScrollDirections,
 ) {
-    val text = when (direction) {
-        LazyListScrollDirections.UP -> "↑"
-        LazyListScrollDirections.DOWN -> "↓"
-    }
+    val text =
+        when (direction) {
+            LazyListScrollDirections.UP -> "↑"
+            LazyListScrollDirections.DOWN -> "↓"
+        }
 
     FloatingActionButton(
         containerColor = ZeBlack,
-        modifier = Modifier
-            .padding(16.dp)
-            .border(
-                width = 1.dp,
-                color = ZeWhite,
-                shape = RoundedCornerShape(16.dp),
-            ),
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .border(
+                    width = 1.dp,
+                    color = ZeWhite,
+                    shape = RoundedCornerShape(16.dp),
+                ),
         onClick = {
             coroutineScope.launch {
                 when (direction) {
                     LazyListScrollDirections.UP -> lazyListState.animateScrollToItem(0)
-                    LazyListScrollDirections.DOWN -> lazyListState.animateScrollToItem(
-                        lazyListState.layoutInfo.totalItemsCount - 1,
-                    )
+                    LazyListScrollDirections.DOWN ->
+                        lazyListState.animateScrollToItem(
+                            lazyListState.layoutInfo.totalItemsCount - 1,
+                        )
                 }
             }
         },

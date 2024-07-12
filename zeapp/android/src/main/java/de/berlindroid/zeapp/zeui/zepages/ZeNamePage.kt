@@ -37,20 +37,22 @@ fun NamePage(
     var secondarySize by remember { mutableStateOf(8.sp) }
 
     Column(
-        modifier = Modifier
-            .background(
-                color = Color.White,
-            )
-            .size(
-                width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
-                height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
-            ),
+        modifier =
+            Modifier
+                .background(
+                    color = Color.White,
+                )
+                .size(
+                    width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
+                    height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF801000)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF801000)),
             fontFamily = FontFamily.Cursive,
             fontSize = 10.sp,
             textAlign = TextAlign.Center,
@@ -59,9 +61,10 @@ fun NamePage(
             text = stringResource(R.string.hello_my_name_is),
         )
         Text(
-            modifier = Modifier
-                .wrapContentSize()
-                .weight(1.0f),
+            modifier =
+                Modifier
+                    .wrapContentSize()
+                    .weight(1.0f),
             fontSize = size,
             textAlign = TextAlign.Center,
             text = name,
@@ -72,9 +75,10 @@ fun NamePage(
             },
         )
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF801000)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF801000)),
             fontFamily = FontFamily.Monospace,
             fontSize = secondarySize,
             color = Color.White,

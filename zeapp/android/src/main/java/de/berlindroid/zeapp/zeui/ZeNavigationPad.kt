@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ZeNavigationPad(
-    lazyListState: LazyListState,
-) {
+fun ZeNavigationPad(lazyListState: LazyListState) {
     val coroutineScope = rememberCoroutineScope()
 
     val topReached by remember {
@@ -36,11 +34,12 @@ fun ZeNavigationPad(
         ZeFloatingScroller(
             coroutineScope = coroutineScope,
             lazyListState = lazyListState,
-            direction = if (topReached) {
-                LazyListScrollDirections.DOWN
-            } else {
-                LazyListScrollDirections.UP
-            },
+            direction =
+                if (topReached) {
+                    LazyListScrollDirections.DOWN
+                } else {
+                    LazyListScrollDirections.UP
+                },
         )
         Spacer(modifier = Modifier.size(16.dp))
     }

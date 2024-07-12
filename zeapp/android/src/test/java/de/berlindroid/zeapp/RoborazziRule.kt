@@ -15,8 +15,9 @@ fun roborazziOf(
     return RoborazziRule(
         composeRule = szenario,
         captureRoot = szenario.onRoot(),
-        options = RoborazziRule.Options(
-            captureType = captureType,
-        ),
+        options =
+            RoborazziRule.Options(
+                captureType = captureType,
+            ),
     )
 }

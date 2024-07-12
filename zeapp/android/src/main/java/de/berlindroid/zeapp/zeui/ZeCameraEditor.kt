@@ -22,11 +22,12 @@ fun ZeCameraEditor(
     vm: ZeBadgeViewModel,
 ) {
     val context = LocalContext.current
-    val uri = FileProvider.getUriForFile(
-        context,
-        "${BuildConfig.APPLICATION_ID}.files",
-        File(context.cacheDir, "photo.jpg"),
-    )
+    val uri =
+        FileProvider.getUriForFile(
+            context,
+            "${BuildConfig.APPLICATION_ID}.files",
+            File(context.cacheDir, "photo.jpg"),
+        )
     val coroutineScope = rememberCoroutineScope()
     val takePicture =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { pictureTaken ->

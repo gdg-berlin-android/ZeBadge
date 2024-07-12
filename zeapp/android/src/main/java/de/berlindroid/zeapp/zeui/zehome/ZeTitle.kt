@@ -17,17 +17,19 @@ internal fun ZeTitle(
     titleClick: () -> Unit,
 ) {
     Text(
-        modifier = modifier.clickable {
-            titleClick()
-        },
+        modifier =
+            modifier.clickable {
+                titleClick()
+            },
         style = MaterialTheme.typography.titleLarge,
-        text = buildAnnotatedString {
-            pushStyle(SpanStyle(fontWeight = FontWeight.Black))
-            append(stringResource(id = R.string.app_name).take(2))
-            pop()
-            pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
-            append(stringResource(id = R.string.app_name).drop(2))
-            pop()
-        },
+        text =
+            buildAnnotatedString {
+                pushStyle(SpanStyle(fontWeight = FontWeight.Black))
+                append(stringResource(id = R.string.app_name).take(2))
+                pop()
+                pushStyle(SpanStyle(fontWeight = FontWeight.Normal))
+                append(stringResource(id = R.string.app_name).drop(2))
+                pop()
+            },
     )
 }

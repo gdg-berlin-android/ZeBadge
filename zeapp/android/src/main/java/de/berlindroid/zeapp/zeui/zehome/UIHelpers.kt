@@ -23,15 +23,17 @@ internal val ZeSlot.isSponsor: Boolean
 
 // Device size extensions
 internal val WindowSizeClass.isTabletSize: Boolean
-    get() = this.widthSizeClass == WindowWidthSizeClass.Expanded &&
-        (
-            this.heightSizeClass == WindowHeightSizeClass.Expanded ||
-                this.heightSizeClass == WindowHeightSizeClass.Medium
+    get() =
+        this.widthSizeClass == WindowWidthSizeClass.Expanded &&
+            (
+                this.heightSizeClass == WindowHeightSizeClass.Expanded ||
+                    this.heightSizeClass == WindowHeightSizeClass.Medium
             )
 
 internal val WindowSizeClass.isSmartphoneSize: Boolean
-    get() = this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
-        (this.heightSizeClass == WindowHeightSizeClass.Compact)
+    get() =
+        this.widthSizeClass in WindowWidthSizeClass.DefaultSizeClasses &&
+            (this.heightSizeClass == WindowHeightSizeClass.Compact)
 
 @Composable
 fun isKeyboardVisibleState(): State<Boolean> {
@@ -39,11 +41,12 @@ fun isKeyboardVisibleState(): State<Boolean> {
     var isImeVisible by remember { mutableStateOf(false) }
 
     DisposableEffect(LocalWindowInfo.current) {
-        val listener = ViewTreeObserver.OnPreDrawListener {
-            isImeVisible = ViewCompat.getRootWindowInsets(view)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
-            true
-        }
+        val listener =
+            ViewTreeObserver.OnPreDrawListener {
+                isImeVisible = ViewCompat.getRootWindowInsets(view)
+                    ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+                true
+            }
         view.viewTreeObserver.addOnPreDrawListener(listener)
         onDispose {
             view.viewTreeObserver.removeOnPreDrawListener(listener)

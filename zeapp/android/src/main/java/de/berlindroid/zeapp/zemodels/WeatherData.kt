@@ -7,7 +7,6 @@ data class WeatherData(
     val day: String?,
     val temperature: Double,
 ) {
-
     val formattedTemperature: String
         get() = "${temperature}C"
 

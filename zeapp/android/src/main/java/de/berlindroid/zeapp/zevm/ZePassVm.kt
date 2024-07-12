@@ -26,34 +26,38 @@ data class ZePassUiState(
 )
 
 @HiltViewModel
-class ZePassVm @Inject constructor(
-    private val passApi: ZePassApi,
-    private val userApi: ZeUserApi,
-) : ViewModel() {
-    init {
-        loadAllMessage()
-    }
+class ZePassVm
+    @Inject
+    constructor(
+        private val passApi: ZePassApi,
+        private val userApi: ZeUserApi,
+    ) : ViewModel() {
+        init {
+            loadAllMessage()
+        }
 
-    private val _uiState: MutableStateFlow<ZePassUiState> = MutableStateFlow(
-        ZePassUiState(),
-    )
+        private val _uiState: MutableStateFlow<ZePassUiState> =
+            MutableStateFlow(
+                ZePassUiState(),
+            )
 
-    val uiState: StateFlow<ZePassUiState> = _uiState.asStateFlow()
+        val uiState: StateFlow<ZePassUiState> = _uiState.asStateFlow()
 
-    fun loadAllMessage() {
-        viewModelScope.launch {
-            val newMessages = passApi.getAllMessages()
-            _uiState.update {
-                it.copy(messages = newMessages.toUi())
+        fun loadAllMessage() {
+            viewModelScope.launch {
+                val newMessages = passApi.getAllMessages()
+                _uiState.update {
+                    it.copy(messages = newMessages.toUi())
+                }
             }
         }
-    }
 
-    private suspend fun List<Message>.toUi() = map {
-        MessageUi(
-            text = it.message,
-            profileUrl = userApi.getSmallUserProfilePng(it.poster),
-            userName = userApi.getOneUser(it.poster)?.name ?: "",
-        )
+        private suspend fun List<Message>.toUi() =
+            map {
+                MessageUi(
+                    text = it.message,
+                    profileUrl = userApi.getSmallUserProfilePng(it.poster),
+                    userName = userApi.getOneUser(it.poster)?.name ?: "",
+                )
+            }
     }
-}

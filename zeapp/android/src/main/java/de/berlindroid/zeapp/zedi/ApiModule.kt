@@ -26,10 +26,11 @@ private val METEO_URL = ZeServerBaseUrl("https://api.open-meteo.com")
 @Module
 object ApiModule {
     @Provides
-    fun provideSerialization(): Json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-    }
+    fun provideSerialization(): Json =
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
 
     @Provides
     fun provideZePassService(
@@ -46,20 +47,20 @@ object ApiModule {
     fun provideBaseUrl(): ZeServerBaseUrl = BASE_URL
 
     @Provides
-    fun provideZePassApi(
-        service: ZePassService,
-    ): ZePassApi = ZePassApi(
-        service,
-    )
+    fun provideZePassApi(service: ZePassService): ZePassApi =
+        ZePassApi(
+            service,
+        )
 
     @Provides
     fun provideZeUserApi(
         service: ZeUserService,
         baseUrl: ZeServerBaseUrl,
-    ): ZeUserApi = ZeUserApi(
-        service,
-        baseUrl,
-    )
+    ): ZeUserApi =
+        ZeUserApi(
+            service,
+            baseUrl,
+        )
 
     @Provides
     fun provideUserService(
@@ -80,9 +81,7 @@ object ApiModule {
             )
 
     @Provides
-    fun provideZeWeatherApi(
-        json: Json,
-    ): ZeWeatherApi =
+    fun provideZeWeatherApi(json: Json): ZeWeatherApi =
         Retrofit.Builder()
             .baseUrl(METEO_URL.value)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))

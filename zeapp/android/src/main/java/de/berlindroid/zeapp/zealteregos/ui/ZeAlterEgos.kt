@@ -41,9 +41,7 @@ import de.berlindroid.zeapp.zealteregos.vm.User
 
 @Composable
 @Preview
-fun ZeAlterEgos(
-    paddingValues: PaddingValues,
-) {
+fun ZeAlterEgos(paddingValues: PaddingValues) {
     val viewModel: AlterEgosVm = hiltViewModel()
 
     val state by viewModel.uiState.collectAsState()
@@ -77,21 +75,24 @@ private fun AllEgosView(
     viewModel: AlterEgosVm,
 ) {
     LazyVerticalGrid(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = paddingValues.calculateTopPadding()),
-        contentPadding = PaddingValues(
-            start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
-            end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-            bottom = paddingValues.calculateBottomPadding(),
-        ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = paddingValues.calculateTopPadding()),
+        contentPadding =
+            PaddingValues(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
         columns = GridCells.Adaptive(200.dp),
     ) {
         items(state.users) { user ->
             Box(
-                modifier = Modifier.clickable {
-                    viewModel.userClicked(user.uuid)
-                },
+                modifier =
+                    Modifier.clickable {
+                        viewModel.userClicked(user.uuid)
+                    },
             ) {
                 AsyncImage(
                     modifier = Modifier.size(200.dp),
@@ -103,10 +104,11 @@ private fun AllEgosView(
                     text = user.name,
                     style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0, 0, 0, 128))
-                        .padding(vertical = 2.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(Color(0, 0, 0, 128))
+                            .padding(vertical = 2.dp),
                 )
             }
         }
@@ -116,9 +118,10 @@ private fun AllEgosView(
 @Composable
 private fun EmptyView(paddingValues: PaddingValues) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = paddingValues.calculateTopPadding()),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = paddingValues.calculateTopPadding()),
     ) {
         Spacer(
             modifier = Modifier.weight(1.0f),
@@ -141,14 +144,15 @@ private fun DetailedUserView(
     clicked: () -> Unit = {},
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0, 0, 0, 200))
-            .padding(
-                top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding() + 16.dp,
-            )
-            .clickable { clicked() },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color(0, 0, 0, 200))
+                .padding(
+                    top = paddingValues.calculateTopPadding() + 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                )
+                .clickable { clicked() },
     ) {
         SubcomposeAsyncImage(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -165,9 +169,10 @@ private fun DetailedUserView(
         )
 
         Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
         ) {
             Text(
                 text = user.name,

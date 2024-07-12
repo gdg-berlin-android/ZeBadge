@@ -61,12 +61,13 @@ fun BadgeSimulator(
     onButtonPressed: (ZeSimulatorButtonAction) -> Unit = {},
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .paint(
-                painterResource(id = R.drawable.badgerrpi2040),
-                contentScale = ContentScale.Fit,
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .paint(
+                    painterResource(id = R.drawable.badgerrpi2040),
+                    contentScale = ContentScale.Fit,
+                ),
     ) {
         Spacer(Modifier.fillMaxHeight(.2f))
         Row(Modifier.fillMaxHeight(.76f)) {
@@ -77,13 +78,15 @@ fun BadgeSimulator(
             // drawState.bitmap
 
             Image(
-                modifier = Modifier
-                    .width(550.dp)
-                    .fillMaxHeight()
-                    .drawing(drawState),
-                bitmap = page
-                    .scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
-                    .asImageBitmap(),
+                modifier =
+                    Modifier
+                        .width(550.dp)
+                        .fillMaxHeight()
+                        .drawing(drawState),
+                bitmap =
+                    page
+                        .scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                        .asImageBitmap(),
                 contentDescription = null,
                 filterQuality = FilterQuality.None,
             )
@@ -124,12 +127,16 @@ fun BadgeSimulator(
 }
 
 @Composable
-private fun rememberDrawingState(key: Any, size: IntSize): DrawingState {
-    val bitmap = ImageBitmap(
-        size.width,
-        size.height,
-        config = ImageBitmapConfig.Argb8888,
-    )
+private fun rememberDrawingState(
+    key: Any,
+    size: IntSize,
+): DrawingState {
+    val bitmap =
+        ImageBitmap(
+            size.width,
+            size.height,
+            config = ImageBitmapConfig.Argb8888,
+        )
     val canvas = Canvas(bitmap)
     return remember(key, size) {
         DrawingState(
@@ -148,7 +155,6 @@ private class DrawingState(
     /** this canvas draws onto the bitmap */
     val canvas: Canvas,
 ) {
-
     /** this bitmap (and its canvas) its used only for the preview on the android device */
     private var _drawBitmap: ImageBitmap? = null
     private var _drawCanvas: Canvas? = null
@@ -160,11 +166,12 @@ private class DrawingState(
 
     fun ContentDrawScope.ensureDraw(): Boolean {
         if (_drawBitmap == null && size.isEmpty().not()) {
-            _drawBitmap = ImageBitmap(
-                size.width.toInt(),
-                size.height.toInt(),
-                config = ImageBitmapConfig.Argb8888,
-            )
+            _drawBitmap =
+                ImageBitmap(
+                    size.width.toInt(),
+                    size.height.toInt(),
+                    config = ImageBitmapConfig.Argb8888,
+                )
             _drawCanvas = Canvas(_drawBitmap!!)
         }
 
@@ -172,19 +179,21 @@ private class DrawingState(
     }
 }
 
-private val paint = Paint().apply {
-    color = Color.Black
-    isAntiAlias = false
-    strokeCap = StrokeCap.Square
-    strokeWidth = 1f
-}
+private val paint =
+    Paint().apply {
+        color = Color.Black
+        isAntiAlias = false
+        strokeCap = StrokeCap.Square
+        strokeWidth = 1f
+    }
 
-private val drawPaint = Paint().apply {
-    color = Color.Black
-    isAntiAlias = false
-    strokeCap = StrokeCap.Square
-    strokeWidth = 30f
-}
+private val drawPaint =
+    Paint().apply {
+        color = Color.Black
+        isAntiAlias = false
+        strokeCap = StrokeCap.Square
+        strokeWidth = 30f
+    }
 
 @SuppressLint("ReturnFromAwaitPointerEventScope")
 @Composable
@@ -221,9 +230,10 @@ private fun Modifier.drawing(state: DrawingState): Modifier {
                         state.drawCanvas.drawPoints(PointMode.Lines, listOf(localLastPosition, event.position), drawPaint)
                     }
 
-                    lastPosition = event.position.takeUnless {
-                        pointerEvent.type == PointerEventType.Exit || pointerEvent.type == PointerEventType.Release
-                    }
+                    lastPosition =
+                        event.position.takeUnless {
+                            pointerEvent.type == PointerEventType.Exit || pointerEvent.type == PointerEventType.Release
+                        }
 
                     // this update++ is a hack
                     // I could not find a way to invalidate the drawing directly,
