@@ -1,10 +1,10 @@
 package de.berlindroid.zeapp.zeservices
 
 import de.berlindroid.zeapp.zedi.ZeServerBaseUrl
-import javax.inject.Inject
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 import retrofit2.http.Path
+import javax.inject.Inject
 
 @Serializable
 data class User(

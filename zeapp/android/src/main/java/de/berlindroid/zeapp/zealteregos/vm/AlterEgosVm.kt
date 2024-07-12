@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.berlindroid.zeapp.zeservices.ZeUserApi
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class User(
     val uuid: String,
@@ -43,7 +43,7 @@ class AlterEgosVm @Inject constructor(
     fun userClicked(uuid: String?) {
         _uiState.update { old ->
             old.copy(
-                selectedUser = old.users.firstOrNull { it.uuid == uuid }
+                selectedUser = old.users.firstOrNull { it.uuid == uuid },
             )
         }
     }
@@ -63,7 +63,7 @@ class AlterEgosVm @Inject constructor(
                             description = apiUser.description,
                             chatPhrase = apiUser.chatPhrase,
                         )
-                    } ?: emptyList()
+                    } ?: emptyList(),
                 )
             }
         }

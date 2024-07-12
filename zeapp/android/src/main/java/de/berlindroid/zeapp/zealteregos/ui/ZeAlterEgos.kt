@@ -88,9 +88,11 @@ private fun AllEgosView(
         columns = GridCells.Adaptive(200.dp),
     ) {
         items(state.users) { user ->
-            Box(modifier = Modifier.clickable {
-                viewModel.userClicked(user.uuid)
-            }) {
+            Box(
+                modifier = Modifier.clickable {
+                    viewModel.userClicked(user.uuid)
+                },
+            ) {
                 AsyncImage(
                     modifier = Modifier.size(200.dp),
                     model = user.smallPngUrl,
@@ -104,7 +106,7 @@ private fun AllEgosView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0, 0, 0, 128))
-                        .padding(vertical = 2.dp)
+                        .padding(vertical = 2.dp),
                 )
             }
         }
@@ -119,14 +121,14 @@ private fun EmptyView(paddingValues: PaddingValues) {
             .padding(top = paddingValues.calculateTopPadding()),
     ) {
         Spacer(
-            modifier = Modifier.weight(1.0f)
+            modifier = Modifier.weight(1.0f),
         )
         Text(
             style = MaterialTheme.typography.headlineLarge,
             text = "Please wait, talking to ZeServer.",
         )
         Spacer(
-            modifier = Modifier.weight(1.0f)
+            modifier = Modifier.weight(1.0f),
         )
     }
 }
@@ -136,7 +138,7 @@ private fun EmptyView(paddingValues: PaddingValues) {
 private fun DetailedUserView(
     paddingValues: PaddingValues,
     user: User = User("UUID", "NAME", "PNG", "SMPNG", "DESC", "PHRASE"),
-    clicked: () -> Unit = {}
+    clicked: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -146,7 +148,7 @@ private fun DetailedUserView(
                 top = paddingValues.calculateTopPadding() + 16.dp,
                 bottom = paddingValues.calculateBottomPadding() + 16.dp,
             )
-            .clickable { clicked() }
+            .clickable { clicked() },
     ) {
         SubcomposeAsyncImage(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -154,7 +156,7 @@ private fun DetailedUserView(
             loading = {
                 AsyncImage(
                     model = user.smallPngUrl,
-                    contentDescription = "please wait"
+                    contentDescription = "please wait",
                 )
             },
             contentDescription = user.description,
@@ -165,13 +167,13 @@ private fun DetailedUserView(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             Text(
                 text = user.name,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
             )
 
             Text(
@@ -187,6 +189,5 @@ private fun DetailedUserView(
                 textAlign = TextAlign.Right,
             )
         }
-
     }
 }
