@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.detekt.gradle) apply false
     alias(libs.plugins.dagger.hilt) apply false
-    alias(libs.plugins.license.report.gradle) apply false
     alias(libs.plugins.aboutlibraries.gradle) apply false
 }
 

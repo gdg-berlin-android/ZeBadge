@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.gradle)
     alias(libs.plugins.roborazzi)
@@ -231,12 +230,6 @@ ktlint {
             "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
         ),
     )
-}
-
-licenseReport {
-    generateHtmlReport = true
-    generateJsonReport = false
-    copyHtmlReportToAssets = false
 }
 
 roborazzi {
