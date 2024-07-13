@@ -40,18 +40,21 @@ fun ZeAbout(
     val contributors by vm.lines.collectAsState()
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier =
+            Modifier
+                .fillMaxSize(),
     ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = paddingValues.calculateTopPadding()),
-            contentPadding = PaddingValues(
-                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
-                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-                bottom = paddingValues.calculateBottomPadding(),
-            ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = paddingValues.calculateTopPadding()),
+            contentPadding =
+                PaddingValues(
+                    start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                    end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = paddingValues.calculateBottomPadding(),
+                ),
         ) {
             stickyHeader {
                 Column(
@@ -77,10 +80,11 @@ fun ZeAbout(
                     AsyncImage(
                         model = contributor.imageUrl,
                         contentDescription = "avatar",
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(50.dp)
-                            .clip(CircleShape),
+                        modifier =
+                            Modifier
+                                .padding(8.dp)
+                                .size(50.dp)
+                                .clip(CircleShape),
                     )
                     Text(
                         text = "${contributor.name}: ${contributor.contributions}",

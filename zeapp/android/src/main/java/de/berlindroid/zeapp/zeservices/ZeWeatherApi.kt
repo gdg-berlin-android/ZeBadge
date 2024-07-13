@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 
 interface ZeWeatherApi {
-
     @Serializable
     data class Weather(
         @SerialName(value = "hourly")
@@ -16,7 +15,6 @@ interface ZeWeatherApi {
     data class Hourly(
         @SerialName(value = "time")
         val time: List<String>,
-
         @SerialName(value = "temperature_2m")
         val temperature: List<Double>,
     )

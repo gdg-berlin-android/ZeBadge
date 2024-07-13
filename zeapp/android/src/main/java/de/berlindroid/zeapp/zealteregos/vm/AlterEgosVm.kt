@@ -26,46 +26,49 @@ data class UiState(
 )
 
 @HiltViewModel
-class AlterEgosVm @Inject constructor(
-    private val userApi: ZeUserApi,
-) : ViewModel() {
-
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
-        UiState(),
-    )
-
-    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
-
-    init {
-        findAndLoadMaxUsers()
-    }
-
-    fun userClicked(uuid: String?) {
-        _uiState.update { old ->
-            old.copy(
-                selectedUser = old.users.firstOrNull { it.uuid == uuid },
+class AlterEgosVm
+    @Inject
+    constructor(
+        private val userApi: ZeUserApi,
+    ) : ViewModel() {
+        private val _uiState: MutableStateFlow<UiState> =
+            MutableStateFlow(
+                UiState(),
             )
+
+        val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+        init {
+            findAndLoadMaxUsers()
         }
-    }
 
-    fun findAndLoadMaxUsers() {
-        viewModelScope.launch {
-            val apiUsers = userApi.getUsers()
-
+        fun userClicked(uuid: String?) {
             _uiState.update { old ->
                 old.copy(
-                    users = apiUsers?.map { apiUser ->
-                        User(
-                            uuid = apiUser.uuid,
-                            name = apiUser.name,
-                            pngUrl = userApi.getUserProfilePng(apiUser.uuid),
-                            smallPngUrl = userApi.getSmallUserProfilePng(apiUser.uuid),
-                            description = apiUser.description,
-                            chatPhrase = apiUser.chatPhrase,
-                        )
-                    } ?: emptyList(),
+                    selectedUser = old.users.firstOrNull { it.uuid == uuid },
                 )
             }
         }
+
+        fun findAndLoadMaxUsers() {
+            viewModelScope.launch {
+                val apiUsers = userApi.getUsers()
+
+                _uiState.update { old ->
+                    old.copy(
+                        users =
+                            apiUsers?.map { apiUser ->
+                                User(
+                                    uuid = apiUser.uuid,
+                                    name = apiUser.name,
+                                    pngUrl = userApi.getUserProfilePng(apiUser.uuid),
+                                    smallPngUrl = userApi.getSmallUserProfilePng(apiUser.uuid),
+                                    description = apiUser.description,
+                                    chatPhrase = apiUser.chatPhrase,
+                                )
+                            } ?: emptyList(),
+                    )
+                }
+            }
+        }
     }
-}

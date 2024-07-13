@@ -138,7 +138,7 @@ fun QRCodeEditorDialog(
                         Switch(checked = isVcard, onCheckedChange = {
                             isVcard = it
                             redrawComposableImage()
-                        },)
+                        })
                     }
                 }
 
@@ -202,6 +202,7 @@ fun LazyListScope.basicFields(
         )
     }
 }
+
 fun LazyListScope.additionalVcardFields(
     redrawComposableImage: () -> Unit,
     email: String,

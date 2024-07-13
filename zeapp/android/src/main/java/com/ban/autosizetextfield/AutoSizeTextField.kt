@@ -40,11 +40,12 @@ fun AutoSizeTextField(
         val calculateIntrinsics = @Composable {
             ParagraphIntrinsics(
                 text = value,
-                style = TextStyle(
-                    fontSize = shrunkFontSize,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 36.sp,
-                ),
+                style =
+                    TextStyle(
+                        fontSize = shrunkFontSize,
+                        fontWeight = FontWeight.Normal,
+                        lineHeight = 36.sp,
+                    ),
                 density = LocalDensity.current,
                 fontFamilyResolver = createFontFamilyResolver(LocalContext.current),
             )
@@ -66,31 +67,33 @@ fun AutoSizeTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value,
             onValueChange = { onValueChange(it) },
-            textStyle = TextStyle(
-                fontSize = shrunkFontSize,
-                fontWeight = FontWeight.Normal,
-                lineHeight = 36.sp,
-                textAlign = TextAlign.Start,
-            ),
+            textStyle =
+                TextStyle(
+                    fontSize = shrunkFontSize,
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 36.sp,
+                    textAlign = TextAlign.Start,
+                ),
             label = label,
             singleLine = true,
             supportingText = supportingText,
             trailingIcon = trailingIcon,
             placeholder = placeholder,
             isError = isError,
-            colors = OutlinedTextFieldDefaults.colors().copy(
-                focusedContainerColor = ZeBlack,
-                focusedTextColor = ZeWhite,
-                focusedLabelColor = ZeBlack,
-                unfocusedContainerColor = ZeWhite,
-                unfocusedTextColor = ZeBlack,
-                unfocusedLabelColor = ZeBlack,
-                cursorColor = ZeWhite,
-                errorContainerColor = Color.Red,
-                errorLabelColor = Color.Red,
-                focusedSupportingTextColor = ZeBlack,
-                unfocusedSupportingTextColor = ZeBlack,
-            ),
+            colors =
+                OutlinedTextFieldDefaults.colors().copy(
+                    focusedContainerColor = ZeBlack,
+                    focusedTextColor = ZeWhite,
+                    focusedLabelColor = ZeBlack,
+                    unfocusedContainerColor = ZeWhite,
+                    unfocusedTextColor = ZeBlack,
+                    unfocusedLabelColor = ZeBlack,
+                    cursorColor = ZeWhite,
+                    errorContainerColor = Color.Red,
+                    errorLabelColor = Color.Red,
+                    focusedSupportingTextColor = ZeBlack,
+                    unfocusedSupportingTextColor = ZeBlack,
+                ),
         )
     }
 }

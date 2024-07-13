@@ -75,13 +75,15 @@ internal fun ZePages(
 
         LazyColumn(
             state = lazyListState,
-            modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding()),
-            contentPadding = PaddingValues(
-                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
-                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-                bottom = paddingValues.calculateBottomPadding(),
-            ),
+            modifier =
+                Modifier
+                    .padding(top = paddingValues.calculateTopPadding()),
+            contentPadding =
+                PaddingValues(
+                    start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                    end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = paddingValues.calculateBottomPadding(),
+                ),
         ) {
             if (message.isNotEmpty()) {
                 stickyHeader {
@@ -105,16 +107,18 @@ internal fun ZePages(
                     modifier = Modifier.graphicsLayer { this.alpha = alpha },
                     name = slot::class.simpleName ?: "WTF",
                     bitmap = vm.slotToBitmap(slot),
-                    customizeThisPage = if (slot.isSponsor) {
-                        { vm.customizeSponsorSlot(slot) }
-                    } else {
-                        { vm.customizeSlot(slot) }
-                    },
-                    resetThisPage = if (slot.isSponsor) {
-                        null
-                    } else {
-                        { vm.resetSlot(slot) }
-                    },
+                    customizeThisPage =
+                        if (slot.isSponsor) {
+                            { vm.customizeSponsorSlot(slot) }
+                        } else {
+                            { vm.customizeSlot(slot) }
+                        },
+                    resetThisPage =
+                        if (slot.isSponsor) {
+                            null
+                        } else {
+                            { vm.resetSlot(slot) }
+                        },
                     sendToDevice = {
                         vm.sendPageToBadgeAndDisplay(slot)
                     },

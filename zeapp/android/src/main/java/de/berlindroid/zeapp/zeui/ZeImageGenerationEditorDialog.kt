@@ -144,10 +144,11 @@ fun ImageGenerationEditorDialog(
                                     withContext(Dispatchers.Main) {
                                         snackbarMessage(context.getString(R.string.could_not_generate_image))
                                     }
-                                    bitmap = BitmapFactory.decodeResource(
-                                        context.resources,
-                                        R.drawable.error,
-                                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                                    bitmap =
+                                        BitmapFactory.decodeResource(
+                                            context.resources,
+                                            R.drawable.error,
+                                        ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                                     lastLoadedBitmap = null
                                 }
                                 progress = null
@@ -166,37 +167,41 @@ private suspend fun requestImageGeneration(
     context: Context,
     prompt: String,
 ): Bitmap? {
-    val maybeImages = openAiApi.generateImage(
-        body = OpenAIApi.GenerateImages(
-            prompt = prompt,
-        ),
-    )
+    val maybeImages =
+        openAiApi.generateImage(
+            body =
+                OpenAIApi.GenerateImages(
+                    prompt = prompt,
+                ),
+        )
 
     if (maybeImages.isSuccessful) {
         val body = maybeImages.body()
         if (body != null) {
-            val bitmaps = body.data.map { location ->
-                val request = Request
-                    .Builder()
-                    .url(location.url)
-                    .get()
-                    .build()
+            val bitmaps =
+                body.data.map { location ->
+                    val request =
+                        Request
+                            .Builder()
+                            .url(location.url)
+                            .get()
+                            .build()
 
-                val response = ok.newCall(request).execute()
-                if (response.isSuccessful) {
-                    val bytes = response.body?.bytes() ?: byteArrayOf()
-                    BitmapFactory.decodeByteArray(
-                        bytes,
-                        0,
-                        bytes.size,
-                    )
-                } else {
-                    BitmapFactory.decodeResource(
-                        context.resources,
-                        R.drawable.error,
-                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                    val response = ok.newCall(request).execute()
+                    if (response.isSuccessful) {
+                        val bytes = response.body?.bytes() ?: byteArrayOf()
+                        BitmapFactory.decodeByteArray(
+                            bytes,
+                            0,
+                            bytes.size,
+                        )
+                    } else {
+                        BitmapFactory.decodeResource(
+                            context.resources,
+                            R.drawable.error,
+                        ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                    }
                 }
-            }
 
             return bitmaps.first().cropPageFromCenter()
         } else {
@@ -211,14 +216,16 @@ private suspend fun requestImageGeneration(
 
 private val ok = OkHttpClient.Builder().build()
 
-private val json = Json {
-    ignoreUnknownKeys = true
-}
+private val json =
+    Json {
+        ignoreUnknownKeys = true
+    }
 
-private val retrofit = Retrofit.Builder()
-    .baseUrl("https://api.openai.com")
-    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-    .build()
+private val retrofit =
+    Retrofit.Builder()
+        .baseUrl("https://api.openai.com")
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
 
 private val openAiApi = retrofit.create(OpenAIApi::class.java)
 

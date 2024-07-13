@@ -35,10 +35,11 @@ fun ZeSettings(
     var selectedTheme by remember { mutableStateOf(themes[themeSettings]) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
     ) {
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -49,9 +50,10 @@ fun ZeSettings(
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
                 label = { Text("Theme") },
             )
 

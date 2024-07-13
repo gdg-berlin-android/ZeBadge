@@ -26,13 +26,16 @@ interface ZeUserService {
 }
 
 class ZeUserApi
-@Inject constructor(
-    private val service: ZeUserService,
-    private val baseUrl: ZeServerBaseUrl,
-) {
-    fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/png"
-    fun getSmallUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/256x256/png"
+    @Inject
+    constructor(
+        private val service: ZeUserService,
+        private val baseUrl: ZeServerBaseUrl,
+    ) {
+        fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/png"
 
-    suspend fun getOneUser(uuid: String): User? = service.getOneUser(uuid)
-    suspend fun getUsers(): List<User>? = service.getUsers()
-}
+        fun getSmallUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/256x256/png"
+
+        suspend fun getOneUser(uuid: String): User? = service.getOneUser(uuid)
+
+        suspend fun getUsers(): List<User>? = service.getUsers()
+    }

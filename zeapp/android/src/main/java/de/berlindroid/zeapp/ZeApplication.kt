@@ -6,7 +6,6 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class ZeApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
 

@@ -38,24 +38,27 @@ fun QRCodePage(
     val pageWidth = with(LocalDensity.current) { BADGE_WIDTH.toDp() }
     val pageHeight = with(LocalDensity.current) { BADGE_HEIGHT.toDp() }
     Row(
-        modifier = Modifier
-            .background(
-                color = Color.White,
-            )
-            .size(
-                width = pageWidth,
-                height = pageHeight,
-            ),
+        modifier =
+            Modifier
+                .background(
+                    color = Color.White,
+                )
+                .size(
+                    width = pageWidth,
+                    height = pageHeight,
+                ),
     ) {
         Column(
-            modifier = Modifier
-                .width(pageWidth - pageHeight)
-                .fillMaxHeight(),
+            modifier =
+                Modifier
+                    .width(pageWidth - pageHeight)
+                    .fillMaxHeight(),
         ) {
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color.Black),
                 fontFamily = FontFamily.Cursive,
                 fontSize = 12.sp,
                 color = Color.White,
@@ -64,9 +67,10 @@ fun QRCodePage(
                 textAlign = TextAlign.Center,
             )
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color.White),
                 fontSize = 10.sp,
                 textAlign = TextAlign.Center,
                 color = Color.Black,

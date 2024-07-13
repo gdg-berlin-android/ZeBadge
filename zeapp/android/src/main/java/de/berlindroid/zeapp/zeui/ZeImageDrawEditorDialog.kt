@@ -48,7 +48,6 @@ import kotlinx.coroutines.launch
 /**
  * Use Canvas to draw something with a finger on the badge.
  *
- * @param initialPrompt the initial prompt to be used to generate an image.
  * @param dismissed callback called when the editor dialog is dismissed
  * @param accepted callback called when the image is accepted
  */
@@ -56,7 +55,6 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 fun ZeImageDrawEditorDialog(
-    initialPrompt: String = stringResource(id = R.string.unicorn_at_an_android_conference_in_isometric_view),
     dismissed: () -> Unit = {},
     accepted: (config: ZeConfiguration.ImageDraw) -> Unit = {},
     snackbarMessage: (String) -> Unit = {},
@@ -67,46 +65,51 @@ fun ZeImageDrawEditorDialog(
     // recomposition is triggered by reassigning the same path object
     var path by remember { mutableStateOf(Path(), policy = neverEqualPolicy()) }
 
-    val drawContainer = remember {
-        ComposeView(context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-            )
-            setContent {
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
-                        .clipToBounds()
-                        .background(Color.White)
-                        .pointerInput(Unit) {
-                            detectDragGestures(
-                                onDragStart = { offset ->
-                                    path = path.apply { moveTo(offset.x, offset.y) }
-                                },
-                                onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
-                                    val currentPosition = pointerInputChange.position + offset
-                                    path = path.apply {
-                                        lineTo(currentPosition.x, currentPosition.y)
-                                    }
-                                },
-                            )
-                        },
-                ) {
-                    drawPath(
-                        color = Color.Black,
-                        path = path,
-                        style = Stroke(
-                            width = 4.dp.toPx(),
-                            cap = StrokeCap.Round,
-                            join = StrokeJoin.Round,
-                        ),
+    val drawContainer =
+        remember {
+            ComposeView(context).apply {
+                layoutParams =
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
                     )
+                setContent {
+                    Canvas(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
+                                .clipToBounds()
+                                .background(Color.White)
+                                .pointerInput(Unit) {
+                                    detectDragGestures(
+                                        onDragStart = { offset ->
+                                            path = path.apply { moveTo(offset.x, offset.y) }
+                                        },
+                                        onDrag = { pointerInputChange: PointerInputChange, offset: Offset ->
+                                            val currentPosition = pointerInputChange.position + offset
+                                            path =
+                                                path.apply {
+                                                    lineTo(currentPosition.x, currentPosition.y)
+                                                }
+                                        },
+                                    )
+                                },
+                    ) {
+                        drawPath(
+                            color = Color.Black,
+                            path = path,
+                            style =
+                                Stroke(
+                                    width = 4.dp.toPx(),
+                                    cap = StrokeCap.Round,
+                                    join = StrokeJoin.Round,
+                                ),
+                        )
+                    }
                 }
             }
         }
-    }
     AlertDialog(
         containerColor = ZeWhite,
         onDismissRequest = dismissed,
@@ -141,11 +144,12 @@ fun ZeImageDrawEditorDialog(
         },
         text = {
             AndroidView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
-                    .clipToBounds()
-                    .background(Color.Green),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(BADGE_WIDTH / BADGE_HEIGHT.toFloat())
+                        .clipToBounds()
+                        .background(Color.Green),
                 factory = {
                     drawContainer
                 },

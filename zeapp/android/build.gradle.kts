@@ -3,12 +3,12 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.jetbrains.compose.compiler)
     alias(libs.plugins.ktlint.gradle)
     alias(libs.plugins.detekt.gradle)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.license.report.gradle)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.gradle)
     alias(libs.plugins.roborazzi)
@@ -225,12 +225,12 @@ ktlint {
     filter {
         exclude("**/generated/**")
     }
-}
 
-licenseReport {
-    generateHtmlReport = true
-    generateJsonReport = false
-    copyHtmlReportToAssets = false
+    additionalEditorconfig.set(
+        mapOf(
+            "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
+        ),
+    )
 }
 
 roborazzi {

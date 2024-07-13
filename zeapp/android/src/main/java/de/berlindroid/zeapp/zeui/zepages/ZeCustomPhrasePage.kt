@@ -13,13 +13,12 @@ import androidx.compose.ui.unit.sp
 import de.berlindroid.zeapp.R
 
 @Composable
-fun CustomPhrasePage(
-    phrase: String = stringResource(R.string.your_phrase_here),
-) {
+fun CustomPhrasePage(phrase: String = stringResource(R.string.your_phrase_here)) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF2E6D31)),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color(0xFF2E6D31)),
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),

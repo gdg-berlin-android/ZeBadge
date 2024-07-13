@@ -55,24 +55,26 @@ fun PictureEditorDialog(
         )
     }
 
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-    ) { uri ->
-        // success?
-        bitmap = if (uri == null) {
-            // nope, so show error bitmap
-            Timber.d("Picture: Not found")
-            BitmapFactory.decodeResource(
-                context.resources,
-                R.drawable.error,
-            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
-        } else {
-            // yes, so read image
-            BitmapFactory.decodeStream(
-                context.contentResolver.openInputStream(uri),
-            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
-        }.cropPageFromCenter()
-    }
+    val launcher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia(),
+        ) { uri ->
+            // success?
+            bitmap =
+                if (uri == null) {
+                    // nope, so show error bitmap
+                    Timber.d("Picture: Not found")
+                    BitmapFactory.decodeResource(
+                        context.resources,
+                        R.drawable.error,
+                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                } else {
+                    // yes, so read image
+                    BitmapFactory.decodeStream(
+                        context.contentResolver.openInputStream(uri),
+                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                }.cropPageFromCenter()
+        }
 
     AlertDialog(
         containerColor = ZeWhite,
@@ -84,7 +86,7 @@ fun PictureEditorDialog(
                 } else {
                     updateMessage(context.getString(R.string.not_binary_image))
                 }
-            },) {
+            }) {
                 Text(stringResource(id = android.R.string.ok))
             }
         },

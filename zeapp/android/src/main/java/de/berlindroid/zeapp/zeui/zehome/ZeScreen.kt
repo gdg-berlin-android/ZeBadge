@@ -3,6 +3,7 @@ package de.berlindroid.zeapp.zeui.zehome
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -38,32 +40,39 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
+internal fun ZeScreen(
+    vm: ZeBadgeViewModel,
+    modifier: Modifier = Modifier,
+) {
     val lazyListState = rememberLazyListState()
     val context = LocalContext.current
 
-    val goToReleases: () -> Unit = remember {
-        {
-            val intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases"),
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val goToReleases: () -> Unit =
+        remember {
+            {
+                val intent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/gdg-berlin-android/ZeBadge/releases"),
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                context.startActivity(intent)
             }
-            context.startActivity(intent)
         }
-    }
-    val goToGithubPage: () -> Unit = remember {
-        {
-            val intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/gdg-berlin-android/ZeBadge"),
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val goToGithubPage: () -> Unit =
+        remember {
+            {
+                val intent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/gdg-berlin-android/ZeBadge"),
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                context.startActivity(intent)
             }
-            context.startActivity(intent)
         }
-    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -116,92 +125,118 @@ internal fun ZeScreen(vm: ZeBadgeViewModel, modifier: Modifier = Modifier) {
                     )
                 },
             ) {
-                Scaffold(
+                ZeScreenScaffold(
                     modifier = modifier,
-                    floatingActionButton = {
-                        if (currentRoute == ROUTE_HOME) {
-                            ZeNavigationPad(lazyListState)
-                        }
-                    },
-                    topBar = {
-                        ZeTopBar(
-                            isNavDrawerOpen = drawerState.isOpen,
-                            onOpenMenuClicked = { scope.launch { drawerState.open() } },
-                            onCloseMenuClicked = { scope.launch { drawerState.close() } },
-                            onTitleClick = {
-                                scope.launch { drawerState.close() }
-                                goToGithubPage()
-                            },
-                        )
-                    },
-                ) { paddingValues ->
-                    NavHost(navController = navController, startDestination = ROUTE_HOME) {
-                        composable(ROUTE_HOME) {
-                            DrawerBackHandler(
-                                drawerState = drawerState,
-                                scope = scope,
-                            )
-                            ZePages(
-                                paddingValues = paddingValues,
-                                lazyListState = lazyListState,
-                                vm = vm,
-                            )
-                        }
-                        composable(ROUTE_ZEPASS) {
-                            ZeUserProfile(paddingValues = paddingValues)
-                        }
-                        composable(ROUTE_ALTER_EGOS) {
-                            ZeAlterEgos(paddingValues = paddingValues)
-                        }
-                        composable(ROUTE_ABOUT) {
-                            DrawerBackHandler(
-                                drawerState = drawerState,
-                                scope = scope,
-                            )
-                            ZeAbout(paddingValues)
-                        }
-                        composable(ROUTE_OPENSOURCE) {
-                            DrawerBackHandler(
-                                drawerState = drawerState,
-                                scope = scope,
-                            )
-                            ZeOpenSource(paddingValues)
-                        }
-                        composable(ROUTE_SETTINGS) {
-                            DrawerBackHandler(
-                                drawerState = drawerState,
-                                scope = scope,
-                            )
-                            ZeSettings(
-                                paddingValues = paddingValues,
-                                themeSettings = vm.uiState.value.themeSettings ?: 0,
-                                onThemeChange = {
-                                    vm.setThemeSettings(it)
-                                },
-                            )
-                        }
-                        composable(ROUTE_LANGUAGES) {
-                            DrawerBackHandler(
-                                drawerState = drawerState,
-                                scope = scope,
-                            )
-                            ZeLanguages(
-                                paddingValues = paddingValues,
-                                onLocaleChange = {
-                                    vm.setLocale(it)
-                                    navController.navigateUp()
-                                },
-                            )
-                        }
-                    }
-                }
+                    currentRoute = currentRoute,
+                    lazyListState = lazyListState,
+                    drawerState = drawerState,
+                    scope = scope,
+                    goToGithubPage = goToGithubPage,
+                    navController = navController,
+                    vm = vm,
+                )
             }
         },
     )
 }
 
 @Composable
-fun DrawerBackHandler(drawerState: DrawerState, scope: CoroutineScope) {
+private fun ZeScreenScaffold(
+    modifier: Modifier,
+    currentRoute: String,
+    lazyListState: LazyListState,
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    goToGithubPage: () -> Unit,
+    navController: NavHostController,
+    vm: ZeBadgeViewModel,
+) {
+    Scaffold(
+        modifier = modifier,
+        floatingActionButton = {
+            if (currentRoute == ROUTE_HOME) {
+                ZeNavigationPad(lazyListState)
+            }
+        },
+        topBar = {
+            ZeTopBar(
+                isNavDrawerOpen = drawerState.isOpen,
+                onOpenMenuClicked = { scope.launch { drawerState.open() } },
+                onCloseMenuClicked = { scope.launch { drawerState.close() } },
+                onTitleClick = {
+                    scope.launch { drawerState.close() }
+                    goToGithubPage()
+                },
+            )
+        },
+    ) { paddingValues ->
+        NavHost(navController = navController, startDestination = ROUTE_HOME) {
+            composable(ROUTE_HOME) {
+                DrawerBackHandler(
+                    drawerState = drawerState,
+                    scope = scope,
+                )
+                ZePages(
+                    paddingValues = paddingValues,
+                    lazyListState = lazyListState,
+                    vm = vm,
+                )
+            }
+            composable(ROUTE_ZEPASS) {
+                ZeUserProfile(paddingValues = paddingValues)
+            }
+            composable(ROUTE_ALTER_EGOS) {
+                ZeAlterEgos(paddingValues = paddingValues)
+            }
+            composable(ROUTE_ABOUT) {
+                DrawerBackHandler(
+                    drawerState = drawerState,
+                    scope = scope,
+                )
+                ZeAbout(paddingValues)
+            }
+            composable(ROUTE_OPENSOURCE) {
+                DrawerBackHandler(
+                    drawerState = drawerState,
+                    scope = scope,
+                )
+                ZeOpenSource(paddingValues)
+            }
+            composable(ROUTE_SETTINGS) {
+                DrawerBackHandler(
+                    drawerState = drawerState,
+                    scope = scope,
+                )
+                ZeSettings(
+                    paddingValues = paddingValues,
+                    themeSettings = vm.uiState.value.themeSettings ?: 0,
+                    onThemeChange = {
+                        vm.setThemeSettings(it)
+                    },
+                )
+            }
+            composable(ROUTE_LANGUAGES) {
+                DrawerBackHandler(
+                    drawerState = drawerState,
+                    scope = scope,
+                )
+                ZeLanguages(
+                    paddingValues = paddingValues,
+                    onLocaleChange = {
+                        vm.setLocale(it)
+                        navController.navigateUp()
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DrawerBackHandler(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+) {
     BackHandler(drawerState.isOpen) {
         scope.launch { drawerState.close() }
     }

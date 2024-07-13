@@ -23,9 +23,10 @@ fun ZeLanguages(
     val appLanguages = SUPPORTED_LANGUAGES
 
     Column(
-        modifier = Modifier
-            .padding(paddingValues)
-            .padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
     ) {
         Text(text = "App Language", style = MaterialTheme.typography.titleMedium)
 
@@ -46,26 +47,28 @@ fun ZeLanguages(
     }
 }
 
-private val SUPPORTED_LANGUAGES = listOf(
-    "ar-EG", // Arabic (Egypt)
-    "bs", // Bosnian
-    "de-DE", // German (Germany)
-    "en-GB", // English (United Kingdom)
-    "es", // Spanish
-    "et", // Estonian
-    "fr", // French
-    "hi", // Hindi
-    "hr-HR", // Croatian (Croatia)
-    "it", // Italian
-    "ja", // Japanese
-    "lt", // Lithuanian
-    "mr", // Marathi
-    "nl", // Dutch
-    "pl", // Polish
-    "pt-BR", // Portuguese (Brazil)
-    "ru", // Russian
-    "sq", // Albanian
-    "tr", // Turkish
-    "uk", // Ukrainian
-    "ur", // Urdu
-)
+@Suppress("ktlint")
+private val SUPPORTED_LANGUAGES =
+    listOf(
+        "ar-EG", // Arabic (Egypt)
+        "bs", // Bosnian
+        "de-DE", // German (Germany)
+        "en-GB", // English (United Kingdom)
+        "es", // Spanish
+        "et", // Estonian
+        "fr", // French
+        "hi", // Hindi
+        "hr-HR", // Croatian (Croatia)
+        "it", // Italian
+        "ja", // Japanese
+        "lt", // Lithuanian
+        "mr", // Marathi
+        "nl", // Dutch
+        "pl", // Polish
+        "pt-BR", // Portuguese (Brazil)
+        "ru", // Russian
+        "sq", // Albanian
+        "tr", // Turkish
+        "uk", // Ukrainian
+        "ur", // Urdu
+    )

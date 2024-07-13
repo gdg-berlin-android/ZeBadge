@@ -9,7 +9,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class ZeMainActivityTests {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ZeMainActivity>()
 

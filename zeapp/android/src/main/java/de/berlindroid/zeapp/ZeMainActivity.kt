@@ -55,13 +55,14 @@ class ZeMainActivity : AppCompatActivity() {
             ?.let(::updateSelectedImage)
     }
 
-    private fun updateSelectedImage(imageUri: Uri) = lifecycleScope.launch {
-        val bitmap = imageUri.toDitheredImage(this@ZeMainActivity)
-        vm.slotConfigured(
-            ZeSlot.Camera,
-            ZeConfiguration.Camera(bitmap),
-        )
-    }
+    private fun updateSelectedImage(imageUri: Uri) =
+        lifecycleScope.launch {
+            val bitmap = imageUri.toDitheredImage(this@ZeMainActivity)
+            vm.slotConfigured(
+                ZeSlot.Camera,
+                ZeConfiguration.Camera(bitmap),
+            )
+        }
 
     @Composable
     private fun DrawUi() {

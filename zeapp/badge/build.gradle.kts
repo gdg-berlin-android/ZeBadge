@@ -7,16 +7,22 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs.add("-Xexpect-actual-classes")
+        }
+    }
+
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
 
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        }
 
+        compilations.all {
             dependencies {
                 implementation(libs.mik3y.usb.serial.android)
                 implementation(libs.kotlinx.coroutines.core)
