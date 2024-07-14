@@ -112,11 +112,11 @@ private fun ZePagesLazyList(
         state = lazyListState,
         modifier = modifier,
         contentPadding =
-        PaddingValues(
-            start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
-            end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-            bottom = paddingValues.calculateBottomPadding(),
-        ),
+            PaddingValues(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
     ) {
         items(
             slots.keys.toList(),
@@ -136,17 +136,17 @@ private fun ZePagesLazyList(
                 name = slot::class.simpleName ?: "WTF",
                 bitmap = slotToBitmap(slot),
                 customizeThisPage =
-                if (slot.isSponsor) {
-                    { customizeSponsorSlot(slot) }
-                } else {
-                    { customizeSlot(slot) }
-                },
+                    if (slot.isSponsor) {
+                        { customizeSponsorSlot(slot) }
+                    } else {
+                        { customizeSlot(slot) }
+                    },
                 resetThisPage =
-                if (slot.isSponsor) {
-                    null
-                } else {
-                    { resetSlot(slot) }
-                },
+                    if (slot.isSponsor) {
+                        null
+                    } else {
+                        { resetSlot(slot) }
+                    },
                 sendToDevice = {
                     sendPageToBadgeAndDisplay(slot)
                 },
