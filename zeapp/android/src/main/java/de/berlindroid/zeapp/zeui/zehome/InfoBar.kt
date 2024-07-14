@@ -34,21 +34,21 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 @Composable
 @Preview
 internal fun InfoBar(
+    modifier: Modifier = Modifier,
     message: String = stringResource(id = R.string.ze_very_important),
     progress: Float = 0.5f,
     copyMoreToClipboard: (() -> Unit) = {},
 ) {
     Card(
-        modifier =
-            Modifier
-                .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
-                .background(ZeCarmine, RoundedCornerShape(ZeDimen.One))
-                .zIndex(10.0f),
+        modifier = modifier
+            .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
+            .background(ZeCarmine, RoundedCornerShape(ZeDimen.One))
+            .zIndex(10.0f),
         colors =
-            CardDefaults.cardColors(
-                containerColor = ZeCarmine,
-                contentColor = ZeWhite,
-            ),
+        CardDefaults.cardColors(
+            containerColor = ZeCarmine,
+            contentColor = ZeWhite,
+        ),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = ZeDimen.Two, vertical = ZeDimen.One),
@@ -65,9 +65,9 @@ internal fun InfoBar(
             IconButton(onClick = copyMoreToClipboard) {
                 Icon(
                     painter =
-                        painterResource(
-                            id = R.drawable.copy_clipboard,
-                        ),
+                    painterResource(
+                        id = R.drawable.copy_clipboard,
+                    ),
                     contentDescription = "Copy info bar message",
                 )
             }
@@ -76,9 +76,9 @@ internal fun InfoBar(
         LinearProgressIndicator(
             progress = { progress },
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 4.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 4.dp),
             color = ZeBlack,
             trackColor = ZeWhite,
             strokeCap = StrokeCap.Round,
