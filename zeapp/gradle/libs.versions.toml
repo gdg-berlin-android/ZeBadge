@@ -39,7 +39,7 @@ kotlinxCoroutinesTest = "1.8.1"
 aboutlibraries = "11.2.2"
 hilt-navigation-compose = "1.2.0"
 jetbrains-compose = "1.6.11"
-roborazzi = "1.21.0"
+roborazzi = "1.22.2"
 robolectric = "4.13"
 
 [plugins]
