@@ -34,13 +34,14 @@ import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
 @Composable
 @Preview
 internal fun InfoBar(
+    modifier: Modifier = Modifier,
     message: String = stringResource(id = R.string.ze_very_important),
     progress: Float = 0.5f,
     copyMoreToClipboard: (() -> Unit) = {},
 ) {
     Card(
         modifier =
-            Modifier
+            modifier
                 .padding(horizontal = ZeDimen.One, vertical = ZeDimen.One)
                 .background(ZeCarmine, RoundedCornerShape(ZeDimen.One))
                 .zIndex(10.0f),
