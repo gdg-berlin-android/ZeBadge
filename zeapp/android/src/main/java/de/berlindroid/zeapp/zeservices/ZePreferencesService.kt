@@ -28,8 +28,6 @@ constructor(
     @ApplicationContext private val context: Context,
 ) {
     companion object {
-        const val TYPE_KEY = "type"
-        const val IMAGE_KEY = "bitmap"
         private val OPEN_API_PREFERENCES_KEY = stringPreferencesKey("openapi")
         private val THEME_KEY = intPreferencesKey("theme")
     }
@@ -38,11 +36,6 @@ constructor(
 
     suspend fun getOpenApiKey(): String {
         return dataStore.data.map { preferences -> preferences[OPEN_API_PREFERENCES_KEY].orEmpty() }
-            .first()
-    }
-
-    suspend fun isSlotConfigured(slot: ZeSlot): Boolean {
-        return dataStore.data.map { preferences -> preferences.contains(slot.preferencesKey(TYPE_KEY)) }
             .first()
     }
 
@@ -56,6 +49,4 @@ constructor(
             preferences[THEME_KEY] = themeSettings
         }
     }
-
-    private fun ZeSlot.preferencesKey(field: String): Preferences.Key<String> = stringPreferencesKey("slot.$name.$field")
 }
