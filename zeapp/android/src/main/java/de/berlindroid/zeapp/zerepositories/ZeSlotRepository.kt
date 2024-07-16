@@ -18,8 +18,10 @@ import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.debase64
 import de.berlindroid.zekompanion.toBinary
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -42,24 +44,25 @@ class ZeSlotRepository
             const val IMAGE_KEY = "bitmap"
         }
 
-        suspend fun getSlotConfiguration(slot: ZeSlot): ZeConfiguration? {
-            return zePreferencesService.dataStore.data.map { preferences ->
+        suspend fun getSlotConfiguration(slot: ZeSlot): ZeConfiguration? =
+            withContext(Dispatchers.IO) {
+                return@withContext zePreferencesService.dataStore.data.map { preferences ->
 
-                val type = ZeBadgeType.getOrNull(preferences[slot.preferencesKey(TYPE_KEY)].orEmpty())
-                val bitmap =
-                    preferences[slot.preferencesKey(IMAGE_KEY)]
-                        ?.debase64()
-                        ?.toBitmap(BADGE_WIDTH, BADGE_HEIGHT)
-                        ?: return@map null
+                    val type = ZeBadgeType.getOrNull(preferences[slot.preferencesKey(TYPE_KEY)].orEmpty())
+                    val bitmap =
+                        preferences[slot.preferencesKey(IMAGE_KEY)]
+                            ?.debase64()
+                            ?.toBitmap(BADGE_WIDTH, BADGE_HEIGHT)
+                            ?: return@map null
 
-                return@map getSlotConfigurationByType(
-                    slot = slot,
-                    type = type,
-                    bitmap = bitmap,
-                    preferences = preferences,
-                )
-            }.firstOrNull()
-        }
+                    return@map getSlotConfigurationByType(
+                        slot = slot,
+                        type = type,
+                        bitmap = bitmap,
+                        preferences = preferences,
+                    )
+                }.firstOrNull()
+            }
 
         suspend fun saveSlotConfiguration(
             slot: ZeSlot,
@@ -90,61 +93,63 @@ class ZeSlotRepository
             }
         }
 
-        fun getDefaultSlotConfiguration(slot: ZeSlot): ZeConfiguration =
-            when (slot) {
-                is ZeSlot.Name ->
-                    ZeConfiguration.Name(
-                        null,
-                        null,
-                        imageProviderService.getInitialNameBitmap(),
-                    )
+        suspend fun getDefaultSlotConfiguration(slot: ZeSlot): ZeConfiguration =
+            withContext(Dispatchers.IO) {
+                when (slot) {
+                    is ZeSlot.Name ->
+                        ZeConfiguration.Name(
+                            null,
+                            null,
+                            imageProviderService.getInitialNameBitmap(),
+                        )
 
-                is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
-                is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
-                is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
-                ZeSlot.QRCode ->
-                    ZeConfiguration.QRCode(
-                        title = "",
-                        text = "",
-                        url = "",
-                        isVcard = false,
-                        phone = "",
-                        email = "",
-                        bitmap = R.drawable.qrpage_preview.toBitmap(),
-                    )
+                    is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
+                    is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
+                    is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
+                    ZeSlot.QRCode ->
+                        ZeConfiguration.QRCode(
+                            title = "",
+                            text = "",
+                            url = "",
+                            isVcard = false,
+                            phone = "",
+                            email = "",
+                            bitmap = R.drawable.qrpage_preview.toBitmap(),
+                        )
 
-                ZeSlot.Weather ->
-                    ZeConfiguration.Weather(
-                        LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
-                        "22C",
-                        R.drawable.soon.toBitmap(),
-                    )
+                    ZeSlot.Weather ->
+                        ZeConfiguration.Weather(
+                            LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
+                            "22C",
+                            R.drawable.soon.toBitmap(),
+                        )
 
-                is ZeSlot.Quote ->
-                    ZeConfiguration.Quote(
-                        "Test",
-                        "Author",
-                        R.drawable.page_quote_sample.toBitmap(),
-                    )
+                    is ZeSlot.Quote ->
+                        ZeConfiguration.Quote(
+                            "Test",
+                            "Author",
+                            R.drawable.page_quote_sample.toBitmap(),
+                        )
 
-                ZeSlot.BarCode ->
-                    ZeConfiguration.BarCode(
-                        "Your title for barcode",
-                        "",
-                        R.drawable.soon.toBitmap(),
-                    )
+                    ZeSlot.BarCode ->
+                        ZeConfiguration.BarCode(
+                            "Your title for barcode",
+                            "",
+                            R.drawable.soon.toBitmap(),
+                        )
 
-                ZeSlot.Add ->
-                    ZeConfiguration.Name(
-                        null,
-                        null,
-                        imageProviderService.provideImageBitmap(R.drawable.add),
-                    )
+                    ZeSlot.Add ->
+                        ZeConfiguration.Name(
+                            null,
+                            null,
+                            imageProviderService.provideImageBitmap(R.drawable.add),
+                        )
 
-                ZeSlot.Camera ->
-                    ZeConfiguration.Camera(
-                        imageProviderService.provideImageBitmap(R.drawable.soon),
-                    )
+                    ZeSlot.Camera ->
+                        ZeConfiguration.Camera(
+                            imageProviderService.provideImageBitmap(R.drawable.soon),
+                        )
+                }
             }
 
         fun getInitialSlots(): List<ZeSlot> =
