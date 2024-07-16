@@ -17,6 +17,7 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zerepositories.ZeSlotRepository
 import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
@@ -51,6 +52,7 @@ class ZeBadgeViewModel
         private val imageProviderService: ZeImageProviderService,
         private val badgeManager: ZeBadgeManager,
         private val preferencesService: ZePreferencesService,
+        private val zeSlotRepository: ZeSlotRepository,
         private val clipboardService: ZeClipboardService,
         private val weatherService: ZeWeatherService,
         private val getTemplateConfigurations: GetTemplateConfigurations,
@@ -374,7 +376,7 @@ class ZeBadgeViewModel
 
         private suspend fun initialConfiguration(slot: ZeSlot): ZeConfiguration {
             if (preferencesService.isSlotConfigured(slot)) {
-                val configuration = preferencesService.getSlotConfiguration(slot)
+                val configuration = zeSlotRepository.getSlotConfiguration(slot)
                 if (configuration != null) {
                     return configuration
                 }
@@ -538,7 +540,7 @@ class ZeBadgeViewModel
             config: ZeConfiguration,
         ) {
             viewModelScope.launch(Dispatchers.IO) {
-                preferencesService.saveSlotConfiguration(slot, config)
+                zeSlotRepository.saveSlotConfiguration(slot, config)
             }
         }
 
