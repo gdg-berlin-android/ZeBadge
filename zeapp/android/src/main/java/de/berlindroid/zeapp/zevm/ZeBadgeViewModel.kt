@@ -17,6 +17,7 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import de.berlindroid.zeapp.zemodels.ZeTemplateChooser
+import de.berlindroid.zeapp.zerepositories.ZeSlotRepository
 import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
@@ -34,8 +35,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
@@ -51,6 +50,7 @@ class ZeBadgeViewModel
         private val imageProviderService: ZeImageProviderService,
         private val badgeManager: ZeBadgeManager,
         private val preferencesService: ZePreferencesService,
+        private val zeSlotRepository: ZeSlotRepository,
         private val clipboardService: ZeClipboardService,
         private val weatherService: ZeWeatherService,
         private val getTemplateConfigurations: GetTemplateConfigurations,
@@ -64,19 +64,12 @@ class ZeBadgeViewModel
         // See if disappearing message is ongoing
         private var hideMessageJob: Job? = null
         private var messageProgressJob: Job? = null
-        private val initialSlots =
-            listOf(
-                ZeSlot.Name,
-                ZeSlot.FirstSponsor,
-                ZeSlot.Camera,
-                ZeSlot.Add,
-            )
 
         // This needed to be created to avoid refactoring all the comoposables
         // We should avoid passing down the VM and pass only the state
 
         // Represents the current slot showing on the simulator
-        var currentSimulatorSlot by mutableStateOf(initialSlots.first())
+        var currentSimulatorSlot by mutableStateOf(zeSlotRepository.getInitialSlots().first())
             private set
 
         init {
@@ -363,78 +356,24 @@ class ZeBadgeViewModel
          */
         fun resetSlot(slot: ZeSlot) {
             viewModelScope.launch {
+                // Removing all the saved data from the persistence
+                zeSlotRepository.removeSlotConfiguration(slot = slot)
+                // Getting the default value
+                val defaultSlotConfiguration = zeSlotRepository.getDefaultSlotConfiguration(slot = slot)
+
                 _uiState.update {
                     it.copy(
                         message = "",
-                        slots = it.slots.copy(slot to initialConfiguration(slot)),
+                        slots = it.slots.copy(slot to defaultSlotConfiguration),
                     )
                 }
             }
         }
 
         private suspend fun initialConfiguration(slot: ZeSlot): ZeConfiguration {
-            if (preferencesService.isSlotConfigured(slot)) {
-                val configuration = preferencesService.getSlotConfiguration(slot)
-                if (configuration != null) {
-                    return configuration
-                }
-            }
-
-            return when (slot) {
-                is ZeSlot.Name ->
-                    ZeConfiguration.Name(
-                        null,
-                        null,
-                        imageProviderService.getInitialNameBitmap(),
-                    )
-
-                is ZeSlot.FirstSponsor -> ZeConfiguration.Picture(R.drawable.page_google.toBitmap())
-                is ZeSlot.FirstCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
-                is ZeSlot.SecondCustom -> ZeConfiguration.Picture(R.drawable.soon.toBitmap())
-                ZeSlot.QRCode ->
-                    ZeConfiguration.QRCode(
-                        title = "",
-                        text = "",
-                        url = "",
-                        isVcard = false,
-                        phone = "",
-                        email = "",
-                        bitmap = R.drawable.qrpage_preview.toBitmap(),
-                    )
-
-                ZeSlot.Weather ->
-                    ZeConfiguration.Weather(
-                        LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
-                        "22C",
-                        R.drawable.soon.toBitmap(),
-                    )
-
-                is ZeSlot.Quote ->
-                    ZeConfiguration.Quote(
-                        "Test",
-                        "Author",
-                        R.drawable.page_quote_sample.toBitmap(),
-                    )
-
-                ZeSlot.BarCode ->
-                    ZeConfiguration.BarCode(
-                        "Your title for barcode",
-                        "",
-                        R.drawable.soon.toBitmap(),
-                    )
-
-                ZeSlot.Add ->
-                    ZeConfiguration.Name(
-                        null,
-                        null,
-                        imageProviderService.provideImageBitmap(R.drawable.add),
-                    )
-
-                ZeSlot.Camera ->
-                    ZeConfiguration.Camera(
-                        imageProviderService.provideImageBitmap(R.drawable.soon),
-                    )
-            }
+            // try to get from the persistence, if not present, return the default
+            return zeSlotRepository.getSlotConfiguration(slot = slot)
+                ?: zeSlotRepository.getDefaultSlotConfiguration(slot = slot)
         }
 
         /**
@@ -538,7 +477,7 @@ class ZeBadgeViewModel
             config: ZeConfiguration,
         ) {
             viewModelScope.launch(Dispatchers.IO) {
-                preferencesService.saveSlotConfiguration(slot, config)
+                zeSlotRepository.saveSlotConfiguration(slot, config)
             }
         }
 
@@ -568,7 +507,7 @@ class ZeBadgeViewModel
         private fun loadData() {
             viewModelScope.launch(Dispatchers.IO) {
                 val slots =
-                    initialSlots.associateWith {
+                    zeSlotRepository.getInitialSlots().associateWith {
                         initialConfiguration(it)
                     }
 
