@@ -35,3 +35,13 @@ include(":desktop")
 include(":terminal")
 include(":server")
 include(":badge")
+
+buildCache {
+    val isGithub = System.getenv("GITHUB_REPOSITORY")?.let { true } ?: false
+    val target = ".gradle/build-cache"
+
+    local {
+        isEnabled = isGithub
+        directory = File(rootDir, target)
+    }
+}
