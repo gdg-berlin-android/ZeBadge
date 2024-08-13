@@ -73,7 +73,7 @@ class ZeWifi:
                     map(
                         lambda found: Network(*[found.split(",")[i] for i in [1, 3, 2]]),
                         filter(
-                            lambda wifi: '+CWLAP:' in wifi,
+                            lambda wlan: '+CWLAP:' in wlan,
                             response.replace('\r', '').replace('"', '').splitlines()
                         )
                     )
@@ -194,30 +194,30 @@ class ZeWifi:
         return self._http_method("POST", ip, url, host, port, body)
 
 
-wifi = None
+wlan = None
 
 
 def init(os) -> bool:
-    global wifi
+    global wlan
     # disconnect the i2c, make it a UART
     # 👀
     board.I2C().deinit()
     time.sleep(0.4)
 
-    wifi = ZeWifi()
+    wlan = ZeWifi()
 
-    scan = wifi.scan()
+    scan = wlan.scan()
     if not scan:
-        scan = wifi.scan()
+        scan = wlan.scan()
 
     if scan:
         os.subscribe(MessageKey.SCAN, lambda _, message: os.messages.append(
-            Message(MessageKey.SCAN_RESULT, wifi.scan())))
+            Message(MessageKey.SCAN_RESULT, wlan.scan())))
 
         os.subscribe(MessageKey.CONNECT, lambda _, message: os.messages.append(
             Message(
                 MessageKey.CONNECT_RESULT,
-                wifi.connect(
+                wlan.connect(
                     message.value['ssid'],
                     message.value['pwd']
                 )
@@ -227,7 +227,7 @@ def init(os) -> bool:
         os.subscribe(MessageKey.GET, lambda _, message: os.messages.append(
             Message(
                 MessageKey.GET_RESULT,
-                wifi.http_get(
+                wlan.http_get(
                     message.value['ip'],
                     message.value['url'],
                     message.value['host'],
@@ -239,7 +239,7 @@ def init(os) -> bool:
         os.subscribe(MessageKey.POST, lambda _, message: os.messages.append(
             Message(
                 MessageKey.POST_RESULT,
-                wifi.http_post(
+                wlan.http_post(
                     message.value['ip'],
                     message.value['url'],
                     message.value['host'],

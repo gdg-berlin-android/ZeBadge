@@ -169,7 +169,7 @@ class ZeBadgeOs:
         print(f"init: i2c interfaces: {addrs}")
 
         keyboard_attached = False
-        wifi_attached = False
+        wlan_attached = False
         if addrs:
             has_keyboard = 95 in addrs
             if has_keyboard:
@@ -178,25 +178,25 @@ class ZeBadgeOs:
 
             keyboard_attached = has_keyboard
         else:
-            print("... no i2c found, trying wifi")
+            print("... no i2c found, trying wlan")
 
-            import wifi
-            if not wifi.init(self):
-                print("... no wifi found.")
-                wifi_attached = False
+            import wlan
+            if not wlan.init(self):
+                print("... no wlan found.")
+                wlan_attached = False
             else:
-                print("... wifi !!!")
-                wifi_attached = True
+                print("... wlan !!!")
+                wlan_attached = True
 
         self.config["keyboard.attached"] = keyboard_attached
-        self.config["wifi.attached"] = wifi_attached
+        self.config["wlan.attached"] = wlan_attached
         self.config["developer.mode"] = not (usb_cdc.data is None)
 
     def _init_apps(self):
         self._app_a = StoreAndShowApp(self)
         self._app_b = ZeAlterEgoApp(self)
 
-        if self.config["wifi.attached"]:
+        if self.config["wlan.attached"]:
             self._app_c = ZePassApp(self)
         elif self.config['keyboard.attached']:
             self._app_c = DeveloperIdleClickerApp(self)
@@ -244,7 +244,6 @@ class SystemButtons:
         self.c = _system_button(board.SW_C)
         self.up = _system_button(board.SW_UP)
         self.down = _system_button(board.SW_DOWN)
-        self.developer = _system_button(board.USER_SW)
         self.last = self.snapshot()
 
     def snapshot(self):
@@ -254,7 +253,6 @@ class SystemButtons:
             'c': self.c.value,
             'up': self.up.value,
             'down': self.down.value,
-            'developer': self.developer.value,
         }
 
     def changes(self):
@@ -266,7 +264,6 @@ class SystemButtons:
         if current['c'] != self.last['c']: result['c'] = current['c']
         if current['up'] != self.last['up']: result['up'] = current['up']
         if current['down'] != self.last['down']: result['down'] = current['down']
-        if current['developer'] != self.last['developer']: result['developer'] = current['developer']
 
         self.last = current
         return result

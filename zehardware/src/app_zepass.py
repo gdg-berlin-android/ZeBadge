@@ -5,7 +5,7 @@ import terminalio
 from adafruit_display_text import label
 
 import ui
-import wifi
+import wlan
 import zeos
 from message import Message
 from ui import MessageKey as UIKeys
@@ -19,9 +19,9 @@ class ZePassApp:
 
     def run(self):
         self.subscription_ids += [
-            self.os.subscribe(wifi.MessageKey.CONNECT_RESULT, self._connected),
-            self.os.subscribe(wifi.MessageKey.GET_RESULT, self._response_received),
-            self.os.subscribe(wifi.MessageKey.POST_RESULT, self._response_received),
+            self.os.subscribe(wlan.MessageKey.CONNECT_RESULT, self._connected),
+            self.os.subscribe(wlan.MessageKey.GET_RESULT, self._response_received),
+            self.os.subscribe(wlan.MessageKey.POST_RESULT, self._response_received),
 
             self.os.subscribe(
                 zeos.MessageKey.BUTTON_CHANGED,
@@ -44,14 +44,14 @@ class ZePassApp:
 
     def _fetch_all_posts(self):
         config = {
-            'ssid': self.os.config['wifi.ssid'],
-            'pwd': self.os.config['wifi.pwd']
+            'ssid': self.os.config['wlan.ssid'],
+            'pwd': self.os.config['wlan.pwd']
         }
         self.method = "GET"
-        self.os.messages.append(Message(zeos.MessageKey.INFO, f'Connecting to wifi {config} '))
+        self.os.messages.append(Message(zeos.MessageKey.INFO, f'Connecting to wlan {config} '))
         self.os.messages.append(
             Message(
-                wifi.MessageKey.CONNECT,
+                wlan.MessageKey.CONNECT,
                 config
             )
         )
@@ -59,19 +59,19 @@ class ZePassApp:
     def _connected(self, os: zeos.ZeBadgeOs, message):
         if message.value:
             config = {
-                'ip': os.config['wifi.ip'],
-                'url': os.config['wifi.url'],
-                'host': os.config['wifi.host'],
-                'port': os.config['wifi.port'],
+                'ip': os.config['wlan.ip'],
+                'url': os.config['wlan.url'],
+                'host': os.config['wlan.host'],
+                'port': os.config['wlan.port'],
             }
 
             if self.method == "GET":
                 os.messages.append(Message(zeos.MessageKey.INFO, f'Connected, GETing posts {config}.'))
-                os.messages.append(Message(wifi.MessageKey.GET, config))
+                os.messages.append(Message(wlan.MessageKey.GET, config))
             elif self.method == "POST":
                 config['body'] = os.config['user.uuid']
                 os.messages.append(Message(zeos.MessageKey.INFO, f'Connected, POSTing {config}.'))
-                os.messages.append(Message(wifi.MessageKey.POST, config))
+                os.messages.append(Message(wlan.MessageKey.POST, config))
             else:
                 os.messages.append(
                     Message(
@@ -88,13 +88,13 @@ class ZePassApp:
         self.method = "POST"
 
         config = {
-            'ssid': self.os.config['wifi.ssid'],
-            'pwd': self.os.config['wifi.pwd']
+            'ssid': self.os.config['wlan.ssid'],
+            'pwd': self.os.config['wlan.pwd']
         }
         self.os.messages.append(Message(zeos.MessageKey.INFO, f'Trying to connect: {config}'))
         self.os.messages.append(
             Message(
-                wifi.MessageKey.CONNECT,
+                wlan.MessageKey.CONNECT,
                 config
             )
         )

@@ -13,6 +13,7 @@ class MessageKey:
     SHOW_GROUP = "SHOW_GROUP"
     SHOW_BITMAP = "SHOW_BITMAP"
     SHOW_FILE = "SHOW_FILE"
+    SHOW_TEXT = "SHOW_TEXT"
     SHOW_TERMINAL = "SHOW_TERMINAL"
     REFRESH = "REFRESH"
 
@@ -21,6 +22,7 @@ def init(os):
     os.subscribe(MessageKey.SHOW_GROUP, _show_group)
     os.subscribe(MessageKey.SHOW_BITMAP, _show_bitmap_handler)
     os.subscribe(MessageKey.SHOW_FILE, _show_file_handler)
+    os.subscribe(MessageKey.SHOW_TEXT, _show_text_handler)
     os.subscribe(MessageKey.SHOW_TERMINAL, _show_terminal_handler)
     os.subscribe(MessageKey.REFRESH, _refresh_handler)
 
@@ -37,6 +39,18 @@ def _refresh_display_save():
 def _refresh_handler(os, message):
     _refresh_display_save()
 
+def _show_text_handler(os, message):
+    import board
+    import terminalio
+    from adafruit_display_text import label
+
+    text = str(message.value)
+    text_area = label.Label(terminalio.FONT, text=text, scale=2)
+    text_area.x = 20
+    text_area.y = 20
+    board.DISPLAY.root_group = text_area
+
+    board.DISPLAY.refresh()
 
 def _show_bitmap_handler(os, message):
     bitmap, palette = message.value

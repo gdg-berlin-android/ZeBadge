@@ -92,9 +92,9 @@ def __test__():
     expected = {
         "last_app": None,
         "developer_mode": True,
-        "wifi.ssid": "Your cat has an ssid.",
-        "wifi.pwd": "ask pete! !@",
-        "wifi.port": 1233.890,
+        "wlan.ssid": "Your cat has an ssid.",
+        "wlan.pwd": "ask pete! !@",
+        "wlan.port": 1233.890,
     }
 
     cfg = fields_to_str(expected)

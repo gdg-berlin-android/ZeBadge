@@ -1,5 +1,6 @@
 import displayio
 
+import board
 import zeos
 from message import Message
 from ui import MessageKey as UIKeys
@@ -25,10 +26,11 @@ class ZeAlterEgoApp:
             self.os.unsubscribe(subscription)
 
     def _show(self):
-        odb = displayio.OnDiskBitmap("zeAlternative.bmp")
+        swift = board.DISPLAY.is_zebadge()
+        print(swift)
         self.os.messages.append(
             Message(
-                UIKeys.SHOW_BITMAP,
-                (odb, odb.pixel_shader)
+                UIKeys.SHOW_TEXT,
+                swift
             )
         )
