@@ -32,9 +32,9 @@ interface ZePassService {
 }
 
 class ZePassApi(
-        private val service: ZePassService,
-    ) {
-        suspend fun getAllMessages(): List<Message> = service.getAllMessages()
+    private val service: ZePassService,
+) {
+    suspend fun getAllMessages(): List<Message> = service.getAllMessages()
 
-        suspend fun postNewMessage(user: User) = service.postMessage(user.uuid)
-    }
+    suspend fun postNewMessage(user: User) = service.postMessage(user.uuid)
+}

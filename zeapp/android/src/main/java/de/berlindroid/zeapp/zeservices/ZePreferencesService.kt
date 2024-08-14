@@ -20,28 +20,28 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class ZePreferencesService(
-        private val context: Context,
-    ) {
-        companion object {
-            private val OPEN_API_PREFERENCES_KEY = stringPreferencesKey("openapi")
-            private val THEME_KEY = intPreferencesKey("theme")
-        }
+    private val context: Context,
+) {
+    companion object {
+        private val OPEN_API_PREFERENCES_KEY = stringPreferencesKey("openapi")
+        private val THEME_KEY = intPreferencesKey("theme")
+    }
 
-        val dataStore = context.dataStore
+    val dataStore = context.dataStore
 
-        suspend fun getOpenApiKey(): String {
-            return dataStore.data.map { preferences -> preferences[OPEN_API_PREFERENCES_KEY].orEmpty() }
-                .first()
-        }
+    suspend fun getOpenApiKey(): String {
+        return dataStore.data.map { preferences -> preferences[OPEN_API_PREFERENCES_KEY].orEmpty() }
+            .first()
+    }
 
-        suspend fun getThemeSettings(): Int {
-            return dataStore.data.map { preferences -> preferences[THEME_KEY] ?: 0 }
-                .first()
-        }
+    suspend fun getThemeSettings(): Int {
+        return dataStore.data.map { preferences -> preferences[THEME_KEY] ?: 0 }
+            .first()
+    }
 
-        suspend fun setThemeSettings(themeSettings: Int) {
-            dataStore.edit { preferences ->
-                preferences[THEME_KEY] = themeSettings
-            }
+    suspend fun setThemeSettings(themeSettings: Int) {
+        dataStore.edit { preferences ->
+            preferences[THEME_KEY] = themeSettings
         }
     }
+}

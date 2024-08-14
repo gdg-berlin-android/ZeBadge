@@ -19,20 +19,21 @@ import org.robolectric.Shadows.shadowOf
 abstract class RoborazziTest(
     captureType: RoborazziRule.CaptureType = RoborazziRule.CaptureType.None,
 ) {
-
     // see: https://github.com/robolectric/robolectric/pull/4736#issuecomment-1831034882
     @get:Rule(order = 1)
-    val addActivityToRobolectricRule = object : TestWatcher() {
-        override fun starting(description: Description?) {
-            super.starting(description)
-            val appContext: Application = ApplicationProvider.getApplicationContext()
-            val activityInfo = ActivityInfo().apply {
-                name = ComponentActivity::class.java.name
-                packageName = appContext.packageName
+    val addActivityToRobolectricRule =
+        object : TestWatcher() {
+            override fun starting(description: Description?) {
+                super.starting(description)
+                val appContext: Application = ApplicationProvider.getApplicationContext()
+                val activityInfo =
+                    ActivityInfo().apply {
+                        name = ComponentActivity::class.java.name
+                        packageName = appContext.packageName
+                    }
+                shadowOf(appContext.packageManager).addOrUpdateActivity(activityInfo)
             }
-            shadowOf(appContext.packageManager).addOrUpdateActivity(activityInfo)
         }
-    }
 
     @get:Rule(order = 2)
     val subjectUnderTest = createAndroidComposeRule<ComponentActivity>()

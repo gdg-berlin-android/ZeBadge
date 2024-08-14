@@ -9,12 +9,11 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeSlot
 import kotlinx.coroutines.launch
 
-fun ZeMainActivity.handleIntent(){
+fun ZeMainActivity.handleIntent() {
     if (intent.type?.startsWith("image/") == true) {
         handleSendImage(intent)
     }
 }
-
 
 private fun ZeMainActivity.handleSendImage(intent: Intent) {
     IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)

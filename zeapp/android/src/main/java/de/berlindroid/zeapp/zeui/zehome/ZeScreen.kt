@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import de.berlindroid.zeapp.zealteregos.ui.ZeAlterEgos
 import de.berlindroid.zeapp.zeentrypoint.ROUTE_ABOUT
 import de.berlindroid.zeapp.zeentrypoint.ROUTE_ALTER_EGOS
 import de.berlindroid.zeapp.zeentrypoint.ROUTE_HOME
@@ -28,7 +29,6 @@ import de.berlindroid.zeapp.zeentrypoint.ROUTE_LANGUAGES
 import de.berlindroid.zeapp.zeentrypoint.ROUTE_OPENSOURCE
 import de.berlindroid.zeapp.zeentrypoint.ROUTE_SETTINGS
 import de.berlindroid.zeapp.zeentrypoint.ROUTE_ZEPASS
-import de.berlindroid.zeapp.zealteregos.ui.ZeAlterEgos
 import de.berlindroid.zeapp.zeui.ZeNavigationPad
 import de.berlindroid.zeapp.zeui.zeabout.ZeAbout
 import de.berlindroid.zeapp.zeui.zelanguages.ZeLanguages

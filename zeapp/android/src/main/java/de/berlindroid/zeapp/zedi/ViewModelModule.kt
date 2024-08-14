@@ -8,10 +8,11 @@ import de.berlindroid.zeapp.zevm.ZePassVm
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
-val viewModelModule = module {
-    viewModelOf(::ZeBadgeViewModel)
-    viewModelOf(::AlterEgosVm)
-    viewModelOf(::ZeAboutViewModel)
-    viewModelOf(::ZeDrawerViewModel)
-    viewModelOf(::ZePassVm)
-}
+val viewModelModule =
+    module {
+        viewModelOf(::ZeBadgeViewModel)
+        viewModelOf(::AlterEgosVm)
+        viewModelOf(::ZeAboutViewModel)
+        viewModelOf(::ZeDrawerViewModel)
+        viewModelOf(::ZePassVm)
+    }

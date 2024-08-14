@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class ZeContributorsService(
-        private val githubApi: GitHubApi,
-    ) {
-        fun contributors(page: Int): Flow<List<Contributor>> =
-            flow {
-                val contributors = githubApi.getContributors(page)
+    private val githubApi: GitHubApi,
+) {
+    fun contributors(page: Int): Flow<List<Contributor>> =
+        flow {
+            val contributors = githubApi.getContributors(page)
 
-                emit(
-                    contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) },
-                )
-            }.flowOn(Dispatchers.IO)
-    }
+            emit(
+                contributors.map { Contributor(it.login, it.url, it.imageUrl, it.contributions) },
+            )
+        }.flowOn(Dispatchers.IO)
+}

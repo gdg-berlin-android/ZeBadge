@@ -25,14 +25,14 @@ interface ZeUserService {
 }
 
 class ZeUserApi(
-        private val service: ZeUserService,
-        private val baseUrl: ZeServerBaseUrl,
-    ) {
-        fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/png"
+    private val service: ZeUserService,
+    private val baseUrl: ZeServerBaseUrl,
+) {
+    fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/png"
 
-        fun getSmallUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/256x256/png"
+    fun getSmallUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/256x256/png"
 
-        suspend fun getOneUser(uuid: String): User? = service.getOneUser(uuid)
+    suspend fun getOneUser(uuid: String): User? = service.getOneUser(uuid)
 
-        suspend fun getUsers(): List<User>? = service.getUsers()
-    }
+    suspend fun getUsers(): List<User>? = service.getUsers()
+}
