@@ -6,8 +6,6 @@ plugins {
     alias(libs.plugins.jetbrains.compose.compiler)
     alias(libs.plugins.ktlint.gradle)
     alias(libs.plugins.detekt.gradle)
-    alias(libs.plugins.dagger.hilt)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.aboutlibraries.gradle)
@@ -30,6 +28,12 @@ android {
         minSdk = 29
         versionCode = appVersionCode
         versionName = "1.0"
+
+        testOptions {
+            unitTests {
+                isIncludeAndroidResources = true
+            }
+        }
 
         vectorDrawables {
             useSupportLibrary = true
@@ -116,15 +120,9 @@ android {
         "${layout.buildDirectory.get()}/generated/assets",
     )
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-
-        freeCompilerArgs +=
+    kotlin {
+        jvmToolchain(17)
+        kotlinOptions.freeCompilerArgs +=
             listOf(
                 "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
                 "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi",
@@ -189,12 +187,18 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.zxing)
     implementation(libs.material3.wsc)
-    implementation(libs.dagger.hilt)
     implementation(libs.coil.compose)
     implementation(libs.coil.transformations)
+
+    // koin-start
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.navigation)
+    implementation(libs.koin.androidx.compose)
+    // koin-end
+
     implementation(libs.timber)
     implementation(libs.aboutlibraries.compose)
-    implementation(libs.androidx.compose.hilt.navigation)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
@@ -206,7 +210,6 @@ dependencies {
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit)
-    ksp(libs.dagger.hilt.compiler)
     baselineProfile(projects.benchmark)
 }
 

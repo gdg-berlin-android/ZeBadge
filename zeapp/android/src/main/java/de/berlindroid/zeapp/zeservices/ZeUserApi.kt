@@ -4,7 +4,6 @@ import de.berlindroid.zeapp.zedi.ZeServerBaseUrl
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 import retrofit2.http.Path
-import javax.inject.Inject
 
 @Serializable
 data class User(
@@ -25,17 +24,15 @@ interface ZeUserService {
     suspend fun getUsers(): List<User>?
 }
 
-class ZeUserApi
-    @Inject
-    constructor(
-        private val service: ZeUserService,
-        private val baseUrl: ZeServerBaseUrl,
-    ) {
-        fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/png"
+class ZeUserApi(
+    private val service: ZeUserService,
+    private val baseUrl: ZeServerBaseUrl,
+) {
+    fun getUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/png"
 
-        fun getSmallUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/256x256/png"
+    fun getSmallUserProfilePng(uuid: String): String = "${baseUrl.value}/user/$uuid/256x256/png"
 
-        suspend fun getOneUser(uuid: String): User? = service.getOneUser(uuid)
+    suspend fun getOneUser(uuid: String): User? = service.getOneUser(uuid)
 
-        suspend fun getUsers(): List<User>? = service.getUsers()
-    }
+    suspend fun getUsers(): List<User>? = service.getUsers()
+}

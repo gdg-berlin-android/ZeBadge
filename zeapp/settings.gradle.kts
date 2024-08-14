@@ -2,7 +2,13 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("androidx.*")
+                includeGroupByRegex("com\\.google.*")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
@@ -15,6 +21,7 @@ dependencyResolutionManagement {
             content {
                 includeGroupByRegex("androidx\\..*")
                 includeGroupByRegex("com\\.android\\..*")
+                includeGroupByRegex("com\\.google.*")
             }
         }
         maven {

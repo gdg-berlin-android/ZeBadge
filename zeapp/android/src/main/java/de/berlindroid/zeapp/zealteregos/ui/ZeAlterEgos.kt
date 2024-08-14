@@ -32,17 +32,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import de.berlindroid.zeapp.zealteregos.vm.AlterEgosVm
 import de.berlindroid.zeapp.zealteregos.vm.UiState
 import de.berlindroid.zeapp.zealteregos.vm.User
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 @Preview
 fun ZeAlterEgos(paddingValues: PaddingValues) {
-    val viewModel: AlterEgosVm = hiltViewModel()
+    val viewModel: AlterEgosVm = koinViewModel()
 
     val state by viewModel.uiState.collectAsState()
 
