@@ -2,7 +2,6 @@ package de.berlindroid.zeapp.zeservices
 
 import android.content.Context
 import android.graphics.Bitmap
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.berlindroid.zeapp.zeui.pixelBuffer
 import de.berlindroid.zekompanion.ConfigCommand
 import de.berlindroid.zekompanion.ConfigListCommand
@@ -19,14 +18,11 @@ import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
 import kotlinx.coroutines.delay
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val SPACE_REPLACEMENT = "\$SPACE#"
 
-class ZeBadgeManager
-    @Inject
-    constructor(
-        @ApplicationContext private val context: Context,
+class ZeBadgeManager(
+        private val context: Context,
         private val badgeConfigParser: ZeBadgeConfigParser,
     ) {
         private val badgeManager = buildBadgeManager(Environment(context))

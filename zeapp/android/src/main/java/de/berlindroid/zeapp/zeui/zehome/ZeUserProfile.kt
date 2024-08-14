@@ -24,13 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import coil.compose.AsyncImage
 import de.berlindroid.zeapp.zevm.ZePassVm
 
 @Composable
 fun ZeUserProfile(paddingValues: PaddingValues) {
-    val viewModel: ZePassVm = hiltViewModel()
+    val viewModel: ZePassVm = koinViewModel()
 
     val state by viewModel.uiState.collectAsState()
 

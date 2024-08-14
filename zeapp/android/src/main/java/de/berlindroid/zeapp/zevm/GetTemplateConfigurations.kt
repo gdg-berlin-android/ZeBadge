@@ -6,10 +6,8 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zekompanion.ditherFloydSteinberg
-import javax.inject.Inject
 
 class GetTemplateConfigurations
-    @Inject
     constructor(
         private val imageProviderService: ZeImageProviderService,
     ) {

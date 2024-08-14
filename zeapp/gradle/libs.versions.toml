@@ -17,13 +17,12 @@ androidx-test-uiautomator = "2.3.0"
 benchmark = "1.2.4"
 benchmarkMacroJunit4 = "1.2.4"
 coil = "2.7.0"
-dagger-hilt = "2.52"
 detekt-gradle = "1.23.6"
 jSerialComm = "2.11.0"
 kotlin = "2.0.10"
 kotlinx-coroutines-core = "1.8.1"
 kotlinxSerializationJson = "1.7.1"
-ksp = "2.0.10-1.0.24"
+koin = "3.5.4"
 ktlint-gradle = "12.1.1"
 material3-wsc = "1.2.1"
 mik3y-usb-serial = "3.7.0"
@@ -37,7 +36,6 @@ ktor = "2.3.12"
 mockk = "1.13.12"
 kotlinxCoroutinesTest = "1.8.1"
 aboutlibraries = "11.2.2"
-hilt-navigation-compose = "1.2.0"
 jetbrains-compose = "1.6.11"
 roborazzi = "1.26.0"
 robolectric = "4.13"
@@ -47,10 +45,8 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
 android-test = { id = "com.android.test", version.ref = "android-gradle-plugin" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
-dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 detekt-gradle = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-gradle" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
 aboutlibraries-gradle = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -72,7 +68,6 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-toolingpreview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-compose-ui-ui = { module = "androidx.compose.ui:ui" }
-androidx-compose-hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
@@ -84,9 +79,11 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-transformations = "com.github.Commit451.coil-transformations:transformations:2.0.2"
-dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
-dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-hilt" }
 jSerialComm = { module = "com.fazecast:jSerialComm", version.ref = "jSerialComm" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+koin-androidx-navigation = { module = "io.insert-koin:koin-androidx-navigation", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 ktor-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-tomcat = { group = "io.ktor", name = "ktor-server-tomcat", version.ref = "ktor" }
 ktor-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }

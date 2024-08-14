@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import de.berlindroid.zeapp.zeentrypoint.ZeMainActivity
 import org.junit.Rule
 import org.junit.Test
 

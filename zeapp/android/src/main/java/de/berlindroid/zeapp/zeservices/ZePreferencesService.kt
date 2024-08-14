@@ -8,10 +8,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 private const val PREFS_NAME = "defaults"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -21,10 +19,8 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     },
 )
 
-class ZePreferencesService
-    @Inject
-    constructor(
-        @ApplicationContext private val context: Context,
+class ZePreferencesService(
+        private val context: Context,
     ) {
         companion object {
             private val OPEN_API_PREFERENCES_KEY = stringPreferencesKey("openapi")

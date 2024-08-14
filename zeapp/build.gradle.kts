@@ -6,10 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.jetbrains.compose.compiler) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.detekt.gradle) apply false
-    alias(libs.plugins.dagger.hilt) apply false
     alias(libs.plugins.aboutlibraries.gradle) apply false
 }
 

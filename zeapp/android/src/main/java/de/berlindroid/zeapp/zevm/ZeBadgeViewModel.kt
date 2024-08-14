@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import de.berlindroid.zeapp.OPENAI_API_KEY
 import de.berlindroid.zeapp.R
 import de.berlindroid.zeapp.zebits.isBinary
@@ -35,7 +34,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
 private const val MESSAGE_DISPLAY_UPDATES = 5
@@ -43,10 +41,7 @@ private const val MESSAGE_DISPLAY_UPDATES = 5
 /**
  * Base ViewModel building a list of pages for the badge and offering simulator support.
  */
-@HiltViewModel
-class ZeBadgeViewModel
-    @Inject
-    constructor(
+class ZeBadgeViewModel(
         private val imageProviderService: ZeImageProviderService,
         private val badgeManager: ZeBadgeManager,
         private val preferencesService: ZePreferencesService,

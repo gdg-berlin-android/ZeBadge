@@ -27,7 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import coil.compose.AsyncImage
 import de.berlindroid.zekompanion.getPlatform
 
@@ -35,7 +35,7 @@ import de.berlindroid.zekompanion.getPlatform
 @Composable
 fun ZeAbout(
     paddingValues: PaddingValues,
-    vm: ZeAboutViewModel = hiltViewModel(),
+    vm: ZeAboutViewModel = koinViewModel(),
 ) {
     val contributors by vm.lines.collectAsState()
 

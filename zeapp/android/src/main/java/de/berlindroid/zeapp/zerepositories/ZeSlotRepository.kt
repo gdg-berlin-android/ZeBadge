@@ -25,16 +25,13 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 /**
  * Responsible for all the ZeSlot and ZeSlotConfiguration persistence
  * It provides easy access methods to
  * [getSlotConfiguration], [saveSlotConfiguration], [removeSlotConfiguration], [getDefaultSlotConfiguration] and [getInitialSlots]
  */
-class ZeSlotRepository
-    @Inject
-    constructor(
+class ZeSlotRepository(
         private val zePreferencesService: ZePreferencesService,
         private val imageProviderService: ZeImageProviderService,
     ) {

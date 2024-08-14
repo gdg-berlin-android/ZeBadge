@@ -2,7 +2,6 @@ package de.berlindroid.zeapp.zeservices
 
 import android.util.Base64
 import java.util.UUID
-import javax.inject.Inject
 
 private const val SPACE_ESCAPED = "\$SPACE#"
 private val CONFIG_REGEX = Regex("""([^\s]+?)=([^\s]+?)(?:\s+|$)""")
@@ -17,9 +16,7 @@ private val CONFIG_REGEX = Regex("""([^\s]+?)=([^\s]+?)(?:\s+|$)""")
  * user.iconB64=eNpjYGBgUJnkqaIg6MDAAmTX/+U+WGf//399OwNjYfv/gk1AQ==
  * ```
  */
-class ZeBadgeConfigParser
-    @Inject
-    constructor() {
+class ZeBadgeConfigParser {
         fun parse(configString: String): ParseResult {
             val configMap =
                 CONFIG_REGEX.findAll(configString)

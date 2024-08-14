@@ -4,7 +4,6 @@ import de.berlindroid.zeapp.zedi.ZeServerBaseUrl
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 import retrofit2.http.Path
-import javax.inject.Inject
 
 @Serializable
 data class User(
@@ -25,9 +24,7 @@ interface ZeUserService {
     suspend fun getUsers(): List<User>?
 }
 
-class ZeUserApi
-    @Inject
-    constructor(
+class ZeUserApi(
         private val service: ZeUserService,
         private val baseUrl: ZeServerBaseUrl,
     ) {

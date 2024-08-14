@@ -4,11 +4,8 @@ import de.berlindroid.zeapp.BuildConfig
 import okio.IOException
 import retrofit2.HttpException
 import timber.log.Timber
-import javax.inject.Inject
 
-class ZeReleaseService
-    @Inject
-    constructor(
+class ZeReleaseService(
         private val githubApi: GitHubApi,
     ) {
         suspend fun getLatestRelease() =

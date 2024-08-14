@@ -6,7 +6,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-import javax.inject.Inject
 
 @Serializable
 data class Message(
@@ -32,9 +31,7 @@ interface ZePassService {
     )
 }
 
-class ZePassApi
-    @Inject
-    constructor(
+class ZePassApi(
         private val service: ZePassService,
     ) {
         suspend fun getAllMessages(): List<Message> = service.getAllMessages()

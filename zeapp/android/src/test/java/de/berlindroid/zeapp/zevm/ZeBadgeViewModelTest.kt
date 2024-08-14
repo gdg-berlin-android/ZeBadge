@@ -1,5 +1,7 @@
 package de.berlindroid.zeapp.zevm
 
+import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zerepositories.ZeSlotRepository
 import de.berlindroid.zeapp.zeservices.ZeBadgeManager
 import de.berlindroid.zeapp.zeservices.ZeClipboardService
 import de.berlindroid.zeapp.zeservices.ZeImageProviderService
@@ -21,6 +23,7 @@ import org.junit.Test
 class ZeBadgeViewModelTest {
     private val imageProviderService = mockk<ZeImageProviderService>()
     private val zeBadgeManager = mockk<ZeBadgeManager>()
+    private val zeSlotRepository = mockk<ZeSlotRepository>()
     private val zePreferencesService = mockk<ZePreferencesService>()
     private val clipboardService = mockk<ZeClipboardService>()
     private val weatherService = mockk<ZeWeatherService>()
@@ -40,6 +43,7 @@ class ZeBadgeViewModelTest {
     @Test
     fun testCopyToClipBoard() {
         // Given
+        every { zeSlotRepository.getInitialSlots() } returns listOf(ZeSlot.FirstCustom)
         every { clipboardService.copyToClipboard("") } returns Unit
         val zeBadgeViewModel = provideViewModel()
 
@@ -58,6 +62,7 @@ class ZeBadgeViewModelTest {
             clipboardService = clipboardService,
             weatherService = weatherService,
             getTemplateConfigurations = templateConfigurations,
+            zeSlotRepository = zeSlotRepository,
         )
 
     @After

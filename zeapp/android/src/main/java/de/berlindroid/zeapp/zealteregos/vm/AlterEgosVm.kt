@@ -2,14 +2,12 @@ package de.berlindroid.zeapp.zealteregos.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import de.berlindroid.zeapp.zeservices.ZeUserApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class User(
     val uuid: String,
@@ -25,9 +23,7 @@ data class UiState(
     val selectedUser: User? = null,
 )
 
-@HiltViewModel
 class AlterEgosVm
-    @Inject
     constructor(
         private val userApi: ZeUserApi,
     ) : ViewModel() {

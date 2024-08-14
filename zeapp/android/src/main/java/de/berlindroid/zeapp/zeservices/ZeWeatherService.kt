@@ -1,14 +1,11 @@
 package de.berlindroid.zeapp.zeservices
 
 import de.berlindroid.zeapp.zemodels.WeatherData
-import javax.inject.Inject
 
 /**
  * Service to fetch the weather data from the API by the provided date
  */
-class ZeWeatherService
-    @Inject
-    constructor(private val zeWeatherApi: ZeWeatherApi) {
+class ZeWeatherService(private val zeWeatherApi: ZeWeatherApi) {
         internal suspend fun fetchWeather(date: String): WeatherData {
             try {
                 val weather = zeWeatherApi.getWeather()

@@ -2,7 +2,6 @@ package de.berlindroid.zeapp.zevm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import de.berlindroid.zeapp.zeservices.Message
 import de.berlindroid.zeapp.zeservices.ZePassApi
 import de.berlindroid.zeapp.zeservices.ZeUserApi
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class MessageUi(
     val text: String,
@@ -25,10 +23,7 @@ data class ZePassUiState(
     val errorMessage: String = "",
 )
 
-@HiltViewModel
-class ZePassVm
-    @Inject
-    constructor(
+class ZePassVm(
         private val passApi: ZePassApi,
         private val userApi: ZeUserApi,
     ) : ViewModel() {
