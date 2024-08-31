@@ -33,7 +33,6 @@ class ZeBadgeViewModelTest {
     @Before
     fun setupMainDispatcher() {
         Dispatchers.setMain(testDispatcher)
-
     }
 
     @After
