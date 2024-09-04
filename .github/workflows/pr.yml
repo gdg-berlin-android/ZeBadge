@@ -115,3 +115,5 @@ jobs:
         uses: gradle/actions/wrapper-validation@v4
       - name: "Test"
         run: ./gradlew linuxTest
+      - name: "Android Unit Test"
+        run: ./gradlew :android:testDebugUnitTest
