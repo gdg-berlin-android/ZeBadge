@@ -3,12 +3,8 @@ package de.berlindroid.zeapp.zeui.zehome
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,6 +99,22 @@ internal fun ZeDrawerContent(
     val viewModel: ZeDrawerViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
+    // Map drawer item IDs to their corresponding callback functions
+    val onItemClick: (DrawerItemId?) -> Unit = { itemId ->
+        when (itemId) {
+            DrawerItemId.ZEPASS_CHAT -> onGotoZePass()
+            DrawerItemId.ALTER_EGOS -> onGoToAlterEgos()
+            DrawerItemId.SAVE_ALL -> onSaveAllClick()
+            DrawerItemId.UPDATE_CONFIG -> onUpdateConfig()
+            DrawerItemId.SEND_RANDOM -> onGetStoredPages()
+            DrawerItemId.SETTINGS -> onGoToSettings()
+            DrawerItemId.LANGUAGE_SETTINGS -> onGotoLanguagesSettings()
+            DrawerItemId.CONTRIBUTORS -> onGotoContributors()
+            DrawerItemId.OPEN_SOURCE -> onGotoOpenSourceClick()
+            null -> {} // For dividers and spacers
+        }
+    }
+
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.secondary,
         drawerShape = DrawerDefaults.shape,
@@ -122,110 +133,35 @@ internal fun ZeDrawerContent(
         }
 
         LazyColumn {
-            item {
-                NavDrawerItem(
-                    text = stringResource(R.string.open_zepass_chat),
-                    vector = Icons.Default.Person,
-                    onClick = onGotoZePass,
-                    onCloseDrawer = onCloseDrawer,
-                )
+            items(uiState.drawerItems) { drawerItem ->
+                when (drawerItem.type) {
+                    DrawerItemType.NAVIGATION -> {
+                        NavDrawerItem(
+                            text = stringResource(drawerItem.titleRes),
+                            vector = drawerItem.vector,
+                            painter = drawerItem.painter?.let { painterResource(it) },
+                            onClick = { onItemClick(drawerItem.id) },
+                            onCloseDrawer = onCloseDrawer,
+                        )
+                    }
+                    DrawerItemType.DIVIDER -> {
+                        Divider()
+                    }
+                    DrawerItemType.SPACE -> {
+                        HorizontalDivider(
+                            thickness = 0.dp,
+                            color = MaterialTheme.colorScheme.background,
+                            modifier =
+                                Modifier.padding(
+                                    start = 0.dp,
+                                    end = 0.dp,
+                                    top = 16.dp,
+                                    bottom = 16.dp,
+                                ),
+                        )
+                    }
+                }
             }
-
-            item {
-                NavDrawerItem(
-                    text = stringResource(R.string.show_all_alter_egos),
-                    vector = Icons.Default.Star,
-                    onClick = onGoToAlterEgos,
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item {
-                Divider()
-            }
-
-            item {
-                NavDrawerItem(
-                    onClick = onSaveAllClick,
-                    painter = painterResource(id = R.drawable.save_all),
-                    text = stringResource(id = R.string.ze_navdrawer_save_all_pages),
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_update_config),
-                    vector = Icons.Default.ThumbUp,
-                    onClick = onUpdateConfig,
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    painter = painterResource(id = R.drawable.ic_random),
-                    text = stringResource(id = R.string.ze_navdrawer_send_random_page),
-                    onClick = onGetStoredPages,
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item { Divider() }
-
-            item {
-                NavDrawerItem(
-                    painter = painterResource(id = R.drawable.ic_settings),
-                    text = stringResource(id = R.string.ze_navdrawer_settings),
-                    onClick = onGoToSettings,
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item { Divider() }
-
-            item {
-                NavDrawerItem(
-                    painter = painterResource(id = R.drawable.ic_language),
-                    text = stringResource(id = R.string.ze_navdrawer_language_settings),
-                    onClick = onGotoLanguagesSettings,
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item {
-                HorizontalDivider(
-                    thickness = 0.dp,
-                    color = MaterialTheme.colorScheme.background,
-                    modifier =
-                        Modifier.padding(
-                            start = 0.dp,
-                            end = 0.dp,
-                            top = 16.dp,
-                            bottom = 16.dp,
-                        ),
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_contributors),
-                    painter = rememberVectorPainter(Icons.Default.Info),
-                    onClick = onGotoContributors,
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item {
-                NavDrawerItem(
-                    text = stringResource(id = R.string.ze_navdrawer_open_source),
-                    painter = painterResource(id = R.drawable.ic_open_source_initiative),
-                    onClick = onGotoOpenSourceClick,
-                    onCloseDrawer = onCloseDrawer,
-                )
-            }
-
-            item { Divider() }
 
             uiState.newReleaseVersion?.let { version ->
                 item {
