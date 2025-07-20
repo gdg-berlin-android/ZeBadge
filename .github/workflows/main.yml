@@ -20,21 +20,31 @@ jobs:
     runs-on: ubuntu-latest
     environment: default
     steps:
-      - name: Checkout Repo
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Check folders after checkout repo
-        run: tree -P '*.apk' --prune
-      - name: Setup Java 17
+
+      - name: setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v3
+
+      - name: Cache and Restore BuildCache
+        uses: actions/cache@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: Assemble Release
         run: ./gradlew :android:assembleRelease --no-daemon
       - name: Check folders after assembleRelease
@@ -61,32 +71,90 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Java 17
+
+      - name: setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v3
+
+      - name: Restore BuildCache
+        uses: actions/cache/restore@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: Lint
         run: ./gradlew lint --no-daemon
   detekt:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Java 17
+
+      - name: setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v3
+
+      - name: Restore BuildCache
+        uses: actions/cache/restore@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: Detekt
         run: ./gradlew detekt
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Cache and Restore BuildCache
+        uses: actions/cache@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build--
+      - name: "Test"
+        run: ./gradlew test

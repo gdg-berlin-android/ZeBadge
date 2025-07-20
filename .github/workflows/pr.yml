@@ -24,8 +24,18 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
       - name: "Validate Gradle wrapper"
         uses: gradle/actions/wrapper-validation@v4
+      - name: Cache and Restore BuildCache
+        uses: actions/cache@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: "Assemble Debug"
         run: ./gradlew :android:assembleDebug --no-daemon
       - name: "Upload Debug APK to GitHub"
@@ -45,8 +55,18 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
       - name: "Validate Gradle wrapper"
         uses: gradle/actions/wrapper-validation@v4
+      - name: Cache and Restore BuildCache
+        uses: actions/cache@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: "Assemble Debug"
         run: ./gradlew :android:assembleDebug --no-daemon
       # Not uploading the APK cause the other step will generate the same thing anyway
@@ -62,8 +82,18 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
       - name: "Validate Gradle wrapper"
         uses: gradle/actions/wrapper-validation@v4
+      - name: Restore BuildCache
+        uses: actions/cache/restore@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: "ktLint"
         run: ./gradlew ktlintCheck --no-daemon
 
@@ -79,8 +109,18 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
       - name: "Validate Gradle wrapper"
         uses: gradle/actions/wrapper-validation@v4
+      - name: Restore BuildCache
+        uses: actions/cache/restore@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: "Lint"
         run: ./gradlew lint --no-daemon
   detekt:
@@ -95,8 +135,18 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
       - name: "Validate Gradle wrapper"
         uses: gradle/actions/wrapper-validation@v4
+      - name: Restore BuildCache
+        uses: actions/cache/restore@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: "Detekt"
         run: ./gradlew detekt
   test:
@@ -111,8 +161,18 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
       - name: "Validate Gradle wrapper"
         uses: gradle/actions/wrapper-validation@v4
+      - name: Cache and Restore BuildCache
+        uses: actions/cache@v4
+        with:
+          path: '**/build-cache/**'
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-${{ github.sha }}
+            build-
       - name: "Test"
         run: ./gradlew linuxTest
       - name: "Android Unit Test"
