@@ -9,6 +9,12 @@ updates:
     directory: "zeapp/" # this means root of the repo for almost everything
     schedule:
       interval: "daily"
+    groups:
+      kotlin-ksp:
+        patterns:
+          - "org.jetbrains.kotlin:*"
+          - "org.jetbrains.kotlin.jvm"
+          - "com.google.devtools.ksp"
       
   - package-ecosystem: "github-actions"
     directory: "/" # and this is the exception. this means this dot github directory
