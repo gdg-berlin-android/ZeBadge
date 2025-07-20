@@ -5,11 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -105,6 +99,22 @@ internal fun ZeDrawerContent(
     val viewModel: ZeDrawerViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
+    // Map drawer item IDs to their corresponding callback functions
+    val onItemClick: (DrawerItemId?) -> Unit = { itemId ->
+        when (itemId) {
+            DrawerItemId.ZEPASS_CHAT -> onGotoZePass()
+            DrawerItemId.ALTER_EGOS -> onGoToAlterEgos()
+            DrawerItemId.SAVE_ALL -> onSaveAllClick()
+            DrawerItemId.UPDATE_CONFIG -> onUpdateConfig()
+            DrawerItemId.SEND_RANDOM -> onGetStoredPages()
+            DrawerItemId.SETTINGS -> onGoToSettings()
+            DrawerItemId.LANGUAGE_SETTINGS -> onGotoLanguagesSettings()
+            DrawerItemId.CONTRIBUTORS -> onGotoContributors()
+            DrawerItemId.OPEN_SOURCE -> onGotoOpenSourceClick()
+            null -> {} // For dividers and spacers
+        }
+    }
+
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.secondary,
         drawerShape = DrawerDefaults.shape,
@@ -130,7 +140,7 @@ internal fun ZeDrawerContent(
                             text = stringResource(drawerItem.titleRes),
                             vector = drawerItem.vector,
                             painter = drawerItem.painter?.let { painterResource(it) },
-                            onClick = drawerItem.onClick,
+                            onClick = { onItemClick(drawerItem.id) },
                             onCloseDrawer = onCloseDrawer,
                         )
                     }

@@ -1,7 +1,6 @@
 package de.berlindroid.zeapp
 
-import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import com.github.takahirom.roborazzi.RoborazziRule
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -14,14 +13,21 @@ abstract class RoborazziTest(
     captureType: RoborazziRule.CaptureType = RoborazziRule.CaptureType.None,
 ) {
     @get:Rule
-    val subjectUnderTest = createAndroidComposeRule<ComponentActivity>()
+    val subjectUnderTest = createComposeRule()
 
     @get:Rule
-    val roborazziRule = roborazziOf(subjectUnderTest, captureType)
+    val roborazziRule =
+        RoborazziRule(
+            composeRule = subjectUnderTest,
+            captureRoot = subjectUnderTest.onRoot(),
+            options =
+                RoborazziRule.Options(
+                    captureType = captureType,
+                ),
+        )
 
     @After
     fun capture() {
         subjectUnderTest.onRoot().captureRoboImage()
-        subjectUnderTest.activityRule.scenario.recreate()
     }
 }
