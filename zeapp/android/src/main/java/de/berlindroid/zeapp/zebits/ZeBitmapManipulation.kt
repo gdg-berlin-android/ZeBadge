@@ -337,7 +337,7 @@ fun Bitmap.cropPageFromCenter(): Bitmap {
 /**
  * Copy the bitmap, keeping its config and make it modifiable
  */
-fun Bitmap.copy(): Bitmap = copy(config, true)
+fun Bitmap.copy(): Bitmap = copy(config ?: Bitmap.Config.ARGB_8888, true)
 
 /**
  * Only scale an image if it is needed, otherwise return a copy.
@@ -358,7 +358,7 @@ private fun Bitmap.crop(
     targetWidth: Int,
     targetHeight: Int,
 ): Bitmap {
-    val result = Bitmap.createBitmap(targetWidth, targetHeight, config)
+    val result = Bitmap.createBitmap(targetWidth, targetHeight, config ?: Bitmap.Config.ARGB_8888)
     val canvas = Canvas(result)
     canvas.drawBitmap(this, fromX.toFloat(), fromY.toFloat(), null)
     return result
