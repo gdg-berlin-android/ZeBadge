@@ -25,8 +25,8 @@ android {
 
     defaultConfig {
         applicationId = "de.berlindroid.zeapp"
-        compileSdk = 34
-        targetSdk = 34
+        compileSdk = 35
+        targetSdk = 35
         minSdk = 29
         versionCode = appVersionCode
         versionName = "1.0"
