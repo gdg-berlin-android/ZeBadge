@@ -18,39 +18,39 @@ private val CONFIG_REGEX = Regex("""([^\s]+?)=([^\s]+?)(?:\s+|$)""")
  * ```
  */
 class ZeBadgeConfigParser
-    @Inject
-    constructor() {
-        fun parse(configString: String): ParseResult {
-            val configMap =
-                CONFIG_REGEX.findAll(configString)
-                    .map { it.groupValues }
-                    .associate { it[1] to it[2] }
-                    .mapValues { it.value.replace(SPACE_ESCAPED, " ") }
+@Inject
+constructor() {
+    fun parse(configString: String): ParseResult {
+        val configMap =
+            CONFIG_REGEX.findAll(configString)
+                .map { it.groupValues }
+                .associate { it[1] to it[2] }
+                .mapValues { it.value.replace(SPACE_ESCAPED, " ") }
 
-            val userId = configMap["user.uuid"]?.let { UUID.fromString(it) }
-            val userName = configMap["user.name"]
-            val userDescription = configMap["user.description"]
-            val userProfilePhoto = configMap["user.iconB64"]?.let { Base64.decode(it, Base64.DEFAULT) }
+        val userId = configMap["user.uuid"]?.let { UUID.fromString(it) }
+        val userName = configMap["user.name"]
+        val userDescription = configMap["user.description"]
+        val userProfilePhoto = configMap["user.iconB64"]?.let { Base64.decode(it, Base64.DEFAULT) }
 
-            val isWiFiAttached = configMap["wifi_attached"]?.toBoolean() ?: false
-            val isDeveloperMode = configMap["developer_mode"]?.toBoolean() ?: false
+        val isWiFiAttached = configMap["wifi_attached"]?.toBoolean() ?: false
+        val isDeveloperMode = configMap["developer_mode"]?.toBoolean() ?: false
 
-            val userInfo =
-                if (
-                    userId != null && userName != null && userDescription != null && userProfilePhoto != null
-                ) {
-                    UserInfo(userId, userName, userDescription, userProfilePhoto)
-                } else {
-                    null
-                }
+        val userInfo =
+            if (
+                userId != null && userName != null && userDescription != null && userProfilePhoto != null
+            ) {
+                UserInfo(userId, userName, userDescription, userProfilePhoto)
+            } else {
+                null
+            }
 
-            return ParseResult(
-                userInfo,
-                isWiFiAttached,
-                isDeveloperMode,
-            )
-        }
+        return ParseResult(
+            userInfo,
+            isWiFiAttached,
+            isDeveloperMode,
+        )
     }
+}
 
 data class ParseResult(
     val userInfo: UserInfo?,
@@ -84,9 +84,7 @@ data class UserInfo(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as UserInfo
+        if (other !is UserInfo) return false
 
         if (id != other.id) return false
         if (name != other.name) return false
