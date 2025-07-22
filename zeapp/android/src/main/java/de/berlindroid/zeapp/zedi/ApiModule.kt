@@ -37,7 +37,8 @@ object ApiModule {
         baseUrl: ZeServerBaseUrl,
         json: Json,
     ): ZePassService =
-        Retrofit.Builder()
+        Retrofit
+            .Builder()
             .baseUrl(baseUrl.value)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
@@ -67,14 +68,14 @@ object ApiModule {
         baseUrl: ZeServerBaseUrl,
         json: Json,
     ): ZeUserService =
-        Retrofit.Builder()
+        Retrofit
+            .Builder()
             .baseUrl(baseUrl.value)
             .client(
                 OkHttpClient()
                     .newBuilder()
                     .build(),
-            )
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            ).addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(
                 ZeUserService::class.java,
@@ -82,7 +83,8 @@ object ApiModule {
 
     @Provides
     fun provideZeWeatherApi(json: Json): ZeWeatherApi =
-        Retrofit.Builder()
+        Retrofit
+            .Builder()
             .baseUrl(METEO_URL.value)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()

@@ -18,10 +18,10 @@ import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.forEach
 import de.berlindroid.zekompanion.forEachIndexed
 import de.berlindroid.zekompanion.isBinary
-import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import kotlin.experimental.and
+import timber.log.Timber
 
 /**
  * Render a composable into a bitmap.
@@ -34,7 +34,9 @@ fun composableToBitmap(
     callback: (Bitmap) -> Unit,
 ) {
     // create a custom view like in the good old days
-    class ParentView(context: Context) : LinearLayout(context) {
+    class ParentView(
+        context: Context,
+    ) : LinearLayout(context) {
         init {
             val width = BADGE_WIDTH
             val height = BADGE_HEIGHT
@@ -109,7 +111,9 @@ fun qrComposableToBitmap(
     callback: (Bitmap) -> Unit,
 ) {
     // create a custom view like in the good old days
-    class ParentView(context: Context) : LinearLayout(context) {
+    class ParentView(
+        context: Context,
+    ) : LinearLayout(context) {
         init {
             val width = BADGE_WIDTH
             val height = BADGE_HEIGHT
@@ -183,7 +187,9 @@ fun barCodeComposableToBitmap(
     callback: (Bitmap) -> Unit,
 ) {
     // create a custom view like in the good old days
-    class ParentView(context: Context) : LinearLayout(context) {
+    class ParentView(
+        context: Context,
+    ) : LinearLayout(context) {
         init {
             val width = BADGE_WIDTH
             val height = BADGE_HEIGHT

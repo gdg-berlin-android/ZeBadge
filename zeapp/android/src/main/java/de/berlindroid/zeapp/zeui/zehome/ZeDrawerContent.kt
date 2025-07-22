@@ -51,8 +51,7 @@ fun NavDrawerItem(
                     end = 32.dp,
                     top = 4.dp,
                     bottom = 4.dp,
-                )
-                .border(
+                ).border(
                     width = 1.dp,
                     color = ZeWhite,
                     shape = shape,

@@ -8,7 +8,9 @@ import javax.inject.Inject
  */
 class ZeWeatherService
     @Inject
-    constructor(private val zeWeatherApi: ZeWeatherApi) {
+    constructor(
+        private val zeWeatherApi: ZeWeatherApi,
+    ) {
         internal suspend fun fetchWeather(date: String): WeatherData {
             try {
                 val weather = zeWeatherApi.getWeather()

@@ -11,8 +11,8 @@ import com.github.takahirom.roborazzi.RoborazziRule
 fun roborazziOf(
     szenario: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>,
     captureType: RoborazziRule.CaptureType = RoborazziRule.CaptureType.None,
-): RoborazziRule {
-    return RoborazziRule(
+): RoborazziRule =
+    RoborazziRule(
         composeRule = szenario,
         captureRoot = szenario.onRoot(),
         options =
@@ -20,4 +20,3 @@ fun roborazziOf(
                 captureType = captureType,
             ),
     )
-}

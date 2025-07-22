@@ -72,10 +72,11 @@ fun ImageGenerationEditorDialog(
     var prompt by remember { mutableStateOf(initialPrompt) }
     var bitmap by remember {
         mutableStateOf(
-            BitmapFactory.decodeResource(
-                context.resources,
-                R.drawable.error,
-            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT),
+            BitmapFactory
+                .decodeResource(
+                    context.resources,
+                    R.drawable.error,
+                ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT),
         )
     }
 
@@ -145,10 +146,11 @@ fun ImageGenerationEditorDialog(
                                         snackbarMessage(context.getString(R.string.could_not_generate_image))
                                     }
                                     bitmap =
-                                        BitmapFactory.decodeResource(
-                                            context.resources,
-                                            R.drawable.error,
-                                        ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                                        BitmapFactory
+                                            .decodeResource(
+                                                context.resources,
+                                                R.drawable.error,
+                                            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                                     lastLoadedBitmap = null
                                 }
                                 progress = null
@@ -196,10 +198,11 @@ private suspend fun requestImageGeneration(
                             bytes.size,
                         )
                     } else {
-                        BitmapFactory.decodeResource(
-                            context.resources,
-                            R.drawable.error,
-                        ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                        BitmapFactory
+                            .decodeResource(
+                                context.resources,
+                                R.drawable.error,
+                            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                     }
                 }
 
@@ -222,7 +225,8 @@ private val json =
     }
 
 private val retrofit =
-    Retrofit.Builder()
+    Retrofit
+        .Builder()
         .baseUrl("https://api.openai.com")
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()

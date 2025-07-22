@@ -1,16 +1,20 @@
 package de.berlindroid.zeapp
 
 import android.content.Intent
+import android.content.res.Configuration as AndroidConfig
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Row as ZeRow
+import androidx.compose.foundation.layout.Spacer as ZeSpacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier as ZeModifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
@@ -18,16 +22,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.berlindroid.zeapp.zebits.toDitheredImage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeSlot
+import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 import de.berlindroid.zeapp.zeui.zehome.ZeScreen
 import de.berlindroid.zeapp.zeui.zehome.isSmartphoneSize
 import de.berlindroid.zeapp.zeui.zehome.isTabletSize
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
 import kotlinx.coroutines.launch
-import android.content.res.Configuration as AndroidConfig
-import androidx.compose.foundation.layout.Row as ZeRow
-import androidx.compose.foundation.layout.Spacer as ZeSpacer
-import androidx.compose.ui.Modifier as ZeModifier
-import de.berlindroid.zeapp.zeui.simulator.BadgeSimulator as ZeSimulator
 
 /**
  * Main View entrance for the app
@@ -51,7 +51,8 @@ class ZeMainActivity : AppCompatActivity() {
     }
 
     private fun handleSendImage(intent: Intent) {
-        IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+        IntentCompat
+            .getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
             ?.let(::updateSelectedImage)
     }
 

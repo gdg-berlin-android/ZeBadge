@@ -38,10 +38,10 @@ import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zeui.zepages.WeatherPage
 import de.berlindroid.zeapp.zeui.zetheme.ZeBlack
 import de.berlindroid.zeapp.zeui.zetheme.ZeWhite
-import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.launch
 
 /**
  * Editor dialog for selecting the weather
@@ -142,9 +142,11 @@ fun WeatherEditorDialog(
                                     onClick = {
                                         openDialog = false
                                         date =
-                                            datePickerState.selectedDateMillis?.let {
-                                                Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
-                                            }?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString()
+                                            datePickerState.selectedDateMillis
+                                                ?.let {
+                                                    Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+                                                }?.format(DateTimeFormatter.ISO_LOCAL_DATE)
+                                                .toString()
                                     },
                                     enabled = confirmEnabled,
                                 ) {

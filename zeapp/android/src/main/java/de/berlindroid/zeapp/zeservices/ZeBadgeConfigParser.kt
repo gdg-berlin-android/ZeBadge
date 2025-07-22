@@ -22,7 +22,8 @@ class ZeBadgeConfigParser
     constructor() {
         fun parse(configString: String): ParseResult {
             val configMap =
-                CONFIG_REGEX.findAll(configString)
+                CONFIG_REGEX
+                    .findAll(configString)
                     .map { it.groupValues }
                     .associate { it[1] to it[2] }
                     .mapValues { it.value.replace(SPACE_ESCAPED, " ") }

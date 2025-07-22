@@ -43,7 +43,8 @@ fun isKeyboardVisibleState(): State<Boolean> {
     DisposableEffect(LocalWindowInfo.current) {
         val listener =
             ViewTreeObserver.OnPreDrawListener {
-                isImeVisible = ViewCompat.getRootWindowInsets(view)
+                isImeVisible = ViewCompat
+                    .getRootWindowInsets(view)
                     ?.isVisible(WindowInsetsCompat.Type.ime()) == true
                 true
             }

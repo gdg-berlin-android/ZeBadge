@@ -13,8 +13,8 @@ class GetTemplateConfigurations
     constructor(
         private val imageProviderService: ZeImageProviderService,
     ) {
-        operator fun invoke(openApiKey: String): List<ZeConfiguration> {
-            return mutableListOf(
+        operator fun invoke(openApiKey: String): List<ZeConfiguration> =
+            mutableListOf(
                 ZeConfiguration.Name(
                     null,
                     null,
@@ -32,16 +32,30 @@ class GetTemplateConfigurations
                     R.drawable.soon.toBitmap(),
                 ),
                 ZeConfiguration.Kodee(
-                    R.drawable.kodee.toBitmap().pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
+                    R.drawable.kodee
+                        .toBitmap()
+                        .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
                 ),
                 ZeConfiguration.ImageDraw(
-                    R.drawable.kodee.toBitmap().pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
+                    R.drawable.kodee
+                        .toBitmap()
+                        .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
                 ),
-                ZeConfiguration.Camera(R.drawable.soon.toBitmap().pixelManipulation { w, h -> ditherFloydSteinberg(w, h) }),
-                ZeConfiguration.Camera(R.drawable.soon.toBitmap().pixelManipulation { w, h -> ditherFloydSteinberg(w, h) }),
+                ZeConfiguration.Camera(
+                    R.drawable.soon
+                        .toBitmap()
+                        .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
+                ),
+                ZeConfiguration.Camera(
+                    R.drawable.soon
+                        .toBitmap()
+                        .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
+                ),
                 ZeConfiguration.CustomPhrase(
                     "Custom phrase",
-                    R.drawable.page_phrase.toBitmap().pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
+                    R.drawable.page_phrase
+                        .toBitmap()
+                        .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
                 ),
             ).apply {
                 // Surprise mechanic: If token is set, show open ai item
@@ -56,9 +70,6 @@ class GetTemplateConfigurations
                     )
                 }
             }
-        }
 
-        private fun Int.toBitmap(): Bitmap {
-            return imageProviderService.provideImageBitmap(this)
-        }
+        private fun Int.toBitmap(): Bitmap = imageProviderService.provideImageBitmap(this)
     }

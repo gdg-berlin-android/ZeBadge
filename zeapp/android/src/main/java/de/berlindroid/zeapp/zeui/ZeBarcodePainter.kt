@@ -82,11 +82,12 @@ fun rememberBarcodeBitmapPainter(
 
     return remember(bitmap) {
         val currentBitmap =
-            bitmap ?: Bitmap.createBitmap(
-                sizePx,
-                sizePx,
-                Bitmap.Config.ARGB_8888,
-            ).apply { eraseColor(Color.TRANSPARENT) }
+            bitmap ?: Bitmap
+                .createBitmap(
+                    sizePx,
+                    sizePx,
+                    Bitmap.Config.ARGB_8888,
+                ).apply { eraseColor(Color.TRANSPARENT) }
 
         BitmapPainter(currentBitmap.asImageBitmap())
     }

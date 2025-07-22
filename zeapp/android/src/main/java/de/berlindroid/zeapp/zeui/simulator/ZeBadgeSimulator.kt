@@ -45,8 +45,8 @@ import de.berlindroid.zeapp.zebits.scaleIfNeeded
 import de.berlindroid.zeapp.zeui.BinaryBitmapPageProvider
 import de.berlindroid.zekompanion.BADGE_HEIGHT
 import de.berlindroid.zekompanion.BADGE_WIDTH
-import timber.log.Timber
 import kotlin.math.min
+import timber.log.Timber
 
 /**
  * This is the simulator composable for the badge.

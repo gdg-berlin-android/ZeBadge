@@ -10,12 +10,11 @@ data class WeatherData(
     val formattedTemperature: String
         get() = "${temperature}C"
 
-    fun formattedDate(): String {
-        return if (day == null) {
+    fun formattedDate(): String =
+        if (day == null) {
             "N/A"
         } else {
             val dateTime = LocalDateTime.parse(day, DateTimeFormatter.ISO_DATE_TIME)
             dateTime.format(DateTimeFormatter.ofPattern("d MMM uuuu"))
         }
-    }
 }
