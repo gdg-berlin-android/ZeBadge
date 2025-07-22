@@ -2,7 +2,7 @@ package de.berlindroid.zekompanion.server.ai
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.Body
@@ -65,7 +65,7 @@ class Gemini(
         .baseUrl("https://generativelanguage.googleapis.com/")
         .addConverterFactory(
             json.asConverterFactory(
-                MediaType.parse("application/json; charset=UTF8")!!,
+                "application/json; charset=UTF8".toMediaType(),
             ),
         )
         .build()
