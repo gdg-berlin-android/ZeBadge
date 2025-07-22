@@ -4,7 +4,9 @@ package de.berlindroid.zeapp.zemodels
  * Slot a page can reside in.
  *
  */
-sealed class ZeSlot(val name: String) {
+sealed class ZeSlot(
+    val name: String,
+) {
     data object Name : ZeSlot("A")
 
     data object FirstSponsor : ZeSlot("B")

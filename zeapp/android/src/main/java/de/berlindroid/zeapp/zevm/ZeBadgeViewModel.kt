@@ -26,6 +26,7 @@ import de.berlindroid.zeapp.zeservices.ZeWeatherService
 import de.berlindroid.zeapp.zeui.pixelManipulation
 import de.berlindroid.zeapp.zeui.simulator.ZeSimulatorButtonAction
 import de.berlindroid.zekompanion.ditherFloydSteinberg
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,7 +36,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val MESSAGE_DISPLAY_DURATION = 3_000L
 private const val MESSAGE_DISPLAY_UPDATES = 5
@@ -183,8 +183,7 @@ class ZeBadgeViewModel
                                         R.drawable.page_google,
                                         R.drawable.page_google_2,
                                         R.drawable.page_google_3,
-                                    )
-                                        .random()
+                                    ).random()
                                         .toBitmap()
                                         .pixelManipulation { w, h -> ditherFloydSteinberg(w, h) },
                                 ),
@@ -296,7 +295,9 @@ class ZeBadgeViewModel
          * @param slot the slot to be displayed.
          */
         fun simulatorButtonPressed(direction: ZeSimulatorButtonAction) {
-            val slotList = _uiState.value.slots.keys.toList()
+            val slotList =
+                _uiState.value.slots.keys
+                    .toList()
             val currentSlotIndex = slotList.indexOf(currentSimulatorSlot)
 
             val slotToBePresented =
@@ -468,9 +469,7 @@ class ZeBadgeViewModel
             }
         }
 
-        private fun Int.toBitmap(): Bitmap {
-            return imageProviderService.provideImageBitmap(this)
-        }
+        private fun Int.toBitmap(): Bitmap = imageProviderService.provideImageBitmap(this)
 
         private fun saveSlotConfiguration(
             slot: ZeSlot,
@@ -557,7 +556,9 @@ sealed class ZeBadgeErrorUiState {
         @StringRes val messageResId: Int,
     ) : ZeBadgeErrorUiState()
 
-    data class ShowError(val message: String) : ZeBadgeErrorUiState()
+    data class ShowError(
+        val message: String,
+    ) : ZeBadgeErrorUiState()
 
     data object ClearError : ZeBadgeErrorUiState()
 }

@@ -17,9 +17,9 @@ import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.buildBadgeManager
 import de.berlindroid.zekompanion.toBinary
 import de.berlindroid.zekompanion.zipit
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val SPACE_REPLACEMENT = "\$SPACE#"
 
@@ -141,10 +141,11 @@ class ZeBadgeManager
          */
         suspend fun updateConfiguration(configuration: Map<String, Any?>): Result<Any> {
             val detypedConfig: Map<String, String> =
-                configuration.map { e ->
-                    val (k, v) = e
-                    k to kotlinToPython(v)
-                }.toMap()
+                configuration
+                    .map { e ->
+                        val (k, v) = e
+                        k to kotlinToPython(v)
+                    }.toMap()
 
             val config = detypedConfig.entries.joinToString(separator = " ")
 
@@ -157,9 +158,10 @@ class ZeBadgeManager
                 badgeManager.readResponse()
                 delay(300)
 
-                return if (badgeManager.sendPayload(
-                        ConfigSaveCommand(),
-                    ).isSuccess
+                return if (badgeManager
+                        .sendPayload(
+                            ConfigSaveCommand(),
+                        ).isSuccess
                 ) {
                     Result.success(true)
                 } else {

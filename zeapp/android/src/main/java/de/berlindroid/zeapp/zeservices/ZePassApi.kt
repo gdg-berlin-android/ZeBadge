@@ -1,12 +1,12 @@
 package de.berlindroid.zeapp.zeservices
 
+import javax.inject.Inject
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-import javax.inject.Inject
 
 @Serializable
 data class Message(

@@ -16,20 +16,20 @@ class ZeImageProviderService
     constructor(
         @ApplicationContext private val context: Context,
     ) {
-        fun getInitialNameBitmap(): Bitmap {
-            return BitmapFactory.decodeResource(
-                context.resources,
-                R.drawable.sample_badge,
-            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
-        }
+        fun getInitialNameBitmap(): Bitmap =
+            BitmapFactory
+                .decodeResource(
+                    context.resources,
+                    R.drawable.sample_badge,
+                ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
 
         fun provideImageBitmap(
             @DrawableRes imageResource: Int,
-        ): Bitmap {
-            return BitmapFactory.decodeResource(
-                context.resources,
-                imageResource,
-                BitmapFactory.Options().apply { inScaled = false },
-            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
-        }
+        ): Bitmap =
+            BitmapFactory
+                .decodeResource(
+                    context.resources,
+                    imageResource,
+                    BitmapFactory.Options().apply { inScaled = false },
+                ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
     }

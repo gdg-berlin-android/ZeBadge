@@ -42,8 +42,7 @@ fun QRCodePage(
             Modifier
                 .background(
                     color = Color.White,
-                )
-                .size(
+                ).size(
                     width = pageWidth,
                     height = pageHeight,
                 ),

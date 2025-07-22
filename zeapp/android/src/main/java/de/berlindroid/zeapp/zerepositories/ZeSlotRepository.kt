@@ -18,14 +18,14 @@ import de.berlindroid.zekompanion.BADGE_WIDTH
 import de.berlindroid.zekompanion.base64
 import de.berlindroid.zekompanion.debase64
 import de.berlindroid.zekompanion.toBinary
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 /**
  * Responsible for all the ZeSlot and ZeSlotConfiguration persistence
@@ -46,22 +46,23 @@ class ZeSlotRepository
 
         suspend fun getSlotConfiguration(slot: ZeSlot): ZeConfiguration? =
             withContext(Dispatchers.IO) {
-                return@withContext zePreferencesService.dataStore.data.map { preferences ->
+                return@withContext zePreferencesService.dataStore.data
+                    .map { preferences ->
 
-                    val type = ZeBadgeType.getOrNull(preferences[slot.preferencesKey(TYPE_KEY)].orEmpty())
-                    val bitmap =
-                        preferences[slot.preferencesKey(IMAGE_KEY)]
-                            ?.debase64()
-                            ?.toBitmap(BADGE_WIDTH, BADGE_HEIGHT)
-                            ?: return@map null
+                        val type = ZeBadgeType.getOrNull(preferences[slot.preferencesKey(TYPE_KEY)].orEmpty())
+                        val bitmap =
+                            preferences[slot.preferencesKey(IMAGE_KEY)]
+                                ?.debase64()
+                                ?.toBitmap(BADGE_WIDTH, BADGE_HEIGHT)
+                                ?: return@map null
 
-                    return@map getSlotConfigurationByType(
-                        slot = slot,
-                        type = type,
-                        bitmap = bitmap,
-                        preferences = preferences,
-                    )
-                }.firstOrNull()
+                        return@map getSlotConfigurationByType(
+                            slot = slot,
+                            type = type,
+                            bitmap = bitmap,
+                            preferences = preferences,
+                        )
+                    }.firstOrNull()
             }
 
         suspend fun saveSlotConfiguration(
@@ -70,7 +71,11 @@ class ZeSlotRepository
         ) {
             zePreferencesService.dataStore.edit { preferences ->
                 preferences[slot.preferencesKey(TYPE_KEY)] = config.type.rawValue
-                preferences[slot.preferencesKey(IMAGE_KEY)] = config.bitmap.pixelBuffer().toBinary().base64()
+                preferences[slot.preferencesKey(IMAGE_KEY)] =
+                    config.bitmap
+                        .pixelBuffer()
+                        .toBinary()
+                        .base64()
 
                 saveSlotConfigurationByConfig(
                     slot = slot,

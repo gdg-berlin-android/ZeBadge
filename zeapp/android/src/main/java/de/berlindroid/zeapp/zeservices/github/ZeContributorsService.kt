@@ -1,11 +1,11 @@
 package de.berlindroid.zeapp.zeservices.github
 
 import de.berlindroid.zeapp.zeui.zeabout.Contributor
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
 class ZeContributorsService
     @Inject

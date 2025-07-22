@@ -1,10 +1,10 @@
 package de.berlindroid.zeapp.zeservices.github
 
 import de.berlindroid.zeapp.BuildConfig
+import javax.inject.Inject
 import okio.IOException
 import retrofit2.HttpException
 import timber.log.Timber
-import javax.inject.Inject
 
 class ZeReleaseService
     @Inject

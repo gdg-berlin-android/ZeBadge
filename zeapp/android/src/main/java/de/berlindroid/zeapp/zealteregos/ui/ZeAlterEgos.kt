@@ -151,8 +151,7 @@ private fun DetailedUserView(
                 .padding(
                     top = paddingValues.calculateTopPadding() + 16.dp,
                     bottom = paddingValues.calculateBottomPadding() + 16.dp,
-                )
-                .clickable { clicked() },
+                ).clickable { clicked() },
     ) {
         SubcomposeAsyncImage(
             modifier = Modifier.fillMaxWidth().padding(16.dp),

@@ -17,10 +17,12 @@ class ZeMainActivityTests {
 
     @Test
     fun testSendRandomPageButtonWithNoDeviceConnected() {
-        composeTestRule.onNodeWithContentDescription("Send random page to badge")
+        composeTestRule
+            .onNodeWithContentDescription("Send random page to badge")
             .performClick()
 
-        composeTestRule.onNodeWithContentDescription("Copy info bar message")
+        composeTestRule
+            .onNodeWithContentDescription("Copy info bar message")
             .assertIsDisplayed()
     }
 }

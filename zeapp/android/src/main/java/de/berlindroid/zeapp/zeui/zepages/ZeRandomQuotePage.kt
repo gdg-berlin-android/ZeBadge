@@ -39,8 +39,7 @@ fun RandomQuotePage(
             Modifier
                 .background(
                     color = Color.White,
-                )
-                .size(
+                ).size(
                     width = with(LocalDensity.current) { BADGE_WIDTH.toDp() },
                     height = with(LocalDensity.current) { BADGE_HEIGHT.toDp() },
                 ),

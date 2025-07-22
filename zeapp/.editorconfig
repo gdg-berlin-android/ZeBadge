@@ -5,7 +5,7 @@ insert_final_newline = true
 max_line_length = 150
 
 [{*.gradle.kts,*.kt,*.kts,*.main.kts}]
-ij_kotlin_imports_layout = java.**, javax.**, kotlin.**, ^
+ij_kotlin_imports_layout = *
 ij_kotlin_name_count_to_use_star_import = 2147483647
 ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
 ij_kotlin_allow_trailing_comma = true

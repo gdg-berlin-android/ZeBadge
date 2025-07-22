@@ -48,10 +48,11 @@ fun PictureEditorDialog(
 
     var bitmap by remember {
         mutableStateOf(
-            BitmapFactory.decodeResource(
-                context.resources,
-                R.drawable.error,
-            ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT),
+            BitmapFactory
+                .decodeResource(
+                    context.resources,
+                    R.drawable.error,
+                ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT),
         )
     }
 
@@ -64,15 +65,17 @@ fun PictureEditorDialog(
                 if (uri == null) {
                     // nope, so show error bitmap
                     Timber.d("Picture: Not found")
-                    BitmapFactory.decodeResource(
-                        context.resources,
-                        R.drawable.error,
-                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                    BitmapFactory
+                        .decodeResource(
+                            context.resources,
+                            R.drawable.error,
+                        ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                 } else {
                     // yes, so read image
-                    BitmapFactory.decodeStream(
-                        context.contentResolver.openInputStream(uri),
-                    ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
+                    BitmapFactory
+                        .decodeStream(
+                            context.contentResolver.openInputStream(uri),
+                        ).scaleIfNeeded(BADGE_WIDTH, BADGE_HEIGHT)
                 }.cropPageFromCenter()
         }
 

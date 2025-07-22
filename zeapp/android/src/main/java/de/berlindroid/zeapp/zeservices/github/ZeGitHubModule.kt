@@ -18,7 +18,8 @@ object ZeGitHubModule {
         }
 
     private val retrofit =
-        Retrofit.Builder()
+        Retrofit
+            .Builder()
             .baseUrl("https://api.github.com/repos/gdg-berlin-android/zebadge/")
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()

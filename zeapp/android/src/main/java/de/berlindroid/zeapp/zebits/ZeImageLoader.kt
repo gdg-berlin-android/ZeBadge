@@ -19,7 +19,8 @@ import de.berlindroid.zekompanion.ditherFloydSteinberg
 
 suspend fun Uri.toDitheredImage(context: Context): Bitmap {
     val imageRequest =
-        ImageRequest.Builder(context)
+        ImageRequest
+            .Builder(context)
             .data(this)
             .transformations(CropTransformation())
             .size(BADGE_WIDTH, BADGE_HEIGHT)

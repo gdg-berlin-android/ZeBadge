@@ -6,6 +6,7 @@ import assertk.assertions.messageContains
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.util.UUID
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -15,7 +16,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.util.UUID
 
 class ZeBadgeConfigParserTest {
     private val parser = ZeBadgeConfigParser()

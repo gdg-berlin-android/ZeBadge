@@ -2,7 +2,9 @@ package de.berlindroid.zeapp.zemodels
 
 import android.graphics.Bitmap
 
-enum class ZeBadgeType(val rawValue: String) {
+enum class ZeBadgeType(
+    val rawValue: String,
+) {
     NAME("Name Tag"),
     QR_CODE("QRCode Tag"),
     CUSTOM_PICTURE("Custom Picture"),
@@ -18,9 +20,7 @@ enum class ZeBadgeType(val rawValue: String) {
     ;
 
     companion object {
-        fun getOrNull(type: String): ZeBadgeType? {
-            return values().find { it.rawValue == type }
-        }
+        fun getOrNull(type: String): ZeBadgeType? = values().find { it.rawValue == type }
     }
 }
 

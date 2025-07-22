@@ -12,8 +12,8 @@ import de.berlindroid.zeapp.zebits.toDitheredImage
 import de.berlindroid.zeapp.zemodels.ZeConfiguration
 import de.berlindroid.zeapp.zemodels.ZeEditor
 import de.berlindroid.zeapp.zevm.ZeBadgeViewModel
-import kotlinx.coroutines.launch
 import java.io.File
+import kotlinx.coroutines.launch
 
 @Composable
 fun ZeCameraEditor(
