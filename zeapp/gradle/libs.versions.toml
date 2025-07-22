@@ -38,7 +38,7 @@ mockk = "1.13.13"
 kotlinxCoroutinesTest = "1.10.2"
 aboutlibraries = "11.2.3"
 hilt-navigation-compose = "1.2.0"
-jetbrains-compose = "1.7.0"
+jetbrains-compose = "1.8.2"
 roborazzi = "1.46.1"
 robolectric = "4.15.1"
 
