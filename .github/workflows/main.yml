@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
@@ -75,7 +75,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
@@ -105,7 +105,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
@@ -135,7 +135,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
