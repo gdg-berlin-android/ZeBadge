@@ -23,11 +23,11 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
       - name: "Validate Gradle wrapper"
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
       - name: Cache and Restore BuildCache
         uses: actions/cache@v4
         with:
@@ -54,11 +54,11 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
       - name: "Validate Gradle wrapper"
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
       - name: Cache and Restore BuildCache
         uses: actions/cache@v4
         with:
@@ -81,11 +81,11 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: true
       - name: "Validate Gradle wrapper"
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
       - name: Restore BuildCache
         uses: actions/cache/restore@v4
         with:
@@ -108,11 +108,11 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: true
       - name: "Validate Gradle wrapper"
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
       - name: Restore BuildCache
         uses: actions/cache/restore@v4
         with:
@@ -134,11 +134,11 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: true
       - name: "Validate Gradle wrapper"
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
       - name: Restore BuildCache
         uses: actions/cache/restore@v4
         with:
@@ -160,11 +160,11 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: false
       - name: "Validate Gradle wrapper"
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
       - name: Cache and Restore BuildCache
         uses: actions/cache@v4
         with:
